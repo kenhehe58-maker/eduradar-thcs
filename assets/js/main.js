@@ -398,13 +398,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 let scoreText = '-';
                 let subText = '';
-                if (t.status === 'already_achieved') {
+                if (t.status === 'already_achieved' || t.status === 'guaranteed') {
                     scoreText = '✓ ĐÃ ĐẠT';
-                    subText = 'Dù nhận 0đ CK';
-                } else if (t.status === 'impossible_exceeds_10') {
+                    subText = 'Chỉ cần thi ≥ 0đ';
+                } else if (t.status === 'impossible_exceeds_10' || t.status === 'impossible_ck_only') {
                     scoreText = '> 10.0';
                     subText = '⚠️ Cần thêm TX';
-                } else if (t.val !== undefined && t.val !== '') {
+                } else if (t.val !== undefined && t.val !== '' && !isNaN(parseFloat(t.val))) {
                     scoreText = `${parseFloat(t.val).toFixed(1)} đ`;
                     subText = 'Điểm CK tối thiểu';
                 } else {

@@ -265,3 +265,56 @@ function diagnose_student_mathematical_profile(array $txScores, ?float $gk, ?flo
         'computed_at' => date('Y-m-d H:i:s')
     ];
 }
+
+/**
+ * 5. XUẤT CÁC THUỘC TÍNH DATA-MATH-* CHO GIAO DIỆN MODAL VÀ RADAR TABLE
+ */
+function format_math_data_attributes(array $student): string {
+    $mp = $student['math_profile'] ?? [];
+    if (empty($mp)) {
+        $txList = $student['tx_list'] ?? [];
+        if (empty($txList)) {
+            foreach (['tx1', 'tx2', 'tx3', 'tx4'] as $col) {
+                if (isset($student[$col]) && $student[$col] !== null && $student[$col] !== '') {
+                    $txList[] = (float)$student[$col];
+                }
+            }
+        }
+        $gk = isset($student['gk']) && $student['gk'] !== null && $student['gk'] !== '' ? (float)$student['gk'] : null;
+        $ck = isset($student['ck']) && $student['ck'] !== null && $student['ck'] !== '' ? (float)$student['ck'] : null;
+        $mp = diagnose_student_mathematical_profile($txList, $gk, $ck);
+    }
+
+    $reg = $mp['regression'] ?? [];
+    $stab = $mp['stability'] ?? [];
+    $targetData = $mp['targets'] ?? [];
+    $targets = $targetData['targets'] ?? [];
+    $alert = $targetData['pedagogical_advice'] ?? '';
+
+    $slope = $reg['k'] ?? ($reg['slope'] ?? 0);
+    $slopeSummary = $reg['trend_label'] ?? ($reg['summary'] ?? '');
+    $stddev = $stab['std_dev'] ?? 0;
+    $stabBadge = $stab['label'] ?? ($stab['stability_level'] ?? 'Ổn định');
+    $stabDesc = $stab['label'] ?? ($stab['description'] ?? 'Phân tán chuẩn của chuỗi điểm');
+
+    $targetDat = isset($targets['dat']['required_ck']) ? $targets['dat']['required_ck'] : '';
+    $targetKha = isset($targets['kha']['required_ck']) ? $targets['kha']['required_ck'] : '';
+    $targetTot = isset($targets['tot']['required_ck']) ? $targets['tot']['required_ck'] : '';
+
+    $statusDat = $targets['dat']['feasibility'] ?? ($targets['dat']['status'] ?? '');
+    $statusKha = $targets['kha']['feasibility'] ?? ($targets['kha']['status'] ?? '');
+    $statusTot = $targets['tot']['feasibility'] ?? ($targets['tot']['status'] ?? '');
+
+    return 'data-math-slope="' . htmlspecialchars((string)$slope) . '" ' .
+           'data-math-slope-summary="' . htmlspecialchars((string)$slopeSummary) . '" ' .
+           'data-math-stddev="' . htmlspecialchars((string)$stddev) . '" ' .
+           'data-math-stability-badge="' . htmlspecialchars((string)$stabBadge) . '" ' .
+           'data-math-stability-desc="' . htmlspecialchars((string)$stabDesc) . '" ' .
+           'data-math-target-dat="' . htmlspecialchars((string)$targetDat) . '" ' .
+           'data-math-target-kha="' . htmlspecialchars((string)$targetKha) . '" ' .
+           'data-math-target-tot="' . htmlspecialchars((string)$targetTot) . '" ' .
+           'data-math-status-dat="' . htmlspecialchars((string)$statusDat) . '" ' .
+           'data-math-status-kha="' . htmlspecialchars((string)$statusKha) . '" ' .
+           'data-math-status-tot="' . htmlspecialchars((string)$statusTot) . '" ' .
+           'data-math-alert="' . htmlspecialchars((string)$alert) . '"';
+}
