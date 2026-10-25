@@ -23,6 +23,7 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/radar_helper.php';
+require_once __DIR__ . '/includes/algorithms.php';
 
 // Kiểm tra quyền đăng nhập
 require_login();
@@ -351,7 +352,8 @@ foreach ($rows as $r) {
     }
 
     $evaluation = evaluateRiskZone($avg, $gk, $ck, $txList);
-    $students[] = array_merge($r, $evaluation, ['tx_list' => $txList]);
+    $mathProfile = diagnose_student_mathematical_profile($txList, $gk, $ck);
+    $students[] = array_merge($r, $evaluation, ['tx_list' => $txList, 'math_profile' => $mathProfile]);
 }
 
 $stats = calculateRadarStats($students);
@@ -1341,6 +1343,18 @@ require_once __DIR__ . '/includes/header.php';
                             data-overall="<?= htmlspecialchars($studentOverallMap[$sid]['level'] ?? '') ?>"
                             data-txwarn="<?= !empty($firstSub['has_tx_warning']) ? '1' : '0' ?>"
                             data-diagnostic="<?= htmlspecialchars($firstSub['diagnostic']) ?>"
+                            data-math-slope="<?= $firstSub['math_profile']['regression']['slope'] ?? 0 ?>"
+                            data-math-slope-summary="<?= htmlspecialchars($firstSub['math_profile']['regression']['summary'] ?? '') ?>"
+                            data-math-stddev="<?= $firstSub['math_profile']['stability']['std_dev'] ?? 0 ?>"
+                            data-math-stability-badge="<?= htmlspecialchars($firstSub['math_profile']['stability']['stability_badge'] ?? '') ?>"
+                            data-math-stability-desc="<?= htmlspecialchars($firstSub['math_profile']['stability']['description'] ?? '') ?>"
+                            data-math-target-dat="<?= isset($firstSub['math_profile']['targets']['targets']['dat']['required_ck']) ? $firstSub['math_profile']['targets']['targets']['dat']['required_ck'] : '' ?>"
+                            data-math-target-kha="<?= isset($firstSub['math_profile']['targets']['targets']['kha']['required_ck']) ? $firstSub['math_profile']['targets']['targets']['kha']['required_ck'] : '' ?>"
+                            data-math-target-tot="<?= isset($firstSub['math_profile']['targets']['targets']['tot']['required_ck']) ? $firstSub['math_profile']['targets']['targets']['tot']['required_ck'] : '' ?>"
+                            data-math-status-dat="<?= htmlspecialchars($firstSub['math_profile']['targets']['targets']['dat']['status'] ?? '') ?>"
+                            data-math-status-kha="<?= htmlspecialchars($firstSub['math_profile']['targets']['targets']['kha']['status'] ?? '') ?>"
+                            data-math-status-tot="<?= htmlspecialchars($firstSub['math_profile']['targets']['targets']['tot']['status'] ?? '') ?>"
+                            data-math-alert="<?= htmlspecialchars($firstSub['math_profile']['pedagogical_alert'] ?? '') ?>"
                             data-advice="<?= htmlspecialchars($firstSub['competency']['pedagogical_advice'] ?? '') ?>"
                             data-competency-title="<?= htmlspecialchars($firstSub['competency']['competency_title'] ?? '') ?>"
                             data-note="<?= htmlspecialchars($firstSub['teacher_note'] ?? '') ?>"
@@ -1505,6 +1519,18 @@ require_once __DIR__ . '/includes/header.php';
                                 data-overall="<?= htmlspecialchars($sub['level']) ?>"
                                 data-txwarn="<?= !empty($sub['has_tx_warning']) ? '1' : '0' ?>"
                                 data-diagnostic="<?= htmlspecialchars($sub['diagnostic']) ?>"
+                                data-math-slope="<?= $sub['math_profile']['regression']['slope'] ?? 0 ?>"
+                                data-math-slope-summary="<?= htmlspecialchars($sub['math_profile']['regression']['summary'] ?? '') ?>"
+                                data-math-stddev="<?= $sub['math_profile']['stability']['std_dev'] ?? 0 ?>"
+                                data-math-stability-badge="<?= htmlspecialchars($sub['math_profile']['stability']['stability_badge'] ?? '') ?>"
+                                data-math-stability-desc="<?= htmlspecialchars($sub['math_profile']['stability']['description'] ?? '') ?>"
+                                data-math-target-dat="<?= isset($sub['math_profile']['targets']['targets']['dat']['required_ck']) ? $sub['math_profile']['targets']['targets']['dat']['required_ck'] : '' ?>"
+                                data-math-target-kha="<?= isset($sub['math_profile']['targets']['targets']['kha']['required_ck']) ? $sub['math_profile']['targets']['targets']['kha']['required_ck'] : '' ?>"
+                                data-math-target-tot="<?= isset($sub['math_profile']['targets']['targets']['tot']['required_ck']) ? $sub['math_profile']['targets']['targets']['tot']['required_ck'] : '' ?>"
+                                data-math-status-dat="<?= htmlspecialchars($sub['math_profile']['targets']['targets']['dat']['status'] ?? '') ?>"
+                                data-math-status-kha="<?= htmlspecialchars($sub['math_profile']['targets']['targets']['kha']['status'] ?? '') ?>"
+                                data-math-status-tot="<?= htmlspecialchars($sub['math_profile']['targets']['targets']['tot']['status'] ?? '') ?>"
+                                data-math-alert="<?= htmlspecialchars($sub['math_profile']['pedagogical_alert'] ?? '') ?>"
                                 data-advice="<?= htmlspecialchars($sub['competency']['pedagogical_advice'] ?? '') ?>"
                                 data-competency-title="<?= htmlspecialchars($sub['competency']['competency_title'] ?? '') ?>"
                                 data-note="<?= htmlspecialchars($sub['teacher_note'] ?? '') ?>"
@@ -1821,6 +1847,42 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
                 <div class="score-timeline-ribbon" id="modalScoreTimeline">
                     <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- DỰ BÁO ĐIỂM SỐ MỤC TIÊU & CHỈ SỐ TOÁN HỌC (OLS REGRESSION & TT22 INVERSE SOLVER) -->
+            <div class="apple-pedagogical-card" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 16px;">📐</span>
+                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Trọng Tâm Toán Học &amp; Dự Báo Điểm Cuối Kỳ Mục Tiêu</span>
+                    </div>
+                    <span class="mono-code" style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 3px 8px; border-radius: 6px; font-weight: 700;">Hồi quy OLS &amp; Giải ngược TT22</span>
+                </div>
+
+                <!-- Slope and Stability Metrics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px;">
+                    <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Động năng xu hướng (Hệ số góc k)</div>
+                        <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">k = +0.00</div>
+                        <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Chuỗi điểm đang phân tích...</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Độ ổn định phong độ (Độ lệch chuẩn σ)</div>
+                        <div id="modalMathStability" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">σ = 0.00</div>
+                        <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Mức độ phân tán phong độ</div>
+                    </div>
+                </div>
+
+                <!-- Target CK Projection Cards -->
+                <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
+                        🎯 Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                    <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; color: #b91c1c; display: none; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca; line-height: 1.5;"></div>
                 </div>
             </div>
 

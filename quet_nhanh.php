@@ -12,6 +12,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/radar_helper.php';
+require_once __DIR__ . '/includes/algorithms.php';
+require_once __DIR__ . '/includes/ocr_pipeline.php';
 require_once __DIR__ . '/includes/xlsx_helper.php';
 
 // -----------------------------------------------------------------------------
@@ -465,6 +467,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['gradebook_file'])) {
 $guestData = $_SESSION['guest_scan_data'] ?? null;
 $students = $guestData['students'] ?? [];
 $hasData = !empty($students);
+
+// Bổ sung phân tích toán học và dự báo điểm số mục tiêu TT22
+foreach ($students as &$st) {
+    if (!isset($st['math_profile'])) {
+        $txList = $st['tx_list'] ?? [];
+        $st['math_profile'] = diagnose_student_mathematical_profile($txList, $st['gk'] ?? null, $st['ck'] ?? null);
+    }
+}
+unset($st);
 
 // Chuẩn hóa tên lớp để tránh bị "Lớp Lớp 9A1"
 $rawClassName = $guestData['class_name'] ?? '9A1';
@@ -1098,6 +1109,18 @@ require_once __DIR__ . '/includes/header.php';
                             data-tier-class="<?= htmlspecialchars($s['score_tier']['class']) ?>"
                             data-txwarn="<?= !empty($s['has_tx_warning']) ? '1' : '0' ?>"
                             data-diagnostic="<?= htmlspecialchars($s['diagnostic']) ?>"
+                            data-math-slope="<?= $s['math_profile']['regression']['slope'] ?? 0 ?>"
+                            data-math-slope-summary="<?= htmlspecialchars($s['math_profile']['regression']['summary'] ?? '') ?>"
+                            data-math-stddev="<?= $s['math_profile']['stability']['std_dev'] ?? 0 ?>"
+                            data-math-stability-badge="<?= htmlspecialchars($s['math_profile']['stability']['stability_badge'] ?? '') ?>"
+                            data-math-stability-desc="<?= htmlspecialchars($s['math_profile']['stability']['description'] ?? '') ?>"
+                            data-math-target-dat="<?= isset($s['math_profile']['targets']['targets']['dat']['required_ck']) ? $s['math_profile']['targets']['targets']['dat']['required_ck'] : '' ?>"
+                            data-math-target-kha="<?= isset($s['math_profile']['targets']['targets']['kha']['required_ck']) ? $s['math_profile']['targets']['targets']['kha']['required_ck'] : '' ?>"
+                            data-math-target-tot="<?= isset($s['math_profile']['targets']['targets']['tot']['required_ck']) ? $s['math_profile']['targets']['targets']['tot']['required_ck'] : '' ?>"
+                            data-math-status-dat="<?= htmlspecialchars($s['math_profile']['targets']['targets']['dat']['status'] ?? '') ?>"
+                            data-math-status-kha="<?= htmlspecialchars($s['math_profile']['targets']['targets']['kha']['status'] ?? '') ?>"
+                            data-math-status-tot="<?= htmlspecialchars($s['math_profile']['targets']['targets']['tot']['status'] ?? '') ?>"
+                            data-math-alert="<?= htmlspecialchars($s['math_profile']['pedagogical_alert'] ?? '') ?>"
                             data-advice="<?= htmlspecialchars($s['competency']['pedagogical_advice'] ?? '') ?>"
                             data-competency-title="<?= htmlspecialchars($s['competency']['competency_title'] ?? '') ?>"
                             data-note="<?= htmlspecialchars($s['teacher_note'] ?? '') ?>"
@@ -1271,6 +1294,42 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                         <div class="score-timeline-chips" id="modalScoreTimeline">
                             <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- DỰ BÁO ĐIỂM SỐ MỤC TIÊU & CHỈ SỐ TOÁN HỌC (OLS REGRESSION & TT22 INVERSE SOLVER) -->
+                    <div class="apple-pedagogical-card" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">📐</span>
+                                <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Trọng Tâm Toán Học &amp; Dự Báo Điểm Cuối Kỳ Mục Tiêu</span>
+                            </div>
+                            <span class="mono-code" style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 3px 8px; border-radius: 6px; font-weight: 700;">Hồi quy OLS &amp; Giải ngược TT22</span>
+                        </div>
+
+                        <!-- Slope and Stability Metrics -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px;">
+                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Động năng xu hướng (Hệ số góc k)</div>
+                                <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">k = +0.00</div>
+                                <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Chuỗi điểm đang phân tích...</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Độ ổn định phong độ (Độ lệch chuẩn σ)</div>
+                                <div id="modalMathStability" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">σ = 0.00</div>
+                                <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Mức độ phân tán phong độ</div>
+                            </div>
+                        </div>
+
+                        <!-- Target CK Projection Cards -->
+                        <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <div style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
+                                🎯 Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                            <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; color: #b91c1c; display: none; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca; line-height: 1.5;"></div>
                         </div>
                     </div>
 

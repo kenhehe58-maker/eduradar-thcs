@@ -353,6 +353,84 @@ document.addEventListener('DOMContentLoaded', function () {
             modalPedagogicalAdvice.textContent = row.dataset.advice || 'Chưa có khuyến nghị sư phạm.';
         }
 
+        // Mathematical Metrics & Target Prediction
+        const modalMathSlope = document.getElementById('modalMathSlope');
+        const modalMathSlopeSummary = document.getElementById('modalMathSlopeSummary');
+        const modalMathStability = document.getElementById('modalMathStability');
+        const modalMathStabilityDesc = document.getElementById('modalMathStabilityDesc');
+        const modalTargetCardsGrid = document.getElementById('modalTargetCardsGrid');
+        const modalMathTargetAlert = document.getElementById('modalMathTargetAlert');
+
+        if (modalMathSlope) {
+            const slope = parseFloat(row.dataset.mathSlope || '0');
+            const sign = slope > 0 ? '+' : '';
+            modalMathSlope.textContent = `k = ${sign}${slope.toFixed(2)}`;
+            modalMathSlope.style.color = slope > 0 ? '#16a34a' : (slope < 0 ? '#dc2626' : '#64748b');
+        }
+        if (modalMathSlopeSummary) {
+            modalMathSlopeSummary.textContent = row.dataset.mathSlopeSummary || 'Chưa đủ dữ liệu chuỗi điểm';
+        }
+        if (modalMathStability) {
+            const stdDev = parseFloat(row.dataset.mathStddev || '0');
+            const badge = row.dataset.mathStabilityBadge || 'Ổn định';
+            modalMathStability.textContent = `σ = ${stdDev.toFixed(2)} (${badge})`;
+            modalMathStability.style.color = stdDev > 1.8 ? '#dc2626' : (stdDev > 1.0 ? '#d97706' : '#16a34a');
+        }
+        if (modalMathStabilityDesc) {
+            modalMathStabilityDesc.textContent = row.dataset.mathStabilityDesc || 'Phân tán chuẩn của chuỗi điểm';
+        }
+
+        if (modalTargetCardsGrid) {
+            modalTargetCardsGrid.innerHTML = '';
+            const targets = [
+                { key: 'dat', label: 'Mức Đạt (≥ 5.0)', val: row.dataset.mathTargetDat, status: row.dataset.mathStatusDat, color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
+                { key: 'kha', label: 'Mức Khá (≥ 6.5)', val: row.dataset.mathTargetKha, status: row.dataset.mathStatusKha, color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
+                { key: 'tot', label: 'Mức Tốt (≥ 8.0)', val: row.dataset.mathTargetTot, status: row.dataset.mathStatusTot, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' }
+            ];
+
+            targets.forEach(function(t) {
+                const card = document.createElement('div');
+                card.style.padding = '8px 10px';
+                card.style.borderRadius = '8px';
+                card.style.border = `1px solid ${t.border}`;
+                card.style.background = t.bg;
+                card.style.textAlign = 'center';
+
+                let scoreText = '-';
+                let subText = '';
+                if (t.status === 'already_achieved') {
+                    scoreText = '✓ ĐÃ ĐẠT';
+                    subText = 'Dù nhận 0đ CK';
+                } else if (t.status === 'impossible_exceeds_10') {
+                    scoreText = '> 10.0';
+                    subText = '⚠️ Cần thêm TX';
+                } else if (t.val !== undefined && t.val !== '') {
+                    scoreText = `${parseFloat(t.val).toFixed(1)} đ`;
+                    subText = 'Điểm CK tối thiểu';
+                } else {
+                    scoreText = 'Chờ điểm';
+                    subText = 'Chưa có điểm TX';
+                }
+
+                card.innerHTML = `
+                    <div style="font-size: 10.5px; font-weight: 700; color: ${t.color}; text-transform: uppercase;">${t.label}</div>
+                    <div style="font-size: 16px; font-weight: 900; color: ${t.color}; margin: 2px 0;">${scoreText}</div>
+                    <div style="font-size: 10px; color: #64748b;">${subText}</div>
+                `;
+                modalTargetCardsGrid.appendChild(card);
+            });
+        }
+
+        if (modalMathTargetAlert) {
+            const alertMsg = row.dataset.mathAlert || '';
+            if (alertMsg.length > 0) {
+                modalMathTargetAlert.innerHTML = `⚠️ <b>Khuyến nghị thuật toán:</b> ${alertMsg}`;
+                modalMathTargetAlert.style.display = 'block';
+            } else {
+                modalMathTargetAlert.style.display = 'none';
+            }
+        }
+
         // Teacher note
         const note = row.dataset.note || '';
         if (modalTeacherNoteInput) {
