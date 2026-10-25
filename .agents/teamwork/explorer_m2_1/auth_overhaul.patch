@@ -1,0 +1,130 @@
+--- a/login.php
++++ b/login.php
+@@ -1,39 +1,63 @@
+ <?php
+-session_start();
++if (session_status() === PHP_SESSION_NONE) {
++    session_start();
++}
+ require_once __DIR__ . '/includes/db.php';
+ 
++// Nếu người dùng đã đăng nhập từ trước, điều hướng trực tiếp theo vai trò
++if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_SESSION['user_id'])) {
++    if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
++        header('Location: admin.php');
++    } else {
++        header('Location: index.php');
++    }
++    exit;
++}
++
+ $error = '';
++
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+     $username = trim($_POST['username'] ?? '');
+-    $password = trim($_POST['password'] ?? '');
++    $password = (string)($_POST['password'] ?? '');
+ 
+-    if ($username && $password) {
++    if ($username !== '' && $password !== '') {
+         $pdo = db();
+         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+         $stmt->execute([$username]);
+         $user = $stmt->fetch();
+ 
+-        if ($user && (password_verify($password, $user['password']) || $password === '123456')) {
+-            $_SESSION['user_id'] = $user['id'];
++        // XÁC THỰC BẢO MẬT: Bỏ hoàn toàn backdoor || $password === '123456'
++        // Nghiêm ngặt chỉ chấp nhận mật khẩu đã hash bcrypt qua password_verify()
++        if ($user && password_verify($password, $user['password'])) {
++            // Ngăn ngừa tấn công Session Fixation bằng cách cấp lại session ID mới
++            session_regenerate_id(true);
++
++            $_SESSION['user_id'] = (int)$user['id'];
+             $_SESSION['username'] = $user['username'];
+             $_SESSION['full_name'] = $user['full_name'];
+             $_SESSION['role'] = $user['role'];
+ 
+-            // GHI NHẬT KÝ VÀO DATABASE
+-            logAction('Đăng nhập thành công', "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập vào hệ thống.");
++            // Ghi nhật ký đăng nhập thành công vào bảng audit_logs
++            log_action(
++                (int)$user['id'],
++                $user['username'],
++                'Đăng nhập thành công',
++                "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập thành công vào hệ thống."
++            );
+ 
++            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên vào index.php
+             if ($user['role'] === 'admin') {
+                 header('Location: admin.php');
+             } else {
+-                header('Location: nhap_diem.php');
++                header('Location: index.php');
+             }
+             exit;
+         } else {
+-            // GHI NHẬT KÝ ĐĂNG NHẬP THẤT BẠI
+-            logAction('Đăng nhập thất bại', "Thử đăng nhập sai mật khẩu với tài khoản [$username].");
++            // Ghi nhật ký đăng nhập thất bại kèm tên tài khoản đã cố gắng đăng nhập
++            log_action(
++                null,
++                $username,
++                'Đăng nhập thất bại',
++                "Thử đăng nhập thất bại với tài khoản [$username]."
++            );
+             $error = 'Tên đăng nhập hoặc mật khẩu không chính xác!';
+         }
+     } else {
+@@ -102,5 +126,6 @@
+             <strong>Bấm để tự điền tài khoản thử nghiệm (Pass: <code>123456</code>):</strong><br>
+             • Admin: <code>admin</code> <button type="button" class="demo-fill-btn" onclick="fillForm('admin')">Điền Admin</button><br>
+-            • Giáo viên: <code>gv_toan</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_toan')">Điền GV Toán</button>
++            • GV Toán: <code>gv_toan</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_toan')">Điền GV Toán</button><br>
++            • GV Ngữ Văn: <code>gv_van</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_van')">Điền GV Văn</button>
+         </div>
+ 
+--- a/logout.php
++++ b/logout.php
+@@ -1,11 +1,38 @@
+ <?php
+-session_start();
++if (session_status() === PHP_SESSION_NONE) {
++    session_start();
++}
+ require_once __DIR__ . '/includes/db.php';
+ 
+-if (isset($_SESSION['username'])) {
+-    logAction('Đăng xuất', "Tài khoản [{$_SESSION['username']}] đã đăng xuất.");
++// Trích xuất danh tính trước khi giải phóng bộ nhớ session
++$userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
++$username = $_SESSION['username'] ?? null;
++
++// Ghi nhật ký đăng xuất vào bảng audit_logs
++if ($username !== null) {
++    log_action($userId, $username, 'Đăng xuất', "Người dùng [$username] đã đăng xuất khỏi hệ thống.");
+ }
+ 
++// Xóa sạch toàn bộ biến session trong bộ nhớ runtime
++$_SESSION = [];
++
++// Hủy cookie session phía client trình duyệt nếu cookie được sử dụng
++if (ini_get("session.use_cookies")) {
++    $params = session_get_cookie_params();
++    setcookie(
++        session_name(),
++        '',
++        time() - 42000,
++        $params["path"],
++        $params["domain"],
++        $params["secure"],
++        $params["httponly"]
++    );
++}
++
++// Hủy dữ liệu session lưu trên máy chủ
+ session_destroy();
++
++// Chuyển hướng an toàn về trang đăng nhập
+ header('Location: login.php');
+ exit;

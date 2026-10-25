@@ -1,0 +1,578 @@
+// =============================================================================
+// EduRadar THCS: Master Client-side Interactions
+// Features:
+// 1. Collapsible Left-side Navigation Sidebar with localStorage Persistence
+// 2. Real-time Multi-Dimensional Filter Chips & Instant Student Search
+// 3. Expandable Student Competency Profile Modal with Score Timeline
+// 4. AJAX Teacher Pedagogical Note Saver with Real-time Audit Feedback
+// =============================================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    // -------------------------------------------------------------------------
+    // 1. COLLAPSIBLE LEFT-SIDE NAVIGATION SIDEBAR
+    // -------------------------------------------------------------------------
+    const sidebar = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mainContent = document.querySelector('.content');
+
+    // Đồng bộ trạng thái ban đầu từ localStorage
+    try {
+        const isCollapsed = localStorage.getItem('edu_sidebar_collapsed') === '1';
+        if (isCollapsed) {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+            sidebar?.classList.add('collapsed');
+            mainContent?.classList.add('sidebar-collapsed');
+        }
+    } catch (e) {}
+
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const willCollapse = !document.documentElement.classList.contains('sidebar-is-collapsed');
+            if (willCollapse) {
+                document.documentElement.classList.add('sidebar-is-collapsed');
+                sidebar.classList.add('collapsed');
+                mainContent?.classList.add('sidebar-collapsed');
+                try { localStorage.setItem('edu_sidebar_collapsed', '1'); } catch (err) {}
+            } else {
+                document.documentElement.classList.remove('sidebar-is-collapsed');
+                sidebar.classList.remove('collapsed');
+                mainContent?.classList.remove('sidebar-collapsed');
+                try { localStorage.setItem('edu_sidebar_collapsed', '0'); } catch (err) {}
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. RADAR DASHBOARD: REAL-TIME CLIENT FILTER & INSTANT SEARCH
+    // -------------------------------------------------------------------------
+    const rows = document.querySelectorAll('tbody tr[data-level]');
+    const chips = document.querySelectorAll('.chip[data-filter]');
+    const search = document.getElementById('search');
+    const emptyRow = document.getElementById('radarEmptyRow') || document.querySelector('.radar-filter-empty-row');
+    let currentFilter = 'all';
+
+    function applyFilter() {
+        const q = (search?.value || '').toLowerCase().trim();
+        let visibleCount = 0;
+
+        rows.forEach(function (r) {
+            const level = r.dataset.level || '';
+            const trend = r.dataset.trend || '';
+            const momentum = r.dataset.momentum || '';
+            const tier = r.dataset.tier || '';
+            const txWarn = r.dataset.txwarn || '0';
+            const name = (r.dataset.name || '').toLowerCase();
+            const searchAttr = (r.dataset.search || '').toLowerCase();
+
+            let okFilter = false;
+            if (currentFilter === 'all') {
+                okFilter = true;
+            } else if (currentFilter === 'red' || currentFilter === 'yellow' || currentFilter === 'green' || currentFilter === 'pending') {
+                okFilter = (level === currentFilter);
+            } else if (currentFilter === 'trend:up') {
+                okFilter = (trend === 'up' || momentum === 'up' || momentum === 'surge');
+            } else if (currentFilter === 'trend:steady') {
+                okFilter = (trend === 'stable' || momentum === 'steady');
+            } else if (currentFilter === 'trend:down') {
+                okFilter = (trend === 'down' || momentum === 'down' || momentum === 'drop');
+            } else if (currentFilter === 'trend:pending') {
+                okFilter = (momentum === 'pending' || trend === 'pending');
+            } else if (currentFilter === 'tier:excellent') {
+                okFilter = (tier === 'excellent');
+            } else if (currentFilter === 'tier:good') {
+                okFilter = (tier === 'good');
+            } else if (currentFilter === 'tier:high') {
+                okFilter = (tier === 'excellent' || tier === 'good');
+            } else if (currentFilter === 'tier:average') {
+                okFilter = (tier === 'average');
+            } else if (currentFilter === 'tier:low') {
+                okFilter = (tier === 'low');
+            } else if (currentFilter.startsWith('overall:')) {
+                const targetOverall = currentFilter.replace('overall:', '');
+                okFilter = ((r.dataset.overall || '') === targetOverall);
+            } else if (currentFilter === 'tx:warn') {
+                okFilter = (txWarn === '1');
+            }
+
+            const okSearch = !q || name.includes(q) || searchAttr.includes(q);
+
+            if (okFilter && okSearch) {
+                r.style.display = '';
+                visibleCount++;
+            } else {
+                r.style.display = 'none';
+            }
+        });
+
+        if (emptyRow) {
+            emptyRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+        }
+    }
+
+    chips.forEach(function (c) {
+        c.addEventListener('click', function () {
+            chips.forEach(function (x) { x.classList.remove('active'); });
+            this.classList.add('active');
+            currentFilter = this.dataset.filter || 'all';
+            applyFilter();
+        });
+    });
+
+    if (search) {
+        search.addEventListener('input', applyFilter);
+    }
+
+    // Expose global helper to programmatically trigger filters (e.g. from metric cards)
+    window.filterByTier = function (filterVal) {
+        const chip = document.querySelector('.chip[data-filter="' + filterVal + '"]');
+        if (chip) {
+            chip.click();
+        } else {
+            chips.forEach(function (x) { x.classList.remove('active'); });
+            currentFilter = filterVal;
+            applyFilter();
+        }
+        const targetTable = document.querySelector('.radar-table') || document.querySelector('.table-container');
+        if (targetTable) {
+            targetTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // 3. EXPANDABLE STUDENT COMPETENCY PROFILE MODAL
+    // -------------------------------------------------------------------------
+    const modal = document.getElementById('competencyDetailModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalStudentAvatar = document.getElementById('modalStudentAvatar');
+    const modalStudentName = document.getElementById('modalStudentName');
+    const modalStudentCode = document.getElementById('modalStudentCode');
+    const modalStudentClass = document.getElementById('modalStudentClass');
+    const modalStudentSubject = document.getElementById('modalStudentSubject');
+    const modalStudentBirthday = document.getElementById('modalStudentBirthday');
+    const modalStudentPhone = document.getElementById('modalStudentPhone');
+
+    const modalMomentumBadge = document.getElementById('modalMomentumBadge');
+    const modalScoreTierBadge = document.getElementById('modalScoreTierBadge');
+    const modalRiskBadge = document.getElementById('modalRiskBadge');
+
+    const modalScoreTimeline = document.getElementById('modalScoreTimeline');
+    const modalDiagnosticText = document.getElementById('modalDiagnosticText');
+    const modalCompetencyTitle = document.getElementById('modalCompetencyTitle');
+    const modalPedagogicalAdvice = document.getElementById('modalPedagogicalAdvice');
+
+    const modalTeacherNoteInput = document.getElementById('modalTeacherNoteInput');
+    const btnSaveTeacherNote = document.getElementById('btnSaveTeacherNote');
+    const teacherNoteStatus = document.getElementById('teacherNoteStatus');
+    const teacherNoteSavedTime = document.getElementById('teacherNoteSavedTime');
+
+    let currentStudentId = 0;
+    let currentSubject = '';
+    let activeRowElement = null;
+
+    function getInitials(fullName) {
+        if (!fullName) return 'HS';
+        const parts = fullName.trim().split(/\s+/);
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    function formatScoreValue(val) {
+        if (val === null || val === undefined || val === '') return '-';
+        const num = parseFloat(val);
+        return isNaN(num) ? '-' : num.toFixed(1);
+    }
+
+    function getScoreClass(val) {
+        if (val === null || val === undefined || val === '') return '';
+        const num = parseFloat(val);
+        if (isNaN(num)) return '';
+        if (num < 3.5) return 'crit';
+        if (num < 5.0) return 'warn';
+        if (num >= 8.0) return 'excel';
+        return 'good';
+    }
+
+    function openStudentModal(row) {
+        if (!modal) return;
+        activeRowElement = row;
+
+        currentStudentId = parseInt(row.dataset.studentId || '0', 10);
+        currentSubject = row.dataset.subject || '';
+        const fullName = row.dataset.fullName || '';
+        const studentCode = row.dataset.studentCode || '';
+        const className = row.dataset.className || '';
+        const birthday = row.dataset.birthday || '';
+        const phone = row.dataset.phone || '';
+
+        // Profile info
+        if (modalStudentAvatar) modalStudentAvatar.textContent = getInitials(fullName);
+        if (modalStudentName) modalStudentName.textContent = fullName;
+        if (modalStudentCode) modalStudentCode.textContent = studentCode;
+        if (modalStudentClass) modalStudentClass.textContent = 'Lớp ' + className;
+        if (modalStudentSubject) {
+            const subrows = document.querySelectorAll('.student-sub-row[data-parent-student="' + currentStudentId + '"]');
+            if (subrows.length > 1) {
+                modalStudentSubject.innerHTML = '';
+                subrows.forEach(function(sub) {
+                    const sName = sub.dataset.subject;
+                    const pill = document.createElement('span');
+                    pill.className = 'badge-subject' + (sName === currentSubject ? ' active' : '');
+                    pill.style.cursor = 'pointer';
+                    pill.style.marginRight = '4px';
+                    pill.style.padding = '2px 8px';
+                    pill.style.borderRadius = '6px';
+                    if (sName === currentSubject) {
+                        pill.style.background = '#4f46e5';
+                        pill.style.color = '#ffffff';
+                    } else {
+                        pill.style.background = '#e2e8f0';
+                        pill.style.color = '#334155';
+                    }
+                    pill.textContent = 'Môn ' + sName;
+                    pill.onclick = function(e) {
+                        e.stopPropagation();
+                        openStudentModal(sub);
+                    };
+                    modalStudentSubject.appendChild(pill);
+                });
+            } else {
+                modalStudentSubject.textContent = 'Môn ' + currentSubject;
+            }
+        }
+        if (modalStudentBirthday) {
+            modalStudentBirthday.textContent = birthday ? '• 🎂 ' + birthday : '';
+            modalStudentBirthday.style.display = birthday ? 'inline' : 'none';
+        }
+        if (modalStudentPhone) {
+            modalStudentPhone.textContent = phone ? '• 📞 ' + phone : '';
+            modalStudentPhone.style.display = phone ? 'inline' : 'none';
+        }
+
+        // Dual Framework Badges
+        const momIcon = row.dataset.momentumIcon || '🔄';
+        const momLabel = row.dataset.momentumLabel || 'Duy trì';
+        if (modalMomentumBadge) {
+            modalMomentumBadge.innerHTML = '<span style="font-size: 15px; font-weight: 800; color: #0f172a;">' + momIcon + ' ' + momLabel + '</span>';
+        }
+
+        const tierBadge = row.dataset.tierBadge || 'Chờ điểm';
+        if (modalScoreTierBadge) {
+            modalScoreTierBadge.innerHTML = '<span style="font-size: 15px; font-weight: 800; color: #0f172a;">' + tierBadge + '</span>';
+        }
+
+        const riskLevel = row.dataset.level || 'green';
+        if (modalRiskBadge) {
+            if (riskLevel === 'red') {
+                modalRiskBadge.innerHTML = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Nguy cấp</span>';
+            } else if (riskLevel === 'yellow') {
+                modalRiskBadge.innerHTML = '<span style="color: #d97706; font-size: 15px; font-weight: 800;">🟡 Cần chú ý</span>';
+            } else if (riskLevel === 'pending') {
+                modalRiskBadge.innerHTML = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm số</span>';
+            } else {
+                modalRiskBadge.innerHTML = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Ổn định</span>';
+            }
+        }
+
+        // Score Progression Timeline chips
+        if (modalScoreTimeline) {
+            modalScoreTimeline.innerHTML = '';
+            const scoreNodes = [
+                { name: 'TX 1', val: row.dataset.tx1, isGk: false, isCk: false, isAvg: false },
+                { name: 'TX 2', val: row.dataset.tx2, isGk: false, isCk: false, isAvg: false },
+                { name: 'TX 3', val: row.dataset.tx3, isGk: false, isCk: false, isAvg: false },
+                { name: 'TX 4', val: row.dataset.tx4, isGk: false, isCk: false, isAvg: false },
+                { name: 'GK (x2)', val: row.dataset.gk, isGk: true, isCk: false, isAvg: false },
+                { name: 'CK (x3)', val: row.dataset.ck, isGk: false, isCk: true, isAvg: false },
+                { name: 'ĐTB', val: row.dataset.avg, isGk: false, isCk: false, isAvg: true },
+            ];
+
+            scoreNodes.forEach(function (node, idx) {
+                const nodeDiv = document.createElement('div');
+                nodeDiv.className = 'score-timeline-node' + (node.isGk ? ' node-gk' : '') + (node.isCk ? ' node-ck' : '') + (node.isAvg ? ' node-avg' : '');
+                
+                const valStr = formatScoreValue(node.val);
+                const valClass = getScoreClass(node.val);
+
+                nodeDiv.innerHTML = `
+                    <div class="node-label">${node.name}</div>
+                    <div class="node-score ${valClass}">${valStr}</div>
+                `;
+                modalScoreTimeline.appendChild(nodeDiv);
+
+                if (idx < scoreNodes.length - 1) {
+                    const arrowSpan = document.createElement('span');
+                    arrowSpan.className = 'timeline-separator';
+                    arrowSpan.textContent = '→';
+                    modalScoreTimeline.appendChild(arrowSpan);
+                }
+            });
+        }
+
+        // Diagnostic & Pedagogical advice
+        if (modalDiagnosticText) {
+            modalDiagnosticText.textContent = row.dataset.diagnostic || 'Chưa có chẩn đoán chi tiết.';
+        }
+        if (modalCompetencyTitle) {
+            modalCompetencyTitle.textContent = row.dataset.competencyTitle || 'Chưa có tiêu đề năng lực';
+        }
+        if (modalPedagogicalAdvice) {
+            modalPedagogicalAdvice.textContent = row.dataset.advice || 'Chưa có khuyến nghị sư phạm.';
+        }
+
+        // Teacher note
+        const note = row.dataset.note || '';
+        if (modalTeacherNoteInput) {
+            modalTeacherNoteInput.value = note;
+        }
+        if (teacherNoteStatus) {
+            teacherNoteStatus.style.display = 'none';
+        }
+        if (teacherNoteSavedTime) {
+            teacherNoteSavedTime.textContent = '';
+        }
+
+        // Cập nhật link In / Xuất Phiếu Phụ Đạo (PDF & Excel)
+        const btnModalPrintPdf = document.getElementById('btnModalPrintPdf');
+        const btnModalExportXlsx = document.getElementById('btnModalExportXlsx');
+        if (btnModalPrintPdf) {
+            btnModalPrintPdf.href = 'in_phieu_phu_dao.php?student_id=' + currentStudentId + '&subject=' + encodeURIComponent(currentSubject) + '&format=pdf';
+        }
+        if (btnModalExportXlsx) {
+            btnModalExportXlsx.href = 'in_phieu_phu_dao.php?student_id=' + currentStudentId + '&subject=' + encodeURIComponent(currentSubject) + '&format=xlsx';
+        }
+
+        // Dành cho Tuyến Khách (Guest Mode)
+        const guestIdx = row.dataset.studentIdx !== undefined ? row.dataset.studentIdx : '';
+        modal.dataset.currentIdx = guestIdx;
+        const btnGuestPrintPdf = document.getElementById('btnGuestPrintPdf');
+        const btnGuestExportXlsx = document.getElementById('btnGuestExportXlsx');
+        if (btnGuestPrintPdf) {
+            btnGuestPrintPdf.href = 'in_phieu_phu_dao.php?guest=1&idx=' + encodeURIComponent(guestIdx) + '&format=pdf';
+        }
+        if (btnGuestExportXlsx) {
+            btnGuestExportXlsx.href = 'in_phieu_phu_dao.php?guest=1&idx=' + encodeURIComponent(guestIdx) + '&format=xlsx';
+        }
+
+        // Show modal
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function closeStudentModal() {
+        if (!modal) return;
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 200);
+    }
+
+    // Attach row click listeners (both main rows and sub-rows)
+    document.querySelectorAll('tbody tr[data-level]').forEach(function (r) {
+        r.addEventListener('click', function (e) {
+            // Không mở modal nếu nhấn trực tiếp vào link sổ điểm hoặc nút toggle subrows
+            if (e.target.closest('a') || e.target.closest('.btn-goto-gradebook') || e.target.closest('.btn-toggle-subrows')) {
+                return;
+            }
+            openStudentModal(this);
+        });
+
+        const detailBtn = r.querySelector('.btn-open-detail');
+        if (detailBtn) {
+            detailBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openStudentModal(r);
+            });
+        }
+    });
+
+    if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeStudentModal);
+    }
+
+    if (modal) {
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                closeStudentModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeStudentModal();
+        }
+    });
+
+    // -------------------------------------------------------------------------
+    // 4. AJAX LƯU NHẬN XÉT SƯ PHẠM VÀO DATABASE VỚI LIQUID GLASS BUTTON (PROMPT #001)
+    // -------------------------------------------------------------------------
+    const u001NoteSaver = document.getElementById('u001ModalNoteSaver');
+    const u001Live = u001NoteSaver?.querySelector('.u001-live');
+
+    if (btnSaveTeacherNote && modalTeacherNoteInput) {
+        btnSaveTeacherNote.addEventListener('click', function () {
+            if (currentStudentId <= 0 || !currentSubject) {
+                alert('Không xác định được học sinh hoặc môn học!');
+                return;
+            }
+
+            const noteVal = modalTeacherNoteInput.value.trim();
+
+            if (u001NoteSaver) {
+                u001NoteSaver.dataset.state = 'load';
+                btnSaveTeacherNote.setAttribute('aria-busy', 'true');
+                if (u001Live) u001Live.textContent = 'Đang lưu nhận xét...';
+            }
+            btnSaveTeacherNote.disabled = true;
+            if (teacherNoteStatus) teacherNoteStatus.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('action', 'save_teacher_note');
+            formData.append('student_id', currentStudentId);
+            formData.append('subject', currentSubject);
+            formData.append('note', noteVal);
+
+            fetch('index.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Mã phản hồi HTTP: ' + res.status);
+                }
+                return res.json();
+            })
+            .then(data => {
+                btnSaveTeacherNote.disabled = false;
+
+                if (data.success) {
+                    if (u001NoteSaver) {
+                        u001NoteSaver.dataset.state = 'ok';
+                        btnSaveTeacherNote.removeAttribute('aria-busy');
+                        if (u001Live) u001Live.textContent = 'Đã lưu nhận xét';
+                        setTimeout(function () {
+                            u001NoteSaver.dataset.state = 'idle';
+                            if (u001Live) u001Live.textContent = '';
+                        }, 2500);
+                    }
+
+                    if (teacherNoteStatus) {
+                        teacherNoteStatus.style.display = 'inline-flex';
+                        teacherNoteStatus.textContent = '✓ ' + (data.message || 'Đã lưu nhận xét thành công!');
+                    }
+                    if (teacherNoteSavedTime && data.updated_at) {
+                        teacherNoteSavedTime.textContent = 'Cập nhật lúc: ' + data.updated_at;
+                    }
+
+                    // Cập nhật ngay lập tức vào DOM dòng học sinh tương ứng
+                    if (activeRowElement) {
+                        activeRowElement.dataset.note = noteVal;
+                        const noteBadge = activeRowElement.querySelector('.js-note-badge');
+                        if (noteBadge) {
+                            if (noteVal) {
+                                noteBadge.style.display = 'inline-flex';
+                                noteBadge.title = noteVal.substring(0, 80) + '...';
+                            } else {
+                                noteBadge.style.display = 'none';
+                            }
+                        }
+                    }
+                } else {
+                    if (u001NoteSaver) {
+                        u001NoteSaver.dataset.state = 'idle';
+                        btnSaveTeacherNote.removeAttribute('aria-busy');
+                    }
+                    alert('Lỗi: ' + (data.error || 'Không thể lưu nhận xét'));
+                }
+            })
+            .catch(err => {
+                btnSaveTeacherNote.disabled = false;
+                if (u001NoteSaver) {
+                    u001NoteSaver.dataset.state = 'idle';
+                    btnSaveTeacherNote.removeAttribute('aria-busy');
+                }
+                alert('Lỗi kết nối máy chủ: ' + err.message);
+            });
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. LIQUID GLASS BUTTON (PROMPT #001) INTERACTION & MAGNETIC HOVER PULL
+    // -------------------------------------------------------------------------
+    const rmGlass = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.u001').forEach(function(uRoot) {
+        const btn = uRoot.querySelector('.u001-btn');
+        const mag = uRoot.querySelector('.u001-mag');
+        if (!btn || !mag) return;
+
+        uRoot.addEventListener('pointermove', function (e) {
+            const r = btn.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            const pull = rmGlass ? 0 : Math.max(0, 1 - Math.hypot(dx, dy) / 190);
+            mag.style.translate = (dx * 0.18 * pull).toFixed(1) + 'px ' + (dy * 0.18 * pull).toFixed(1) + 'px';
+            btn.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+            btn.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+        });
+
+        uRoot.addEventListener('pointerleave', function () {
+            mag.style.translate = '0px 0px';
+        });
+    });
+
+    const u001FilterBtn = document.getElementById('u001FilterBtnWrapper');
+    const btnFilterApply = document.getElementById('btnFilterApply');
+    if (btnFilterApply && u001FilterBtn) {
+        btnFilterApply.addEventListener('click', function() {
+            u001FilterBtn.dataset.state = 'load';
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. COLLAPSIBLE MULTI-SUBJECT SUB-ROWS & SCORE DETAIL COLUMN TOGGLE
+    // -------------------------------------------------------------------------
+    window.toggleStudentSubrows = function(studentId, btn) {
+        if (!studentId) return;
+        const subrows = document.querySelectorAll('.student-sub-row[data-parent-student="' + studentId + '"]');
+        const isExpanded = btn.classList.contains('expanded');
+        if (isExpanded) {
+            btn.classList.remove('expanded');
+            btn.textContent = '▶';
+            subrows.forEach(function(row) {
+                row.style.display = 'none';
+            });
+        } else {
+            btn.classList.add('expanded');
+            btn.textContent = '▼';
+            subrows.forEach(function(row) {
+                row.style.display = '';
+            });
+        }
+    };
+
+    window.toggleScoreDetailColumns = function() {
+        const table = document.getElementById('radarTable');
+        const btn = document.getElementById('btnToggleScoreCols');
+        if (!table) return;
+        const isHidden = table.classList.contains('scores-hidden');
+        if (isHidden) {
+            table.classList.remove('scores-hidden');
+            if (btn) {
+                btn.classList.add('active');
+                btn.innerHTML = '⚡ Thu Gọn (Chỉ Xem ĐTB)';
+            }
+        } else {
+            table.classList.add('scores-hidden');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '👁️ Hiện Điểm TX, GK, CK';
+            }
+        }
+    };
+});

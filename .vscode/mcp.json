@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "@shadcn/mcp-server"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "convex": {
+      "command": "npx",
+      "args": ["-y", "convex-mcp-server"]
+    },
+    "testsprite": {
+      "command": "npx",
+      "args": ["-y", "@testsprite/mcp-server"]
+    },
+    "vercel": {
+      "command": "npx",
+      "args": ["-y", "@vercel/mcp-server"]
+    }
+  }
+}
