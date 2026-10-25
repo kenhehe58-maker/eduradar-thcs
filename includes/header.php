@@ -1,12 +1,12 @@
 <?php
-// includes/header.php - Liquid Glass Apple Full-Width Shell (Bottom Dock Replaces Sidebar)
+// includes/header.php - Edexa University Modern Layout Shell with Light / Dark Theme Support
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 $currentUserRole = $_SESSION['role'] ?? 'teacher';
 $currentUsername = $_SESSION['username'] ?? '';
 $currentUserFullName = $_SESSION['full_name'] ?? $currentUsername;
-$activeNav = $activeNav ?? 'dashboard'; // 'dashboard' | 'gradebook' | 'admin'
+$activeNav = $activeNav ?? 'dashboard'; // 'welcome' | 'dashboard' | 'gradebook' | 'admin' | 'slides'
 $pageTitle = $pageTitle ?? 'EduRadar THCS';
 ?>
 <!DOCTYPE html>
@@ -19,6 +19,13 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time() ?>">
+    <script>
+        // Khởi tạo Theme ngay lập tức trước khi render DOM để chống giật nháy màn hình (Anti-Flicker)
+        (function() {
+            var savedTheme = localStorage.getItem('eduradar_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
     <style>
         body { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
         body.liquid-glass-layout {
@@ -28,94 +35,87 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             width: 100%;
             margin: 0;
             padding: 0;
-            background: #f4f6fa;
-            color: var(--text-body, #334155);
+            background: var(--bg-main, #f8fafc);
+            color: var(--text-body, #1e293b);
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
+        /* EDEXA TOPBAR: FIXED OFFSET 230px FROM LEFT */
         .glass-topbar {
             position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
+            left: 230px;
+            margin-left: 230px;
+            width: calc(100% - 230px);
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.85);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.85);
-            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+            background: rgba(255, 255, 255, 0.94);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+            transition: all 0.2s ease;
         }
         .glass-topbar-inner {
-            max-width: 1540px;
-            margin: 0 auto;
-            padding: 12px 28px;
+            padding: 12px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
             width: 100%;
         }
-        .glass-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s ease;
-        }
-        .glass-brand:hover {
-            transform: translateY(-1px);
-        }
-        .glass-brand-icon {
-            font-size: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            background: linear-gradient(135deg, #4f46e5, #818cf8);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-        .glass-brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-        .glass-brand-title {
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: -0.4px;
-            color: #0f172a;
-            line-height: 1.2;
-        }
-        .glass-brand-sub {
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #64748b;
-        }
-        /* GLASS TOPBAR SYSTEM STATUS PILLS (REPLACES REDUNDANT USER PILL) */
-        .glass-status-group {
+        /* EDEXA PERSONALIZED GREETING (AS SEEN IN DRIBBLE SHOT) */
+        .edexa-welcome-wrap {
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
         }
+        .edexa-welcome-text {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-heading, #0f172a);
+            letter-spacing: -0.02em;
+        }
+        .edexa-welcome-sub {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-subtle, #64748b);
+        }
+        .edexa-role-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* SYSTEM & ACADEMIC STATUS INDICATORS */
+        .glass-status-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
         .glass-status-chip {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(203, 213, 225, 0.7);
-            font-size: 12.5px;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            background: var(--card-bg, #ffffff);
+            border: 1px solid var(--border-subtle, #e2e8f0);
+            font-size: 12px;
             font-weight: 700;
-            color: #334155;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+            color: var(--text-body, #334155);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
             white-space: nowrap;
         }
         .glass-status-chip .chip-pulse {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #10b981;
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
@@ -123,29 +123,64 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
         }
         @keyframes pulseGreen {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
         .glass-status-chip.chip-accent {
-            background: rgba(238, 242, 255, 0.85);
-            border-color: rgba(199, 210, 254, 0.8);
-            color: #4338ca;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
         }
+        /* REAL INTERACTIVE THEME TOGGLE BUTTON */
+        .edexa-theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            background: var(--card-bg, #ffffff);
+            color: var(--text-heading, #475569);
+            border: 1.5px solid var(--border-color, #cbd5e1);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            user-select: none;
+        }
+        .edexa-theme-toggle:hover {
+            border-color: var(--primary, #2563eb);
+            transform: translateY(-1px);
+        }
+        .edexa-theme-toggle .theme-icon {
+            font-size: 13px;
+        }
+
+        /* MAIN CONTENT AREA OFFSET FOR 230px SIDEBAR */
         .content.full-width {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            padding: 24px 32px 90px 105px !important;
-            max-width: 1540px !important;
-            width: 100% !important;
+            margin-left: 230px !important;
+            width: calc(100% - 230px) !important;
+            max-width: none !important;
+            padding: 24px 32px 80px 32px !important;
             flex: 1 0 auto;
+            box-sizing: border-box;
         }
+
         /* Anti-overlap scroll margin for headings and sections */
         section, .panel-box, .section-header, table {
             scroll-margin-top: 85px;
         }
+
         @media (max-width: 900px) {
+            .glass-topbar {
+                left: 68px;
+                margin-left: 68px;
+                width: calc(100% - 68px);
+            }
             .content.full-width {
-                padding: 16px 16px 85px 16px !important;
+                margin-left: 68px !important;
+                width: calc(100% - 68px) !important;
+                padding: 16px 16px 70px 16px !important;
             }
         }
     </style>
@@ -153,23 +188,21 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
 </head>
 <body class="liquid-glass-layout">
 
-<!-- TOP LIQUID GLASS NAVIGATION BAR (REPLACES FIXED SIDEBAR) -->
+<!-- TOP EDEXA GREETING & STATUS BAR -->
 <header class="glass-topbar">
     <div class="glass-topbar-inner">
-        <a href="index.php" class="glass-brand">
-            <span class="glass-brand-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="2"></circle>
-                    <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
-                </svg>
+        <div class="edexa-welcome-wrap">
+            <a href="welcome.php" style="text-decoration: none; color: inherit;" title="Về Trang Chào Mừng & Khởi Động EduRadar">
+                <span class="edexa-welcome-text">
+                    Chào mừng trở lại, <?= htmlspecialchars($currentUserFullName) ?>!
+                </span>
+            </a>
+            <span class="edexa-role-pill">
+                <?= htmlspecialchars(($currentUserRole === 'admin') ? 'Quản Trị Viên' : 'Giáo Viên Bộ Môn') ?>
             </span>
-            <div class="glass-brand-text">
-                <span class="glass-brand-title">EDURADAR // THCS</span>
-                <span class="glass-brand-sub">Telemetry &bull; Early Warning &bull; TT22</span>
-            </div>
-        </a>
+        </div>
 
-        <!-- SYSTEM & ACADEMIC STATUS INDICATORS (NON-REDUNDANT TECH HUD BAR) -->
+        <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
             <div class="glass-status-chip chip-accent" title="Niên khóa & Học kỳ đang áp dụng">
                 <span class="tech-indicator">CAL</span>
@@ -183,9 +216,40 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 <span class="tech-indicator">SPEC</span>
                 <span>TT22/2021/TT-BGDDT</span>
             </div>
+            <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
+            <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối">
+                <span class="theme-icon" id="themeIcon">☀️</span>
+                <span id="themeLabel">Light Theme</span>
+            </button>
         </div>
     </div>
 </header>
+
+<script>
+// ĐIỀU KHIỂN CHUYỂN ĐỔI THEME TOÀN ỨNG DỤNG (PERSISTENT VIA LOCALSTORAGE)
+function toggleAppTheme() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = (cur === 'dark') ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('eduradar_theme', next);
+    updateThemeUI(next);
+}
+function updateThemeUI(theme) {
+    var lbl = document.getElementById('themeLabel');
+    var ico = document.getElementById('themeIcon');
+    if (lbl) lbl.textContent = (theme === 'dark') ? 'Dark Theme' : 'Light Theme';
+    if (ico) ico.textContent = (theme === 'dark') ? '🌙' : '☀️';
+    if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var theme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateThemeUI(theme);
+});
+</script>
 
 <?php include_once __DIR__ . '/side_rail.php'; ?>
 

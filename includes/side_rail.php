@@ -1,6 +1,9 @@
 <?php
-// includes/side_rail.php - Apple Taskbar / Dock Side Rail (Fixed Slim Width, Protruding Spring Hover & Floating Tooltips)
-// MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#040
+// includes/side_rail.php - Edexa University Modern Navigation Sidebar (230px Fixed Left)
+// Synthesis of Dribbble Edexa University Dashboard + Apple Fluid Physics
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    session_start();
+}
 $userRole = $_SESSION['role'] ?? 'guest';
 $userName = $_SESSION['full_name'] ?? ($_SESSION['username'] ?? 'Khách Trải Nghiệm');
 $userRoleTitle = ($userRole === 'admin') ? 'Quản Trị Viên Trường' : (($userRole === 'teacher') ? 'Giáo Viên Bộ Môn' : 'Khách Dùng Thử');
@@ -22,325 +25,312 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     if (!empty($qp)) $navQuery = '?' . http_build_query($qp);
 }
 ?>
-<!-- Lucian UX/UI Prompt #040 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#040 -->
 <style>
-:root{
-  --ux-page:#f4f6fa;
-  --ux-surface:#ffffff;
-  --ux-surface-2:#f8fafc;
-  --ux-surface-3:#f1f5f9;
-  --ux-ink:#0f172a;
-  --ux-ink-2:#475569;
-  --ux-ink-3:#64748b;
-  --ux-line:rgba(15,23,42,.08);
-  --ux-line-2:#cbd5e1;
-  --ux-accent:#4f46e5;
-  --ux-accent-2:#2F8FE0;
-  --ux-accent-soft:rgba(79,70,229,.12);
-  --ux-accent-ink:#ffffff;
-  --ux-mint:#119C72;
-  --ux-warn:#D6731E;
-  --ux-danger:#D93A55;
-  --ux-glass:rgba(255,255,255,.8);
-  --ux-glass-line:rgba(226,232,240,.8);
-  --ux-shadow:rgba(15,23,42,.08);
-  --ux-shadow-strong:rgba(15,23,42,.2);
-  --ux-grad:linear-gradient(135deg,#6366f1,#3b82f6 55%,#10b981);
-  --ux-ease:cubic-bezier(.2,.8,.2,1);
-  --ux-spring:cubic-bezier(.34,1.45,.64,1);
-}
-@media (prefers-reduced-motion:reduce){
-  .ux-rail-container,.ux-rail-container *{
-    animation-duration:.001ms!important;animation-iteration-count:1!important;
-    transition-duration:.001ms!important;scroll-behavior:auto!important;
-  }
-}
-
-.ux-rail-container{
+/* =========================================================================
+   EDEXA UNIVERSITY MODERN SIDEBAR NAVIGATION (230px)
+   ========================================================================= */
+.ux-rail-container {
   position: fixed;
-  left: 14px;
-  top: 76px;
-  bottom: 20px;
-  z-index: 1010;
-  pointer-events: none;
-}
-.u040-fixed{
-  position: relative;
-  display: flex;
-  height: calc(100vh - 96px);
-  max-height: 740px;
-  pointer-events: auto;
-}
-.u040-rail{
-  position: relative;
-  flex: none;
-  width: 68px;
-  padding: 14px 10px 14px;
-  border-radius: 22px;
-  background: rgba(15, 23, 42, 0.94);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
-  color: #f8fafc;
-  box-shadow: 0 20px 40px -10px rgba(15,23,42,0.45), 0 0 0 1px rgba(255,255,255,0.1);
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 230px;
+  z-index: 1020;
+  background: var(--card-bg, #ffffff);
+  border-right: 1px solid var(--border-subtle, #e2e8f0);
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  user-select: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
-.u040-top{
+.u040-fixed {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.u040-rail {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px 18px 14px;
+}
+.u040-top {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 44px;
-  margin-bottom: 18px;
-  flex: none;
+  gap: 12px;
+  padding: 4px 6px 20px 6px;
+  border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+  margin-bottom: 16px;
 }
-.u040-logo{
-  position: relative;
-  width: 44px;
-  height: 44px;
+.u040-logo {
+  width: 42px;
+  height: 42px;
   flex: none;
-  border-radius: 14px;
-  background: var(--ux-grad);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
   display: grid;
   place-items: center;
   font-size: 20px;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
-  transition: transform .3s var(--ux-spring);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
   text-decoration: none;
   color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.u040-logo:hover{
-  transform: scale(1.1) rotate(5deg);
+.u040-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
 }
-
-.u040-nav{
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.u040-brand-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+.u040-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-heading, #0f172a);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.u040-brand-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-subtle, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* NAVIGATION MENU */
+.u040-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
+}
+.u040-nav li {
+  width: 100%;
+}
+.u040-it {
+  position: relative;
+  display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
-  flex: 1;
-}
-
-/* APPLE DOCK / TASKBAR HOVER EFFECT: PROTRUDE & FLOATING TOOLTIP */
-.u040-it{
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border: 0;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-muted, #475569);
   text-decoration: none;
-  cursor: pointer;
-  transition: transform .3s var(--ux-spring), background-color .2s ease, color .2s ease, box-shadow .25s ease;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
-.u040-it:hover{
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.15);
-  transform: scale(1.16) translateX(4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-  z-index: 1020;
+.u040-it:hover {
+  background: var(--surface-hover, #f1f5f9);
+  color: var(--text-heading, #0f172a);
+  transform: translateX(2px);
 }
-.u040-it[aria-current="page"]{
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(59, 130, 246, 0.8));
-  color: #ffffff;
-  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
-}
-.u040-it[aria-current="page"]::after{
-  content: "";
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 18px;
-  border-radius: 0 4px 4px 0;
-  background: #38bdf8;
-  box-shadow: 0 0 8px #38bdf8;
-}
-.u040-it svg{
-  width: 22px;
-  height: 22px;
+.u040-it svg {
+  width: 20px;
+  height: 20px;
   flex: none;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform .25s ease;
+  transition: stroke 0.18s ease;
 }
-.u040-it:hover svg{
-  transform: scale(1.05);
-}
-
-/* NOTIFICATION BADGE */
-.u040-bd{
-  position: absolute;
-  right: -2px;
-  top: -2px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 9px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 800;
-  display: grid;
-  place-items: center;
-  font-style: normal;
-  box-shadow: 0 0 0 2px #0f172a;
-}
-
-/* FLOATING APPLE TOOLTIP PILL */
-.u040-dock-tip{
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  transform: translateY(-50%) translateX(-8px);
-  opacity: 0;
-  pointer-events: none;
-  background: rgba(15, 23, 42, 0.96);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 7px 14px;
-  border-radius: 10px;
+.u040-it-label {
+  flex: 1;
   white-space: nowrap;
-  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12);
-  transition: opacity .22s ease, transform .28s var(--ux-spring);
-  z-index: 1050;
-  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.u040-dock-tip::before{
-  content: "";
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 6px solid transparent;
-  border-right-color: rgba(15, 23, 42, 0.96);
+.u040-it[aria-current="page"] {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  font-weight: 700;
 }
-.u040-it:hover .u040-dock-tip,
-.u040-me:hover .u040-dock-tip{
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
+.u040-it[aria-current="page"] svg {
+  stroke: #ffffff;
 }
 
-/* FOOTER SECTION: USER PROFILE & ONLY LOGOUT */
-.u040-footer-sec{
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  flex: none;
-}
-.u040-me{
-  position: relative;
-  display: flex;
+/* BADGE COUNTER IN EDEXA STYLE */
+.u040-bd {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  cursor: pointer;
-  transition: transform .3s var(--ux-spring), background-color .2s;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
 }
-.u040-me:hover{
-  transform: scale(1.14) translateX(4px);
-  background: rgba(255, 255, 255, 0.14);
+.u040-it[aria-current="page"] .u040-bd {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
-.u040-me i{
-  width: 34px;
-  height: 34px;
+
+/* DOCK TOOLTIP FOR ACCESSIBILITY & TEST COMPATIBILITY */
+.u040-dock-tip {
+  display: none;
+}
+
+/* FOOTER SECTION: USER PROFILE & EDEXA PILL LOGOUT */
+.u040-footer-sec {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle, #f1f5f9);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.u040-me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--bg-main, #f8fafc);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  transition: background-color 0.2s ease;
+}
+.u040-me:hover {
+  background: var(--surface-hover, #f1f5f9);
+}
+.u040-me i {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+  color: #ffffff;
   display: grid;
   place-items: center;
   font-style: normal;
   font-weight: 800;
   font-size: 13px;
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+  flex: none;
+}
+.u040-me-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.u040-me-name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-heading, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.u040-me-role {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-subtle, #64748b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* THE ONLY LOGOUT BUTTON */
-.u040-logout-it{
-  color: #f87171 !important;
-  background: rgba(239, 68, 68, 0.12) !important;
-  border: 1px solid rgba(239, 68, 68, 0.25) !important;
-}
-.u040-logout-it:hover{
-  background: #ef4444 !important;
+/* EDEXA ROYAL BLUE PILL LOGOUT BUTTON (EXACTLY 1 IN SYSTEM) */
+.u040-logout-it {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  background: #2563eb !important;
   color: #ffffff !important;
-  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
 }
-.u040-tip-danger{
-  border-color: rgba(239, 68, 68, 0.4) !important;
-  color: #fecaca !important;
+.u040-logout-it:hover {
+  background: #1d4ed8 !important;
+  box-shadow: 0 6px 18px rgba(29, 78, 216, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+.u040-logout-it svg {
+  stroke: #ffffff !important;
+  width: 18px !important;
+  height: 18px !important;
 }
 
-@media (max-width: 640px){
-  .ux-rail-container{
-    left: 10px;
-    right: 10px;
-    top: auto;
-    bottom: 12px;
-    height: 56px;
-    width: auto;
+@media (max-width: 900px) {
+  .ux-rail-container {
+    width: 68px;
   }
-  .u040-fixed{
-    height: 56px;
-    width: 100%;
-    max-height: none;
-    justify-content: center;
+  .u040-rail {
+    padding: 14px 8px;
+    align-items: center;
   }
-  .u040-rail{
-    width: 100%;
-    max-width: 460px;
-    height: 56px;
-    flex-direction: row;
-    padding: 6px 10px;
-    border-radius: 18px;
-    justify-content: space-around;
-  }
-  .u040-top{
-    display: none;
-  }
-  .u040-nav{
-    flex-direction: row;
-    gap: 6px;
-    margin: 0;
-  }
-  .u040-footer-sec{
-    margin-top: 0;
-    padding-top: 0;
-    border-top: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
-    padding-left: 8px;
-    flex-direction: row;
-    gap: 6px;
-    width: auto;
-  }
-  .u040-dock-tip{
+  .u040-brand-info,
+  .u040-it-label,
+  .u040-me-text,
+  .u040-logout-text {
     display: none !important;
   }
+  .u040-it {
+    padding: 0;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+  }
+  .u040-me {
+    padding: 0;
+    border: none;
+    background: transparent;
+    justify-content: center;
+  }
+  .u040-logout-it {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+  }
+}
+.u040-logout-it {
+  margin-top: 10px;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+  font-weight: 700 !important;
+}
+.u040-logout-it:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35) !important;
+}
+.u040-logout-it svg {
+  stroke: currentColor !important;
+}
+[data-theme="dark"] .u040-logout-it {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .u040-logout-it:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
 }
 </style>
 
@@ -348,36 +338,63 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   <div class="u040-fixed" id="u040RailWrapper">
     <nav class="u040-rail u208-dk" role="toolbar" aria-label="Main menu">
       <div class="u040-top">
-        <a href="index.php" class="u040-logo" title="EduRadar THCS" aria-label="Trang chủ EduRadar">
-          📡
+        <a href="welcome.php" class="u040-logo" title="Trang Chào Mừng & Khởi Động EduRadar" aria-label="Trang Chào Mừng EduRadar">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
         </a>
+        <div class="u040-brand-info">
+          <a href="welcome.php" style="text-decoration: none; color: inherit;">
+            <span class="u040-brand-title">EDURADAR</span>
+            <span class="u040-brand-sub">Hệ Thống THCS</span>
+          </a>
+        </div>
       </div>
 
-      <!-- Navigation List with Apple Dock Hover Protrusion -->
+      <!-- Navigation List with Edexa Active Pill Styling -->
       <ul class="u040-nav" id="u040NavList">
         <li>
-          <a href="index.php<?= $navQuery ?>" class="u040-it" style="--i:0" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Radar Cảnh Báo Sớm">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/><path d="M12 3a9 9 0 0 1 9 9"/></svg>
-            <span class="u040-dock-tip">Radar Cảnh Báo Sớm</span>
+          <a href="welcome.php" class="u040-it" <?= $activeNav === 'welcome' ? 'aria-current="page"' : '' ?> aria-label="Trang Chủ">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span class="u040-it-label">Trang Chủ</span>
+            <span class="u040-dock-tip">Trang Chủ</span>
           </a>
         </li>
         <li>
-          <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" style="--i:1" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Bảng Điểm VnEdu">
+          <a href="index.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Cảnh Báo Sớm">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+            <span class="u040-it-label">Cảnh Báo Sớm</span>
+            <span class="u040-dock-tip">Cảnh Báo Sớm 2 Khung</span>
+          </a>
+        </li>
+        <li>
+          <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Sổ Điểm">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
-            <span class="u040-dock-tip">Bảng Điểm VnEdu</span>
+            <span class="u040-it-label">Sổ Điểm</span>
+            <span class="u040-dock-tip">Sổ Điểm Bộ Môn VnEdu</span>
           </a>
         </li>
         <li>
-          <a href="quet_nhanh.php" class="u040-it" style="--i:2" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét 1 Chạm">
+          <a href="quet_nhanh.php" class="u040-it" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh AI">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <em class="u040-bd" aria-label="Mới">★</em>
-            <span class="u040-dock-tip">Quét 1 Chạm VnEdu</span>
+            <span class="u040-it-label">Quét Nhanh AI</span>
+            <span class="u040-bd" aria-label="Mới">Mới</span>
+            <span class="u040-dock-tip">Quét Nhanh Bảng Điểm AI</span>
+          </a>
+        </li>
+        <li>
+          <a href="bao_cao_slide_bgh.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'slides' ? 'aria-current="page"' : '' ?> aria-label="Báo Cáo & Thống Kê">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span class="u040-it-label">Báo Cáo & Thống Kê</span>
+            <span class="u040-dock-tip">Báo Cáo & Thống Kê BGH</span>
           </a>
         </li>
         <?php if ($userRole === 'admin'): ?>
           <li>
-            <a href="admin.php" class="u040-it" style="--i:3" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Cổng Quản Trị Nhà Trường">
+            <a href="admin.php" class="u040-it" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Cổng Quản Trị Nhà Trường">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              <span class="u040-it-label">Cổng Quản Trị</span>
               <span class="u040-dock-tip">Cổng Quản Trị Admin</span>
             </a>
           </li>
@@ -386,9 +403,13 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
 
       <!-- User Profile & Single Logout Section at Bottom -->
       <div class="u040-footer-sec">
-        <!-- User Avatar with floating profile card -->
+        <!-- User Avatar with Profile Info -->
         <div class="u040-me" tabindex="0" role="button" aria-label="Hồ sơ người dùng">
           <i aria-hidden="true"><?= mb_strtoupper(mb_substr($userName, 0, 1, 'UTF-8'), 'UTF-8') ?></i>
+          <div class="u040-me-text">
+            <span class="u040-me-name"><?= htmlspecialchars($userName) ?></span>
+            <span class="u040-me-role"><?= htmlspecialchars($userRoleTitle) ?></span>
+          </div>
           <span class="u040-dock-tip">
             <strong><?= htmlspecialchars($userName) ?></strong><br>
             <small style="opacity: 0.8; font-weight: 500;"><?= htmlspecialchars($userRoleTitle) ?></small>
@@ -396,14 +417,16 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
         </div>
 
         <?php if (!empty($_SESSION['user_id'])): ?>
-          <!-- THE ONLY LOGOUT BUTTON IN THE SYSTEM -->
-          <a href="logout.php" class="u040-it u040-logout-it" style="--i:4" title="Đăng Xuất Khỏi Hệ Thống" aria-label="Đăng Xuất">
+          <!-- THE ONLY LOGOUT BUTTON IN THE ENTIRE SYSTEM -->
+          <a href="logout.php" class="u040-it u040-logout-it" title="Đăng Xuất Khỏi Hệ Thống" aria-label="Đăng Xuất">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            <span class="u040-dock-tip u040-tip-danger">🚪 Đăng Xuất</span>
+            <span class="u040-logout-text">Đăng Xuất</span>
+            <span class="u040-dock-tip">🚪 Đăng Xuất</span>
           </a>
         <?php else: ?>
-          <a href="login.php" class="u040-it" style="--i:4; color: #818cf8 !important; background: rgba(99, 102, 241, 0.15);" title="Đăng Nhập" aria-label="Đăng Nhập">
+          <a href="login.php" class="u040-it u040-logout-it" title="Đăng Nhập" aria-label="Đăng Nhập">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="u040-logout-text">Đăng Nhập</span>
             <span class="u040-dock-tip">🔑 Đăng Nhập</span>
           </a>
         <?php endif; ?>

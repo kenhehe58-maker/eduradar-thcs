@@ -688,47 +688,90 @@ $extraHead = '
 ';
 require_once __DIR__ . '/includes/header.php';
 ?>
-    <header class="topbar">
-        <div>
-            <h1>SỔ ĐIỂM BỘ MÔN // VNEDU MATRIX</h1>
-            <p class="muted">
-                Phụ trách: <b><?= htmlspecialchars($currentTeacherName) ?></b> | Môn: <b style="color: var(--primary);"><?= htmlspecialchars($selectedSubject) ?></b>
-            </p>
-        </div>
-        <div class="top-actions">
-            <form method="GET" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <?php if ($actingTeacherId > 0 && $realUserRole === 'admin'): ?>
-                    <input type="hidden" name="teacher_id" value="<?= $actingTeacherId ?>">
-                <?php endif; ?>
-                <select name="class_id" onchange="this.form.submit()" style="padding: 10px 14px; border-radius: 10px; font-weight: 700; border: 1px solid var(--border-color); font-size: 13.5px; background: #fff;">
-                    <?php if (empty($classesInCurrentSubject)): ?>
-                        <option value="">(Chưa có lớp cho môn này)</option>
-                    <?php else: ?>
-                        <?php foreach ($classesInCurrentSubject as $cid => $c): ?>
-                            <?php if ($c['student_count'] > 0 || $cid == $selectedClassId): ?>
-                                <option value="<?= $cid ?>" <?= $cid == $selectedClassId ? 'selected' : '' ?>>
-                                    Lớp <?= htmlspecialchars($c['name']) ?> (Khối <?= $c['grade'] ?> • <?= $c['student_count'] ?> HS)
-                                </option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
+    <!-- EDEXA & VNEDU SỔ ĐIỂM CHI TIẾT HEADER CARD (DỰA TRÊN ẢNH 4 VNEDU DESKTOP) -->
+    <div class="vnedu-control-card" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15,23,42,0.03);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div class="gb-meta-chip chip-main">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span>SỔ ĐIỂM CHI TIẾT</span>
+                </div>
+                <div class="gb-meta-chip">
+                    <span class="meta-label">Lớp:</span>
+                    <strong><?= htmlspecialchars($curClassName) ?></strong>
+                    <span class="meta-sub">(Khối <?= htmlspecialchars((string)($classesInCurrentSubject[$selectedClassId]['grade'] ?? '')) ?>)</span>
+                </div>
+                <div class="gb-meta-chip">
+                    <span class="meta-label">Môn học:</span>
+                    <strong style="color: var(--primary);"><?= htmlspecialchars($selectedSubject) ?></strong>
+                    <span class="meta-sub">• Học kỳ II</span>
+                </div>
+                <div class="gb-meta-chip">
+                    <span class="meta-label">Giáo viên dạy:</span>
+                    <strong><?= htmlspecialchars($currentTeacherName) ?></strong>
+                </div>
+                <div class="gb-meta-chip chip-permission">
+                    <span>✓ Quyền hạn: Bạn có quyền nhập điểm</span>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <form method="GET" style="display: flex; gap: 8px; align-items: center;">
+                    <?php if ($actingTeacherId > 0 && $realUserRole === 'admin'): ?>
+                        <input type="hidden" name="teacher_id" value="<?= $actingTeacherId ?>">
                     <?php endif; ?>
-                </select>
-                <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" style="padding: 10px 14px; border-radius: 10px; font-weight: 700; border: 1px solid var(--border-color); font-size: 13.5px; background: #fff;">
-                    <?php 
-                        $allSubjectsToDisplay = !empty($teacherSubjects) ? array_keys($teacherSubjects) : $availableSubjectsForClass;
-                        foreach ($allSubjectsToDisplay as $sub): 
-                    ?>
-                        <option value="<?= $sub ?>" <?= $sub === $selectedSubject ? 'selected' : '' ?>>Môn <?= $sub ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
+                    <select name="class_id" onchange="this.form.submit()" class="gb-select-box">
+                        <?php if (empty($classesInCurrentSubject)): ?>
+                            <option value="">(Chưa có lớp cho môn này)</option>
+                        <?php else: ?>
+                            <?php foreach ($classesInCurrentSubject as $cid => $c): ?>
+                                <?php if ($c['student_count'] > 0 || $cid == $selectedClassId): ?>
+                                    <option value="<?= $cid ?>" <?= $cid == $selectedClassId ? 'selected' : '' ?>>
+                                        Lớp <?= htmlspecialchars($c['name']) ?> (<?= $c['student_count'] ?> HS)
+                                    </option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" class="gb-select-box">
+                        <?php 
+                            $allSubjectsToDisplay = !empty($teacherSubjects) ? array_keys($teacherSubjects) : $availableSubjectsForClass;
+                            foreach ($allSubjectsToDisplay as $sub): 
+                        ?>
+                            <option value="<?= $sub ?>" <?= $sub === $selectedSubject ? 'selected' : '' ?>>Môn <?= $sub ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
         </div>
-    </header>
+
+        <!-- ACTION BUTTONS STRIP (MATCHING VNEDU DESKTOP APP: LƯU, NHẬP XUẤT, REFRESH) -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 10px 24px; border-radius: 10px; font-size: 13.5px; font-weight: 700; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span>LƯU BẢNG ĐIỂM</span>
+                </button>
+                <a href="sample_gradebook.xlsx" download class="btn gb-btn-action">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Xuất Excel Mẫu</span>
+                </a>
+                <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="btn gb-btn-action">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <span>Làm Mới</span>
+                </a>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="dirty-badge clean">✓ ĐỒNG BỘ MÁY CHỦ</span>
+            </div>
+        </div>
+    </div>
 
     <?php if (!empty($teacherSubjects)): ?>
         <!-- THANH CHỌN MÔN HỌC GIẢNG DẠY (CHUẨN BỘ MÁY PHÂN QUYỀN VNEDU) -->
-        <div style="display: flex; gap: 8px; align-items: center; overflow-x: auto; padding: 4px 0 10px; margin-bottom: 6px; -webkit-overflow-scrolling: touch;">
-            <span style="font-size: 11.5px; font-weight: 800; color: #475569; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em;">Môn giảng dạy:</span>
+        <div class="gb-chips-strip">
+            <span class="gb-strip-label">Môn giảng dạy:</span>
             <?php foreach ($teacherSubjects as $subName => $subClasses): ?>
                 <?php 
                     $isSubActive = ($subName === $selectedSubject);
@@ -740,9 +783,9 @@ require_once __DIR__ . '/includes/header.php';
                     if ($firstClassId === 0) $firstClassId = array_key_first($subClasses) ?: 0;
                 ?>
                 <a href="nhap_diem.php?class_id=<?= $firstClassId ?>&subject=<?= urlencode($subName) ?><?= $tParam ?>" 
-                   style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 8px; font-size: 13px; text-decoration: none; font-weight: 700; white-space: nowrap; transition: all .15s; <?= $isSubActive ? 'background: #4338ca; color: #ffffff; box-shadow: 0 2px 8px rgba(67, 56, 202, 0.35);' : 'background: #ffffff; color: #334155; border: 1px solid #cbd5e1;' ?>">
+                   class="gb-subject-chip <?= $isSubActive ? 'active' : '' ?>">
                     <span>Môn <?= htmlspecialchars($subName) ?></span>
-                    <span style="font-size: 11px; padding: 2px 8px; border-radius: 10px; <?= $isSubActive ? 'background: rgba(255,255,255,0.25); color: #fff;' : 'background: #e2e8f0; color: #475569;' ?>">
+                    <span class="chip-count">
                         <?= count($subClasses) ?> lớp
                     </span>
                 </a>
@@ -752,8 +795,8 @@ require_once __DIR__ . '/includes/header.php';
 
     <?php if (!empty($classesInCurrentSubject) && count($classesInCurrentSubject) > 1): ?>
         <!-- THANH CHUYỂN NHANH LỚP PHÂN CÔNG THEO MÔN (CHUẨN VNEDU) -->
-        <div style="display: flex; gap: 8px; align-items: center; overflow-x: auto; padding: 4px 0 14px; margin-bottom: 6px; -webkit-overflow-scrolling: touch;">
-            <span style="font-size: 11.5px; font-weight: 800; color: #64748b; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em;">Lớp phân công:</span>
+        <div class="gb-chips-strip">
+            <span class="gb-strip-label">Lớp phân công:</span>
             <?php foreach ($classesInCurrentSubject as $cid => $c): ?>
                 <?php 
                     if ($c['student_count'] == 0 && $cid != $selectedClassId) continue;
@@ -761,9 +804,9 @@ require_once __DIR__ . '/includes/header.php';
                     $tParam = ($actingTeacherId > 0 && $realUserRole === 'admin') ? "&teacher_id={$actingTeacherId}" : "";
                 ?>
                 <a href="nhap_diem.php?class_id=<?= $cid ?>&subject=<?= urlencode($selectedSubject) ?><?= $tParam ?>" 
-                   style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 12.5px; text-decoration: none; font-weight: 600; white-space: nowrap; transition: all .15s; <?= $isActive ? 'background: #0284c7; color: #fff; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);' : ($c['student_count'] > 0 ? 'background: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd;' : 'background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0;') ?>">
-                    Lớp <?= htmlspecialchars($c['name']) ?>
-                    <span style="font-size: 11px; padding: 2px 6px; border-radius: 10px; <?= $isActive ? 'background: rgba(255,255,255,0.25); color: #fff;' : ($c['student_count'] > 0 ? 'background: #e0f2fe; color: #0369a1;' : 'background: #e2e8f0; color: #64748b;') ?>">
+                   class="gb-class-chip <?= $isActive ? 'active' : '' ?>">
+                    <span>Lớp <?= htmlspecialchars($c['name']) ?></span>
+                    <span class="chip-count">
                         <?= $c['student_count'] ?> HS
                     </span>
                 </a>
@@ -833,34 +876,34 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- THANH CÔNG CỤ LỌC PHÂN LOẠI HỌC SINH & TÌM KIẾM TỨC THÌ -->
-    <div class="gradebook-filter-bar" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; background: #ffffff; padding: 10px 16px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+    <div class="gradebook-filter-bar">
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">
+            <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
                 Lọc phân loại:
             </span>
             <button type="button" class="btn-gb-filter active" data-gb-filter="all" onclick="applyGbFilter('all', this)">
                 Tất cả (<?= count($studentList) ?>)
             </button>
-            <button type="button" class="btn-gb-filter" data-gb-filter="excellent" onclick="applyGbFilter('excellent', this)" style="color: #15803d; border-color: #bbf7d0;">
+            <button type="button" class="btn-gb-filter filter-excellent" data-gb-filter="excellent" onclick="applyGbFilter('excellent', this)">
                 Giỏi (<?= $gbCountExcellent ?>)
             </button>
-            <button type="button" class="btn-gb-filter" data-gb-filter="good" onclick="applyGbFilter('good', this)" style="color: #1d4ed8; border-color: #bfdbfe;">
+            <button type="button" class="btn-gb-filter filter-good" data-gb-filter="good" onclick="applyGbFilter('good', this)">
                 Khá (<?= $gbCountGood ?>)
             </button>
-            <button type="button" class="btn-gb-filter" data-gb-filter="average" onclick="applyGbFilter('average', this)" style="color: #b45309; border-color: #fde68a;">
+            <button type="button" class="btn-gb-filter filter-average" data-gb-filter="average" onclick="applyGbFilter('average', this)">
                 Đạt (<?= $gbCountAverage ?>)
             </button>
-            <button type="button" class="btn-gb-filter" data-gb-filter="low" onclick="applyGbFilter('low', this)" style="color: #b91c1c; border-color: #fecaca;">
+            <button type="button" class="btn-gb-filter filter-low" data-gb-filter="low" onclick="applyGbFilter('low', this)">
                 Phụ đạo (<?= $gbCountLow ?>)
             </button>
             <?php if ($gbCountPending > 0): ?>
-            <button type="button" class="btn-gb-filter" data-gb-filter="pending" onclick="applyGbFilter('pending', this)" style="color: #64748b;">
+            <button type="button" class="btn-gb-filter filter-pending" data-gb-filter="pending" onclick="applyGbFilter('pending', this)">
                 Chưa có điểm (<?= $gbCountPending ?>)
             </button>
             <?php endif; ?>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" placeholder="Tìm theo tên, mã HS..." style="height: 34px; padding: 0 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-size: 13px; outline: none; width: 220px; background: #fff;">
+            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" placeholder="Tìm theo tên, mã HS...">
         </div>
     </div>
 

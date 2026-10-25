@@ -70,6 +70,604 @@
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+/* =========================================================================
+   2. DARK THEME TOKENS & OVERRIDES (HIGH-CONTRAST MODERN SAAS & DRIBBLE GRADE)
+   ========================================================================= */
+[data-theme="dark"], body.dark-mode {
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-light: rgba(59, 130, 246, 0.16);
+    --primary-border: rgba(59, 130, 246, 0.35);
+    --primary-glow: rgba(59, 130, 246, 0.25);
+    
+    --bg-main: #0b0f19;
+    --card-bg: #131b2e;
+    --surface-hover: #1a253c;
+    --surface-glass: rgba(19, 27, 46, 0.94);
+    
+    --border-color: #23324d;
+    --border-subtle: #1e293d;
+    --border-specular: rgba(255, 255, 255, 0.08);
+    
+    --text-heading: #f8fafc;
+    --text-body: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-subtle: #64748b;
+    
+    --success-bg: rgba(16, 185, 129, 0.15);
+    --success-border: rgba(16, 185, 129, 0.35);
+    
+    --warning-bg: rgba(245, 158, 11, 0.15);
+    --warning-border: rgba(245, 158, 11, 0.35);
+    
+    --danger-bg: rgba(239, 68, 68, 0.15);
+    --danger-border: rgba(239, 68, 68, 0.35);
+
+    --tech-cyan-bg: rgba(2, 132, 199, 0.15);
+    --tech-cyan-border: rgba(14, 165, 233, 0.35);
+}
+
+[data-theme="dark"] body.liquid-glass-layout {
+    background: #0b0f19 !important;
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .ux-rail-container {
+    background: #0d1424 !important;
+    border-right-color: #23324d !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="dark"] .glass-topbar {
+    background: rgba(13, 20, 36, 0.94) !important;
+    border-bottom-color: #23324d !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] .glass-status-chip {
+    background: #1a253c !important;
+    border-color: #2e3f60 !important;
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] .glass-status-chip.chip-accent {
+    background: rgba(59, 130, 246, 0.18) !important;
+    border-color: rgba(59, 130, 246, 0.4) !important;
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] .edexa-theme-toggle {
+    background: #1a253c !important;
+    color: #f8fafc !important;
+    border: 1px solid #334466 !important;
+}
+
+[data-theme="dark"] .u040-top {
+    border-bottom-color: #23324d !important;
+}
+
+[data-theme="dark"] .u040-brand-title {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u040-brand-sub {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .u040-it {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .u040-it:hover {
+    background: #1a253c !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .u040-it[aria-current="page"] {
+    background: #2563eb !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .u040-bd {
+    background: #1a253c !important;
+    color: #60a5fa !important;
+}
+
+[data-theme="dark"] .u040-footer-sec {
+    border-top-color: #23324d !important;
+}
+
+[data-theme="dark"] .u040-me {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .u040-me-name {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u040-me-role {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .edexa-welcome-text {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .edexa-hero-banner {
+    background: linear-gradient(135deg, #131b2e 0%, #1e1b4b 100%) !important;
+    border-color: #23324d !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .edexa-hero-banner h1 {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .edexa-hero-banner p {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .vnedu-control-card {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .class-subject-matrix-bar {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .card {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .stat-card b {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .stat-card .card-title {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .stat-card .card-sub {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .radar-table {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .radar-table th {
+    background: #0f1626 !important;
+    color: #f8fafc !important;
+    border-bottom: 2px solid #23324d !important;
+}
+
+[data-theme="dark"] .radar-table td {
+    border-color: #1e293d !important;
+    color: #e2e8f0 !important;
+    background: #131b2e !important;
+}
+
+[data-theme="dark"] .radar-table tr:hover td {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .radar-table .student-name,
+[data-theme="dark"] .radar-table .td-name,
+[data-theme="dark"] .radar-table td div[style*="font-weight: 700"] {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .competency-title {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] .competency-advice {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .mono-code {
+    background: #1a253c !important;
+    color: #93c5fd !important;
+    border: 1px solid #2e3f60 !important;
+}
+
+[data-theme="dark"] .student-avatar-circle {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1.5px solid #334466 !important;
+}
+
+[data-theme="dark"] .badge-class {
+    background: #1a253c !important;
+    color: #93c5fd !important;
+    border: 1px solid #2e3f60 !important;
+}
+
+[data-theme="dark"] .badge-subject {
+    background: #1e2238 !important;
+    color: #c084fc !important;
+    border: 1px solid #3b2866 !important;
+}
+
+[data-theme="dark"] .btn-open-detail,
+[data-theme="dark"] .btn-goto-gradebook {
+    background: #1a253c !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #334466 !important;
+}
+
+[data-theme="dark"] .btn-open-detail:hover,
+[data-theme="dark"] .btn-goto-gradebook:hover {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+[data-theme="dark"] .radar-toolbar {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .sub-filter-pill {
+    background: #1a253c !important;
+    color: #94a3b8 !important;
+    border-color: #2e3f60 !important;
+}
+
+[data-theme="dark"] .sub-filter-pill.active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+[data-theme="dark"] .bento-kpi-card {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .bento-kpi-num {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .chip {
+    background: #1a253c !important;
+    border-color: #2e3f60 !important;
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .chip.active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+/* =========================================================================
+   DARK THEME: SPREADSHEET TABLE & GRADEBOOK CONTROLS (CRISP & LEGIBLE)
+   ========================================================================= */
+/* =========================================================================
+   GRADEBOOK CLASSIFICATION FILTER BAR & SEARCH INPUT
+   ========================================================================= */
+.gradebook-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+    background: #ffffff;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+.gradebook-filter-bar span {
+    color: #475569;
+}
+#gbSearchInput {
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1.5px solid #cbd5e1;
+    font-size: 13px;
+    outline: none;
+    width: 220px;
+    background: #ffffff;
+    color: #0f172a;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#gbSearchInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.btn-gb-filter.filter-excellent { color: #15803d; border-color: #bbf7d0; }
+.btn-gb-filter.filter-good { color: #1d4ed8; border-color: #bfdbfe; }
+.btn-gb-filter.filter-average { color: #b45309; border-color: #fde68a; }
+.btn-gb-filter.filter-low { color: #b91c1c; border-color: #fecaca; }
+.btn-gb-filter.filter-pending { color: #64748b; border-color: #cbd5e1; }
+
+[data-theme="dark"] .gradebook-filter-bar {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .gradebook-filter-bar span {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] #gbSearchInput {
+    background: #1a253c !important;
+    color: #f8fafc !important;
+    border-color: #334466 !important;
+}
+
+[data-theme="dark"] #gbSearchInput::placeholder {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] .btn-gb-filter {
+    background: #1a253c !important;
+    color: #cbd5e1 !important;
+    border-color: #2e3f60 !important;
+}
+
+[data-theme="dark"] .btn-gb-filter.filter-excellent { color: #34d399 !important; border-color: rgba(16, 185, 129, 0.4) !important; background: rgba(16, 185, 129, 0.12) !important; }
+[data-theme="dark"] .btn-gb-filter.filter-good { color: #60a5fa !important; border-color: rgba(59, 130, 246, 0.4) !important; background: rgba(59, 130, 246, 0.12) !important; }
+[data-theme="dark"] .btn-gb-filter.filter-average { color: #fbbf24 !important; border-color: rgba(245, 158, 11, 0.4) !important; background: rgba(245, 158, 11, 0.12) !important; }
+[data-theme="dark"] .btn-gb-filter.filter-low { color: #f87171 !important; border-color: rgba(239, 68, 68, 0.4) !important; background: rgba(239, 68, 68, 0.12) !important; }
+[data-theme="dark"] .btn-gb-filter.filter-pending { color: #94a3b8 !important; border-color: #334466 !important; background: #1a253c !important; }
+[data-theme="dark"] .btn-gb-filter.active {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+[data-theme="dark"] .spreadsheet-toolbar {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .toolbar-title {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .spreadsheet-table {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .spreadsheet-table th {
+    background: #0f1626 !important;
+    color: #f8fafc !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .spreadsheet-table td {
+    border-color: #1e293d !important;
+    color: #e2e8f0 !important;
+    background: #131b2e !important;
+}
+
+[data-theme="dark"] .spreadsheet-table tbody tr:hover td {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .col-sticky-stt {
+    background: #131b2e !important;
+    color: #94a3b8 !important;
+    border-right-color: #23324d !important;
+}
+
+[data-theme="dark"] thead th.col-sticky-stt {
+    background: #0f1626 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .col-code {
+    background: #131b2e !important;
+    color: #93c5fd !important;
+    border-right-color: #23324d !important;
+}
+
+[data-theme="dark"] .col-sticky-name {
+    background: #131b2e !important;
+    border-right-color: #23324d !important;
+}
+
+[data-theme="dark"] thead th.col-sticky-name {
+    background: #0f1626 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .col-sticky-name .student-name {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .col-dob {
+    background: #131b2e !important;
+    color: #94a3b8 !important;
+    border-right-color: #23324d !important;
+}
+
+[data-theme="dark"] thead th.col-dob {
+    background: #0f1626 !important;
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .spreadsheet-table tbody tr:hover td.col-sticky-stt,
+[data-theme="dark"] .spreadsheet-table tbody tr:hover td.col-sticky-name,
+[data-theme="dark"] .spreadsheet-table tbody tr:hover td.col-dob {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .score-input {
+    background: #1a253c !important;
+    color: #ffffff !important;
+    border: 1.5px solid #334466 !important;
+    font-weight: 700;
+}
+
+[data-theme="dark"] .score-input:focus {
+    background: #0f172a !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3) !important;
+}
+
+/* =========================================================================
+   DARK THEME: PROMPT #032 DRAG-AND-DROP UPLOAD & PROMPT #034 AIRPORT SEARCH
+   ========================================================================= */
+[data-theme="dark"] .u032-zone {
+    background: #131b2e !important;
+    color: #f8fafc !important;
+    border-color: #23324d !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] .u032-zone b {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u032-zone small {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .u032-dash rect {
+    stroke: #334466 !important;
+}
+
+[data-theme="dark"] .u032-zone:hover,
+[data-theme="dark"] .u032.is-over .u032-zone {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .u032-zone:hover .u032-dash rect,
+[data-theme="dark"] .u032.is-over .u032-dash rect {
+    stroke: #38bdf8 !important;
+}
+
+[data-theme="dark"] .u032-row {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] .u032-meta b {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u032-meta small {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .u034-box {
+    background: #131b2e !important;
+    border-color: #334466 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .u034-box:focus-within {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25) !important;
+}
+
+[data-theme="dark"] .u034-in {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u034-in::placeholder {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] .u034-ghost {
+    color: #64748b !important;
+}
+
+[data-theme="dark"] .u034-list {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-theme="dark"] .u034-o {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u034-o:hover {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .u034-o b {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .u034-o small {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .u034-hl {
+    background: #1a253c !important;
+}
+
+/* =========================================================================
+   DARK THEME: ADMIN PANEL, FORMS & MODALS
+   ========================================================================= */
+[data-theme="dark"] .panel-box,
+[data-theme="dark"] .admin-box,
+[data-theme="dark"] .admin-card {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] table.data-table,
+[data-theme="dark"] .admin-table {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] table.data-table th,
+[data-theme="dark"] .admin-table th {
+    background: #0f1626 !important;
+    color: #f8fafc !important;
+    border-color: #23324d !important;
+}
+
+[data-theme="dark"] table.data-table td,
+[data-theme="dark"] .admin-table td {
+    background: #131b2e !important;
+    color: #cbd5e1 !important;
+    border-color: #1e293d !important;
+}
+
+[data-theme="dark"] table.data-table tr:hover td,
+[data-theme="dark"] .admin-table tr:hover td {
+    background: #1a253c !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: #1a253c !important;
+    color: #f8fafc !important;
+    border-color: #334466 !important;
+}
+
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .dialog-content {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    color: #f8fafc !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -560,6 +1158,23 @@ tr:hover td { background: #f1f5f9; }
     color: #475569;
     border: 1px solid #cbd5e1;
     letter-spacing: 0.03em;
+}
+
+[data-theme="dark"] .tech-system-footer {
+    background: #131b2e !important;
+    border-color: #23324d !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+[data-theme="dark"] .tech-footer-brand {
+    color: #94a3b8 !important;
+}
+[data-theme="dark"] .tech-footer-brand b {
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .tech-footer-chip {
+    background: #1a253c !important;
+    color: #93c5fd !important;
+    border-color: #2e3f60 !important;
 }
 
 /* FORM ELEMENTS */
@@ -2246,6 +2861,22 @@ th.sub-tx {
 .u001[data-state="ok"] .u001-done { opacity: 1; transform: none; filter: none; }
 .u001[data-state="ok"] .u001-done path { stroke-dashoffset: 0; }
 .u001-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Ẩn các cột thừa theo yêu cầu: Bỏ cột Lớp & Môn, bỏ các cột ĐĐGtx (1-4), GK, CK */
+#radarTable .th-class,
+#radarTable .col-class,
+#radarTable .th-score-tx,
+#radarTable .col-score-tx,
+#radarTable .th-score-sub,
+#radarTable .col-score-sub,
+#radarTable .col-detail-score {
+  display: none !important;
+}
+
+/* Nút ẩn/hiện cột điểm trên toolbar không còn cần thiết khi các cột thành phần đã ẩn triệt để */
+#btnToggleScoreCols {
+  display: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .u001-btn, .u001-txt, .u001-done, .u001-spin, .u001-blobs i, .u001-float, .u001-mag {
     animation: none !important;
@@ -2320,19 +2951,28 @@ th.sub-tx {
 .matrix-class-chips {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding: 6px 2px 10px 2px;
+  flex-wrap: wrap;
+  padding: 6px 2px 6px 2px;
   align-items: center;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
 }
-.matrix-class-chips::-webkit-scrollbar {
-  height: 6px;
+
+.gb-chips-strip {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 4px 0 8px;
+  margin-bottom: 8px;
 }
-.matrix-class-chips::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
+
+.gb-strip-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--text-muted, #64748b);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 4px;
 }
 .btn-grade-pill {
   padding: 4px 11px;
@@ -2395,6 +3035,51 @@ th.sub-tx {
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+/* DARK THEME OVERRIDES FOR GRADE PILLS & CLASS CHIPS */
+[data-theme="dark"] .btn-grade-pill {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .btn-grade-pill:hover,
+[data-theme="dark"] .btn-grade-pill.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
+[data-theme="dark"] .class-chip-btn {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .class-chip-btn:hover {
+  background: #22314e !important;
+  border-color: #3b82f6 !important;
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .class-chip-btn.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45) !important;
+}
+[data-theme="dark"] .class-chip-badge {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+}
+[data-theme="dark"] .btn-subject-pill {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .btn-subject-pill.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
   transition: all 0.2s cubic-bezier(0.34, 1.45, 0.64, 1);
   display: inline-flex;
   align-items: center;
@@ -2803,9 +3488,134 @@ body.liquid-glass-layout {
 
 /* APPLE GLASS MODAL REFINEMENTS */
 .competency-modal-card {
-  background: #ffffff !important;
-  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  background: var(--bg-card, #ffffff) !important;
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.9)) !important;
   box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(15, 23, 42, 0.04) !important;
+}
+[data-theme="dark"] .competency-modal-card {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .competency-modal-header {
+  background: #0f172a !important;
+  border-bottom: 1px solid #23324d !important;
+}
+[data-theme="dark"] .modal-student-name {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .modal-close-btn {
+  background: #1a253c !important;
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .modal-close-btn:hover {
+  background: #253352 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .modal-apple-stat-bar {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .modal-apple-stat-item {
+  border-right-color: #23324d !important;
+}
+[data-theme="dark"] .modal-apple-stat-label {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .modal-apple-stat-val {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .apple-pedagogical-card {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .apple-pedagogy-title {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .apple-pedagogy-content {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .score-timeline-ribbon {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .score-timeline-node {
+  background: #131b2e !important;
+  border-color: #2e3f60 !important;
+}
+[data-theme="dark"] .score-timeline-node.node-gk {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+[data-theme="dark"] .score-timeline-node.node-ck {
+  background: rgba(139, 92, 246, 0.15) !important;
+  border-color: rgba(139, 92, 246, 0.4) !important;
+}
+[data-theme="dark"] .score-timeline-node.node-avg {
+  background: rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(37, 99, 235, 0.4) !important;
+}
+[data-theme="dark"] .score-timeline-node .node-label {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .score-timeline-node .node-score {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .timeline-section-title {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .modal-badge-card {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .modal-badge-label {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .modal-info-box.diagnostic-box {
+  background: rgba(99, 102, 241, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+[data-theme="dark"] .modal-info-box.advice-box {
+  background: rgba(37, 99, 235, 0.12) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+}
+[data-theme="dark"] .modal-info-title {
+  color: #93c5fd !important;
+}
+[data-theme="dark"] #modalCompetencyTitle {
+  color: #93c5fd !important;
+}
+[data-theme="dark"] #modalPedagogicalAdvice {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .modal-note-box {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .teacher-note-section {
+  background: #1a253c !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .teacher-note-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .teacher-note-sub {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .teacher-note-textarea {
+  background: #0b0f19 !important;
+  border-color: #2e3f60 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .score-chip-node {
+  background: #131b2e !important;
+  border-color: #2e3f60 !important;
+}
+[data-theme="dark"] .score-chip-name {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .score-chip-val {
+  color: #f8fafc !important;
 }
 .modal-apple-stat-bar {
   display: grid;
@@ -3006,7 +3816,10 @@ body.liquid-glass-layout {
   transition: background-color 0.12s ease;
 }
 .radar-row:hover td {
-  background-color: #f8fafc !important;
+  background-color: #f1f5f9;
+}
+[data-theme="dark"] .radar-row:hover td {
+  background-color: #1a253c !important;
 }
 
 /* =============================================================================
@@ -3067,6 +3880,23 @@ body.liquid-glass-layout {
   text-align: center !important;
 }
 
+#radarTable .th-student, #radarTable .col-student {
+  width: 225px !important;
+  min-width: 215px !important;
+  text-align: left !important;
+  overflow: hidden;
+}
+.badge-has-note {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin-top: 0 !important;
+  padding: 1px 5px !important;
+  font-size: 9.5px !important;
+  line-height: 1.2 !important;
+}
+#radarTable .col-student .muted.small {
+  display: none !important;
+}
 #radarTable .th-tier, #radarTable .col-tier {
   width: 84px !important;
   min-width: 80px !important;
@@ -3125,7 +3955,19 @@ body.liquid-glass-layout {
 #radarTable tbody tr.radar-row:hover td.col-score-avg,
 #radarTable tbody tr.radar-row:hover td.col-score-tx,
 #radarTable tbody tr.radar-row:hover td.col-score-sub {
-  background-color: #f1f5f9 !important;
+  background-color: #f1f5f9;
+}
+
+[data-theme="dark"] #radarTable tbody td.col-score-avg,
+[data-theme="dark"] #radarTable tbody td.col-score-tx,
+[data-theme="dark"] #radarTable tbody td.col-score-sub {
+  background-color: #131b2e !important;
+}
+
+[data-theme="dark"] #radarTable tbody tr.radar-row:hover td.col-score-avg,
+[data-theme="dark"] #radarTable tbody tr.radar-row:hover td.col-score-tx,
+[data-theme="dark"] #radarTable tbody tr.radar-row:hover td.col-score-sub {
+  background-color: #1a253c !important;
 }
 
 /* DOMAIN 3 BOUNDARY (Sau điểm CK) */
@@ -3565,7 +4407,596 @@ tr.gb-row-focused td {
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.28);
 }
 
-/* 5. Apple Reduced Motion & Transparency Accessibility */
+/* =============================================================================
+   6. HERO KPI BOXES, SLIDE BUTTON & EVALUATION TIERS
+   ============================================================================= */
+.hero-kpi-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+.btn-hero-slide {
+  background: #ffffff;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+.btn-hero-slide:hover {
+  background: #f1f5f9;
+}
+
+[data-theme="dark"] .hero-kpi-box {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+[data-theme="dark"] .btn-hero-slide {
+  background: #1a253c !important;
+  color: #f8fafc !important;
+  border-color: #334466 !important;
+}
+[data-theme="dark"] .btn-hero-slide:hover {
+  background: #22314e !important;
+  border-color: #3b82f6 !important;
+}
+
+/* =============================================================================
+   7. CLASS EVALUATION PANEL & EVAL METRIC TIERS (LIGHT & DARK THEMES)
+   ============================================================================= */
+.class-evaluation-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+}
+.eval-sub-card {
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+}
+.eval-tier-box {
+  border-radius: 8px;
+  padding: 10px 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.eval-tier-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.eval-tier-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  display: block;
+}
+.eval-tier-val {
+  font-size: 20px;
+  font-family: var(--font-mono);
+  display: block;
+  margin: 2px 0;
+}
+.eval-tier-pct {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* Light theme tier colors */
+.eval-tier-box.tier-tot { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.eval-tier-box.tier-tot .eval-tier-label { color: #065f46; }
+.eval-tier-box.tier-tot .eval-tier-val { color: #047857; }
+.eval-tier-box.tier-tot .eval-tier-pct { color: #059669; }
+
+.eval-tier-box.tier-kha { background: #eff6ff; border: 1px solid #bfdbfe; }
+.eval-tier-box.tier-kha .eval-tier-label { color: #1e40af; }
+.eval-tier-box.tier-kha .eval-tier-val { color: #1d4ed8; }
+.eval-tier-box.tier-kha .eval-tier-pct { color: #2563eb; }
+
+.eval-tier-box.tier-dat { background: #fffbeb; border: 1px solid #fde68a; }
+.eval-tier-box.tier-dat .eval-tier-label { color: #92400e; }
+.eval-tier-box.tier-dat .eval-tier-val { color: #b45309; }
+.eval-tier-box.tier-dat .eval-tier-pct { color: #d97706; }
+
+.eval-tier-box.tier-chuadat { background: #fef2f2; border: 1px solid #fecaca; }
+.eval-tier-box.tier-chuadat .eval-tier-label { color: #991b1b; }
+.eval-tier-box.tier-chuadat .eval-tier-val { color: #b91c1c; }
+.eval-tier-box.tier-chuadat .eval-tier-pct { color: #dc2626; }
+
+/* Dark theme tier colors */
+[data-theme="dark"] .class-evaluation-panel {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+[data-theme="dark"] .eval-sub-card {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+}
+[data-theme="dark"] .eval-tier-box.tier-tot {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+[data-theme="dark"] .eval-tier-box.tier-tot .eval-tier-label { color: #34d399 !important; }
+[data-theme="dark"] .eval-tier-box.tier-tot .eval-tier-val { color: #6ee7b7 !important; }
+[data-theme="dark"] .eval-tier-box.tier-tot .eval-tier-pct { color: #a7f3d0 !important; }
+
+[data-theme="dark"] .eval-tier-box.tier-kha {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+}
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-label { color: #60a5fa !important; }
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-val { color: #93c5fd !important; }
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-pct { color: #bfdbfe !important; }
+
+[data-theme="dark"] .eval-tier-box.tier-dat {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-label { color: #fbbf24 !important; }
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-val { color: #fde047 !important; }
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-pct { color: #fef08a !important; }
+
+[data-theme="dark"] .eval-tier-box.tier-chuadat {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+}
+[data-theme="dark"] .eval-tier-box.tier-chuadat .eval-tier-label { color: #f87171 !important; }
+[data-theme="dark"] .eval-tier-box.tier-chuadat .eval-tier-val { color: #fca5a5 !important; }
+[data-theme="dark"] .eval-tier-box.tier-chuadat .eval-tier-pct { color: #fecaca !important; }
+
+/* =============================================================================
+   8. GRADEBOOK (NHAP_DIEM) META CHIPS, ACTIONS & CLASS SELECTORS
+   ============================================================================= */
+.gb-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  color: #0f172a;
+}
+.gb-meta-chip.chip-main {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+.gb-meta-chip.chip-permission {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.gb-meta-chip .meta-label {
+  color: #64748b;
+  font-weight: 600;
+}
+.gb-meta-chip .meta-sub {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.gb-select-box {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: 1.5px solid #cbd5e1;
+  font-size: 13px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.gb-select-box:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.gb-btn-action {
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+.gb-btn-action:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.gb-subject-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all .15s;
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+.gb-subject-chip:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+.gb-subject-chip.active {
+  background: #4338ca;
+  color: #ffffff;
+  border-color: #4338ca;
+  box-shadow: 0 2px 8px rgba(67, 56, 202, 0.35);
+}
+.gb-subject-chip .chip-count {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #475569;
+}
+.gb-subject-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.gb-class-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all .15s;
+  background: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+.gb-class-chip:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0284c7;
+}
+.gb-class-chip.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+.gb-class-chip .chip-count {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.gb-class-chip.active .chip-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Dark theme overrides for Gradebook components */
+[data-theme="dark"] .gb-meta-chip {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .gb-meta-chip.chip-main {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .gb-meta-chip.chip-permission {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  color: #34d399 !important;
+}
+[data-theme="dark"] .gb-meta-chip .meta-label {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .gb-meta-chip .meta-sub {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .gb-select-box {
+  background: #1a253c !important;
+  border-color: #334466 !important;
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .gb-select-box:focus {
+  border-color: #38bdf8 !important;
+}
+
+[data-theme="dark"] .gb-btn-action {
+  background: #1a253c !important;
+  border-color: #334466 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .gb-btn-action:hover {
+  background: #22314e !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .gb-subject-chip {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .gb-subject-chip:hover {
+  background: #22314e !important;
+  border-color: #3b82f6 !important;
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .gb-subject-chip.active {
+  background: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(79, 70, 229, 0.45) !important;
+}
+[data-theme="dark"] .gb-subject-chip .chip-count {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] .gb-class-chip {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .gb-class-chip:hover {
+  background: #22314e !important;
+  border-color: #38bdf8 !important;
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .gb-class-chip.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45) !important;
+}
+[data-theme="dark"] .gb-class-chip .chip-count {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Welcome Page Portal Cards (Ảnh 3 dark mode badge refinement) */
+[data-theme="dark"] .launchpad-card {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .launchpad-card-header span:last-child {
+  background: rgba(59, 130, 246, 0.16) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+[data-theme="dark"] .launchpad-card-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .launchpad-card-desc {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .launchpad-card-footer {
+  border-top-color: #1e293d !important;
+  color: #60a5fa !important;
+}
+[data-theme="dark"] .kpi-card {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .kpi-icon-box {
+  background: #1a253c !important;
+}
+[data-theme="dark"] .handbook-box {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+}
+
+/* Modal 3 Badges (Ảnh 4: Khung Hiệu Suất, Khung Điểm Số, Phân Vùng Rủi Ro TT22) */
+.modal-apple-stat-item {
+  padding: 12px 18px !important;
+}
+.modal-apple-stat-val {
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+[data-theme="dark"] .modal-apple-stat-val .badge-momentum,
+[data-theme="dark"] .modal-apple-stat-val .badge-tier,
+[data-theme="dark"] .modal-apple-stat-val .status-badge {
+  box-shadow: none !important;
+}
+
+/* Sửa các viền trắng bị chói trong dark mode */
+[data-theme="dark"] .card,
+[data-theme="dark"] .panel-box,
+[data-theme="dark"] .class-evaluation-panel,
+[data-theme="dark"] .class-subject-matrix-bar,
+[data-theme="dark"] .radar-toolbar,
+[data-theme="dark"] .radar-table-wrap,
+[data-theme="dark"] .spreadsheet-container {
+  border-color: #23324d !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+/* Khử gờ sáng/viền trắng trên đỉnh card trong dark mode (Ảnh 1) */
+[data-theme="dark"] .card::before,
+[data-theme="dark"] .stat-card::before {
+  background: #1e293d !important;
+}
+[data-theme="dark"] .card.total::before { background: var(--primary) !important; }
+[data-theme="dark"] .card.green::before { background: var(--success) !important; }
+[data-theme="dark"] .card.yellow::before { background: var(--warning) !important; }
+[data-theme="dark"] .card.red::before { background: var(--danger) !important; }
+[data-theme="dark"] .class-evaluation-panel::before {
+  display: none !important;
+}
+[data-theme="dark"] hr,
+[data-theme="dark"] *[style*="border-top: 1px dashed"],
+[data-theme="dark"] *[style*="border-bottom: 1px solid #f1f5f9"],
+[data-theme="dark"] *[style*="border-bottom: 1px solid var(--border-subtle)"] {
+  border-color: #1e293d !important;
+}
+
+/* Sửa nút đăng xuất màu đỏ trong side_rail */
+.u040-logout-it {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  font-weight: 700 !important;
+}
+.u040-logout-it:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+[data-theme="dark"] .u040-logout-it {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .u040-logout-it:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+
+/* Ẩn các cột thừa theo yêu cầu: Bỏ cột Lớp & Môn, bỏ các cột ĐĐGtx (1-4), GK, CK */
+#radarTable .th-class,
+#radarTable .col-class,
+#radarTable .th-score-tx,
+#radarTable .col-score-tx,
+#radarTable .th-score-sub,
+#radarTable .col-score-sub,
+#radarTable .col-detail-score {
+  display: none !important;
+}
+
+/* TỐI ƯU LAYOUT BẢNG RADAR TẠI ZOOM 100% (KHÔNG MẤT CỘT THAO TÁC) & CHỮ TO RÕ */
+#radarTable.radar-table {
+  min-width: 100% !important;
+  width: 100% !important;
+  table-layout: auto !important;
+}
+.radar-table-wrap {
+  overflow-x: auto !important;
+  max-width: 100% !important;
+}
+#radarTable thead th {
+  padding: 10px 6px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.03em !important;
+}
+#radarTable tbody td {
+  padding: 10px 8px !important;
+  font-size: 14px !important;
+}
+#radarTable .th-actions,
+#radarTable .col-actions {
+  width: 96px !important;
+  min-width: 96px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+#radarTable .th-stt,
+#radarTable .col-stt {
+  width: 44px !important;
+  min-width: 44px !important;
+  font-size: 13.5px !important;
+}
+#radarTable .th-code,
+#radarTable .col-code {
+  width: 88px !important;
+  min-width: 85px !important;
+}
+#radarTable .mono-code {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+}
+#radarTable .th-student,
+#radarTable .col-student {
+  min-width: 180px !important;
+}
+#radarTable .col-student span:first-child {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+#radarTable .th-momentum,
+#radarTable .col-momentum {
+  min-width: 105px !important;
+}
+#radarTable .badge-momentum {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+}
+#radarTable .th-tier,
+#radarTable .col-tier {
+  min-width: 105px !important;
+}
+#radarTable .badge-tier {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+}
+#radarTable .th-score-avg,
+#radarTable .col-score-avg {
+  width: 58px !important;
+  min-width: 55px !important;
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+}
+#radarTable .competency-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  margin-bottom: 3px !important;
+}
+#radarTable .competency-advice {
+  font-size: 13.5px !important;
+  line-height: 1.55 !important;
+}
+
+/* SỔ ĐIỂM VNEDU - TĂNG CỠ CHỮ BẢNG ĐIỂM */
+.spreadsheet-container table th {
+  font-size: 12.5px !important;
+  padding: 8px 6px !important;
+}
+.spreadsheet-container table td {
+  font-size: 14.5px !important;
+}
+.spreadsheet-table input.grade-cell-input,
+.spreadsheet-container input[type="text"],
+.spreadsheet-container input[type="number"] {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+/* Nút ẩn/hiện cột điểm trên toolbar không còn cần thiết khi các cột thành phần đã ẩn triệt để */
+#btnToggleScoreCols {
+  display: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -3579,4 +5010,370 @@ tr.gb-row-focused td {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
+}
+
+/* =============================================================================
+   9. SHAKURO FINANCE DASHBOARD REFINEMENTS (ZERO CLUTTER & SLEEK SCROLLBARS)
+   ============================================================================= */
+
+/* Global Custom Scrollbars (No ugly white native Windows scrollbars) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+[data-theme="dark"], [data-theme="dark"] * {
+  scrollbar-color: #334155 #0b0f19;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #2e3f60;
+  border-radius: 9999px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Gradebook Table Container: Full natural height so there is no inner double scrollbar */
+.spreadsheet-container {
+  max-height: none !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+/* De-clutter Radar Table Rows (Shakuro Clean Financial Ledger Style) */
+#radarTable.radar-table tbody td {
+  padding: 10px 8px !important;
+  border-right: 1px solid rgba(148, 163, 184, 0.12) !important;
+}
+[data-theme="dark"] #radarTable.radar-table tbody td {
+  border-bottom: 1px solid #1e293d !important;
+  border-right: 1px solid rgba(35, 50, 77, 0.55) !important;
+}
+[data-theme="dark"] #radarTable thead th.th-class,
+[data-theme="dark"] #radarTable thead th.th-tier,
+[data-theme="dark"] #radarTable thead th.th-score-ck,
+[data-theme="dark"] #radarTable.scores-hidden thead th.th-score-avg,
+[data-theme="dark"] #radarTable thead th.th-advice {
+  border-right: 1px solid #2e3f60 !important;
+}
+[data-theme="dark"] #radarTable tbody td.col-class,
+[data-theme="dark"] #radarTable tbody td.col-tier,
+[data-theme="dark"] #radarTable tbody td.col-score-ck,
+[data-theme="dark"] #radarTable.scores-hidden tbody td.col-score-avg,
+[data-theme="dark"] #radarTable tbody td.col-advice {
+  border-right: 1px solid #23324d !important;
+}
+
+/* Student Cell: Clean 2-line hierarchy (Name on top, single compact meta line below) */
+#radarTable .col-student .muted.small {
+  font-size: 11px !important;
+  font-family: var(--font-mono);
+  color: #64748b !important;
+}
+[data-theme="dark"] #radarTable .col-student .muted.small {
+  color: #94a3b8 !important;
+}
+
+/* Dark Mode Translucent Pill Badges (Eliminate glaring white/pastel boxes in Dark Mode) */
+[data-theme="dark"] .risk-pill-inline.pill-red {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .risk-pill-inline.pill-yellow {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="dark"] .badge-has-note {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Momentum Badges (1. Hiệu Suất) */
+[data-theme="dark"] .badge-momentum-surge,
+[data-theme="dark"] .badge-momentum-up {
+  background: rgba(16, 185, 129, 0.14) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+[data-theme="dark"] .badge-momentum-steady {
+  background: rgba(56, 189, 248, 0.14) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.32) !important;
+}
+[data-theme="dark"] .badge-momentum-down,
+[data-theme="dark"] .badge-momentum-drop {
+  background: rgba(244, 63, 94, 0.15) !important;
+  color: #fb7185 !important;
+  border: 1px solid rgba(244, 63, 94, 0.35) !important;
+}
+
+/* Tier Badges (2. Bậc TT22) */
+[data-theme="dark"] .badge-tier.tier-excellent {
+  background: rgba(16, 185, 129, 0.14) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+[data-theme="dark"] .badge-tier.tier-good {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+[data-theme="dark"] .badge-tier.tier-average {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="dark"] .badge-tier.tier-low,
+[data-theme="dark"] .badge-tier.tier-critical {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .badge-tier.tier-pending {
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+/* Average Score Badges (ĐTB & Sổ Điểm) */
+[data-theme="dark"] .avg-score-badge.avg-red,
+[data-theme="dark"] .avg-badge.level-danger {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.38) !important;
+}
+[data-theme="dark"] .avg-score-badge.avg-yellow,
+[data-theme="dark"] .avg-badge.level-warning {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(245, 158, 11, 0.38) !important;
+}
+[data-theme="dark"] .avg-score-badge.avg-green,
+[data-theme="dark"] .avg-badge.level-excellent {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.38) !important;
+}
+[data-theme="dark"] .avg-badge.level-good {
+  background: rgba(59, 130, 246, 0.16) !important;
+  color: #93c5fd !important;
+  border: 1px solid rgba(59, 130, 246, 0.38) !important;
+}
+[data-theme="dark"] .avg-score-badge.avg-empty,
+[data-theme="dark"] .avg-badge.level-empty {
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #64748b !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+/* TX (1-4) Scores: Ultra-Clean Tabular Numbers without heavy box clutter */
+.tx-scores-wrap {
+  gap: 4px !important;
+}
+.tx-num {
+  width: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  font-size: 11px !important;
+  background: transparent !important;
+  border: none !important;
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+[data-theme="dark"] .tx-num {
+  color: #cbd5e1 !important;
+}
+.tx-num.crit {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+[data-theme="dark"] .tx-num.crit {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #f87171 !important;
+}
+.tx-num.warn {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #d97706 !important;
+  font-weight: 800 !important;
+}
+[data-theme="dark"] .tx-num.warn {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fbbf24 !important;
+}
+
+/* Năng Lực & Khuyến Nghị Sư Phạm: Concise 1-line scannable summary + subtle diagnostic tag */
+.competency-cell {
+  gap: 2px !important;
+}
+.competency-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.competency-advice {
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 1 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  opacity: 0.85;
+}
+.competency-diag-tag {
+  font-size: 10px !important;
+  padding: 1px 6px !important;
+  border-radius: 4px !important;
+  background: rgba(244, 63, 94, 0.08) !important;
+  color: #be123c !important;
+  border: 1px solid rgba(244, 63, 94, 0.22) !important;
+  margin-top: 2px !important;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[data-theme="dark"] .competency-diag-tag {
+  background: rgba(244, 63, 94, 0.14) !important;
+  color: #fda4af !important;
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+/* KPI Card Percentage Pills & Toolbar Chips in Dark Mode */
+[data-theme="dark"] .card-pct.total,
+[data-theme="dark"] .badge.total {
+  background: rgba(99, 102, 241, 0.16) !important;
+  color: #a5b4fc !important;
+  border: 1px solid rgba(99, 102, 241, 0.35) !important;
+}
+[data-theme="dark"] .card-pct.green,
+[data-theme="dark"] .card-pct.trend-up,
+[data-theme="dark"] .badge.green {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+}
+[data-theme="dark"] .card-pct.yellow,
+[data-theme="dark"] .card-pct.tx-warn,
+[data-theme="dark"] .badge.yellow {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="dark"] .card-pct.red,
+[data-theme="dark"] .card-pct.trend-down,
+[data-theme="dark"] .badge.red {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+
+[data-theme="dark"] .subject-quick-filter-group {
+  background: #0f1626 !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] .filter-label-sub {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .radar-chips {
+  border-top-color: #1e293d !important;
+}
+[data-theme="dark"] .toolbar-sep {
+  background: #23324d !important;
+}
+[data-theme="dark"] .btn-toggle-score-cols {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .btn-toggle-score-cols.active {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: #3b82f6 !important;
+  color: #93c5fd !important;
+}
+[data-theme="dark"] .dirty-badge.clean {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+#radarTable .th-student, #radarTable .col-student {
+  width: 225px !important;
+  min-width: 215px !important;
+  text-align: left !important;
+  overflow: hidden;
+}
+.badge-has-note {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin-top: 0 !important;
+  padding: 1px 5px !important;
+  font-size: 9.5px !important;
+  line-height: 1.2 !important;
+}
+#radarTable .col-student .muted.small {
+  display: none !important;
+}
+#radarTable .th-tier, #radarTable .col-tier {
+  width: 96px !important;
+  min-width: 94px !important;
+  text-align: center !important;
+}
+#radarTable .th-score-avg, #radarTable .col-score-avg {
+  width: 56px !important;
+  min-width: 54px !important;
+  text-align: center !important;
+}
+#radarTable .th-actions, #radarTable .col-actions {
+  width: 126px !important;
+  min-width: 124px !important;
+  text-align: center !important;
+  border-right: none !important;
+}
+.actions-stack {
+  flex-direction: row !important;
+  gap: 5px !important;
+  justify-content: center !important;
+}
+.actions-stack .btn-open-detail,
+.actions-stack .btn-goto-gradebook {
+  width: auto !important;
+  padding: 0 8px !important;
+  height: 26px !important;
+  font-size: 11px !important;
+}
+.competency-diag-tag {
+  display: none !important;
+}
+[data-theme="dark"] .dirty-badge.dirty {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="dark"] .vnedu-control-card > div:first-child {
+  border-bottom-color: #1e293d !important;
 }

@@ -427,19 +427,66 @@ $pageTitle = 'Radar Cảnh Báo Sớm & Năng Lực Học Tập';
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<!-- EDEXA HERO NOTICE BOARD / WELCOME CARD (DRIBBLE SHOT INSPIRATION) -->
+<div class="edexa-hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 20px; padding: 24px 28px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+    <div style="max-width: 680px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+            <span>📢 BẢNG THÔNG TIN SƯ PHẠM</span>
+            <span>&bull;</span>
+            <span>NIÊN KHÓA 2025–2026</span>
+        </div>
+        <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
+            Đồng Hành Cùng Học Sinh Bứt Phá Năng Lực Học Tập
+        </h1>
+        <p style="font-size: 13.5px; color: var(--text-muted, #475569); margin: 0 0 16px 0; line-height: 1.5;">
+            Hệ thống Radar 2 khung đánh giá tự động: phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và gợi ý lộ trình bồi dưỡng cá nhân hóa tức thì.
+        </p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <a href="nhap_diem.php<?= $navQuery ?>" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
+                <span>Vào Sổ Điểm Bộ Môn</span>
+            </a>
+            <?php if (!empty($selectedClassId)): ?>
+                <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn btn-hero-slide" style="border: 1.5px solid var(--border-color, #cbd5e1); padding: 8px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <span>Xuất Slide Báo Cáo BGH</span>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
+            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted, #64748b); text-transform: uppercase;">TỔNG HỌC SINH</span>
+            <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                <?= count($students) ?>
+            </div>
+            <span style="font-size: 11.5px; color: #10b981; font-weight: 700;">100% Hồ sơ</span>
+        </div>
+        <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
+            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted, #64748b); text-transform: uppercase;">GIỎI & KHÁ</span>
+            <div style="font-size: 26px; font-weight: 800; color: #3b82f6; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                <?= $stats['tier_excellent'] + $stats['tier_good'] ?>
+            </div>
+            <span style="font-size: 11.5px; color: #3b82f6; font-weight: 700;">
+                <?= round(($stats['tier_excellent'] + $stats['tier_good']) / max(1, count($students)) * 100, 1) ?>%
+            </span>
+        </div>
+    </div>
+</div>
+
 <!-- KHỐI TIÊU ĐỀ DASHBOARD -->
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 16px; flex-wrap: wrap;">
     <div>
-        <h1 style="font-size: 24px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.5px; margin-bottom: 6px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.4px; margin-bottom: 4px;">
             📡 Radar Đánh Giá 2 Khung: Hiệu Suất & Học Lực
-        </h1>
+        </h2>
         <p class="muted small" style="margin: 0;">
-            <b>Khung Hiệu Suất</b> (Tăng · Đều · Giảm) kết hợp <b>Khung Điểm Số</b> theo chuẩn Thông tư 22/2021/TT-BGDĐT
+            <b>Khung Hiệu Suất</b> (Tăng &bull; Đều &bull; Giảm) kết hợp <b>Khung Điểm Số</b> theo chuẩn Thông tư 22/2021/TT-BGDĐT
         </p>
     </div>
 </div>
 
-<!-- KHỐI ĐIỀU KHIỂN MA TRẬN LỚP HỌC & PHÂN MÔN (CLASS & SUBJECT MATRIX CONTROL BAR) -->
+<!-- KHỐI ĐIỀU KHIỂN MA TRẬN LỚP HỌC & PHÂN MÔN (CLASS & SUBJECT MATRIX CONTROL BAR ĐƯỢC CHUYỂN LÊN ĐẦU) -->
 <div class="class-subject-matrix-bar">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <?php if ($userRole === 'admin'): ?>
@@ -633,7 +680,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <?php if ($selectedClassId > 0 && isset($filterClasses[$selectedClassId])): ?>
     <!-- BẢNG ĐÁNH GIÁ HỌC LỰC THEO MÔN & HỌC LỰC CHUNG LỚP (CHUẨN THÔNG TƯ 22) - TECH TELEMETRY HUD -->
-    <div class="card class-evaluation-panel" style="margin-bottom: 22px; padding: 18px 22px; border-radius: var(--radius-md); background: #ffffff; border: 1px solid var(--border-color); box-shadow: var(--shadow-xs);">
+    <div class="card class-evaluation-panel" style="margin-bottom: 22px; padding: 18px 22px; border-radius: var(--radius-md);">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
             <div>
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -675,69 +722,69 @@ require_once __DIR__ . '/includes/header.php';
         <!-- 2 KHỐI SO SÁNH: HỌC LỰC MÔN VÀ HỌC LỰC CHUNG (TT22) -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
             <!-- KHỐI 1: HỌC LỰC MÔN HIỆN TẠI -->
-            <div style="background: #f8fafc; border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--border-color);">
+            <div class="eval-sub-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <b style="font-size: 13px; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.04em;">
                         Học Lực Môn: <span style="color: var(--primary);"><?= htmlspecialchars($selectedSubject === 'all' ? 'Tổng Hợp Môn' : $selectedSubject) ?></span>
                     </b>
-                    <span class="badge" style="background: #e0e7ff; color: #4338ca; font-weight: 700;">
+                    <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 700; border: 1px solid var(--primary-border);">
                         <?= $stats['total'] ?> bài đánh giá
                     </span>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
-                    <div onclick="filterByTier('tier:excellent')" title="Bấm để lọc xem danh sách học sinh Mức Tốt" class="tech-metric-box" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #065f46; display: block;">MỨC TỐT</span>
-                        <b style="font-size: 20px; color: #047857; font-family: var(--font-mono);"><?= $stats['tier_excellent'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #059669; font-family: var(--font-mono);"><?= round($stats['tier_excellent'] / max(1, $stats['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('tier:excellent')" title="Bấm để lọc xem danh sách học sinh Mức Tốt" class="eval-tier-box tier-tot">
+                        <span class="eval-tier-label">MỨC TỐT</span>
+                        <b class="eval-tier-val"><?= $stats['tier_excellent'] ?></b>
+                        <small class="eval-tier-pct"><?= round($stats['tier_excellent'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('tier:good')" title="Bấm để lọc xem danh sách học sinh Mức Khá" class="tech-metric-box" style="background: #eff6ff; border: 1px solid #bfdbfe;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #1e40af; display: block;">MỨC KHÁ</span>
-                        <b style="font-size: 20px; color: #1d4ed8; font-family: var(--font-mono);"><?= $stats['tier_good'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #2563eb; font-family: var(--font-mono);"><?= round($stats['tier_good'] / max(1, $stats['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('tier:good')" title="Bấm để lọc xem danh sách học sinh Mức Khá" class="eval-tier-box tier-kha">
+                        <span class="eval-tier-label">MỨC KHÁ</span>
+                        <b class="eval-tier-val"><?= $stats['tier_good'] ?></b>
+                        <small class="eval-tier-pct"><?= round($stats['tier_good'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('tier:average')" title="Bấm để lọc xem danh sách học sinh Mức Đạt" class="tech-metric-box" style="background: #fffbeb; border: 1px solid #fde68a;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #92400e; display: block;">MỨC ĐẠT</span>
-                        <b style="font-size: 20px; color: #b45309; font-family: var(--font-mono);"><?= $stats['tier_average'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #d97706; font-family: var(--font-mono);"><?= round($stats['tier_average'] / max(1, $stats['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('tier:average')" title="Bấm để lọc xem danh sách học sinh Mức Đạt" class="eval-tier-box tier-dat">
+                        <span class="eval-tier-label">MỨC ĐẠT</span>
+                        <b class="eval-tier-val"><?= $stats['tier_average'] ?></b>
+                        <small class="eval-tier-pct"><?= round($stats['tier_average'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('tier:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt" class="tech-metric-box" style="background: #fef2f2; border: 1px solid #fecaca;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #991b1b; display: block;">CHƯA ĐẠT</span>
-                        <b style="font-size: 20px; color: #b91c1c; font-family: var(--font-mono);"><?= $stats['tier_low'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #dc2626; font-family: var(--font-mono);"><?= round($stats['tier_low'] / max(1, $stats['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('tier:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt" class="eval-tier-box tier-chuadat">
+                        <span class="eval-tier-label">CHƯA ĐẠT</span>
+                        <b class="eval-tier-val"><?= $stats['tier_low'] ?></b>
+                        <small class="eval-tier-pct"><?= round($stats['tier_low'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                     </div>
                 </div>
             </div>
 
             <!-- KHỐI 2: HỌC LỰC CHUNG TOÀN LỚP (CHUẨN THÔNG TƯ 22) -->
-            <div style="background: #ffffff; border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--border-color);">
+            <div class="eval-sub-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <b style="font-size: 13px; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.04em;">
                         HỌC LỰC CHUNG TOÀN LỚP (TT22)
                     </b>
-                    <span class="badge" style="background: #0f172a; color: #ffffff; font-weight: 700;">
+                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.35);">
                         TỔNG HỢP ĐA MÔN
                     </span>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
-                    <div onclick="filterByTier('overall:excellent')" title="Bấm để lọc xem danh sách học sinh đạt Mức Tốt chung toàn lớp" class="tech-metric-box" style="background: #ffffff; border: 1px solid #10b981;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #065f46; display: block;">TỐT (CHUNG)</span>
-                        <b style="font-size: 20px; color: #047857; font-family: var(--font-mono);"><?= $classOverallSummary['excellent'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #059669; font-family: var(--font-mono);"><?= round($classOverallSummary['excellent'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('overall:excellent')" title="Bấm để lọc xem danh sách học sinh đạt Mức Tốt chung toàn lớp" class="eval-tier-box tier-tot">
+                        <span class="eval-tier-label">TỐT (CHUNG)</span>
+                        <b class="eval-tier-val"><?= $classOverallSummary['excellent'] ?></b>
+                        <small class="eval-tier-pct"><?= round($classOverallSummary['excellent'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('overall:good')" title="Bấm để lọc xem danh sách học sinh đạt Mức Khá chung toàn lớp" class="tech-metric-box" style="background: #ffffff; border: 1px solid #3b82f6;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #1e40af; display: block;">KHÁ (CHUNG)</span>
-                        <b style="font-size: 20px; color: #1d4ed8; font-family: var(--font-mono);"><?= $classOverallSummary['good'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #2563eb; font-family: var(--font-mono);"><?= round($classOverallSummary['good'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('overall:good')" title="Bấm để lọc xem danh sách học sinh đạt Mức Khá chung toàn lớp" class="eval-tier-box tier-kha">
+                        <span class="eval-tier-label">KHÁ (CHUNG)</span>
+                        <b class="eval-tier-val"><?= $classOverallSummary['good'] ?></b>
+                        <small class="eval-tier-pct"><?= round($classOverallSummary['good'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('overall:average')" title="Bấm để lọc xem danh sách học sinh đạt Mức Đạt chung toàn lớp" class="tech-metric-box" style="background: #ffffff; border: 1px solid #f59e0b;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #92400e; display: block;">ĐẠT (CHUNG)</span>
-                        <b style="font-size: 20px; color: #b45309; font-family: var(--font-mono);"><?= $classOverallSummary['average'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #d97706; font-family: var(--font-mono);"><?= round($classOverallSummary['average'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('overall:average')" title="Bấm để lọc xem danh sách học sinh đạt Mức Đạt chung toàn lớp" class="eval-tier-box tier-dat">
+                        <span class="eval-tier-label">ĐẠT (CHUNG)</span>
+                        <b class="eval-tier-val"><?= $classOverallSummary['average'] ?></b>
+                        <small class="eval-tier-pct"><?= round($classOverallSummary['average'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
                     </div>
-                    <div onclick="filterByTier('overall:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt chung toàn lớp" class="tech-metric-box" style="background: #ffffff; border: 1px solid #ef4444;">
-                        <span style="font-size: 10.5px; font-weight: 800; color: #991b1b; display: block;">CHƯA ĐẠT</span>
-                        <b style="font-size: 20px; color: #b91c1c; font-family: var(--font-mono);"><?= $classOverallSummary['low'] ?></b>
-                        <small style="display: block; font-size: 11px; color: #dc2626; font-family: var(--font-mono);"><?= round($classOverallSummary['low'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
+                    <div onclick="filterByTier('overall:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt chung toàn lớp" class="eval-tier-box tier-chuadat">
+                        <span class="eval-tier-label">CHƯA ĐẠT</span>
+                        <b class="eval-tier-val"><?= $classOverallSummary['low'] ?></b>
+                        <small class="eval-tier-pct"><?= round($classOverallSummary['low'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
                     </div>
                 </div>
             </div>
@@ -811,12 +858,12 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <?php if ($stats['momentum_pending'] > 0): ?>
-            <div class="card stat-card" style="border-left: 4px solid #94a3b8; background: #f8fafc;">
+            <div class="card stat-card" style="border-left: 4px solid #94a3b8;">
                 <div class="card-header-row">
-                    <span class="card-title" style="color: #475569;">⏳ Chờ Điểm Số</span>
+                    <span class="card-title">⏳ Chờ Điểm Số</span>
                     <span class="card-pct" style="color: #64748b; font-weight: 700;"><?= round(($stats['momentum_pending'] / max(1, $stats['total'])) * 100, 1) ?>%</span>
                 </div>
-                <b style="color: #334155;"><?= $stats['momentum_pending'] ?></b>
+                <b><?= $stats['momentum_pending'] ?></b>
                 <span class="card-sub">Chưa có bài kiểm tra ghi nhận</span>
             </div>
         <?php endif; ?>
@@ -832,20 +879,20 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="card stat-card yellow">
             <div class="card-header-row">
-                <span class="card-title">🟡 Cần Chú Ý</span>
-                <span class="card-pct yellow"><?= $stats['yellow_pct'] ?>%</span>
+                <span class="card-title">🟡 Trung Bình</span>
+                <span class="card-pct yellow"><?= $stats['total'] > 0 ? round(($stats['tier_average'] / $stats['total']) * 100, 1) : 0 ?>%</span>
             </div>
-            <b><?= $stats['yellow'] ?></b>
-            <span class="card-sub">Đi đều mức thấp/TB hoặc có dấu hiệu sa sút</span>
+            <b><?= $stats['tier_average'] ?></b>
+            <span class="card-sub" title="Trung bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">5.0 ≤ ĐTB &lt; 6.5 (Cần chú ý)</span>
         </div>
 
         <div class="card stat-card red">
             <div class="card-header-row">
-                <span class="card-title">🔴 Nguy Cấp</span>
-                <span class="card-pct red"><?= $stats['red_pct'] ?>%</span>
+                <span class="card-title">🔴 Yếu</span>
+                <span class="card-pct red"><?= $stats['total'] > 0 ? round(($stats['tier_low'] / $stats['total']) * 100, 1) : 0 ?>%</span>
             </div>
-            <b><?= $stats['red'] ?></b>
-            <span class="card-sub">ĐTB &lt; 3.5, CK &lt; 3.0, hoặc hỏng thi</span>
+            <b><?= $stats['tier_low'] ?></b>
+            <span class="card-sub" title="Yếu (ĐTB < 5.0) · Nguy cấp">ĐTB &lt; 5.0 (Nguy cấp)</span>
         </div>
     </section>
 </div>
@@ -909,6 +956,18 @@ require_once __DIR__ . '/includes/header.php';
         .u034-o small{display:block;margin-top:1px;font-size:10.5px;color:#64748b !important}
         .u034-o em{margin-left:auto;font-style:normal;font-size:11px;font-weight:700;color:#334155;white-space:nowrap;font-variant-numeric:tabular-nums}
         .u034-none{padding:16px 10px;text-align:center;font-size:12px;color:#94a3b8}
+
+        /* DARK THEME OVERRIDES FOR AIRPORT AUTOCOMPLETE */
+        [data-theme="dark"] .u034-box{background:#131b2e !important;border-color:#334466 !important;box-shadow:0 1px 4px rgba(0,0,0,.3) !important;}
+        [data-theme="dark"] .u034-box:focus-within{border-color:#38bdf8 !important;box-shadow:0 0 0 3px rgba(56,189,248,.25) !important;}
+        [data-theme="dark"] .u034-in{color:#f8fafc !important;}
+        [data-theme="dark"] .u034-in::placeholder{color:#64748b !important;}
+        [data-theme="dark"] .u034-ghost{color:#64748b !important;}
+        [data-theme="dark"] .u034-list{background:#131b2e !important;border-color:#23324d !important;box-shadow:0 16px 36px rgba(0,0,0,.6) !important;}
+        [data-theme="dark"] .u034-o b{color:#f8fafc !important;}
+        [data-theme="dark"] .u034-o small{color:#94a3b8 !important;}
+        [data-theme="dark"] .u034-o em{color:#cbd5e1 !important;}
+        [data-theme="dark"] .u034-hl{background:#1a253c !important;}
         </style>
 
         <div class="ux u034" id="u034SearchContainer">
@@ -964,12 +1023,12 @@ require_once __DIR__ . '/includes/header.php';
                 <span>Học Sinh Khá</span>
                 <span class="chip-count">(<?= $stats['tier_good'] ?>)</span>
             </button>
-            <button type="button" class="chip" data-filter="tier:average" style="color: #78350f; border-color: #fde68a;" title="Chỉ xem học sinh Mức Đạt / Trung Bình (5.0 ≤ ĐTB < 6.5)">
-                <span>Mức Đạt (TB)</span>
+            <button type="button" class="chip" data-filter="tier:average" style="color: #78350f; border-color: #fde68a;" title="Chỉ xem học sinh Mức Đạt / Trung Bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">
+                <span>Trung bình</span>
                 <span class="chip-count">(<?= $stats['tier_average'] ?>)</span>
             </button>
-            <button type="button" class="chip chip-red" data-filter="tier:low" title="Chỉ xem học sinh Chưa Đạt / Cần Bồi Dưỡng (ĐTB < 5.0)">
-                <span>Cần Phụ Đạo</span>
+            <button type="button" class="chip chip-red" data-filter="tier:low" title="Chỉ xem học sinh Chưa Đạt / Yếu (ĐTB < 5.0) · Nguy cấp">
+                <span>Yếu</span>
                 <span class="chip-count">(<?= $stats['tier_low'] ?>)</span>
             </button>
         </div>
@@ -978,11 +1037,11 @@ require_once __DIR__ . '/includes/header.php';
 
         <!-- LỌC CẢNH BÁO SỚM & RỦI RO -->
         <div class="chip-segment-group">
-            <button type="button" class="chip chip-red" data-filter="red">
-                <span>Nguy cấp (<?= $stats['red'] ?>)</span>
+            <button type="button" class="chip chip-red" data-filter="red" title="Học sinh ở mức Yếu / Nguy cấp">
+                <span>Yếu (<?= $stats['red'] ?>)</span>
             </button>
-            <button type="button" class="chip chip-yellow" data-filter="yellow">
-                <span>Cần chú ý (<?= $stats['yellow'] ?>)</span>
+            <button type="button" class="chip chip-yellow" data-filter="yellow" title="Học sinh ở mức Trung bình / Cần chú ý">
+                <span>Trung bình (<?= $stats['yellow'] ?>)</span>
             </button>
             <button type="button" class="chip chip-green" data-filter="green">
                 <span>Ổn định (<?= $stats['green'] ?>)</span>
@@ -1314,11 +1373,11 @@ require_once __DIR__ . '/includes/header.php';
                                         <div style="font-weight: 700; color: var(--text-heading); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($mainStudent['full_name']) ?>">
                                             <?= htmlspecialchars($mainStudent['full_name']) ?>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; margin-top: 2px; overflow: hidden;">
                                             <?php if ($overallRisk === 'red'): ?>
-                                                <span class="risk-pill-inline pill-red" title="Học sinh có môn ở mức nguy cấp">Nguy cấp</span>
+                                                <span class="risk-pill-inline pill-red" title="Học sinh ở mức nguy cấp · Yếu">Yếu</span>
                                             <?php elseif ($overallRisk === 'yellow'): ?>
-                                                <span class="risk-pill-inline pill-yellow" title="Học sinh có môn cần chú ý hoặc sa sút">Cần chú ý</span>
+                                                <span class="risk-pill-inline pill-yellow" title="Học sinh cần chú ý · Trung bình">Trung bình</span>
                                             <?php endif; ?>
                                             <?php if (!empty($mainStudent['phone'])): ?>
                                                 <span class="muted small"><?= htmlspecialchars($mainStudent['phone']) ?></span>
@@ -1590,7 +1649,7 @@ require_once __DIR__ . '/includes/header.php';
                                         <div style="font-weight: 700; color: var(--text-heading); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($s['full_name']) ?>">
                                             <?= htmlspecialchars($s['full_name']) ?>
                                         </div>
-                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 2px;">
+                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; margin-top: 2px; overflow: hidden;">
                                             <?php if ($riskLevel === 'red'): ?>
                                                 <span class="risk-pill-inline pill-red" title="Học sinh ở mức nguy cấp">Nguy cấp</span>
                                             <?php elseif ($riskLevel === 'yellow'): ?>

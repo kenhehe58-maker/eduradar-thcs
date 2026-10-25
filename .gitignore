@@ -1,0 +1,17 @@
+﻿# Environments & Editor
+.vscode/
+.idea/
+*.log
+*.tmp
+
+# Dependencies & Testing Caches
+node_modules/
+vendor/
+.venv/
+.playwright/
+__pycache__/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

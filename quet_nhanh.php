@@ -605,33 +605,91 @@ $extraHead = '
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            max-width: 900px;
-            margin: 36px auto 0 auto;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            max-width: 960px;
+            margin: 36px auto 20px auto;
         }
         .feature-item {
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px 20px;
+            border-radius: 14px;
+            padding: 20px 22px;
             text-align: left;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
         }
         .feature-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 26px;
+            margin-bottom: 10px;
             display: inline-block;
         }
         .feature-title {
-            font-size: 14px;
+            font-size: 14.5px;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
         }
         .feature-desc {
-            font-size: 12.5px;
+            font-size: 13px;
             color: #64748b;
-            line-height: 1.5;
+            line-height: 1.55;
+        }
+
+        /* DARK THEME SUPPORT FOR QUET NHANH */
+        [data-theme="dark"] .u032-zone {
+            background: #131b2e !important;
+            color: #f8fafc !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+        }
+        [data-theme="dark"] .u032-zone:hover,
+        [data-theme="dark"] .u032.is-over .u032-zone {
+            background: #1a253c !important;
+        }
+        [data-theme="dark"] .u032-dash rect {
+            stroke: #334466 !important;
+        }
+        [data-theme="dark"] .u032-zone b {
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .u032-zone small {
+            color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .u032-row {
+            background: #131b2e !important;
+            border-color: #23324d !important;
+        }
+        [data-theme="dark"] .u032-meta b {
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .upload-input-group label {
+            color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .upload-input-group input,
+        [data-theme="dark"] .upload-input-group select {
+            background: #1a253c !important;
+            color: #f8fafc !important;
+            border-color: #334466 !important;
+        }
+        [data-theme="dark"] .feature-item {
+            background: #131b2e !important;
+            border-color: #23324d !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+        }
+        [data-theme="dark"] .feature-title {
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .feature-desc {
+            color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .sample-box-card {
+            background: #131b2e !important;
+            border-color: #23324d !important;
         }
 
         .no-scores-alert-banner {
@@ -711,10 +769,10 @@ require_once __DIR__ . '/includes/header.php';
     <?php if (!$hasData): ?>
         <!-- GIAO DIỆN KHI CHƯA CÓ FILE: VÙNG KÉO THẢ TỆP EXCEL VNEDU -->
         <div style="text-align: center; margin: 30px 0 20px 0;">
-            <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">
+            <h1 style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); margin-bottom: 8px;">
                 Quét 1 Chạm Sổ Điểm Điện Tử VnEdu
             </h1>
-            <p style="color: #64748b; font-size: 14px; max-width: 600px; margin: 0 auto;">
+            <p style="color: var(--text-muted, #64748b); font-size: 14px; max-width: 600px; margin: 0 auto;">
                 Chẩn đoán sớm rủi ro học sinh sa sút, phân tích 2 khung năng lực và xuất báo cáo nộp BGH chỉ trong vài giây.
             </p>
         </div>
@@ -755,17 +813,58 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <div style="text-align: center; margin-top: 24px;">
-                <button type="submit" class="btn-guest-action btn-guest-white" style="background: #4f46e5; color: #ffffff; padding: 12px 28px; font-size: 15px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);">
+                <button type="submit" class="btn-guest-action btn-guest-white" style="background: #2563eb; color: #ffffff; padding: 12px 28px; font-size: 15px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);">
                     🚀 Bắt Đầu Phân Tích Radar Ngay
                 </button>
             </div>
         </form>
 
         <div style="text-align: center; margin: 28px 0 20px 0;">
-            <span style="color: #94a3b8; font-size: 13px;">— Hoặc trải nghiệm ngay không cần chuẩn bị tệp —</span><br>
-            <a href="quet_nhanh.php?action=sample" class="btn-guest-action btn-guest-white" style="margin-top: 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #334155;">
+            <span style="color: var(--text-muted, #94a3b8); font-size: 13px;">— Hoặc trải nghiệm ngay không cần chuẩn bị tệp —</span><br>
+            <a href="quet_nhanh.php?action=sample" class="btn-guest-action btn-guest-white" style="margin-top: 12px; border: 1.5px solid var(--primary-border, #3b82f6); background: var(--card-bg, #ffffff); color: var(--primary, #2563eb); font-weight: 700; padding: 10px 22px; border-radius: 10px; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);">
                 🎯 Nạp Sổ Điểm Mẫu VnEdu THCS (10 Học Sinh Đa Dạng Động Năng)
             </a>
+        </div>
+
+        <!-- 3-STEP INTELLIGENT PIPELINE (DRIBBLE-STYLE WORKFLOW CARDS) -->
+        <div class="features-grid">
+            <div class="feature-item">
+                <span class="feature-icon">📥</span>
+                <div class="feature-title">1. Trích Xuất Bảng Điểm 1 Chạm</div>
+                <div class="feature-desc">
+                    Tự động nhận diện chính xác các cột Họ và tên, Mã định danh, Ngày sinh, ĐĐGtx (1-4), Điểm GK, CK từ bảng tính Excel VnEdu và SMAS.
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🧠</span>
+                <div class="feature-title">2. Chẩn Đoán 2 Khung Sư Phạm</div>
+                <div class="feature-desc">
+                    Đối sánh kép: Khung Động Năng Học Tập (tiến bộ, duy trì, sa sút) kết hợp Khung Chuẩn Điểm Số Thông tư 22/2021/TT-BGDĐT.
+                </div>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📑</span>
+                <div class="feature-title">3. Trình Chiếu & Báo Cáo BGH</div>
+                <div class="feature-desc">
+                    Mở Slide thuyết trình tương tác phục vụ họp giao ban, xuất báo cáo PDF chuẩn A4 hoặc trích xuất bảng tổng hợp gửi phụ huynh.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECURITY & SPECS PILLS -->
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 10px auto 40px auto; max-width: 860px;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted, #64748b); padding: 6px 14px; border-radius: 999px; background: var(--card-bg, #ffffff); border: 1px solid var(--border-color, #e2e8f0);">
+                <span>🔒</span>
+                <span>Sandbox cô lập: Dữ liệu không ghi đè vào CSDL trường</span>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted, #64748b); padding: 6px 14px; border-radius: 999px; background: var(--card-bg, #ffffff); border: 1px solid var(--border-color, #e2e8f0);">
+                <span>⚡</span>
+                <span>Phân tích dưới 200ms cho 1,000 học sinh</span>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted, #64748b); padding: 6px 14px; border-radius: 999px; background: var(--card-bg, #ffffff); border: 1px solid var(--border-color, #e2e8f0);">
+                <span>🏆</span>
+                <span>Chuẩn hóa Thông tư 22/2021/TT-BGDĐT</span>
+            </div>
         </div>
 
     <?php else: ?>

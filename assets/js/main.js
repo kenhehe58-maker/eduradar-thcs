@@ -46,55 +46,64 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // -------------------------------------------------------------------------
-    // 2. RADAR DASHBOARD: REAL-TIME CLIENT FILTER & INSTANT SEARCH
+    // 2. RADAR DASHBOARD: REAL-TIME CLIENT MULTI-SELECT FILTER & INSTANT SEARCH
     // -------------------------------------------------------------------------
     const rows = document.querySelectorAll('tbody tr[data-level]');
     const chips = document.querySelectorAll('.chip[data-filter]');
     const search = document.getElementById('search');
     const emptyRow = document.getElementById('radarEmptyRow') || document.querySelector('.radar-filter-empty-row');
-    let currentFilter = 'all';
+    let currentFilters = ['all'];
+
+    function matchRowSingleFilter(r, filterVal) {
+        if (!filterVal || filterVal === 'all') return true;
+        const level = r.dataset.level || '';
+        const trend = r.dataset.trend || '';
+        const momentum = r.dataset.momentum || '';
+        const tier = r.dataset.tier || '';
+        const txWarn = r.dataset.txwarn || '0';
+
+        if (filterVal === 'red' || filterVal === 'yellow' || filterVal === 'green' || filterVal === 'pending') {
+            return (level === filterVal);
+        } else if (filterVal === 'trend:up') {
+            return (trend === 'up' || momentum === 'up' || momentum === 'surge');
+        } else if (filterVal === 'trend:steady') {
+            return (trend === 'stable' || momentum === 'steady');
+        } else if (filterVal === 'trend:down') {
+            return (trend === 'down' || momentum === 'down' || momentum === 'drop');
+        } else if (filterVal === 'trend:pending') {
+            return (momentum === 'pending' || trend === 'pending');
+        } else if (filterVal === 'tier:excellent') {
+            return (tier === 'excellent');
+        } else if (filterVal === 'tier:good') {
+            return (tier === 'good');
+        } else if (filterVal === 'tier:high') {
+            return (tier === 'excellent' || tier === 'good');
+        } else if (filterVal === 'tier:average') {
+            return (tier === 'average');
+        } else if (filterVal === 'tier:low') {
+            return (tier === 'low');
+        } else if (filterVal.startsWith('overall:')) {
+            const targetOverall = filterVal.replace('overall:', '');
+            return ((r.dataset.overall || '') === targetOverall);
+        } else if (filterVal === 'tx:warn') {
+            return (txWarn === '1');
+        }
+        return false;
+    }
 
     function applyFilter() {
         const q = (search?.value || '').toLowerCase().trim();
         let visibleCount = 0;
 
         rows.forEach(function (r) {
-            const level = r.dataset.level || '';
-            const trend = r.dataset.trend || '';
-            const momentum = r.dataset.momentum || '';
-            const tier = r.dataset.tier || '';
-            const txWarn = r.dataset.txwarn || '0';
             const name = (r.dataset.name || '').toLowerCase();
             const searchAttr = (r.dataset.search || '').toLowerCase();
 
             let okFilter = false;
-            if (currentFilter === 'all') {
+            if (currentFilters.length === 0 || currentFilters.includes('all')) {
                 okFilter = true;
-            } else if (currentFilter === 'red' || currentFilter === 'yellow' || currentFilter === 'green' || currentFilter === 'pending') {
-                okFilter = (level === currentFilter);
-            } else if (currentFilter === 'trend:up') {
-                okFilter = (trend === 'up' || momentum === 'up' || momentum === 'surge');
-            } else if (currentFilter === 'trend:steady') {
-                okFilter = (trend === 'stable' || momentum === 'steady');
-            } else if (currentFilter === 'trend:down') {
-                okFilter = (trend === 'down' || momentum === 'down' || momentum === 'drop');
-            } else if (currentFilter === 'trend:pending') {
-                okFilter = (momentum === 'pending' || trend === 'pending');
-            } else if (currentFilter === 'tier:excellent') {
-                okFilter = (tier === 'excellent');
-            } else if (currentFilter === 'tier:good') {
-                okFilter = (tier === 'good');
-            } else if (currentFilter === 'tier:high') {
-                okFilter = (tier === 'excellent' || tier === 'good');
-            } else if (currentFilter === 'tier:average') {
-                okFilter = (tier === 'average');
-            } else if (currentFilter === 'tier:low') {
-                okFilter = (tier === 'low');
-            } else if (currentFilter.startsWith('overall:')) {
-                const targetOverall = currentFilter.replace('overall:', '');
-                okFilter = ((r.dataset.overall || '') === targetOverall);
-            } else if (currentFilter === 'tx:warn') {
-                okFilter = (txWarn === '1');
+            } else {
+                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(r, f); });
             }
 
             const okSearch = !q || name.includes(q) || searchAttr.includes(q);
@@ -113,10 +122,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     chips.forEach(function (c) {
-        c.addEventListener('click', function () {
-            chips.forEach(function (x) { x.classList.remove('active'); });
-            this.classList.add('active');
-            currentFilter = this.dataset.filter || 'all';
+        c.addEventListener('click', function (e) {
+            const f = this.dataset.filter || 'all';
+            const allChip = document.querySelector('.chip[data-filter="all"]');
+
+            if (f === 'all') {
+                chips.forEach(function (x) { x.classList.remove('active'); });
+                this.classList.add('active');
+                currentFilters = ['all'];
+            } else {
+                if (allChip) allChip.classList.remove('active');
+                this.classList.toggle('active');
+
+                const activeChips = Array.from(document.querySelectorAll('.chip[data-filter].active'))
+                    .map(function(x) { return x.dataset.filter; })
+                    .filter(function(x) { return x && x !== 'all'; });
+
+                if (activeChips.length === 0) {
+                    if (allChip) allChip.classList.add('active');
+                    currentFilters = ['all'];
+                } else {
+                    currentFilters = activeChips;
+                }
+            }
             applyFilter();
         });
     });
@@ -129,10 +157,13 @@ document.addEventListener('DOMContentLoaded', function () {
     window.filterByTier = function (filterVal) {
         const chip = document.querySelector('.chip[data-filter="' + filterVal + '"]');
         if (chip) {
-            chip.click();
+            chips.forEach(function (x) { x.classList.remove('active'); });
+            chip.classList.add('active');
+            currentFilters = [filterVal];
+            applyFilter();
         } else {
             chips.forEach(function (x) { x.classList.remove('active'); });
-            currentFilter = filterVal;
+            currentFilters = [filterVal];
             applyFilter();
         }
         const targetTable = document.querySelector('.radar-table') || document.querySelector('.table-container');

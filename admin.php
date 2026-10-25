@@ -811,6 +811,45 @@ $extraHead = '<style>
     .delete-class-btn { color: #94a3b8; border: none; background: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; font-size: 11px; line-height: 1; transition: color .15s; }
     .delete-class-btn:hover { color: #ef4444; background: #fee2e2; }
 
+    /* MATRIX GRADE CARDS & PILLS */
+    .matrix-grade-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; }
+    .matrix-grade-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px; }
+    .matrix-grade-title { font-size: 14px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 800; }
+    .matrix-grade-badge { background: #e2e8f0; color: #334155; font-size: 12px; font-family: "JetBrains Mono", monospace; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+    .matrix-class-pill { display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 6px; font-size: 12.5px; color: #0f172a; }
+    .admin-create-class-form { display: flex; gap: 8px; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .admin-assign-mode-box { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
+    .admin-filter-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; background: #ffffff; color: #0f172a; }
+    .admin-assign-teacher-select { padding: 5px 8px; border-radius: 6px; font-weight: 700; font-size: 13px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; cursor: pointer; }
+
+    /* DARK THEME ADMIN OVERRIDES */
+    [data-theme="dark"] .matrix-grade-card { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .matrix-grade-header { border-bottom-color: #23324d !important; }
+    [data-theme="dark"] .matrix-grade-title { color: #f8fafc !important; }
+    [data-theme="dark"] .matrix-grade-badge { background: #1a253c !important; color: #94a3b8 !important; }
+    [data-theme="dark"] .matrix-class-pill { background: #1a253c !important; border-color: #2e3f60 !important; color: #f8fafc !important; }
+    [data-theme="dark"] .admin-create-class-form { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .admin-create-class-form select,
+    [data-theme="dark"] .admin-create-class-form input { background: #1a253c !important; border-color: #2e3f60 !important; color: #f8fafc !important; }
+    [data-theme="dark"] .grade-group { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .grade-header { border-bottom-color: #23324d !important; }
+    [data-theme="dark"] .grade-title { color: #f8fafc !important; }
+    [data-theme="dark"] .class-chip-box { background: #1a253c !important; border-color: #2e3f60 !important; color: #cbd5e1 !important; }
+    [data-theme="dark"] .class-chip-box:hover { background: #233354 !important; border-color: #3b82f6 !important; }
+    [data-theme="dark"] .class-chip-box.selected { background: #2563eb !important; border-color: #3b82f6 !important; color: #ffffff !important; }
+    [data-theme="dark"] .btn-toggle-grade { background: #1a253c !important; border-color: #2e3f60 !important; color: #94a3b8 !important; }
+    [data-theme="dark"] .btn-toggle-grade:hover { background: #253352 !important; color: #f8fafc !important; }
+    [data-theme="dark"] .admin-tab-nav { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .btn-admin-tab { color: #94a3b8 !important; }
+    [data-theme="dark"] .btn-admin-tab:hover { background: rgba(255, 255, 255, 0.05) !important; color: #f8fafc !important; }
+    [data-theme="dark"] .btn-admin-tab.active { background: #2563eb !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important; }
+    [data-theme="dark"] .admin-assign-mode-box { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .admin-assign-mode-box label span { color: #cbd5e1 !important; }
+    [data-theme="dark"] .admin-filter-select { background: #1a253c !important; color: #f8fafc !important; border-color: #2e3f60 !important; }
+    [data-theme="dark"] .admin-assign-teacher-select { background: #1a253c !important; color: #f8fafc !important; border-color: #2e3f60 !important; }
+    [data-theme="dark"] #teacherCurrentInfoBox { background: #1a253c !important; border-color: #312e81 !important; }
+    [data-theme="dark"] #teacherCurrentInfoText { color: #a5b4fc !important; }
+
     /* Lucian UX/UI Prompt #032 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#032 */
     .u032{position:relative;width:100%;margin:10px 0 12px;}
     .u032-zone{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:150px;border:none !important;outline:none;padding:0;border-radius:18px;background:#ffffff !important;color:#0f172a !important;cursor:pointer;box-shadow:0 8px 24px rgba(15,23,42,.06);transition:transform .3s ease,background-color .3s ease}
@@ -848,6 +887,15 @@ $extraHead = '<style>
     @keyframes u032-draw{to{stroke-dashoffset:0}}
     .u032-spin{width:16px;height:16px;border-radius:50%;border:2px solid #e2e8f0;border-top-color:var(--ux-accent,#4f46e5);animation:u032-rot .8s linear infinite}
     @keyframes u032-rot{to{transform:rotate(360deg)}}
+
+    /* DARK THEME U032 OVERRIDES */
+    [data-theme="dark"] .u032-zone { background: #131b2e !important; color: #f8fafc !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important; }
+    [data-theme="dark"] .u032-zone:hover, [data-theme="dark"] .u032.is-over .u032-zone { background: #1a253c !important; }
+    [data-theme="dark"] .u032-dash rect { stroke: #2e3f60 !important; }
+    [data-theme="dark"] .u032-zone b { color: #f8fafc !important; }
+    [data-theme="dark"] .u032-zone small { color: #94a3b8 !important; }
+    [data-theme="dark"] .u032-row { background: #1a253c !important; border-color: #23324d !important; }
+    [data-theme="dark"] .u032-meta b { color: #f8fafc !important; }
 
     /* APPLE-STYLE ADMIN TABS */
     .admin-tab-nav {
@@ -989,22 +1037,22 @@ require_once __DIR__ . '/includes/header.php';
                 <p class="muted small">Xem danh sách lớp học được phân chia theo khối, theo dõi sĩ số học sinh và quản lý thêm/xóa lớp.</p>
             </div>
             <!-- Biểu mẫu tạo lớp học mới -->
-            <form method="POST" style="display: flex; gap: 8px; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <form method="POST" class="admin-create-class-form">
                 <input type="hidden" name="action" value="create_class">
-                <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #475569;">Thêm Lớp:</span>
-                <select name="grade" required style="padding: 6px 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase;">Thêm Lớp:</span>
+                <select name="grade" required style="padding: 6px 8px; font-size: 13px; border-radius: 6px;">
                     <option value="6">Khối 6</option>
                     <option value="7">Khối 7</option>
                     <option value="8">Khối 8</option>
                     <option value="9">Khối 9</option>
                 </select>
-                <select name="section" required style="padding: 6px 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <select name="section" required style="padding: 6px 8px; font-size: 13px; border-radius: 6px;">
                     <option value="A">Ban A</option>
                     <option value="B">Ban B</option>
                     <option value="C">Ban C</option>
                 </select>
-                <input type="number" name="class_num" min="1" max="9" value="1" style="width: 55px; padding: 6px 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1;" title="Số thứ tự lớp (1-9)">
-                <input type="text" name="name" placeholder="Hoặc tên tùy chỉnh (6C4)" style="width: 140px; padding: 6px 8px; font-size: 13px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                <input type="number" name="class_num" min="1" max="9" value="1" style="width: 55px; padding: 6px 8px; font-size: 13px; border-radius: 6px;" title="Số thứ tự lớp (1-9)">
+                <input type="text" name="name" placeholder="Hoặc tên tùy chỉnh (6C4)" style="width: 140px; padding: 6px 8px; font-size: 13px; border-radius: 6px;">
                 <button type="submit" class="btn primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700;">
                     Tạo Lớp
                 </button>
@@ -1018,10 +1066,10 @@ require_once __DIR__ . '/includes/header.php';
                     $classesInThisGrade = $groupedClasses[$g] ?? [];
                     $totalStudentsInGrade = array_sum(array_column($classesInThisGrade, 'student_count'));
                 ?>
-                <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px;">
-                        <b style="font-size: 14px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.03em;">Khối <?= $g ?></b>
-                        <span class="badge" style="background: #e2e8f0; color: #334155; font-size: 12px; font-family: 'JetBrains Mono', monospace;">
+                <div class="matrix-grade-card">
+                    <div class="matrix-grade-header">
+                        <b class="matrix-grade-title">Khối <?= $g ?></b>
+                        <span class="matrix-grade-badge">
                             <?= count($classesInThisGrade) ?> lớp | <?= $totalStudentsInGrade ?> HS
                         </span>
                     </div>
@@ -1030,7 +1078,7 @@ require_once __DIR__ . '/includes/header.php';
                             <span class="muted small">Chưa có lớp nào trong khối này.</span>
                         <?php else: ?>
                             <?php foreach ($classesInThisGrade as $c): ?>
-                                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 6px; font-size: 12.5px;">
+                                <div class="matrix-class-pill">
                                     <b><?= htmlspecialchars($c['name']) ?></b>
                                     <span class="badge-student-count <?= $c['student_count'] > 0 ? 'has-students' : '' ?>">
                                         <?= $c['student_count'] ?> HS
@@ -1189,8 +1237,8 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- CHẾ ĐỘ PHÂN CÔNG (CẬP NHẬT / LÀM MỚI / THÊM MỚI) -->
-            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px;">
-                <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #1e293b; display: block; margin-bottom: 8px;">Chế Độ Phân Công Khi Bấm Lưu:</label>
+            <div class="admin-assign-mode-box">
+                <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">Chế Độ Phân Công Khi Bấm Lưu:</label>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         <input type="radio" name="assign_mode" value="replace_subject" checked>
@@ -1272,19 +1320,19 @@ require_once __DIR__ . '/includes/header.php';
             <span class="muted small">Admin có thể chuyển giao giáo viên trực tiếp trên bảng hoặc mở trực tiếp bảng điểm của bất kỳ môn/lớp nào.</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            <select id="assignSubjectFilter" onchange="filterAssignments()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; background: #fff;">
+            <select id="assignSubjectFilter" onchange="filterAssignments()" class="admin-filter-select">
                 <option value="">-- Lọc theo Môn Học --</option>
                 <?php foreach ($thcsSubjects as $s): ?>
                     <option value="<?= htmlspecialchars($s) ?>"><?= htmlspecialchars($s) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="assignTeacherFilter" onchange="filterAssignments()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; background: #fff;">
+            <select id="assignTeacherFilter" onchange="filterAssignments()" class="admin-filter-select">
                 <option value="">-- Lọc theo Giáo Viên --</option>
                 <?php foreach ($teachers as $t): ?>
                     <option value="<?= htmlspecialchars($t['full_name']) ?>"><?= htmlspecialchars($t['full_name']) ?></option>
                 <?php endforeach; ?>
             </select>
-            <select id="assignGradeFilter" onchange="filterAssignments()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; background: #fff;">
+            <select id="assignGradeFilter" onchange="filterAssignments()" class="admin-filter-select">
                 <option value="">-- Lọc theo Khối --</option>
                 <option value="Khối 6">Khối 6</option>
                 <option value="Khối 7">Khối 7</option>
@@ -1330,7 +1378,7 @@ require_once __DIR__ . '/includes/header.php';
                                 <form method="POST" style="margin: 0; display: inline-flex; align-items: center; gap: 6px;">
                                     <input type="hidden" name="action" value="update_assignment_teacher">
                                     <input type="hidden" name="assignment_id" value="<?= $a['id'] ?>">
-                                    <select name="new_teacher_id" onchange="this.form.submit()" title="Bấm chọn để chuyển giao ngay giáo viên phụ trách" style="padding: 5px 8px; border-radius: 6px; font-weight: 700; font-size: 13px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer;">
+                                    <select name="new_teacher_id" onchange="this.form.submit()" title="Bấm chọn để chuyển giao ngay giáo viên phụ trách" class="admin-assign-teacher-select">
                                         <?php foreach ($teachers as $t): ?>
                                             <option value="<?= $t['id'] ?>" <?= $t['id'] == $a['teacher_id'] ? 'selected' : '' ?>>
                                                 <?= htmlspecialchars($t['full_name']) ?> (<?= htmlspecialchars($t['username']) ?>)
