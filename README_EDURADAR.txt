@@ -21,6 +21,6 @@ HUONG DAN CAI DAT NHANH:
 3. Import file 'my-web-project/database/edu_radar_dump.sql' vao MySQL (bang phpMyAdmin hoac cmd: mysql -u root < database/edu_radar_dump.sql).
 4. Mo trinh duyet truy cap: http://localhost/my-web-project/index.php
    Tai khoan mau:
-   - Giao vien: nguyenvanan / 123456
+   - Giao vien: gv_toan / 123456
    - BGH / Quan tri: admin / 123456
 ========================================================================
