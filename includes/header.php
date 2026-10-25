@@ -171,7 +171,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             scroll-margin-top: 85px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 900px) and (min-width: 769px) {
             .glass-topbar {
                 left: 68px;
                 margin-left: 68px;
@@ -181,6 +181,48 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 margin-left: 68px !important;
                 width: calc(100% - 68px) !important;
                 padding: 16px 16px 70px 16px !important;
+            }
+        }
+
+        /* Full Responsive Layout for Mobile Devices (<= 768px) */
+        @media (max-width: 768px) {
+            .glass-topbar {
+                position: relative !important;
+                left: 0 !important;
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .glass-topbar-inner {
+                padding: 10px 14px !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+            .edexa-welcome-wrap {
+                width: 100% !important;
+                justify-content: space-between !important;
+            }
+            .edexa-welcome-text {
+                font-size: 15px !important;
+            }
+            .glass-status-group {
+                width: 100% !important;
+                justify-content: flex-start !important;
+                gap: 6px !important;
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 2px !important;
+            }
+            .glass-status-chip {
+                padding: 4px 8px !important;
+                font-size: 11px !important;
+            }
+            .content.full-width {
+                margin-left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 12px 14px 84px 14px !important;
+                box-sizing: border-box !important;
             }
         }
     </style>
