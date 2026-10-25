@@ -262,12 +262,99 @@ function diagnose_student_mathematical_profile(array $txScores, ?float $gk, ?flo
         'regression' => $regression,
         'stability' => $stability,
         'targets' => $targetSolver,
+        'academic_phase' => get_academic_calendar_phase(),
         'computed_at' => date('Y-m-d H:i:s')
     ];
 }
 
 /**
- * 5. XUẤT CÁC THUỘC TÍNH DATA-MATH-* CHO GIAO DIỆN MODAL VÀ RADAR TABLE
+ * 5. NHẬN BIẾT LỊCH HỌC NĂM VÀ ĐIỀU BIẾN TRỌNG TÂM TÍNH TOÁN THEO THỜI GIAN THỰC
+ * Tự động nhận diện học kỳ (HK1 / HK2 / Hè), tuần học và giai đoạn sư phạm dựa trên lịch thực tế.
+ */
+function get_academic_calendar_phase(?DateTimeInterface $currentDate = null): array {
+    $now = $currentDate ? clone $currentDate : new DateTime('now', new DateTimeZone('Asia/Ho_Chi_Minh'));
+    $m = (int)$now->format('n');
+    $d = (int)$now->format('j');
+    $y = (int)$now->format('Y');
+
+    if ($m >= 9) {
+        $schoolYear = $y . ' - ' . ($y + 1);
+        $semester = 'HK1';
+        $semesterName = 'Học kỳ I';
+    } elseif ($m <= 5) {
+        $schoolYear = ($y - 1) . ' - ' . $y;
+        $semester = ($m === 1 && $d <= 15) ? 'HK1' : 'HK2';
+        $semesterName = ($m === 1 && $d <= 15) ? 'Học kỳ I' : 'Học kỳ II';
+    } else {
+        $schoolYear = ($y - 1) . ' - ' . $y;
+        $semester = 'SUMMER';
+        $semesterName = 'Nghỉ hè & Chuẩn bị năm học mới';
+    }
+
+    if ($semester === 'HK1') {
+        if ($m === 9 || ($m === 10 && $d <= 20)) {
+            $phaseKey = 'hk1_start';
+            $phaseTitle = 'Khởi động Học kỳ I (Tuần 1 - 7)';
+            $calcFocus = 'Động năng điểm Thường xuyên & Chuẩn bị thi Giữa kỳ';
+            $targetPrompt = 'Điểm Cuối kỳ I (CK1) dự phóng';
+            $focusKey = 'midterm_prep';
+        } elseif (($m === 10 && $d > 20) || $m === 11) {
+            $phaseKey = 'hk1_mid';
+            $phaseTitle = 'Giai đoạn Giữa kỳ I (Tuần 8 - 13)';
+            $calcFocus = 'Đã có điểm Giữa kỳ · Trọng tâm giải ngược điểm Cuối kỳ I';
+            $targetPrompt = 'Điểm Cuối kỳ I (CK1) tối thiểu cần đạt';
+            $focusKey = 'final_inverse';
+        } else {
+            $phaseKey = 'hk1_finals';
+            $phaseTitle = 'Nước rút Cuối kỳ I (Tuần 14 - 18)';
+            $calcFocus = 'Thi Cuối kỳ I & Khóa sổ điểm Học kỳ I TT22';
+            $targetPrompt = 'Điểm Cuối kỳ I chốt sổ ĐTB Học kỳ I';
+            $focusKey = 'final_closing';
+        }
+    } elseif ($semester === 'HK2') {
+        if ($m === 1 || $m === 2 || ($m === 3 && $d <= 15)) {
+            $phaseKey = 'hk2_start';
+            $phaseTitle = 'Khởi động Học kỳ II (Tuần 19 - 25)';
+            $calcFocus = 'Chuỗi điểm TX HK2 & Giữ vững phong độ sau Tết';
+            $targetPrompt = 'Dự báo điểm Giữa kỳ II';
+            $focusKey = 'midterm_prep';
+        } elseif (($m === 3 && $d > 15) || $m === 4) {
+            $phaseKey = 'hk2_mid';
+            $phaseTitle = 'Giai đoạn Giữa kỳ II (Tuần 26 - 31)';
+            $calcFocus = 'Giải ngược điểm Cuối kỳ II cho mục tiêu Cả Năm';
+            $targetPrompt = 'Điểm Cuối kỳ II (CK2) để đạt ĐTB Cả Năm';
+            $focusKey = 'year_end_inverse';
+        } else {
+            $phaseKey = 'hk2_finals';
+            $phaseTitle = 'Nước rút Về đích Cả Năm (Tuần 32 - 35)';
+            $calcFocus = 'Tổng kết năm học & Xét công nhận tốt nghiệp/lên lớp';
+            $targetPrompt = 'Điểm Cuối kỳ II chốt danh hiệu Cả Năm';
+            $focusKey = 'year_end_closing';
+        }
+    } else {
+        $phaseKey = 'summer';
+        $phaseTitle = 'Tổng kết Hè & Chuẩn bị Khóa mới';
+        $calcFocus = 'Phân tích tổng thể hồ sơ học tập và ôn tập hè';
+        $targetPrompt = 'Đánh giá năng lực tổng kết cả năm học';
+        $focusKey = 'summer_review';
+    }
+
+    return [
+        'current_date'   => $now->format('d/m/Y'),
+        'current_time'   => $now->format('H:i'),
+        'school_year'    => $schoolYear,
+        'semester'       => $semester,
+        'semester_name'  => $semesterName,
+        'phase_key'      => $phaseKey,
+        'phase_title'    => $phaseTitle,
+        'calc_focus'     => $calcFocus,
+        'target_prompt'  => $targetPrompt,
+        'focus_key'      => $focusKey
+    ];
+}
+
+/**
+ * 6. XUẤT CÁC THUỘC TÍNH DATA-MATH-* CHO GIAO DIỆN MODAL VÀ RADAR TABLE
  */
 function format_math_data_attributes(array $student): string {
     $mp = $student['math_profile'] ?? [];
@@ -290,6 +377,7 @@ function format_math_data_attributes(array $student): string {
     $targetData = $mp['targets'] ?? [];
     $targets = $targetData['targets'] ?? [];
     $alert = $targetData['pedagogical_advice'] ?? '';
+    $academic = $mp['academic_phase'] ?? get_academic_calendar_phase();
 
     $slope = $reg['k'] ?? ($reg['slope'] ?? 0);
     $slopeSummary = $reg['trend_label'] ?? ($reg['summary'] ?? '');
@@ -316,5 +404,10 @@ function format_math_data_attributes(array $student): string {
            'data-math-status-dat="' . htmlspecialchars((string)$statusDat) . '" ' .
            'data-math-status-kha="' . htmlspecialchars((string)$statusKha) . '" ' .
            'data-math-status-tot="' . htmlspecialchars((string)$statusTot) . '" ' .
-           'data-math-alert="' . htmlspecialchars((string)$alert) . '"';
+           'data-math-alert="' . htmlspecialchars((string)$alert) . '" ' .
+           'data-academic-year="' . htmlspecialchars($academic['school_year']) . '" ' .
+           'data-academic-semester="' . htmlspecialchars($academic['semester_name']) . '" ' .
+           'data-academic-phase="' . htmlspecialchars($academic['phase_title']) . '" ' .
+           'data-academic-focus="' . htmlspecialchars($academic['calc_focus']) . '" ' .
+           'data-academic-prompt="' . htmlspecialchars($academic['target_prompt']) . '"';
 }

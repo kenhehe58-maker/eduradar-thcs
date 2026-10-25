@@ -90,6 +90,43 @@ assert_test("Fuzzy Diacritics Recovery", $match2['student_id'] === 101 && $match
 $match3 = match_student_fuzzy('Trần Thị Mai Phượng', $roster);
 assert_test("Fuzzy Typo Tolerance", $match3['student_id'] === 102 && $match3['similarity_percent'] >= 90.0);
 
+// --- SUITE 5: CHU KỲ NIÊN KHÓA & THỜI ĐIỂM SƯ PHẠM TỰ ĐỘNG ---
+echo "\n--- SUITE 5: Academic Calendar & Pedagogical Phase Engine ---\n";
+// Case 1: Thời điểm hiện tại
+$currentCal = get_academic_calendar_phase();
+assert_test("Current Calendar School Year Formatted", preg_match('/^\d{4}\s*-\s*\d{4}$/', $currentCal['school_year']) === 1);
+assert_test("Current Calendar Semester Valid", in_array($currentCal['semester'], ['HK1', 'HK2', 'SUMMER'], true));
+assert_test("Current Calendar Focus Defined", !empty($currentCal['calc_focus']) && !empty($currentCal['target_prompt']));
+
+// Case 2: Tháng 9 (Đầu HK1 - 2026-09-15) -> hk1_start
+$calSept = get_academic_calendar_phase(new DateTime('2026-09-15'));
+assert_test("Sept Academic Phase hk1_start", $calSept['phase_key'] === 'hk1_start');
+assert_test("Sept School Year 2026 - 2027", $calSept['school_year'] === '2026 - 2027');
+assert_test("Sept Calc Focus GK", strpos($calSept['calc_focus'], 'Giữa kỳ') !== false);
+
+// Case 3: Tháng 11 (Giữa HK1 - 2026-11-20) -> hk1_mid (Giải ngược điểm Cuối kỳ 1)
+$calNov = get_academic_calendar_phase(new DateTime('2026-11-20'));
+assert_test("Nov Academic Phase hk1_mid", $calNov['phase_key'] === 'hk1_mid');
+assert_test("Nov Calc Focus CK1", strpos($calNov['calc_focus'], 'Cuối kỳ I') !== false);
+
+// Case 4: Tháng 12 (Nước rút Cuối kỳ 1 - 2026-12-15) -> hk1_finals
+$calDec = get_academic_calendar_phase(new DateTime('2026-12-15'));
+assert_test("Dec Academic Phase hk1_finals", $calDec['phase_key'] === 'hk1_finals');
+
+// Case 5: Tháng 4 (Giữa HK2 - 2027-04-20) -> hk2_mid & mục tiêu Cả Năm
+$calApr = get_academic_calendar_phase(new DateTime('2027-04-20'));
+assert_test("Apr Academic Phase hk2_mid", $calApr['phase_key'] === 'hk2_mid');
+assert_test("Apr Calc Focus CK2 & Full Year", strpos($calApr['calc_focus'], 'Cả Năm') !== false);
+
+// Case 6: Tháng 5 (Về đích Cả Năm - 2027-05-15) -> hk2_finals
+$calMay = get_academic_calendar_phase(new DateTime('2027-05-15'));
+assert_test("May Academic Phase hk2_finals", $calMay['phase_key'] === 'hk2_finals');
+
+// Case 7: Tháng 7 (Nghỉ hè & Rà soát tuyển sinh - 2027-07-10) -> summer
+$calJul = get_academic_calendar_phase(new DateTime('2027-07-10'));
+assert_test("Jul Academic Phase Summer", $calJul['phase_key'] === 'summer');
+assert_test("Jul School Year 2026 - 2027", $calJul['school_year'] === '2026 - 2027');
+
 // Total Output
 echo "\n========================================================================\n";
 echo "  TEST SUMMARY: $passed PASSED, $failed FAILED\n";

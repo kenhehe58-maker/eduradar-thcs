@@ -360,6 +360,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const modalMathStabilityDesc = document.getElementById('modalMathStabilityDesc');
         const modalTargetCardsGrid = document.getElementById('modalTargetCardsGrid');
         const modalMathTargetAlert = document.getElementById('modalMathTargetAlert');
+        const modalMathAcademicBadge = document.getElementById('modalMathAcademicBadge');
+        const modalMathTargetPrompt = document.getElementById('modalMathTargetPrompt');
+
+        if (modalMathAcademicBadge) {
+            const sem = row.dataset.academicSemester || 'Học kỳ I';
+            const phase = row.dataset.academicPhase || 'Giai đoạn học kỳ';
+            modalMathAcademicBadge.textContent = `${sem} · ${phase}`;
+        }
+        if (modalMathTargetPrompt) {
+            const prompt = row.dataset.academicPrompt || 'Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ';
+            modalMathTargetPrompt.textContent = `🎯 ${prompt}:`;
+        }
 
         if (modalMathSlope) {
             const slope = parseFloat(row.dataset.mathSlope || '0');

@@ -424,6 +424,7 @@ if ($selectedClassId > 0) {
     }
 }
 
+$academicCalendar = get_academic_calendar_phase();
 $activeNav = 'dashboard';
 $pageTitle = 'Radar Cảnh Báo Sớm & Năng Lực Học Tập';
 require_once __DIR__ . '/includes/header.php';
@@ -432,10 +433,12 @@ require_once __DIR__ . '/includes/header.php';
 <!-- EDEXA HERO NOTICE BOARD / WELCOME CARD (DRIBBLE SHOT INSPIRATION) -->
 <div class="edexa-hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 20px; padding: 24px 28px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
     <div style="max-width: 680px;">
-        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
-            <span>📢 BẢNG THÔNG TIN SƯ PHẠM</span>
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; flex-wrap: wrap;">
+            <span>📅 NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
             <span>&bull;</span>
-            <span>NIÊN KHÓA 2025–2026</span>
+            <span><?= htmlspecialchars($academicCalendar['semester_name']) ?> (<?= htmlspecialchars($academicCalendar['phase_title']) ?>)</span>
+            <span>&bull;</span>
+            <span style="color: #0369a1;">🎯 <?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
         </div>
         <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
             Đồng Hành Cùng Học Sinh Bứt Phá Năng Lực Học Tập
@@ -1834,7 +1837,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 16px;">📐</span>
-                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Trọng Tâm Toán Học &amp; Dự Báo Điểm Cuối Kỳ Mục Tiêu</span>
+                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Trọng Tâm Toán Học &amp; Dự Báo Điểm Mục Tiêu</span>
+                        <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
                     </div>
                     <span class="mono-code" style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 3px 8px; border-radius: 6px; font-weight: 700;">Hồi quy OLS &amp; Giải ngược TT22</span>
                 </div>
@@ -1855,7 +1859,7 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Target CK Projection Cards -->
                 <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
+                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
                         🎯 Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
