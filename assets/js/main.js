@@ -402,11 +402,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             targets.forEach(function(t) {
                 const card = document.createElement('div');
+                card.className = 'target-card-item';
                 card.style.padding = '8px 10px';
                 card.style.borderRadius = '8px';
                 card.style.border = `1px solid ${t.border}`;
                 card.style.background = t.bg;
                 card.style.textAlign = 'center';
+
+                let subLabel = 'Điểm CK tối thiểu';
+                const focus = (row.dataset.academicFocus || '').toLowerCase();
+                if (focus.includes('cả năm') || focus.includes('ck2')) {
+                    subLabel = 'Điểm CK2 tối thiểu';
+                } else if (focus.includes('giữa kỳ') || focus.includes('gk')) {
+                    subLabel = 'Điểm GK tối thiểu';
+                }
 
                 let scoreText = '-';
                 let subText = '';
@@ -418,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     subText = '⚠️ Cần thêm TX';
                 } else if (t.val !== undefined && t.val !== '' && !isNaN(parseFloat(t.val))) {
                     scoreText = `${parseFloat(t.val).toFixed(1)} đ`;
-                    subText = 'Điểm CK tối thiểu';
+                    subText = subLabel;
                 } else {
                     scoreText = 'Chờ điểm';
                     subText = 'Chưa có điểm TX';

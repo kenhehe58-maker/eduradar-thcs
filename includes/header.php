@@ -3,6 +3,8 @@
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
+require_once __DIR__ . '/algorithms.php';
+$headerCalendar = get_academic_calendar_phase();
 $currentUserRole = $_SESSION['role'] ?? 'teacher';
 $currentUsername = $_SESSION['username'] ?? '';
 $currentUserFullName = $_SESSION['full_name'] ?? $currentUsername;
@@ -246,9 +248,9 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
 
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
-            <div class="glass-status-chip chip-accent" title="Niên khóa & Học kỳ đang áp dụng">
+            <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title']) ?>">
                 <span class="tech-indicator">CAL</span>
-                <span>2025–2026 &bull; HK II</span>
+                <span><?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
             </div>
             <div class="glass-status-chip" title="Trạng thái kết nối máy chủ CSDL MariaDB (Port 3306)">
                 <span class="chip-pulse"></span>

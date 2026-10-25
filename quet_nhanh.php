@@ -1299,12 +1299,12 @@ require_once __DIR__ . '/includes/header.php';
 
                         <!-- Slope and Stability Metrics -->
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px;">
-                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <div class="math-metric-card" style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
                                 <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Động năng xu hướng (Hệ số góc k)</div>
                                 <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">k = +0.00</div>
                                 <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Chuỗi điểm đang phân tích...</div>
                             </div>
-                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <div class="math-metric-card" style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
                                 <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Độ ổn định phong độ (Độ lệch chuẩn σ)</div>
                                 <div id="modalMathStability" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">σ = 0.00</div>
                                 <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Mức độ phân tán phong độ</div>
@@ -1312,7 +1312,7 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
 
                         <!-- Target CK Projection Cards -->
-                        <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div class="math-target-card" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
                             <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
                                 🎯 Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:
                             </div>

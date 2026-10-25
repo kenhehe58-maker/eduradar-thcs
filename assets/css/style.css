@@ -674,6 +674,10 @@
     padding: 0;
 }
 
+html {
+    overflow-x: clip;
+}
+
 body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     background-color: var(--bg-main);
@@ -682,6 +686,16 @@ body {
     min-height: 100vh;
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+}
+
+:focus-visible {
+    outline: 2px solid var(--primary, #2563eb);
+    outline-offset: 2px;
+}
+
+button, a, input, select {
+    touch-action: manipulation;
 }
 
 /* SIDEBAR - Stitch Modern Dark Luxury (Docked on LEFT Edge with Collapsible State) */
@@ -3623,6 +3637,22 @@ body.liquid-glass-layout {
 }
 [data-theme="dark"] .apple-pedagogy-content {
   color: #cbd5e1 !important;
+}
+[data-theme="dark"] .math-metric-card,
+[data-theme="dark"] .math-target-card {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+}
+[data-theme="dark"] #modalMathSlope,
+[data-theme="dark"] #modalMathStability {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] #modalMathTargetPrompt {
+  color: #cbd5e1 !important;
+}
+[data-theme="dark"] .target-card-item {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 [data-theme="dark"] .score-timeline-ribbon {
   background: #1a253c !important;

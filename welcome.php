@@ -7,6 +7,9 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/radar_helper.php';
+require_once __DIR__ . '/includes/algorithms.php';
+
+$welcomeCalendar = get_academic_calendar_phase();
 
 // Kiểm tra quyền đăng nhập
 $userRole = $_SESSION['role'] ?? 'guest';
@@ -401,7 +404,7 @@ require_once __DIR__ . '/includes/header.php';
 <!-- 1. HERO SHOWCASE BANNER -->
 <section class="welcome-hero">
     <div class="welcome-badge">
-        <span>🚀 TRUNG TÂM KHỞI ĐỘNG SƯ PHẠM</span>
+        <span>📅 NĂM HỌC <?= htmlspecialchars($welcomeCalendar['school_year']) ?> &bull; <?= htmlspecialchars($welcomeCalendar['semester_name']) ?></span>
         <span>&bull;</span>
         <span>EDURADAR THCS</span>
     </div>
