@@ -3388,6 +3388,220 @@ body.liquid-glass-layout {
   .btn, button {
     min-height: 40px;
   }
+
+  /* Mobile Student Cards (Apple / Dribbble Mobile Cards for Teachers) */
+  .radar-table-wrap.view-table-hidden {
+    display: none !important;
+  }
+  .mobile-student-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 14px !important;
+  }
+  .mobile-view-switcher {
+    display: inline-flex !important;
+  }
+}
+
+/* Mobile Student Cards Styles (Unified Component) */
+.mobile-student-cards {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+.mobile-view-switcher {
+  display: none;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 3px;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+[data-theme="dark"] .mobile-view-switcher {
+  background: #1e293b !important;
+}
+.m-view-btn {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.m-view-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+[data-theme="dark"] .m-view-btn.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.m-student-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+.m-student-card:active {
+  transform: scale(0.99);
+}
+[data-theme="dark"] .m-student-card {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+.m-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.m-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .m-avatar {
+  background: #1e293b !important;
+  color: #60a5fa !important;
+}
+.m-info {
+  flex: 1;
+  min-width: 0;
+}
+.m-name {
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--text-heading, #0f172a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.m-meta {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+.m-code {
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #4338ca;
+}
+.m-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: center;
+}
+[data-theme="dark"] .m-metrics-row {
+  background: #1a253c !important;
+  border-color: #26354f !important;
+}
+.m-metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 2px;
+}
+.m-metric-val {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0f172a;
+}
+[data-theme="dark"] .m-metric-val {
+  color: #f8fafc !important;
+}
+.m-pedagogy-box {
+  background: #f8fafc;
+  border-left: 3px solid #2563eb;
+  border-radius: 0 10px 10px 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+[data-theme="dark"] .m-pedagogy-box {
+  background: #182236 !important;
+}
+.m-pedagogy-title {
+  font-weight: 800;
+  color: #1e40af;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+[data-theme="dark"] .m-pedagogy-title {
+  color: #93c5fd !important;
+}
+.m-pedagogy-desc {
+  color: var(--text-muted, #475569);
+}
+.m-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+.btn-m-detail, .btn-m-gradebook {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+.btn-m-detail {
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+}
+[data-theme="dark"] .btn-m-detail {
+  background: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+.btn-m-gradebook {
+  background: #2563eb;
+  color: #ffffff;
+}
 }
 @media (max-width: 640px) {
   .content.full-width {
@@ -4634,21 +4848,21 @@ tr.gb-row-focused td {
   font-family: var(--font-mono);
 }
 
-/* Light theme tier colors */
+/* Light theme tier colors (Chuan 4 mau: Yeu -> Gioi la DO, CAM, VANG, XANH) */
 .eval-tier-box.tier-tot { background: #ecfdf5; border: 1px solid #a7f3d0; }
 .eval-tier-box.tier-tot .eval-tier-label { color: #065f46; }
 .eval-tier-box.tier-tot .eval-tier-val { color: #047857; }
 .eval-tier-box.tier-tot .eval-tier-pct { color: #059669; }
 
-.eval-tier-box.tier-kha { background: #eff6ff; border: 1px solid #bfdbfe; }
-.eval-tier-box.tier-kha .eval-tier-label { color: #1e40af; }
-.eval-tier-box.tier-kha .eval-tier-val { color: #1d4ed8; }
-.eval-tier-box.tier-kha .eval-tier-pct { color: #2563eb; }
+.eval-tier-box.tier-kha { background: #fefce8; border: 1px solid #fef08a; }
+.eval-tier-box.tier-kha .eval-tier-label { color: #854d0e; }
+.eval-tier-box.tier-kha .eval-tier-val { color: #a16207; }
+.eval-tier-box.tier-kha .eval-tier-pct { color: #b45309; }
 
-.eval-tier-box.tier-dat { background: #fffbeb; border: 1px solid #fde68a; }
-.eval-tier-box.tier-dat .eval-tier-label { color: #92400e; }
-.eval-tier-box.tier-dat .eval-tier-val { color: #b45309; }
-.eval-tier-box.tier-dat .eval-tier-pct { color: #d97706; }
+.eval-tier-box.tier-dat { background: #fff7ed; border: 1px solid #fed7aa; }
+.eval-tier-box.tier-dat .eval-tier-label { color: #9a3412; }
+.eval-tier-box.tier-dat .eval-tier-val { color: #c2410c; }
+.eval-tier-box.tier-dat .eval-tier-pct { color: #ea580c; }
 
 .eval-tier-box.tier-chuadat { background: #fef2f2; border: 1px solid #fecaca; }
 .eval-tier-box.tier-chuadat .eval-tier-label { color: #991b1b; }
@@ -4674,20 +4888,20 @@ tr.gb-row-focused td {
 [data-theme="dark"] .eval-tier-box.tier-tot .eval-tier-pct { color: #a7f3d0 !important; }
 
 [data-theme="dark"] .eval-tier-box.tier-kha {
-  background: rgba(59, 130, 246, 0.12) !important;
-  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  background: rgba(234, 179, 8, 0.12) !important;
+  border: 1px solid rgba(234, 179, 8, 0.4) !important;
 }
-[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-label { color: #60a5fa !important; }
-[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-val { color: #93c5fd !important; }
-[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-pct { color: #bfdbfe !important; }
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-label { color: #fde047 !important; }
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-val { color: #fef08a !important; }
+[data-theme="dark"] .eval-tier-box.tier-kha .eval-tier-pct { color: #fef9c3 !important; }
 
 [data-theme="dark"] .eval-tier-box.tier-dat {
-  background: rgba(245, 158, 11, 0.12) !important;
-  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+  background: rgba(249, 115, 22, 0.12) !important;
+  border: 1px solid rgba(249, 115, 22, 0.4) !important;
 }
-[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-label { color: #fbbf24 !important; }
-[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-val { color: #fde047 !important; }
-[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-pct { color: #fef08a !important; }
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-label { color: #fb923c !important; }
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-val { color: #fdba74 !important; }
+[data-theme="dark"] .eval-tier-box.tier-dat .eval-tier-pct { color: #fed7aa !important; }
 
 [data-theme="dark"] .eval-tier-box.tier-chuadat {
   background: rgba(239, 68, 68, 0.12) !important;

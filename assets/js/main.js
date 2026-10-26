@@ -116,10 +116,56 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Filter mobile student cards
+        const mobileCards = document.querySelectorAll('.m-student-card');
+        mobileCards.forEach(function (card) {
+            const searchAttr = (card.dataset.search || '').toLowerCase();
+            let okFilter = false;
+            if (currentFilters.length === 0 || currentFilters.includes('all')) {
+                okFilter = true;
+            } else {
+                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(card, f); });
+            }
+            const okSearch = !q || searchAttr.includes(q);
+            if (okFilter && okSearch) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
         if (emptyRow) {
             emptyRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
         }
     }
+
+    // Global helper for opening student detail modal from mobile card
+    window.openStudentModalFromId = function(studentId) {
+        const row = document.querySelector('tr.radar-row[data-student-id="' + studentId + '"]');
+        if (row) {
+            const btn = row.querySelector('.btn-open-detail');
+            if (btn) btn.click();
+        }
+    };
+
+    // Global helper for toggling between cards and table on mobile
+    window.switchMobileView = function(view) {
+        const tableWrap = document.querySelector('.radar-table-wrap');
+        const cardsWrap = document.getElementById('mobileStudentCards');
+        const btnCards = document.getElementById('btnViewCards');
+        const btnTable = document.getElementById('btnViewTable');
+        if (view === 'table') {
+            tableWrap?.classList.remove('view-table-hidden');
+            if (cardsWrap) cardsWrap.style.display = 'none';
+            btnTable?.classList.add('active');
+            btnCards?.classList.remove('active');
+        } else {
+            tableWrap?.classList.add('view-table-hidden');
+            if (cardsWrap) cardsWrap.style.display = 'flex';
+            btnCards?.classList.add('active');
+            btnTable?.classList.remove('active');
+        }
+    };
 
     chips.forEach(function (c) {
         c.addEventListener('click', function (e) {

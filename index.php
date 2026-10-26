@@ -407,19 +407,19 @@ if ($selectedClassId > 0) {
         $count8 = count(array_filter($scoresList, fn($v) => $v >= 8.0));
         $count65 = count(array_filter($scoresList, fn($v) => $v >= 6.5));
 
-        // Chuẩn đánh giá Thông tư 22
+        // Chuẩn đánh giá Thông tư 22 (Hệ 4 màu: Đỏ -> Cam -> Vàng -> Xanh)
         if ($minScore >= 6.5 && ($count8 >= 1 || $avgAll >= 8.0)) {
             $classOverallSummary['excellent']++;
-            $studentOverallMap[$sid] = ['level' => 'excellent', 'label' => 'Tốt', 'badge' => '🌟 Tốt', 'class' => 'tier-excellent'];
+            $studentOverallMap[$sid] = ['level' => 'excellent', 'label' => 'Tốt', 'badge' => 'Tốt', 'class' => 'tier-excellent', 'color' => '#16a34a'];
         } elseif ($minScore >= 5.0 && ($count65 >= 1 || $avgAll >= 6.5)) {
             $classOverallSummary['good']++;
-            $studentOverallMap[$sid] = ['level' => 'good', 'label' => 'Khá', 'badge' => '🟢 Khá', 'class' => 'tier-good'];
+            $studentOverallMap[$sid] = ['level' => 'good', 'label' => 'Khá', 'badge' => 'Khá', 'class' => 'tier-good', 'color' => '#d97706'];
         } elseif ($minScore >= 3.5 || $avgAll >= 5.0) {
             $classOverallSummary['average']++;
-            $studentOverallMap[$sid] = ['level' => 'average', 'label' => 'Đạt', 'badge' => '🟡 Đạt', 'class' => 'tier-average'];
+            $studentOverallMap[$sid] = ['level' => 'average', 'label' => 'Đạt', 'badge' => 'Đạt', 'class' => 'tier-average', 'color' => '#ea580c'];
         } else {
             $classOverallSummary['low']++;
-            $studentOverallMap[$sid] = ['level' => 'low', 'label' => 'Chưa Đạt', 'badge' => '🔴 Chưa Đạt', 'class' => 'tier-low'];
+            $studentOverallMap[$sid] = ['level' => 'low', 'label' => 'Chưa Đạt', 'badge' => 'Chưa Đạt', 'class' => 'tier-low', 'color' => '#dc2626'];
         }
     }
 }
@@ -525,7 +525,7 @@ require_once __DIR__ . '/includes/header.php';
                 <select name="class_id" id="selectClassId" class="matrix-select" onchange="this.form.submit()">
                     <?php if ($userRole === 'admin'): ?>
                         <option value="0" <?= $selectedClassId === 0 ? 'selected' : '' ?>>
-                            🏢 Tất cả các lớp (<?= count($filterClasses) ?> lớp - <?= array_sum($classCounts) ?> HS)
+                            Tất cả các lớp (<?= count($filterClasses) ?> lớp - <?= array_sum($classCounts) ?> HS)
                         </option>
                         <?php foreach ($filterClasses as $cId => $cName): ?>
                             <option value="<?= $cId ?>" <?= $selectedClassId === $cId ? 'selected' : '' ?>>
@@ -668,7 +668,7 @@ require_once __DIR__ . '/includes/header.php';
                     <a href="index.php?class_id=0&subject=<?= urlencode($selectedSubject) ?>" 
                        class="class-chip-btn <?= $selectedClassId === 0 ? 'active' : '' ?>"
                        data-grade="all">
-                        🏢 Tất cả lớp <span class="class-chip-badge"><?= array_sum($classCounts) ?></span>
+                        Tất cả lớp <span class="class-chip-badge"><?= array_sum($classCounts) ?></span>
                     </a>
                 <?php endif; ?>
                 <?php foreach ($filterClassesWithStudents as $cId => $cName): ?>
@@ -1269,8 +1269,20 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 <?php endif; ?>
 
+<!-- CHUYỂN ĐỔI CHẾ ĐỘ XEM TRÊN ĐIỆN THOẠI (THẺ HỌC SINH / BẢNG ĐIỂM) -->
+<div class="mobile-view-switcher" id="mobileViewSwitcher">
+    <button type="button" class="m-view-btn active" id="btnViewCards" onclick="switchMobileView('cards')">
+        <?= get_svg_icon('users', 14) ?>
+        <span>Dạng Thẻ Học Sinh</span>
+    </button>
+    <button type="button" class="m-view-btn" id="btnViewTable" onclick="switchMobileView('table')">
+        <?= get_svg_icon('bar-chart', 14) ?>
+        <span>Dạng Bảng Điểm</span>
+    </button>
+</div>
+
 <!-- BẢNG RADAR ĐÁNH GIÁ: XU HƯỚNG TIẾN BỘ, BẬC HỌC LỰC TT22, CHẨN ĐOÁN & KHUYẾN NGHỊ -->
-<div class="radar-table-wrap">
+<div class="radar-table-wrap view-table-hidden">
     <table class="radar-table <?= ($selectedSubject === 'all') ? 'scores-hidden' : '' ?>" id="radarTable">
         <thead>
             <tr>
@@ -1824,6 +1836,127 @@ require_once __DIR__ . '/includes/header.php';
             <?php endif; ?>
         </tbody>
     </table>
+</div>
+
+<!-- CHẾ ĐỘ XEM THẺ DÀNH RIÊNG CHO ĐIỆN THOẠI (MOBILE STUDENT CARDS) -->
+<div class="mobile-student-cards" id="mobileStudentCards">
+    <?php if (empty($students)): ?>
+        <div style="text-align: center; padding: 32px 16px; background: #ffffff; border-radius: 16px; color: var(--text-muted); border: 1px solid #e2e8f0;">
+            Chưa có học sinh nào trong phạm vi lớp được chọn.
+        </div>
+    <?php else: ?>
+        <?php foreach (($selectedSubject === 'all' ? $studentsGrouped : $students) as $sidKey => $mItem): ?>
+            <?php
+                if ($selectedSubject === 'all') {
+                    $mStudent = $mItem['student'];
+                    $mSubjects = $mItem['subjects'];
+                    $mFirstSub = $mSubjects[0];
+                    $mSid = (int)$mStudent['student_id'];
+                    $mTierBadge = $studentOverallMap[$mSid]['badge'] ?? $mFirstSub['score_tier']['badge'];
+                    $mTierClass = $studentOverallMap[$mSid]['class'] ?? $mFirstSub['score_tier']['class'];
+                    $mOverall = $studentOverallMap[$mSid]['level'] ?? '';
+                    
+                    $mHasRed = false; $mHasYellow = false; $mHasGreen = false; $mSumAvg = 0; $mCountAvg = 0;
+                    foreach ($mSubjects as $sSub) {
+                        if ($sSub['level'] === 'red') $mHasRed = true;
+                        elseif ($sSub['level'] === 'yellow') $mHasYellow = true;
+                        else $mHasGreen = true;
+                        if ($sSub['avg_score'] !== null && $sSub['avg_score'] !== '') {
+                            $mSumAvg += (float)$sSub['avg_score'];
+                            $mCountAvg++;
+                        }
+                    }
+                    $mRisk = $mHasRed ? 'red' : ($mHasYellow ? 'yellow' : ($mHasGreen ? 'green' : 'pending'));
+                    $mAvg = $mCountAvg > 0 ? round($mSumAvg / $mCountAvg, 1) : null;
+                } else {
+                    $mStudent = $mItem;
+                    $mSubjects = [$mItem];
+                    $mFirstSub = $mItem;
+                    $mSid = (int)$mItem['student_id'];
+                    $mTierBadge = $mItem['score_tier']['badge'];
+                    $mTierClass = $mItem['score_tier']['class'];
+                    $mOverall = $studentOverallMap[$mSid]['level'] ?? '';
+                    $mRisk = $mItem['level'];
+                    $mAvg = ($mItem['avg_score'] !== null && $mItem['avg_score'] !== '') ? (float)$mItem['avg_score'] : null;
+                }
+
+                $mNameParts = explode(' ', trim($mStudent['full_name']));
+                $mInitials = mb_strtoupper(mb_substr(end($mNameParts), 0, 2, 'UTF-8'), 'UTF-8');
+                $mRiskLabel = ($mRisk === 'red') ? 'Nguy cấp' : (($mRisk === 'yellow') ? 'Cần chú ý' : (($mRisk === 'green') ? 'Ổn định' : 'Chờ điểm'));
+            ?>
+            <div class="m-student-card" 
+                 data-student-id="<?= $mSid ?>"
+                 data-level="<?= $mRisk ?>"
+                 data-trend="<?= $mFirstSub['trend'] ?>"
+                 data-momentum="<?= $mFirstSub['momentum'] ?>"
+                 data-tier="<?= $mFirstSub['score_tier']['tier'] ?>"
+                 data-overall="<?= htmlspecialchars($mOverall) ?>"
+                 data-txwarn="<?= !empty($mFirstSub['has_tx_warning']) ? '1' : '0' ?>"
+                 data-search="<?= htmlspecialchars(mb_strtolower(($mStudent['student_code'] ?? '') . ' ' . $mStudent['full_name'] . ' ' . $mStudent['class_name'] . ' ' . implode(' ', array_column($mSubjects, 'subject')), 'UTF-8')) ?>">
+                
+                <div class="m-card-header">
+                    <div class="m-avatar"><?= $mInitials ?></div>
+                    <div class="m-info">
+                        <div class="m-name"><?= htmlspecialchars($mStudent['full_name']) ?></div>
+                        <div class="m-meta">
+                            <span class="m-code"><?= htmlspecialchars(!empty($mStudent['student_code']) ? $mStudent['student_code'] : 'HS' . $mSid) ?></span>
+                            <span>•</span>
+                            <span><?= htmlspecialchars($mStudent['class_name']) ?></span>
+                            <?php if ($selectedSubject === 'all'): ?>
+                                <span>•</span>
+                                <span><?= count($mSubjects) ?> môn</span>
+                            <?php else: ?>
+                                <span>•</span>
+                                <span><?= htmlspecialchars($mFirstSub['subject']) ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="m-badges">
+                        <span class="badge-tier <?= $mTierClass ?>"><?= htmlspecialchars($mTierBadge) ?></span>
+                    </div>
+                </div>
+
+                <div class="m-metrics-row">
+                    <div class="m-metric">
+                        <span class="m-metric-label">ĐTB Học Kỳ</span>
+                        <span class="m-metric-val avg-<?= $mRisk ?>"><?= $mAvg !== null ? number_format($mAvg, 1) : '—' ?></span>
+                    </div>
+                    <div class="m-metric">
+                        <span class="m-metric-label">Xu Hướng</span>
+                        <span class="m-metric-val" style="font-size: 11.5px;"><?= htmlspecialchars($mFirstSub['trend_label']) ?></span>
+                    </div>
+                    <div class="m-metric">
+                        <span class="m-metric-label">Vùng Rủi Ro</span>
+                        <span class="m-metric-val" style="color: <?= ($mRisk === 'red') ? '#dc2626' : (($mRisk === 'yellow') ? '#d97706' : '#16a34a') ?>; font-size: 11.5px;">
+                            <?= $mRiskLabel ?>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- HỘP PHÂN TÍCH SƯ PHẠM DỄ HIỂU CHO GIÁO VIÊN -->
+                <div class="m-pedagogy-box">
+                    <div class="m-pedagogy-title">
+                        <?= get_svg_icon('activity', 13) ?>
+                        <span><?= htmlspecialchars($mFirstSub['competency']['competency_title'] ?? 'Đang phân tích') ?></span>
+                    </div>
+                    <div class="m-pedagogy-desc">
+                        <?= htmlspecialchars($mFirstSub['competency']['pedagogical_advice'] ?? 'Đang cập nhật hướng dẫn hành động sư phạm.') ?>
+                    </div>
+                </div>
+
+                <div class="m-card-actions">
+                    <button type="button" class="btn-m-detail" onclick="openStudentModalFromId(<?= $mSid ?>)">
+                        <?= get_svg_icon('eye', 14) ?>
+                        <span>Chi Tiết &amp; Sổ Tay</span>
+                    </button>
+                    <a href="nhap_diem.php?class_id=<?= urlencode((string)$mStudent['class_id']) ?>&subject=<?= urlencode($mFirstSub['subject']) ?>" class="btn-m-gradebook">
+                        <?= get_svg_icon('file-text', 14) ?>
+                        <span>Vào Sổ Điểm</span>
+                    </a>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 
 <!-- MODAL CHI TIẾT NĂNG LỰC HỌC TẬP & SỔ TAY NHẬN XÉT SƯ PHẠM (EXPANDABLE DETAIL MODAL) -->

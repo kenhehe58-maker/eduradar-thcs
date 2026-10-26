@@ -75,12 +75,13 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
     if ($score >= 8.0) {
         return [
             'tier'       => 'excellent',
-            'label'      => 'Tốt / Giỏi',
-            'badge'      => '🟢 Tốt / Giỏi',
-            'icon'       => '🟢',
+            'label'      => 'Tốt',
+            'badge'      => 'Tốt',
+            'icon'       => '●',
             'class'      => 'tier-excellent',
             'color'      => '#16a34a',
             'bg'         => '#f0fdf4',
+            'border'     => '#bbf7d0',
             'threshold'  => 'ĐTB ≥ 8.0',
         ];
     }
@@ -89,11 +90,12 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
         return [
             'tier'       => 'good',
             'label'      => 'Khá',
-            'badge'      => '🟡 Khá',
-            'icon'       => '🟡',
+            'badge'      => 'Khá',
+            'icon'       => '●',
             'class'      => 'tier-good',
-            'color'      => '#b45309',
+            'color'      => '#d97706',
             'bg'         => '#fefce8',
+            'border'     => '#fef08a',
             'threshold'  => '6.5 ≤ ĐTB < 8.0',
         ];
     }
@@ -101,12 +103,13 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
     if ($score >= 5.0) {
         return [
             'tier'       => 'average',
-            'label'      => 'Trung bình',
-            'badge'      => '🟠 Trung bình',
-            'icon'       => '🟠',
+            'label'      => 'Đạt',
+            'badge'      => 'Đạt',
+            'icon'       => '●',
             'class'      => 'tier-average',
             'color'      => '#ea580c',
             'bg'         => '#fff7ed',
+            'border'     => '#fed7aa',
             'threshold'  => '5.0 ≤ ĐTB < 6.5',
         ];
     }
@@ -114,11 +117,12 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
     return [
         'tier'       => 'low',
         'label'      => $score < 3.5 ? 'Nguy cấp' : 'Chưa đạt',
-        'badge'      => $score < 3.5 ? '🔴 Nguy cấp' : '🔴 Chưa đạt',
-        'icon'       => '🔴',
+        'badge'      => $score < 3.5 ? 'Nguy cấp' : 'Chưa đạt',
+        'icon'       => '●',
         'class'      => $score < 3.5 ? 'tier-critical' : 'tier-low',
         'color'      => '#dc2626',
         'bg'         => '#fef2f2',
+        'border'     => '#fecaca',
         'threshold'  => 'ĐTB < 5.0',
     ];
 }
@@ -243,34 +247,34 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
         $isDivergentSurge = true;
     }
 
-    // TỔNG HỢP KHUNG HIỆU SUẤT (MOMENTUM)
+    // TỔNG HỢP KHUNG TIẾN BỘ (MOMENTUM)
     $trendReasons = [];
     $momentum = 'steady';
     $trend = 'stable';
-    $trendLabel = 'Duy trì đều';
-    $trendIcon = '🔄';
+    $trendLabel = 'Duy trì ổn định';
+    $trendIcon = 'steady';
 
     if ($isTxDeclining || $isExamDrop || $isDivergentDrop) {
         $momentum = ($txDelta !== null && $txDelta <= -2.5) || ($examDelta !== null && $examDelta <= -2.5) ? 'drop' : 'down';
         $trend = 'down';
-        $trendLabel = $momentum === 'drop' ? 'Tuột dốc' : 'Sa sút';
-        $trendIcon = $momentum === 'drop' ? '⚠️' : '📉';
+        $trendLabel = $momentum === 'drop' ? 'Báo động tụt dốc' : 'Sa sút liên tục';
+        $trendIcon = 'down';
         if ($isTxDeclining) $trendReasons[] = $txProgressText;
         if ($isExamDrop) $trendReasons[] = $examProgressText;
         if ($isDivergentDrop) $trendReasons[] = "Học TX tốt (" . number_format($avgTx, 1) . ") nhưng thi cử sút giảm bất thường";
     } elseif ($isTxImproving || $isExamSurge || $isDivergentSurge) {
         $momentum = ($txDelta !== null && $txDelta >= 2.0) || ($examDelta !== null && $examDelta >= 2.0) ? 'surge' : 'up';
         $trend = 'up';
-        $trendLabel = $momentum === 'surge' ? 'Bứt phá' : 'Tiến bộ';
-        $trendIcon = $momentum === 'surge' ? '🚀' : '📈';
+        $trendLabel = $momentum === 'surge' ? 'Tiến bộ vượt bậc' : 'Tiến bộ rõ rệt';
+        $trendIcon = 'up';
         if ($isTxImproving) $trendReasons[] = $txProgressText;
         if ($isExamSurge) $trendReasons[] = $examProgressText;
         if ($isDivergentSurge) $trendReasons[] = "Nỗ lực vượt khó vươn lên ấn tượng cuối kỳ";
     } else {
         $momentum = 'steady';
         $trend = 'stable';
-        $trendLabel = 'Duy trì đều';
-        $trendIcon = '🔄';
+        $trendLabel = 'Duy trì ổn định';
+        $trendIcon = 'steady';
         if (!empty($txProgressText)) {
             $trendReasons[] = $txProgressText;
         } elseif ($avg !== null && $avg >= 8.0) {
@@ -464,9 +468,9 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
         $hasTxEarlyWarning = true;
         $txWarningLevel = 'red';
         if ($txStats['avg'] !== null && $txStats['avg'] < 3.5) {
-            $reasons[] = '🔴 Cảnh báo sớm TX: ĐTB TX nguy cấp (' . number_format($txStats['avg'], 1) . ')';
+            $reasons[] = 'Cảnh báo sớm TX: ĐTB TX nguy cấp (' . number_format($txStats['avg'], 1) . ')';
         } else {
-            $reasons[] = '🔴 Cảnh báo sớm TX: có ' . $txStats['below_35_count'] . ' bài TX < 3.5';
+            $reasons[] = 'Cảnh báo sớm TX: có ' . $txStats['below_35_count'] . ' bài TX < 3.5';
         }
     }
 
@@ -491,7 +495,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
     }
 
     // -------------------------------------------------------------------------
-    // 2. VÙNG 🟡 CẦN CHÚ Ý (WARNING / AT RISK ZONE)
+    // 2. VÙNG CẦN CHÚ Ý (WARNING / AT RISK ZONE)
     // -------------------------------------------------------------------------
     $isWarning = false;
 
@@ -500,7 +504,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
     if ($isAvgWarn) {
         $isWarning = true;
         if ($trendData['momentum'] === 'steady') {
-            $reasons[] = 'Điểm TB dưới chuẩn (' . number_format($avg, 1) . ') · Đi đều, cần tiếp sức bứt phá';
+            $reasons[] = 'Điểm TB dưới chuẩn (' . number_format($avg, 1) . ') · Đi đều, cần phát huy';
         } else {
             $reasons[] = 'Điểm TB dưới chuẩn (' . number_format($avg, 1) . ')';
         }
@@ -531,15 +535,15 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
         $hasTxEarlyWarning = true;
         $txWarningLevel = 'yellow';
         if ($trendData['momentum'] === 'steady') {
-            $reasons[] = '🟡 Cảnh báo sớm TX: ĐTB TX dưới chuẩn (' . number_format($txStats['avg'], 1) . ') · Đi đều, cần phát huy';
+            $reasons[] = 'Cảnh báo sớm TX: ĐTB TX dưới chuẩn (' . number_format($txStats['avg'], 1) . ') · Đi đều, cần phát huy';
         } else {
-            $reasons[] = '🟡 Cảnh báo sớm TX: ĐTB TX dưới chuẩn (' . number_format($txStats['avg'], 1) . ')';
+            $reasons[] = 'Cảnh báo sớm TX: ĐTB TX dưới chuẩn (' . number_format($txStats['avg'], 1) . ')';
         }
     } elseif ($txStats['below_5_count'] > 0) {
         $isWarning = true;
         $hasTxEarlyWarning = true;
         $txWarningLevel = 'yellow';
-        $reasons[] = '🟡 Cảnh báo sớm TX: có ' . $txStats['below_5_count'] . ' bài TX < 5.0';
+        $reasons[] = 'Cảnh báo sớm TX: có ' . $txStats['below_5_count'] . ' bài TX < 5.0';
     }
 
     // 2.5 PHÂN TÍCH XU HƯỚNG SA SÚT (GHI NHẬN TUỘT DỐC: VD 10 -> 9 -> 8 -> 6)
@@ -547,7 +551,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
         $isWarning = true;
         foreach ($trendData['trend_reasons'] as $tReason) {
             if (!in_array($tReason, $reasons, true)) {
-                $reasons[] = '📉 ' . $tReason;
+                $reasons[] = $tReason;
             }
         }
     }
@@ -573,7 +577,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
     }
 
     // -------------------------------------------------------------------------
-    // 3. VÙNG 🟢 ỔN ĐỊNH (STABLE ZONE)
+    // 3. VÙNG ỔN ĐỊNH (STABLE ZONE)
     // -------------------------------------------------------------------------
     if ($avg === null && empty($validTx) && $gk === null && $ck === null) {
         $reasons[] = 'Chưa đủ dữ liệu điểm số';
@@ -584,7 +588,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
             'diagnostic'        => implode(' · ', $reasons),
             'trend'             => 'pending',
             'trend_label'       => 'Chờ điểm',
-            'trend_icon'        => '⏳',
+            'trend_icon'        => 'pending',
             'trend_reasons'     => $reasons,
             'trend_description' => 'Chưa đủ dữ liệu điểm số',
             'momentum'          => 'pending',
@@ -595,7 +599,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
             'tx_warning_level'  => null,
         ];
     } elseif ($trendData['trend'] === 'up') {
-        $reasons[] = '📈 ' . $trendData['trend_description'];
+        $reasons[] = $trendData['trend_description'];
         if ($avg !== null && $avg >= 8.0) {
             $reasons[] = 'Học lực Giỏi, kết quả xuất sắc (' . number_format($avg, 1) . ')';
         } elseif ($avg !== null && $avg >= 6.5) {
