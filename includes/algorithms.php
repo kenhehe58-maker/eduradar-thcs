@@ -1,6 +1,6 @@
 <?php
 // =============================================================================
-// EduRadar THCS - Hạt Nhân Toán Học & Thuật Toán Phân Tích Động Năng Sư Phạm
+// EduRadar THCS - Mô Hình Toán Học & Thuật Toán Phân Tích Xu Hướng Sư Phạm
 // Bám sát: Thông tư 22/2021/TT-BGDĐT & Chuẩn Nghiên Cứu KHKT Quốc Gia
 // =============================================================================
 
@@ -79,7 +79,7 @@ function calculate_linear_regression(array $scores): array {
     // Đánh giá xu hướng dựa trên hệ số góc k
     if ($k >= 0.35) {
         $trend = 'accelerating_up';
-        $trendLabel = 'Tăng tốc bứt phá mạnh (k = +' . round($k, 2) . ')';
+        $trendLabel = 'Tiến bộ rõ rệt (k = +' . round($k, 2) . ')';
     } elseif ($k >= 0.1) {
         $trend = 'steady_up';
         $trendLabel = 'Tiến bộ đều (k = +' . round($k, 2) . ')';
@@ -295,7 +295,7 @@ function get_academic_calendar_phase(?DateTimeInterface $currentDate = null): ar
         if ($m === 9 || ($m === 10 && $d <= 20)) {
             $phaseKey = 'hk1_start';
             $phaseTitle = 'Khởi động Học kỳ I (Tuần 1 - 7)';
-            $calcFocus = 'Động năng điểm Thường xuyên & Chuẩn bị thi Giữa kỳ';
+            $calcFocus = 'Xu hướng điểm Thường xuyên & Chuẩn bị thi Giữa kỳ';
             $targetPrompt = 'Điểm Cuối kỳ I (CK1) dự phóng';
             $focusKey = 'midterm_prep';
         } elseif (($m === 10 && $d > 20) || $m === 11) {

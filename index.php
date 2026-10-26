@@ -4,14 +4,14 @@
  * Hệ Thống Quản Lý Điểm & Cảnh Báo Sớm THCS (EduRadar)
  * Trang Tổng Quan Radar Cảnh Báo Sớm Học Sinh
  * 
- * KIẾN TRÚC 2 KHUNG ĐÁNH GIÁ (DUAL-FRAMEWORK ASSESSMENT):
- * 1. KHUNG HIỆU SUẤT (Performance Momentum) — [ƯU TIÊN CAO HƠN & TRÌNH BÀY ĐỨNG TRƯỚC]:
- *    - Tăng (🚀 Bứt phá / 📈 Tiến bộ)
+ * HỆ THỐNG ĐÁNH GIÁ ĐA CHIỀU (DUAL-PERSPECTIVE ASSESSMENT):
+ * 1. XU HƯỚNG TIẾN BỘ (Learning Trajectory / OLS) — [ƯU TIÊN THEO DÕI]:
+ *    - Tăng (📈 Tiến bộ rõ rệt)
  *    - Đều (🔄 Duy trì đều): Học sinh học lực mức thấp hoặc trung bình mà đang đi đều
- *      thì ghi nhận là "Duy trì ổn định, cần tiếp sức bứt phá" vì điểm còn trong khuôn khổ chưa cao.
- *    - Giảm (📉 Sa sút / ⚠️ Tuột dốc)
- * 2. KHUNG ĐIỂM SỐ (Score Tier / Mastery Bracket):
- *    - Xuất sắc (⭐ 8.0+) | Khá (✨ 6.5-7.9) | Trung bình (⚖️ 5.0-6.4) | Thấp (⚠️ < 5.0)
+ *      thì ghi nhận là "Duy trì ổn định, cần bồi dưỡng nâng cao" vì điểm còn trong khuôn khổ chưa cao.
+ *    - Giảm (📉 Sa sút / ⚠️ Cần can thiệp)
+ * 2. BẬC HỌC LỰC (Score Tier / TT22 Bracket):
+ *    - Tốt / Giỏi (⭐ 8.0+) | Khá (✨ 6.5-7.9) | Đạt / Trung bình (⚖️ 5.0-6.4) | Chưa Đạt / Thấp (⚠️ < 5.0)
  * 3. NĂNG LỰC TỔNG THỂ & KHUYẾN NGHỊ SƯ PHẠM HÀNH ĐỘNG
  * =============================================================================
  */
@@ -337,7 +337,7 @@ if (empty($filterClassesWithStudents)) {
     $filterClassesWithStudents = $filterClasses;
 }
 
-// Đánh giá 2 khung: Khung Hiệu Suất & Khung Điểm Số
+// Đánh giá đa chiều: Xu hướng tiến bộ (OLS) & Bậc học lực (TT22)
 $students = [];
 foreach ($rows as $r) {
     $avg = ($r['avg_score'] !== null && $r['avg_score'] !== '') ? (float)$r['avg_score'] : null;
@@ -1290,7 +1290,7 @@ require_once __DIR__ . '/includes/header.php';
                 <th scope="col" class="th-code">Mã HS</th>
                 <th scope="col" class="th-student">Học Sinh</th>
                 <th scope="col" class="th-class">Lớp & Môn</th>
-                <th scope="col" class="th-momentum">1. Hiệu Suất</th>
+                <th scope="col" class="th-momentum">1. Xu Hướng</th>
                 <th scope="col" class="th-tier">2. Bậc TT22</th>
                 <th scope="col" class="th-score-avg">ĐTB</th>
                 <th scope="col" class="col-detail-score th-score-tx">ĐĐGtx (1-4)</th>
@@ -1459,14 +1459,14 @@ require_once __DIR__ . '/includes/header.php';
                                 </div>
                             </td>
 
-                            <!-- KHUNG 1: HIỆU SUẤT -->
+                            <!-- KHUNG 1: XU HƯỚNG TIẾN BỘ -->
                             <td class="col-momentum">
                                 <span class="badge-momentum badge-momentum-<?= $firstSub['momentum'] ?>" title="<?= htmlspecialchars($firstSub['trend_description'] ?: $firstSub['trend_label']) ?>">
                                     <?= htmlspecialchars($firstSub['trend_label']) ?>
                                 </span>
                             </td>
 
-                            <!-- KHUNG 2: KHUNG ĐIỂM SỐ (BẬC HỌC LỰC TT22) -->
+                            <!-- KHUNG 2: BẬC HỌC LỰC (TT22) -->
                             <td class="col-tier">
                                 <span class="badge-tier <?= $overallTierClass ?>">
                                     <?= htmlspecialchars($overallTierBadge) ?>
@@ -1735,14 +1735,14 @@ require_once __DIR__ . '/includes/header.php';
                                 </div>
                             </td>
 
-                            <!-- KHUNG 1: HIỆU SUẤT -->
+                            <!-- KHUNG 1: XU HƯỚNG TIẾN BỘ -->
                             <td class="col-momentum">
                                 <span class="badge-momentum badge-momentum-<?= $s['momentum'] ?>" title="<?= htmlspecialchars($s['trend_description'] ?: $s['trend_label']) ?>">
                                     <?= htmlspecialchars($s['trend_label']) ?>
                                 </span>
                             </td>
 
-                            <!-- KHUNG 2: KHUNG ĐIỂM SỐ -->
+                            <!-- KHUNG 2: BẬC HỌC LỰC (TT22) -->
                             <td class="col-tier">
                                 <span class="badge-tier <?= $s['score_tier']['class'] ?>" title="<?= htmlspecialchars($s['score_tier']['threshold']) ?>">
                                     <?= htmlspecialchars($s['score_tier']['badge']) ?>
@@ -2087,7 +2087,7 @@ require_once __DIR__ . '/includes/header.php';
                     </summary>
                     <div style="margin-top: 8px; padding: 10px 14px; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; line-height: 1.65; color: #334155;">
                         <div>• <b>Công thức ĐTBmhk (Điều 9 TT22):</b> <code>(Tổng ĐĐGtx + 2 × ĐĐGgk + 3 × ĐĐGck) ÷ (Số cột ĐĐGtx + 5)</code>.</div>
-                        <div>• <b>Khung Điểm Số (Học lực môn):</b> <b>Tốt/Xuất sắc</b> (ĐTB ≥ 8.0) · <b>Khá</b> (6.5 ≤ ĐTB &lt; 8.0) · <b>Đạt/TB</b> (5.0 ≤ ĐTB &lt; 6.5) · <b>Chưa đạt/Cần phụ đạo</b> (ĐTB &lt; 5.0).</div>
+                        <div>• <b>Bậc Học Lực (Thông tư 22):</b> <b>Tốt/Xuất sắc</b> (ĐTB ≥ 8.0) · <b>Khá</b> (6.5 ≤ ĐTB &lt; 8.0) · <b>Đạt/TB</b> (5.0 ≤ ĐTB &lt; 6.5) · <b>Chưa đạt/Cần phụ đạo</b> (ĐTB &lt; 5.0).</div>
                         <div>• <b>Phân vùng Cảnh báo sớm EduRadar:</b> <b style="color:#dc2626;">🔴 Nguy cấp</b> khi ĐTB &lt; 3.5, CK &lt; 3.0, hỏng cả GK &amp; CK (&lt; 5.0), hoặc có ≥ 2 cột TX &lt; 3.5; <b style="color:#d97706;">🟡 Cần chú ý</b> khi 3.5 ≤ ĐTB &lt; 5.0 hoặc chuỗi điểm đang sa sút.</div>
                     </div>
                 </details>

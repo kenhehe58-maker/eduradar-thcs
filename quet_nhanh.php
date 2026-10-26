@@ -51,7 +51,7 @@ if ($action === 'clear') {
     exit;
 }
 
-// HÀNH ĐỘNG 2A: NẠP SỔ ĐIỂM MẪU 10 HỌC SINH ĐA DẠNG ĐỘNG NĂNG
+// HÀNH ĐỘNG 2A: NẠP SỔ ĐIỂM MẪU 10 HỌC SINH ĐA DẠNG XU HƯỚNG TIẾN BỘ
 if ($action === 'sample') {
     $sampleStudents = [
         [
@@ -70,7 +70,7 @@ if ($action === 'sample') {
             'birthday' => '2010-07-22',
             'phone' => '0987654321',
             'tx1' => 5.0, 'tx2' => 6.0, 'tx3' => 7.0, 'tx4' => 8.0, 'gk' => 7.5, 'ck' => 8.5,
-            'teacher_note' => 'Đang có đà bứt phá rất mạnh mẽ, chăm chỉ làm bài tập về nhà.'
+            'teacher_note' => 'Đang có đà tiến bộ rất rõ rệt, chăm chỉ làm bài tập về nhà.'
         ],
         [
             'student_id' => 3,
@@ -79,7 +79,7 @@ if ($action === 'sample') {
             'birthday' => '2010-11-05',
             'phone' => '0903112233',
             'tx1' => 5.0, 'tx2' => 5.5, 'tx3' => 5.0, 'tx4' => 5.5, 'gk' => 5.5, 'ck' => 5.0,
-            'teacher_note' => 'Học lực mức trung bình đang đi đều, duy trì ổn định nhưng cần tiếp sức để bứt phá lên khá.'
+            'teacher_note' => 'Học lực mức trung bình đang đi đều, duy trì ổn định nhưng cần bồi dưỡng thêm để vươn lên khá.'
         ],
         [
             'student_id' => 4,
@@ -195,14 +195,14 @@ if ($action === 'simulate_scores' && isset($_SESSION['guest_scan_data']['student
 
         // Phân bổ giáo dục thực tế
         if ($pct < 0.15) {
-            // Nhóm 1: Bứt phá / Xuất sắc (15%)
+            // Nhóm 1: Tiến bộ vượt bậc / Xuất sắc (15%)
             $tx1 = round(rand(85, 95) / 10, 1);
             $tx2 = round(rand(90, 100) / 10, 1);
             $tx3 = round(rand(90, 100) / 10, 1);
             $tx4 = round(rand(95, 100) / 10, 1);
             $gk  = round(rand(90, 100) / 10, 1);
             $ck  = round(rand(95, 100) / 10, 1);
-            $note = 'Tư duy logic rất sắc bén, liên tục bứt phá đứng đầu môn học.';
+            $note = 'Tư duy logic rất sắc bén, kết quả học tập luôn đứng đầu môn học.';
         } elseif ($pct < 0.45) {
             // Nhóm 2: Đang tiến bộ (30%)
             $tx1 = round(rand(55, 65) / 10, 1);
@@ -1290,14 +1290,14 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Body -->
                 <div class="competency-modal-body">
-                    <!-- 3 Thẻ Trạng Thái: Khung Hiệu Suất (Đứng trước), Khung Điểm Số & Vùng Rủi Ro -->
+                    <!-- 3 Thẻ Trạng Thái: Xu Hướng Tiến Bộ (Đứng trước), Bậc Học Lực & Vùng Rủi Ro -->
                     <div class="modal-badges-grid">
                         <div class="modal-badge-card" style="border-left: 4px solid #4f46e5;">
-                            <span class="modal-badge-label">⚡ 1. Khung Hiệu Suất (Đứng trước)</span>
+                            <span class="modal-badge-label">⚡ 1. Xu Hướng Tiến Bộ (OLS)</span>
                             <div class="modal-badge-val" id="modalMomentumBadge">📈 Đang Tiến Bộ</div>
                         </div>
                         <div class="modal-badge-card" style="border-left: 4px solid #0284c7;">
-                            <span class="modal-badge-label">📊 2. Khung Điểm Số (Học lực)</span>
+                            <span class="modal-badge-label">📊 2. Bậc Học Lực (TT22)</span>
                             <div class="modal-badge-val" id="modalScoreTierBadge">⭐ Xuất Sắc</div>
                         </div>
                         <div class="modal-badge-card" style="border-left: 4px solid #f59e0b;">

@@ -2,26 +2,26 @@
 /**
  * =============================================================================
  * Hệ Thống Quản Lý Điểm & Cảnh Báo Sớm THCS (EduRadar)
- * Module: Động Cơ Chẩn Đoán Radar & Kiến Trúc Đánh Giá 2 Khung Năng Lực
+ * Module: Động Cơ Chẩn Đoán Radar & Hệ Thống Đánh Giá Đa Chiều
  * 
- * KIẾN TRÚC 2 KHUNG ĐÁNH GIÁ (DUAL-FRAMEWORK ASSESSMENT):
- * 1. KHUNG HIỆU SUẤT (Performance Momentum / Trajectory) — [ƯU TIÊN CAO HƠN & ĐỨNG TRƯỚC]:
- *    - Tăng (🚀 Bứt phá / 📈 Tiến bộ): Bài sau cao hơn bài trước hoặc CK bứt phá so với GK.
+ * HỆ THỐNG ĐÁNH GIÁ ĐA CHIỀU (DUAL-PERSPECTIVE ASSESSMENT):
+ * 1. XU HƯỚNG TIẾN BỘ (Learning Trajectory / OLS) — [ƯU TIÊN THEO DÕI]:
+ *    - Tăng (📈 Tiến bộ rõ rệt): Bài sau cao hơn bài trước hoặc CK tiến bộ so với GK.
  *    - Đều (🔄 Duy trì đều): Điểm các bài đi đều đặn, không bị rơi rụng.
  *      * Logic cốt lõi: Khi học sinh có học lực ở mức Thấp hoặc Trung bình mà "đang đi đều"
- *        thì đây là "Duy trì ổn định, cần tiếp sức bứt phá" vì điểm còn trong khuôn khổ chưa cao.
- *    - Giảm (📉 Sa sút / ⚠️ Tuột dốc): Chuỗi điểm tụt dốc (như 10 -> 9 -> 8 -> 6) hoặc CK giảm sâu.
+ *        thì đây là "Duy trì ổn định, cần bồi dưỡng nâng cao" vì điểm còn trong khuôn khổ chưa cao.
+ *    - Giảm (📉 Sa sút / ⚠️ Cần can thiệp): Chuỗi điểm tụt dốc (như 10 -> 9 -> 8 -> 6) hoặc CK giảm sâu.
  *    - Chờ điểm (⏳ Chờ điểm): Chưa có bài kiểm tra ghi nhận, tách riêng để không tính ảo.
  *
- * 2. KHUNG ĐIỂM SỐ (Attainment / Mastery Level):
- *    - Xuất sắc / Giỏi (⭐ ĐTB >= 8.0)
+ * 2. BẬC HỌC LỰC (Attainment / TT22 Level):
+ *    - Tốt / Giỏi (⭐ ĐTB >= 8.0)
  *    - Khá (✨ 6.5 <= ĐTB < 8.0)
- *    - Trung bình / Đạt (⚖️ 5.0 <= ĐTB < 6.5)
- *    - Thấp / Cần hỗ trợ (⚠️ ĐTB < 5.0, trong đó < 3.5 là Nguy cấp)
+ *    - Đạt / Trung bình (⚖️ 5.0 <= ĐTB < 6.5)
+ *    - Chưa Đạt / Cần hỗ trợ (⚠️ ĐTB < 5.0, trong đó < 3.5 là Nguy cấp)
  *    - Chờ điểm (⏳ Chưa có điểm)
  *
  * 3. NĂNG LỰC TỔNG THỂ & KHUYẾN NGHỊ SƯ PHẠM:
- *    - Giao thoa giữa Khung Hiệu Suất (đứng trước) và Khung Điểm Số.
+ *    - Giao thoa giữa Xu Hướng Tiến Bộ và Bậc Học Lực (TT22).
  * =============================================================================
  */
 
@@ -128,8 +128,8 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
 }
 
 /**
- * Phân tích Khung Hiệu Suất (Performance Trajectory / Momentum Engine)
- * ĐO LƯỜNG ĐỘNG NĂNG: Tăng (Tiến bộ) | Đều (Duy trì) | Giảm (Sa sút) | Chờ điểm
+ * Phân tích Xu Hướng Tiến Bộ (Learning Trajectory / OLS)
+ * ĐO LƯỜNG TIẾN BỘ: Tăng (Tiến bộ) | Đều (Duy trì) | Giảm (Sa sút) | Chờ điểm
  *
  * @param float|null $avg Điểm trung bình môn học kỳ
  * @param float|null $gk  Điểm giữa kỳ
@@ -230,7 +230,7 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
             $examProgressText = "Thi CK sa sút (giảm " . abs($examDelta) . "đ so với GK: {$gk} → {$ck})";
         } elseif ($examDelta >= 1.0) {
             $isExamSurge = true;
-            $examProgressText = "Bứt phá cuối kỳ (+{$examDelta}đ so với GK: {$gk} → {$ck})";
+            $examProgressText = "Tiến bộ cuối kỳ (+{$examDelta}đ so với GK: {$gk} → {$ck})";
         } else {
             $isExamSteady = true;
             $examProgressText = "Thi định kỳ giữ vững phong độ ({$gk} → {$ck})";
@@ -308,7 +308,7 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
 
 /**
  * Đánh giá Năng Lực Tổng Thể & Khuyến Nghị Sư Phạm Hành Động (Humanizer Pedagogical Engine)
- * Giao thoa giữa Khung Hiệu Suất (đứng trước) và Khung Điểm Số, cá nhân hóa theo quỹ đạo điểm thực tế
+ * Giao thoa giữa Xu Hướng Tiến Bộ và Bậc Học Lực (TT22), cá nhân hóa theo quỹ đạo điểm thực tế
  *
  * @param array      $trendData Dữ liệu từ analyzeLearningTrend()
  * @param array      $tierData  Dữ liệu từ determineScoreTier()
@@ -335,7 +335,7 @@ function evaluateOverallCompetency(array $trendData, array $tierData, ?float $av
     if ($tier === 'low' && $momentum === 'steady') {
         $scoreNote = $avgFormatted !== '' ? " (ĐTB hiện tại {$avgFormatted}đ)" : '';
         return [
-            'competency_title'   => 'Duy trì ổn định — Cần bồi dưỡng bứt phá',
+            'competency_title'   => 'Duy trì ổn định — Cần bồi dưỡng nâng cao',
             'pedagogical_advice' => "Em giữ nhịp làm bài khá đều đặn, không bị rơi rụng thêm{$scoreNote}; tuy nhiên nền tảng kiến thức còn mỏng. Thầy/cô nên khích lệ sự kiên trì của em, đồng thời giao các dạng bài cơ bản vừa sức để tiếp sức cho em vượt ngưỡng 5.0.",
             'profile_tag'        => 'Đi đều mức thấp (Cần tiếp sức)',
         ];
@@ -344,8 +344,8 @@ function evaluateOverallCompetency(array $trendData, array $tierData, ?float $av
     if ($tier === 'average' && $momentum === 'steady') {
         $scoreNote = $avgFormatted !== '' ? " ({$avgFormatted}đ)" : '';
         return [
-            'competency_title'   => 'Duy trì nền tảng — Cần phát huy bứt phá',
-            'pedagogical_advice' => "Em nắm được kiến thức cốt lõi và giữ mạch điểm ổn định{$scoreNote}. Chỉ cần thầy/cô gợi mở thêm phương pháp tự tổng hợp sơ đồ tư duy và rèn kỹ năng trình bày bài tự luận, em hoàn toàn có thể bứt phá lên nhóm Khá.",
+            'competency_title'   => 'Duy trì nền tảng — Cần phát huy nâng cao',
+            'pedagogical_advice' => "Em nắm được kiến thức cốt lõi và giữ mạch điểm ổn định{$scoreNote}. Chỉ cần thầy/cô gợi mở thêm phương pháp tự tổng hợp sơ đồ tư duy và rèn kỹ năng trình bày bài tự luận, em hoàn toàn có thể vươn lên nhóm Khá.",
             'profile_tag'        => 'Đi đều đạt chuẩn (Phát huy)',
         ];
     }
@@ -367,20 +367,20 @@ function evaluateOverallCompetency(array $trendData, array $tierData, ?float $av
         ];
     }
 
-    // 3. Học sinh có Hiệu Suất TĂNG (Bứt phá / Tiến bộ)
+    // 3. Học sinh có Xu Hướng TĂNG (Tiến bộ rõ rệt)
     if ($momentum === 'surge' || $momentum === 'up') {
         $deltaText = ($txDelta !== null && $txDelta > 0) ? " (tăng +{$txDelta}đ qua các bài TX)" : '';
         if ($tier === 'low' || $tier === 'average') {
             return [
                 'competency_title'   => 'Tiến bộ vượt khó — Đà vươn lên ấn tượng',
                 'pedagogical_advice' => "Sự cố gắng của em đã bắt đầu kết trái khi điểm số cải thiện rõ rệt qua từng bài{$deltaText}. Một lời khen trực tiếp trước lớp lúc này sẽ là động lực rất lớn giúp em tự tin giữ vững đà tiến bộ.",
-                'profile_tag'        => 'Tiến bộ vượt khó (Bứt phá)',
+                'profile_tag'        => 'Tiến bộ vượt khó',
             ];
         }
         return [
-            'competency_title'   => 'Bứt phá xuất sắc — Phát triển toàn diện',
+            'competency_title'   => 'Tiến bộ vượt bậc — Phát triển toàn diện',
             'pedagogical_advice' => "Em thể hiện sức bật rất ấn tượng{$deltaText}, tư duy sắc bén và ngày càng hoàn thiện kỹ năng làm bài. Thầy/cô hãy giao thêm các chuyên đề mở rộng để phát huy tối đa năng khiếu bộ môn của em.",
-            'profile_tag'        => 'Bứt phá xuất sắc',
+            'profile_tag'        => 'Tiến bộ vượt bậc',
         ];
     }
 
@@ -410,9 +410,9 @@ function evaluateOverallCompetency(array $trendData, array $tierData, ?float $av
 
 /**
  * Động Cơ Chẩn Đoán Radar Toàn Diện (Thông tư 22/2021/TT-BGDĐT)
- * Tích hợp Kiến Trúc 2 Khung Đánh Giá:
- * - KHUNG HIỆU SUẤT (Đứng trước & Ưu tiên)
- * - KHUNG ĐIỂM SỐ
+ * Tích hợp Hệ Thống Đánh Giá Đa Chiều:
+ * - XU HƯỚNG TIẾN BỘ (Ưu tiên theo dõi)
+ * - BẬC HỌC LỰC (TT22)
  * - NĂNG LỰC TỔNG THỂ & KHUYẾN NGHỊ SƯ PHẠM
  *
  * @param float|null $avg Điểm trung bình môn học kỳ (ĐTBmhk)
@@ -425,7 +425,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
 {
     $reasons = [];
 
-    // 1. Phân tích Khung Hiệu Suất (Momentum)
+    // 1. Phân tích Xu Hướng Tiến Bộ (OLS)
     $trendData = analyzeLearningTrend($avg, $gk, $ck, $txScores);
     $txStats = $trendData['tx_stats'];
 
@@ -650,12 +650,12 @@ function calculateRadarStats(array $students): array
         'yellow'          => 0,
         'green'           => 0,
         'pending_risk'    => 0,
-        // Khung Hiệu Suất (Momentum)
-        'momentum_up'     => 0, // Tiến bộ & bứt phá
+        // Xu Hướng Tiến Bộ (OLS)
+        'momentum_up'     => 0, // Tiến bộ rõ rệt
         'momentum_steady' => 0, // Đi đều / duy trì thực tế
-        'momentum_down'   => 0, // Sa sút & tuột dốc
+        'momentum_down'   => 0, // Sa sút & cần hỗ trợ
         'momentum_pending'=> 0, // Chờ điểm
-        // Khung Điểm Số (Score Tier)
+        // Bậc Học Lực (TT22)
         'tier_excellent'  => 0, // Giỏi / Xuất sắc (8.0+)
         'tier_good'       => 0, // Khá (6.5 - 7.9)
         'tier_average'    => 0, // Trung bình / Đạt (5.0 - 6.4)

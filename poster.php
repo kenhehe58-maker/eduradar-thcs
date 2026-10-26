@@ -687,7 +687,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                     <div class="card-content">
                         <ul>
                             <li><strong>Thực tiễn:</strong> Triển khai Thông tư 22/2021/TT-BGDĐT đòi hỏi chuyển từ đánh giá trừng phạt sang <em>đánh giá vì sự tiến bộ</em> của học sinh.</li>
-                            <li><strong>Vấn đề nan giải:</strong> Điểm số tổng kết cuối kỳ thường là "bản án muộn màng". Khi phát hiện học sinh Chưa Đạt, học kỳ đã kết thúc, không còn thời gian sửa chữa.</li>
+                            <li><strong>Hạn chế thực tế:</strong> Đánh giá truyền thống chỉ phát hiện học sinh Chưa Đạt khi đã kết thúc học kỳ, lúc này không còn cơ hội hỗ trợ hay can thiệp kịp thời.</li>
                             <li><strong>Giải pháp EduRadar:</strong> Thiết lập hệ thống Ra-đa đa chiều độc lập (Mức độ tích lũy TT22 & Xu hướng tiến bộ OLS), phát hiện nguy cơ sớm từ tuần thứ 4 - 5.</li>
                         </ul>
                         <div class="metric-pills">
@@ -706,12 +706,12 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                 <!-- Card 2: Algorithm Engine -->
                 <div class="bento-card highlight">
                     <div class="card-header">
-                        <div class="card-title"><span class="num">2</span> TRÁI TIM THUẬT TOÁN (ENGINE)</div>
+                        <div class="card-title"><span class="num">2</span> MÔ HÌNH TOÁN HỌC & THUẬT TOÁN</div>
                         <span class="card-badge">MÔ HÌNH TOÁN HỌC</span>
                     </div>
                     <div class="card-content">
                         <ul>
-                            <li><strong>Hồi quy tuyến tính OLS:</strong> Xác định độ dốc vận tốc học tập \( k \):</li>
+                            <li><strong>Hồi quy tuyến tính OLS:</strong> Xác định hệ số góc xu hướng tiến bộ \( k \):</li>
                         </ul>
                         <div class="formula-box">
                             k = [N∑(xy) - ∑x∑y] / [N∑(x²) - (∑x)²]<br>
@@ -823,7 +823,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                             <div class="matrix-cell green"><strong>Ô 4: Tiến bộ rõ</strong><br>Động viên tích cực</div>
                             <div class="matrix-cell yellow"><strong>Ô 5: Trung bình</strong><br>Kèm cặp có trọng tâm</div>
                             <div class="matrix-cell red"><strong>Ô 6: Nguy cơ tụt</strong><br>Họp phụ huynh sớm</div>
-                            <div class="matrix-cell yellow"><strong>Ô 7: Vực dậy</strong><br>Giao bài tập thích ứng</div>
+                            <div class="matrix-cell yellow"><strong>Ô 7: Vươn lên</strong><br>Giao bài tập thích ứng</div>
                             <div class="matrix-cell red"><strong>Ô 8: Đuối dần</strong><br>Phụ đạo tăng cường</div>
                             <div class="matrix-cell red"><strong>Ô 9: Báo động đỏ</strong><br>Can thiệp đặc biệt</div>
                         </div>
@@ -986,7 +986,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                             <tbody>
                                 <tr>
                                     <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 01 - 03/2025</td>
-                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Khảo sát thực trạng tính điểm theo TT22; phát hiện nghịch lý "bản án muộn màng" khi kết thúc học kỳ.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Khảo sát thực trạng tính điểm theo TT22; phân tích hạn chế khi việc phát hiện học sinh yếu kém thường diễn ra quá muộn vào cuối kỳ.</td>
                                     <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Biên bản phỏng vấn 12 giáo viên THCS.</td>
                                 </tr>
                                 <tr style="background: #f8fafc;">

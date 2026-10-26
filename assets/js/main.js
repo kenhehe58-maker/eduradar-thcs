@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (mom === 'steady') {
             momBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Duy trì đều</span>';
         } else if (mom === 'surge') {
-            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Bứt phá</span>';
+            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Tiến bộ vượt bậc</span>';
         } else if (mom === 'up') {
             momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Đang tiến bộ</span>';
         } else {
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', function () {
             slopeColor = '#b45309';
             slopeBg = '#fefce8';
             slopeBorder = '#fde047';
-            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô nên động viên, giao thêm bài tập nâng cao vừa sức để em bứt phá lên mức cao hơn.';
+            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô nên động viên, giao thêm bài tập nâng cao vừa sức để em nâng cao kết quả học tập.';
         } else if (slope < 0.6) {
             slopeStatusText = '🟢 Đang có đà tiến bộ tốt';
             slopeColor = '#16a34a';
@@ -512,11 +512,11 @@ document.addEventListener('DOMContentLoaded', function () {
             slopeBorder = '#86efac';
             slopeDescText = 'Điểm số có sự vươn lên rõ qua từng bài kiểm tra. Ý thức học tập rất tích cực, thầy cô nên biểu dương trước lớp.';
         } else {
-            slopeStatusText = '🟢 Tăng tốc bứt phá xuất sắc';
+            slopeStatusText = '🟢 Tiến bộ vượt bậc';
             slopeColor = '#16a34a';
             slopeBg = '#f0fdf4';
             slopeBorder = '#86efac';
-            slopeDescText = 'Điểm số bứt phá mạnh mẽ, em nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra có độ khó cao.';
+            slopeDescText = 'Điểm số tăng rõ rệt, em nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra có độ khó cao.';
         }
 
         if (modalMathSlope) {

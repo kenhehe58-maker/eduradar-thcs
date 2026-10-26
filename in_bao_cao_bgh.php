@@ -2,7 +2,7 @@
 /**
  * =============================================================================
  * Hệ Thống Quản Lý Điểm & Cảnh Báo Sớm THCS (EduRadar)
- * Module: Báo Cáo Phân Tích Động Năng & Rủi Ro Học Kỳ Nộp BGH (PDF & Excel)
+ * Module: Báo Cáo Phân Tích Xu Hướng Tiến Bộ & Rủi Ro Học Kỳ Nộp BGH (PDF & Excel)
  * Tiêu chuẩn: Thông tư 22/2021/TT-BGDĐT
  * =============================================================================
  */
@@ -169,7 +169,7 @@ if ($format === 'xlsx') {
         ['', 'Sa sút liên tục', $counts['trends']['declining'], $total > 0 ? round(($counts['trends']['declining'] / $total) * 100, 1) : 0, 'Cần tìm hiểu nguyên nhân tâm lý/phương pháp'],
         ['', 'Báo động tụt dốc', $counts['trends']['drop_alarm'], $total > 0 ? round(($counts['trends']['drop_alarm'] / $total) * 100, 1) : 0, 'Giảm >= 2 điểm ở kỳ thi trọng số lớn'],
         ['', 'Chờ điểm số', $counts['trends']['pending'], $total > 0 ? round(($counts['trends']['pending'] / $total) * 100, 1) : 0, 'Chưa đủ dữ liệu tối thiểu 2 cột điểm'],
-        ['2. Khung Điểm Số (Học lực)', 'Xuất sắc (>= 9.0)', $counts['tiers']['XUAT_SAC'], $total > 0 ? round(($counts['tiers']['XUAT_SAC'] / $total) * 100, 1) : 0, 'Bồi dưỡng học sinh giỏi'],
+        ['2. Bậc Học Lực (TT22)', 'Xuất sắc (>= 9.0)', $counts['tiers']['XUAT_SAC'], $total > 0 ? round(($counts['tiers']['XUAT_SAC'] / $total) * 100, 1) : 0, 'Bồi dưỡng học sinh giỏi'],
         ['', 'Tốt (>= 6.5)', $counts['tiers']['TOT'], $total > 0 ? round(($counts['tiers']['TOT'] / $total) * 100, 1) : 0, 'Phát huy năng lực vững vàng'],
         ['', 'Đạt (>= 5.0)', $counts['tiers']['DAT'], $total > 0 ? round(($counts['tiers']['DAT'] / $total) * 100, 1) : 0, 'Củng cố kiến thức cơ bản'],
         ['', 'Chưa đạt (< 5.0)', $counts['tiers']['CHUA_DAT'], $total > 0 ? round(($counts['tiers']['CHUA_DAT'] / $total) * 100, 1) : 0, 'Bắt buộc lập danh sách phụ đạo'],
@@ -178,7 +178,7 @@ if ($format === 'xlsx') {
         ['', 'Ổn định (Vùng Xanh)', $counts['green'], $total > 0 ? round(($counts['green'] / $total) * 100, 1) : 0, 'Duy trì phong độ học tập'],
         [''],
         ['PHẦN 2: DANH SÁCH HỌC SINH CẦN CAN THIỆP & PHỤ ĐẠO SƯ PHẠM'],
-        ['STT', 'Mã HS', 'Họ và tên', 'TX1', 'TX2', 'TX3', 'TX4', 'GK', 'CK', 'ĐTB', 'Xu Hướng Tiến Bộ', 'Khung Học Lực', 'Mức Rủi Ro', 'Chẩn Đoán & Kế Hoạch Sư Phạm', 'Ghi Chú Của Giáo Viên']
+        ['STT', 'Mã HS', 'Họ và tên', 'TX1', 'TX2', 'TX3', 'TX4', 'GK', 'CK', 'ĐTB', 'Xu Hướng Tiến Bộ', 'Bậc Học Lực', 'Mức Rủi Ro', 'Chẩn Đoán & Kế Hoạch Sư Phạm', 'Ghi Chú Của Giáo Viên']
     ];
 
     $stt = 1;
@@ -600,9 +600,9 @@ if ($format === 'xlsx') {
                 <div class="stat-item"><span>Chờ điểm số:</span> <strong><?= $counts['trends']['pending'] ?></strong></div>
             </div>
 
-            <!-- Cột 2: Khung Học Lực -->
+            <!-- Cột 2: Bậc Học Lực -->
             <div class="stat-card">
-                <div class="card-title">2. Khung Học Lực (Thông tư 22)</div>
+                <div class="card-title">2. Bậc Học Lực (Thông tư 22)</div>
                 <div class="stat-item"><span>Xuất sắc (&ge; 9.0):</span> <strong><?= $counts['tiers']['XUAT_SAC'] ?></strong></div>
                 <div class="stat-item"><span>Tốt (&ge; 6.5):</span> <strong><?= $counts['tiers']['TOT'] ?></strong></div>
                 <div class="stat-item"><span>Đạt (&ge; 5.0):</span> <strong><?= $counts['tiers']['DAT'] ?></strong></div>
@@ -645,7 +645,7 @@ if ($format === 'xlsx') {
                         <th style="width: 40px;">CK</th>
                         <th style="width: 45px;">ĐTB</th>
                         <th style="width: 120px;">Xu Hướng</th>
-                        <th style="width: 85px;">Khung Điểm</th>
+                        <th style="width: 85px;">Bậc Học Lực</th>
                         <th style="width: 90px;">Mức Rủi Ro</th>
                         <th>Chẩn Đoán Sư Phạm & Kế Hoạch</th>
                     </tr>

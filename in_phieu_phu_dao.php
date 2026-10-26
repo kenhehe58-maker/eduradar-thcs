@@ -144,9 +144,9 @@ if ($format === 'xlsx') {
             $avgScore
         ],
         [''],
-        ['KẾT QUẢ ĐÁNH GIÁ 2 KHUNG NĂNG LỰC'],
-        ['1. Khung Hiệu Suất (Momentum):', $momentumLabel],
-        ['2. Khung Điểm Số (Học lực):', $scoreTierLabel],
+        ['KẾT QUẢ ĐÁNH GIÁ ĐA CHIỀU'],
+        ['1. Xu Hướng Tiến Bộ (OLS):', $momentumLabel],
+        ['2. Bậc Học Lực (TT22):', $scoreTierLabel],
         ['3. Phân vùng rủi ro:', $riskLabel],
         [''],
         ['CHẨN ĐOÁN & KẾ HOẠCH CAN THIỆP SƯ PHẠM'],
@@ -456,11 +456,11 @@ if ($format === 'xlsx') {
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
         <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; background: #f8fafc;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b;">⚡ 1. Khung Hiệu Suất (Momentum)</div>
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b;">⚡ 1. Xu Hướng Tiến Bộ (OLS)</div>
             <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;"><?= $momentumLabel ?></div>
         </div>
         <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; background: #f8fafc;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b;">📊 2. Khung Điểm Số (Học lực)</div>
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b;">📊 2. Bậc Học Lực (TT22)</div>
             <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;"><?= $scoreTierLabel ?></div>
         </div>
     </div>
