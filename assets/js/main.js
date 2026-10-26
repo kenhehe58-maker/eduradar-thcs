@@ -282,16 +282,42 @@ document.addEventListener('DOMContentLoaded', function () {
             modalStudentPhone.style.display = phone ? 'inline' : 'none';
         }
 
-        // Dual Framework Badges
-        const momIcon = row.dataset.momentumIcon || '🔄';
-        const momLabel = row.dataset.momentumLabel || 'Duy trì';
+        // Dual Framework Badges (Chuẩn 4 màu: ĐỎ - CAM - VÀNG - XANH)
+        const mom = row.dataset.momentum || 'steady';
+        let momBadgeHtml = '';
+        if (mom === 'drop') {
+            momBadgeHtml = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Tuột dốc</span>';
+        } else if (mom === 'down') {
+            momBadgeHtml = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Sa sút</span>';
+        } else if (mom === 'steady') {
+            momBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Duy trì đều</span>';
+        } else if (mom === 'surge') {
+            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Bứt phá</span>';
+        } else if (mom === 'up') {
+            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Đang tiến bộ</span>';
+        } else {
+            momBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+        }
         if (modalMomentumBadge) {
-            modalMomentumBadge.innerHTML = '<span style="font-size: 15px; font-weight: 800; color: #0f172a;">' + momIcon + ' ' + momLabel + '</span>';
+            modalMomentumBadge.innerHTML = momBadgeHtml;
         }
 
-        const tierBadge = row.dataset.tierBadge || 'Chờ điểm';
+        const tier = row.dataset.tier || '';
+        const avgVal = parseFloat(row.dataset.avg || '-1');
+        let tierBadgeHtml = '';
+        if (tier === 'excellent' || avgVal >= 8.0) {
+            tierBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Tốt / Giỏi</span>';
+        } else if (tier === 'good' || (avgVal >= 6.5 && avgVal < 8.0)) {
+            tierBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Khá</span>';
+        } else if (tier === 'average' || (avgVal >= 5.0 && avgVal < 6.5)) {
+            tierBadgeHtml = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Trung bình</span>';
+        } else if (tier === 'low' || (avgVal >= 0 && avgVal < 5.0)) {
+            tierBadgeHtml = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Chưa đạt</span>';
+        } else {
+            tierBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+        }
         if (modalScoreTierBadge) {
-            modalScoreTierBadge.innerHTML = '<span style="font-size: 15px; font-weight: 800; color: #0f172a;">' + tierBadge + '</span>';
+            modalScoreTierBadge.innerHTML = tierBadgeHtml;
         }
 
         const riskLevel = row.dataset.level || 'green';
@@ -299,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (riskLevel === 'red') {
                 modalRiskBadge.innerHTML = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Nguy cấp</span>';
             } else if (riskLevel === 'yellow') {
-                modalRiskBadge.innerHTML = '<span style="color: #d97706; font-size: 15px; font-weight: 800;">🟡 Cần chú ý</span>';
+                modalRiskBadge.innerHTML = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Cần chú ý</span>';
             } else if (riskLevel === 'pending') {
                 modalRiskBadge.innerHTML = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm số</span>';
             } else {
@@ -307,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // Score Progression Timeline chips
+        // Score Progression Timeline chips (Chuẩn 4 màu: ĐỎ <5.0, CAM 5.0-6.4, VÀNG 6.5-7.9, XANH >=8.0)
         if (modalScoreTimeline) {
             modalScoreTimeline.innerHTML = '';
             const scoreNodes = [
@@ -325,11 +351,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 nodeDiv.className = 'score-timeline-node' + (node.isGk ? ' node-gk' : '') + (node.isCk ? ' node-ck' : '') + (node.isAvg ? ' node-avg' : '');
                 
                 const valStr = formatScoreValue(node.val);
-                const valClass = getScoreClass(node.val);
+                const valNum = parseFloat(node.val);
+
+                let textColor = '#64748b';
+                let bgColor = '#f8fafc';
+                let borderColor = '#e2e8f0';
+
+                if (node.val !== null && node.val !== undefined && node.val !== '' && !isNaN(valNum)) {
+                    if (valNum < 5.0) {
+                        textColor = '#dc2626'; // ĐỎ: Yếu / Chưa đạt
+                        bgColor = '#fef2f2';
+                        borderColor = '#fca5a5';
+                    } else if (valNum < 6.5) {
+                        textColor = '#ea580c'; // CAM: Trung bình
+                        bgColor = '#fff7ed';
+                        borderColor = '#fed7aa';
+                    } else if (valNum < 8.0) {
+                        textColor = '#b45309'; // VÀNG: Khá
+                        bgColor = '#fefce8';
+                        borderColor = '#fde047';
+                    } else {
+                        textColor = '#16a34a'; // XANH: Giỏi / Tốt
+                        bgColor = '#f0fdf4';
+                        borderColor = '#86efac';
+                    }
+                }
+
+                nodeDiv.style.background = bgColor;
+                nodeDiv.style.borderColor = borderColor;
+                nodeDiv.style.borderWidth = '1.5px';
+                nodeDiv.style.borderStyle = 'solid';
 
                 nodeDiv.innerHTML = `
                     <div class="node-label">${node.name}</div>
-                    <div class="node-score ${valClass}">${valStr}</div>
+                    <div class="node-score" style="color: ${textColor} !important; font-weight: 800;">${valStr}</div>
                 `;
                 modalScoreTimeline.appendChild(nodeDiv);
 
@@ -353,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modalPedagogicalAdvice.textContent = row.dataset.advice || 'Chưa có khuyến nghị sư phạm.';
         }
 
-        // Mathematical Metrics & Target Prediction
+        // Mathematical Metrics Transformed into Natural Teacher Insights
         const modalMathSlope = document.getElementById('modalMathSlope');
         const modalMathSlopeSummary = document.getElementById('modalMathSlopeSummary');
         const modalMathStability = document.getElementById('modalMathStability');
@@ -365,88 +420,170 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (modalMathAcademicBadge) {
             const sem = row.dataset.academicSemester || 'Học kỳ I';
-            const phase = row.dataset.academicPhase || 'Giai đoạn học kỳ';
+            const phase = row.dataset.academicPhase || 'Giai đoạn Giữa kỳ I';
             modalMathAcademicBadge.textContent = `${sem} · ${phase}`;
         }
         if (modalMathTargetPrompt) {
-            const prompt = row.dataset.academicPrompt || 'Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ';
-            modalMathTargetPrompt.textContent = `🎯 ${prompt}:`;
+            modalMathTargetPrompt.textContent = `🎯 Điểm Cuối Kỳ I (CK1) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:`;
+        }
+
+        // 1. Phân tích Xu Hướng Học Tập cho Giáo Viên (chuyển hóa từ OLS Slope k)
+        const slope = parseFloat(row.dataset.mathSlope || '0');
+        let slopeStatusText = '';
+        let slopeDescText = '';
+        let slopeColor = '#16a34a';
+        let slopeBg = '#f0fdf4';
+        let slopeBorder = '#86efac';
+
+        if (isNaN(slope) || row.dataset.mathSlope === undefined || row.dataset.mathSlope === '') {
+            slopeStatusText = '⏳ Đang theo dõi chuỗi điểm';
+            slopeDescText = 'Cần tối thiểu 2 bài kiểm tra thường xuyên để phân tích xu hướng.';
+            slopeColor = '#64748b';
+            slopeBg = '#f8fafc';
+            slopeBorder = '#e2e8f0';
+        } else if (slope <= -0.5) {
+            slopeStatusText = '🔴 Đang tuột dốc liên tiếp';
+            slopeColor = '#dc2626';
+            slopeBg = '#fef2f2';
+            slopeBorder = '#fca5a5';
+            slopeDescText = 'Điểm các bài kiểm tra gần đây sụt giảm rõ rệt. Em đang có dấu hiệu hổng kiến thức ở các bài học gần đây, thầy cô cần kèm cặp và ôn tập ngay!';
+        } else if (slope < -0.2) {
+            slopeStatusText = '🟠 Có dấu hiệu sa sút';
+            slopeColor = '#ea580c';
+            slopeBg = '#fff7ed';
+            slopeBorder = '#fed7aa';
+            slopeDescText = 'Điểm kiểm tra bài sau có chiều hướng giảm nhẹ so với bài trước. Cần nhắc nhở tinh thần học tập và kiểm tra bài tập về nhà.';
+        } else if (slope <= 0.2) {
+            slopeStatusText = '🟡 Phong độ đi đều, ổn định';
+            slopeColor = '#b45309';
+            slopeBg = '#fefce8';
+            slopeBorder = '#fde047';
+            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô nên động viên, giao thêm bài tập nâng cao vừa sức để em bứt phá lên mức cao hơn.';
+        } else if (slope < 0.6) {
+            slopeStatusText = '🟢 Đang có đà tiến bộ tốt';
+            slopeColor = '#16a34a';
+            slopeBg = '#f0fdf4';
+            slopeBorder = '#86efac';
+            slopeDescText = 'Điểm số có sự vươn lên rõ qua từng bài kiểm tra. Ý thức học tập rất tích cực, thầy cô nên biểu dương trước lớp.';
+        } else {
+            slopeStatusText = '🟢 Tăng tốc bứt phá xuất sắc';
+            slopeColor = '#16a34a';
+            slopeBg = '#f0fdf4';
+            slopeBorder = '#86efac';
+            slopeDescText = 'Điểm số bứt phá mạnh mẽ, em nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra có độ khó cao.';
         }
 
         if (modalMathSlope) {
-            const slope = parseFloat(row.dataset.mathSlope || '0');
-            const sign = slope > 0 ? '+' : '';
-            modalMathSlope.textContent = `k = ${sign}${slope.toFixed(2)}`;
-            modalMathSlope.style.color = slope > 0 ? '#16a34a' : (slope < 0 ? '#dc2626' : '#64748b');
+            modalMathSlope.innerHTML = `<span style="color: ${slopeColor}; font-weight: 800; font-size: 14px;">${slopeStatusText}</span>`;
         }
         if (modalMathSlopeSummary) {
-            modalMathSlopeSummary.textContent = row.dataset.mathSlopeSummary || 'Chưa đủ dữ liệu chuỗi điểm';
+            modalMathSlopeSummary.textContent = slopeDescText;
         }
-        if (modalMathStability) {
-            const stdDev = parseFloat(row.dataset.mathStddev || '0');
-            const badge = row.dataset.mathStabilityBadge || 'Ổn định';
-            modalMathStability.textContent = `σ = ${stdDev.toFixed(2)} (${badge})`;
-            modalMathStability.style.color = stdDev > 1.8 ? '#dc2626' : (stdDev > 1.0 ? '#d97706' : '#16a34a');
-        }
-        if (modalMathStabilityDesc) {
-            modalMathStabilityDesc.textContent = row.dataset.mathStabilityDesc || 'Phân tán chuẩn của chuỗi điểm';
+        const modalSlopeCard = document.getElementById('modalSlopeCard');
+        if (modalSlopeCard) {
+            modalSlopeCard.style.background = slopeBg;
+            modalSlopeCard.style.borderColor = slopeBorder;
         }
 
+        // 2. Phân tích Tâm Lý & Phong Độ Phòng Thi (chuyển hóa từ Độ lệch chuẩn σ)
+        const stdDev = parseFloat(row.dataset.mathStddev || '0');
+        let stabStatusText = '';
+        let stabDescText = '';
+        let stabColor = '#16a34a';
+        let stabBg = '#f0fdf4';
+        let stabBorder = '#86efac';
+
+        if (isNaN(stdDev) || row.dataset.mathStddev === undefined || row.dataset.mathStddev === '') {
+            stabStatusText = '⏳ Đang theo dõi phong độ';
+            stabDescText = 'Cần thêm bài kiểm tra để đánh giá độ ổn định phong độ.';
+            stabColor = '#64748b';
+            stabBg = '#f8fafc';
+            stabBorder = '#e2e8f0';
+        } else if (stdDev >= 1.5) {
+            stabStatusText = '🔴 Rất thất thường (Chênh lệch lớn)';
+            stabColor = '#dc2626';
+            stabBg = '#fef2f2';
+            stabBorder = '#fca5a5';
+            stabDescText = 'Khoảng cách giữa bài cao nhất và bài thấp nhất chênh lệch nhiều. Tâm lý làm bài thi chưa vững, dễ chủ quan hoặc lúng túng khi gặp câu hỏi mới.';
+        } else if (stdDev >= 0.8) {
+            stabStatusText = '🟠 Dao động (Chưa thật vững)';
+            stabColor = '#ea580c';
+            stabBg = '#fff7ed';
+            stabBorder = '#fed7aa';
+            stabDescText = 'Điểm số có sự trồi sụt giữa các bài kiểm tra. Cần rèn luyện tính cẩn thận và thói quen soát lại bài trước khi nộp.';
+        } else {
+            stabStatusText = '🟢 Rất đều tay & Vững vàng';
+            stabColor = '#16a34a';
+            stabBg = '#f0fdf4';
+            stabBorder = '#86efac';
+            stabDescText = 'Phong độ thi cử rất ổn định, làm bài đều tay, tâm lý phòng thi vững vàng và phương pháp học tập khoa học.';
+        }
+
+        if (modalMathStability) {
+            modalMathStability.innerHTML = `<span style="color: ${stabColor}; font-weight: 800; font-size: 14px;">${stabStatusText}</span>`;
+        }
+        if (modalMathStabilityDesc) {
+            modalMathStabilityDesc.textContent = stabDescText;
+        }
+        const modalStabilityCard = document.getElementById('modalStabilityCard');
+        if (modalStabilityCard) {
+            modalStabilityCard.style.background = stabBg;
+            modalStabilityCard.style.borderColor = stabBorder;
+        }
+
+        // 3. Dự Báo Điểm Cuối Kỳ Cần Đạt (Thẻ Mục Tiêu chuẩn màu: CAM Đạt, VÀNG Khá, XANH Tốt)
         if (modalTargetCardsGrid) {
             modalTargetCardsGrid.innerHTML = '';
             const targets = [
-                { key: 'dat', label: 'Mức Đạt (≥ 5.0)', val: row.dataset.mathTargetDat, status: row.dataset.mathStatusDat, color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
-                { key: 'kha', label: 'Mức Khá (≥ 6.5)', val: row.dataset.mathTargetKha, status: row.dataset.mathStatusKha, color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
-                { key: 'tot', label: 'Mức Tốt (≥ 8.0)', val: row.dataset.mathTargetTot, status: row.dataset.mathStatusTot, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' }
+                { key: 'dat', label: 'Mức Đạt (≥ 5.0)', val: row.dataset.mathTargetDat, status: row.dataset.mathStatusDat, color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
+                { key: 'kha', label: 'Mức Khá (≥ 6.5)', val: row.dataset.mathTargetKha, status: row.dataset.mathStatusKha, color: '#b45309', bg: '#fefce8', border: '#fde047' },
+                { key: 'tot', label: 'Mức Tốt (≥ 8.0)', val: row.dataset.mathTargetTot, status: row.dataset.mathStatusTot, color: '#16a34a', bg: '#f0fdf4', border: '#86efac' }
             ];
 
             targets.forEach(function(t) {
                 const card = document.createElement('div');
                 card.className = 'target-card-item';
-                card.style.padding = '8px 10px';
-                card.style.borderRadius = '8px';
-                card.style.border = `1px solid ${t.border}`;
+                card.style.padding = '10px 12px';
+                card.style.borderRadius = '10px';
+                card.style.border = `1.5px solid ${t.border}`;
                 card.style.background = t.bg;
                 card.style.textAlign = 'center';
 
-                let subLabel = 'Điểm CK tối thiểu';
-                const focus = (row.dataset.academicFocus || '').toLowerCase();
-                if (focus.includes('cả năm') || focus.includes('ck2')) {
-                    subLabel = 'Điểm CK2 tối thiểu';
-                } else if (focus.includes('giữa kỳ') || focus.includes('gk')) {
-                    subLabel = 'Điểm GK tối thiểu';
-                }
-
                 let scoreText = '-';
-                let subText = '';
+                let subText = 'Điểm CK tối thiểu';
                 if (t.status === 'already_achieved' || t.status === 'guaranteed') {
                     scoreText = '✓ ĐÃ ĐẠT';
                     subText = 'Chỉ cần thi ≥ 0đ';
                 } else if (t.status === 'impossible_exceeds_10' || t.status === 'impossible_ck_only') {
                     scoreText = '> 10.0';
-                    subText = '⚠️ Cần thêm TX';
+                    subText = '⚠️ Cần gỡ thêm TX';
                 } else if (t.val !== undefined && t.val !== '' && !isNaN(parseFloat(t.val))) {
                     scoreText = `${parseFloat(t.val).toFixed(1)} đ`;
-                    subText = subLabel;
+                    subText = 'Điểm CK tối thiểu';
                 } else {
                     scoreText = 'Chờ điểm';
                     subText = 'Chưa có điểm TX';
                 }
 
                 card.innerHTML = `
-                    <div style="font-size: 10.5px; font-weight: 700; color: ${t.color}; text-transform: uppercase;">${t.label}</div>
-                    <div style="font-size: 16px; font-weight: 900; color: ${t.color}; margin: 2px 0;">${scoreText}</div>
-                    <div style="font-size: 10px; color: #64748b;">${subText}</div>
+                    <div style="font-size: 11px; font-weight: 800; color: ${t.color}; text-transform: uppercase;">${t.label}</div>
+                    <div style="font-size: 17px; font-weight: 900; color: ${t.color}; margin: 3px 0;">${scoreText}</div>
+                    <div style="font-size: 10px; color: #64748b; font-weight: 600;">${subText}</div>
                 `;
                 modalTargetCardsGrid.appendChild(card);
             });
         }
 
+        // 4. Khuyến nghị sư phạm hành động cụ thể cho Giáo viên
         if (modalMathTargetAlert) {
-            const alertMsg = row.dataset.mathAlert || '';
+            let alertMsg = (row.dataset.mathAlert || '').trim();
+            alertMsg = alertMsg.replace(/^[🎯⚠️🚨🌟\s:]+/, '');
             if (alertMsg.length > 0) {
-                modalMathTargetAlert.innerHTML = `⚠️ <b>Khuyến nghị thuật toán:</b> ${alertMsg}`;
+                modalMathTargetAlert.innerHTML = `🎯 <b>Kế hoạch hành động cho Thầy/Cô:</b> ${alertMsg}`;
                 modalMathTargetAlert.style.display = 'block';
+                modalMathTargetAlert.style.background = '#fffbeb';
+                modalMathTargetAlert.style.color = '#92400e';
+                modalMathTargetAlert.style.border = '1px solid #fde047';
             } else {
                 modalMathTargetAlert.style.display = 'none';
             }

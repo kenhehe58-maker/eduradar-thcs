@@ -1832,28 +1832,28 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </div>
 
-            <!-- DỰ BÁO ĐIỂM SỐ MỤC TIÊU & CHỈ SỐ TOÁN HỌC (OLS REGRESSION & TT22 INVERSE SOLVER) -->
+            <!-- DỰ BÁO TIẾN ĐỘ & MỤC TIÊU ĐIỂM THI SƯ PHẠM (Chuyển hóa từ OLS & Thông tư 22) -->
             <div class="apple-pedagogical-card" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 16px;">📐</span>
-                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Trọng Tâm Toán Học &amp; Dự Báo Điểm Mục Tiêu</span>
-                        <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
+                        <span style="font-size: 16px;">🎯</span>
+                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Dự Báo Tiến Bộ &amp; Mục Tiêu Điểm Thi</span>
+                        <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #fefce8; color: #b45309; border: 1px solid #fde047; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
                     </div>
-                    <span class="mono-code" style="font-size: 11px; background: #e0e7ff; color: #4338ca; padding: 3px 8px; border-radius: 6px; font-weight: 700;">Hồi quy OLS &amp; Giải ngược TT22</span>
+                    <span style="font-size: 11px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family: inherit;">Dự báo Sư phạm TT22</span>
                 </div>
 
-                <!-- Slope and Stability Metrics -->
+                <!-- 2 Hộp Phân Tích Thực Tế Dành Riêng Cho Giáo Viên: Xu Hướng & Phong Độ -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px;">
-                    <div class="math-metric-card" style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Động năng xu hướng (Hệ số góc k)</div>
-                        <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">k = +0.00</div>
-                        <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Chuỗi điểm đang phân tích...</div>
+                    <div class="math-metric-card" id="modalSlopeCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">📈 Xu Hướng Học Tập (Tiến bộ / Sa sút)</div>
+                        <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
+                        <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Chuỗi điểm đang phân tích...</div>
                     </div>
-                    <div class="math-metric-card" style="background: #f8fafc; padding: 10px 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <div style="font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase;">Độ ổn định phong độ (Độ lệch chuẩn σ)</div>
-                        <div id="modalMathStability" style="font-size: 14px; font-weight: 800; color: #0f172a; margin-top: 3px;">σ = 0.00</div>
-                        <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #64748b; margin-top: 2px;">Mức độ phân tán phong độ</div>
+                    <div class="math-metric-card" id="modalStabilityCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Tâm Lý &amp; Độ Ổn Định Phong Độ</div>
+                        <div id="modalMathStability" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
+                        <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Mức độ phân tán phong độ</div>
                     </div>
                 </div>
 
@@ -1865,7 +1865,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
                         <!-- Populated dynamically via JS -->
                     </div>
-                    <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; color: #b91c1c; display: none; padding: 8px 12px; background: #fef2f2; border-radius: 8px; border: 1px solid #fecaca; line-height: 1.5;"></div>
+                    <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; display: none; padding: 8px 12px; border-radius: 8px; line-height: 1.5;"></div>
                 </div>
             </div>
 

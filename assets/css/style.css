@@ -1860,28 +1860,28 @@ body.stitch-layout {
     white-space: nowrap;
 }
 .badge-tier.tier-excellent {
-    background: #dcfce7;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #86efac;
 }
 .badge-tier.tier-good {
-    background: #dbeafe;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background: #fefce8;
+    color: #b45309;
+    border: 1px solid #fde047;
 }
 .badge-tier.tier-average {
-    background: #fef3c7;
-    color: #b45309;
-    border: 1px solid #fde68a;
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
 }
 .badge-tier.tier-low {
-    background: #fee2e2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
 }
 .badge-tier.tier-critical {
-    background: #fee2e2;
-    color: #991b1b;
+    background: #fef2f2;
+    color: #b91c1c;
     border: 1px solid #f87171;
 }
 .badge-tier.tier-pending {
@@ -3851,8 +3851,8 @@ body.liquid-glass-layout {
   margin-top: 2px;
 }
 .score-timeline-node .node-score.crit { color: #dc2626; }
-.score-timeline-node .node-score.warn { color: #d97706; }
-.score-timeline-node .node-score.good { color: #2563eb; }
+.score-timeline-node .node-score.warn { color: #ea580c; }
+.score-timeline-node .node-score.good { color: #b45309; }
 .score-timeline-node .node-score.excel { color: #16a34a; }
 .timeline-separator {
   color: #cbd5e1;
@@ -5247,14 +5247,14 @@ tr.gb-row-focused td {
   border: 1px solid rgba(16, 185, 129, 0.35) !important;
 }
 [data-theme="dark"] .badge-tier.tier-good {
-  background: rgba(59, 130, 246, 0.15) !important;
-  color: #60a5fa !important;
-  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+  background: rgba(234, 179, 8, 0.15) !important;
+  color: #facc15 !important;
+  border: 1px solid rgba(234, 179, 8, 0.35) !important;
 }
 [data-theme="dark"] .badge-tier.tier-average {
-  background: rgba(245, 158, 11, 0.15) !important;
-  color: #fbbf24 !important;
-  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: #fb923c !important;
+  border: 1px solid rgba(249, 115, 22, 0.35) !important;
 }
 [data-theme="dark"] .badge-tier.tier-low,
 [data-theme="dark"] .badge-tier.tier-critical {

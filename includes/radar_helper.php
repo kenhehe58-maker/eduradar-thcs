@@ -75,12 +75,12 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
     if ($score >= 8.0) {
         return [
             'tier'       => 'excellent',
-            'label'      => 'Xuất sắc',
-            'badge'      => '⭐ Xuất sắc',
-            'icon'       => '⭐',
+            'label'      => 'Tốt / Giỏi',
+            'badge'      => '🟢 Tốt / Giỏi',
+            'icon'       => '🟢',
             'class'      => 'tier-excellent',
-            'color'      => '#15803d',
-            'bg'         => '#dcfce7',
+            'color'      => '#16a34a',
+            'bg'         => '#f0fdf4',
             'threshold'  => 'ĐTB ≥ 8.0',
         ];
     }
@@ -89,11 +89,11 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
         return [
             'tier'       => 'good',
             'label'      => 'Khá',
-            'badge'      => '✨ Khá',
-            'icon'       => '✨',
+            'badge'      => '🟡 Khá',
+            'icon'       => '🟡',
             'class'      => 'tier-good',
-            'color'      => '#1d4ed8',
-            'bg'         => '#dbeafe',
+            'color'      => '#b45309',
+            'bg'         => '#fefce8',
             'threshold'  => '6.5 ≤ ĐTB < 8.0',
         ];
     }
@@ -102,23 +102,23 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
         return [
             'tier'       => 'average',
             'label'      => 'Trung bình',
-            'badge'      => '⚖️ Trung bình',
-            'icon'       => '⚖️',
+            'badge'      => '🟠 Trung bình',
+            'icon'       => '🟠',
             'class'      => 'tier-average',
-            'color'      => '#b45309',
-            'bg'         => '#fef3c7',
+            'color'      => '#ea580c',
+            'bg'         => '#fff7ed',
             'threshold'  => '5.0 ≤ ĐTB < 6.5',
         ];
     }
 
     return [
         'tier'       => 'low',
-        'label'      => $score < 3.5 ? 'Nguy cấp' : 'Thấp',
-        'badge'      => $score < 3.5 ? '🔴 Nguy cấp' : '⚠️ Thấp',
-        'icon'       => $score < 3.5 ? '🔴' : '⚠️',
+        'label'      => $score < 3.5 ? 'Nguy cấp' : 'Chưa đạt',
+        'badge'      => $score < 3.5 ? '🔴 Nguy cấp' : '🔴 Chưa đạt',
+        'icon'       => '🔴',
         'class'      => $score < 3.5 ? 'tier-critical' : 'tier-low',
-        'color'      => '#b91c1c',
-        'bg'         => '#fee2e2',
+        'color'      => '#dc2626',
+        'bg'         => '#fef2f2',
         'threshold'  => 'ĐTB < 5.0',
     ];
 }
