@@ -224,16 +224,16 @@ function calculate_target_scores(array $txScores, ?float $gk): array {
         ];
     }
     
-    // Phân tích sư phạm chuyên sâu
+    // Phan tich su pham chuyen sau
     $pedagogicalAdvice = '';
     if ($results['dat']['feasibility'] === 'impossible_ck_only' || $results['dat']['required_ck'] >= 9.0) {
-        $pedagogicalAdvice = '🚨 BÁO ĐỘNG ĐỎ SƯ PHẠM: Học sinh cần đạt điểm Cuối kỳ rất cao (>= ' . $results['dat']['required_ck'] . 'đ) mới đủ đạt chuẩn Đạt. Giáo viên bộ môn CẦN cho học sinh kiểm tra bổ sung cột ĐĐGtx (đổi bài hoặc gỡ điểm) ngay trong tuần này trước khi khóa sổ!';
+        $pedagogicalAdvice = 'BÁO ĐỘNG ĐỎ SƯ PHẠM: Học sinh cần đạt điểm Cuối kỳ rất cao (>= ' . $results['dat']['required_ck'] . 'đ) mới đủ đạt chuẩn Đạt. Giáo viên bộ môn CẦN cho học sinh kiểm tra bổ sung cột ĐĐGtx (đổi bài hoặc gỡ điểm) ngay trong tuần này trước khi khóa sổ!';
     } elseif ($results['dat']['required_ck'] >= 6.5) {
-        $pedagogicalAdvice = '⚠️ CẢNH BÁO NGUY CƠ: Học sinh cần đạt tối thiểu ' . $results['dat']['required_ck'] . ' điểm Cuối kỳ để Đạt chuẩn TT22. Cần phân công bạn khá kèm cặp phần kiến thức trọng tâm.';
+        $pedagogicalAdvice = 'CẢNH BÁO NGUY CƠ: Học sinh cần đạt tối thiểu ' . $results['dat']['required_ck'] . ' điểm Cuối kỳ để Đạt chuẩn TT22. Cần phân công bạn khá kèm cặp phần kiến thức trọng tâm.';
     } elseif ($results['kha']['feasibility'] === 'achievable') {
-        $pedagogicalAdvice = '🎯 TIỀM NĂNG BỨT PHÁ: Học sinh chỉ cần đạt ' . $results['kha']['required_ck'] . ' điểm Cuối kỳ là vươn lên mức Khá. Nên khích lệ tinh thần để em nỗ lực ôn tập.';
+        $pedagogicalAdvice = 'TIỀM NĂNG TIẾN BỘ: Học sinh chỉ cần đạt ' . $results['kha']['required_ck'] . ' điểm Cuối kỳ là vươn lên mức Khá. Nên khích lệ tinh thần để em nỗ lực ôn tập.';
     } else {
-        $pedagogicalAdvice = '🌟 PHONG ĐỘ XUẤT SẮC: Điểm số thường xuyên và giữa kỳ rất vững vàng. Hướng dẫn em các câu hỏi phân hóa nâng cao để chinh phục mức Tốt.';
+        $pedagogicalAdvice = 'PHONG ĐỘ VỮNG VÀNG: Điểm số thường xuyên và giữa kỳ rất vững vàng. Hướng dẫn em các câu hỏi phân hóa nâng cao để chinh phục mức Tốt.';
     }
     
     return [

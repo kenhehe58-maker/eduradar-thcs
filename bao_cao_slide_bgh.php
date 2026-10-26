@@ -585,7 +585,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
 <body>
     <header class="deck-topbar">
         <div class="deck-brand">
-            <div class="deck-logo">📡</div>
+            <div class="deck-logo" style="display:flex;align-items:center;justify-content:center;"><?= get_svg_icon('radar', 22) ?></div>
             <div>
                 <div>EduRadar Keynote — Báo Cáo Hội Đồng Sư Phạm &amp; BGH</div>
                 <div style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">
@@ -597,7 +597,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
             <button type="button" class="deck-btn" onclick="prevSlide()" title="Xem slide trước đó (Phím ←)">← Trước</button>
             <span id="slideCounter" style="font-size: 13px; font-weight: 800; padding: 0 8px; color: #cbd5e1;">1 / 4</span>
             <button type="button" class="deck-btn primary" onclick="nextSlide()" title="Xem slide tiếp theo (Phím →)">Tiếp →</button>
-            <button type="button" class="deck-btn" onclick="window.print()" title="In báo cáo hội đồng sư phạm ra khổ giấy A4">🖨️ In Báo Cáo</button>
+            <button type="button" class="deck-btn" onclick="window.print()" title="In báo cáo hội đồng sư phạm ra khổ giấy A4" style="display:inline-flex;align-items:center;gap:6px;"><?= get_svg_icon('printer', 14) ?> In Báo Cáo</button>
             <a href="<?= $isGuest ? 'quet_nhanh.php' : ('index.php' . ($classId > 0 ? '?class_id=' . $classId . ($subject !== '' ? '&subject=' . urlencode($subject) : '') : '')) ?>" class="deck-btn" title="Đóng chế độ trình chiếu">✕ Đóng</a>
         </div>
     </header>
@@ -607,29 +607,29 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
         <section class="slide active" data-slide="0">
             <div>
                 <span class="slide-kicker">Slide 01 • Toàn Cảnh Chẩn Đoán Sớm</span>
-                <h1 class="slide-title">Báo Cáo Động Năng &amp; Phân Vùng Rủi Ro Học Tập — <?= htmlspecialchars($className) ?></h1>
+                <h1 class="slide-title">Báo Cáo Xu Hướng Tiến Bộ &amp; Phân Tầng Học Lực — <?= htmlspecialchars($className) ?></h1>
                 <p class="slide-sub">
                     Báo cáo tổng hợp bởi <b><?= htmlspecialchars($teacherName) ?></b> • Phân môn: <b><?= htmlspecialchars($subjectName) ?></b> • Ngày trích xuất: <b><?= date('d/m/Y H:i') ?></b>
                 </p>
 
                 <div class="kpi-grid">
                     <div class="kpi-card" style="border-top: 4px solid #6366f1;">
-                        <div class="kpi-label"><span>👥 TỔNG HỒ SƠ THEO DÕI</span><span>100%</span></div>
+                        <div class="kpi-label"><span>TỔNG HỒ SƠ THEO DÕI</span><span>100%</span></div>
                         <div class="kpi-num" style="color: #e0e7ff;"><?= $stats['total'] ?></div>
                         <div class="kpi-desc">Học sinh trong danh sách phân tích</div>
                     </div>
                     <div class="kpi-card" style="border-top: 4px solid #10b981;">
-                        <div class="kpi-label"><span>📈 ĐÀ TIẾN BỘ &amp; DUY TRÌ TỐT</span><span><?= round($stats['up_pct'] + $stats['steady_pct'], 1) ?>%</span></div>
+                        <div class="kpi-label"><span>TIẾN BỘ &amp; DUY TRÌ TỐT</span><span><?= round($stats['up_pct'] + $stats['steady_pct'], 1) ?>%</span></div>
                         <div class="kpi-num" style="color: #6ee7b7;"><?= $stats['momentum_up'] + $stats['momentum_steady'] ?></div>
-                        <div class="kpi-desc"><?= $stats['momentum_up'] ?> em bứt phá • <?= $stats['momentum_steady'] ?> em đi đều</div>
+                        <div class="kpi-desc"><?= $stats['momentum_up'] ?> em tiến bộ rõ rệt • <?= $stats['momentum_steady'] ?> em giữ phong độ</div>
                     </div>
                     <div class="kpi-card" style="border-top: 4px solid #f59e0b;">
-                        <div class="kpi-label"><span>🟡 CẦN CHÚ Ý / TIẾP SỨC</span><span><?= $stats['yellow_pct'] ?>%</span></div>
+                        <div class="kpi-label"><span>CẦN CHÚ Ý / TIẾP SỨC</span><span><?= $stats['yellow_pct'] ?>%</span></div>
                         <div class="kpi-num" style="color: #fcd34d;"><?= $stats['yellow'] ?></div>
                         <div class="kpi-desc">Đi đều mức thấp hoặc chớm sa sút</div>
                     </div>
                     <div class="kpi-card" style="border-top: 4px solid #ef4444;">
-                        <div class="kpi-label"><span>🔴 BÁO ĐỘNG NGUY CẤP</span><span><?= $stats['red_pct'] ?>%</span></div>
+                        <div class="kpi-label"><span>BÁO ĐỘNG NGUY CẤP</span><span><?= $stats['red_pct'] ?>%</span></div>
                         <div class="kpi-num" style="color: #fca5a5;"><?= $stats['red'] ?></div>
                         <div class="kpi-desc">ĐTB &lt; 3.5, hỏng kỳ thi hoặc TX nguy cấp</div>
                     </div>
@@ -638,11 +638,12 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
 
             <div style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.28); border-radius: 18px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
                 <div>
-                    <div style="font-size: 13px; font-weight: 800; color: #a5b4fc; text-transform: uppercase; margin-bottom: 4px;">
-                        🎯 Nhận Định Trọng Tâm Trình Ban Giám Hiệu
+                    <div style="font-size: 13px; font-weight: 800; color: #a5b4fc; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('radar', 16, '', 'color: #818cf8;') ?>
+                        <span>Nhận Định Trọng Tâm Trình Ban Giám Hiệu</span>
                     </div>
                     <div style="font-size: 14px; color: #e2e8f0; line-height: 1.55;">
-                        Hệ thống EduRadar áp dụng <b>Kiến trúc 2 Khung Đánh Giá (Thông tư 22/2021/TT-BGDĐT)</b>: đặt <b>Khung Hiệu Suất (Động năng tiến bộ)</b> lên trước <b>Khung Điểm Số</b>, giúp nhà trường phát hiện sớm <b><?= $stats['tx_warn_count'] ?> trường hợp cảnh báo sớm từ cột điểm TX</b> trước khi thi cuối kỳ.
+                        Hệ thống EduRadar áp dụng <b>Đánh giá Đa chiều (Thông tư 22/2021/TT-BGDĐT)</b>: kết hợp <b>Xu hướng tiến bộ (OLS Trend)</b> với <b>Mức độ tích lũy học lực</b>, giúp nhà trường phát hiện sớm <b><?= $stats['tx_warn_count'] ?> trường hợp cảnh báo sớm từ cột điểm TX</b> trước khi thi cuối kỳ.
                     </div>
                 </div>
             </div>
@@ -652,19 +653,25 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
         <section class="slide" data-slide="1">
             <div>
                 <span class="slide-kicker">Slide 02 • Biểu Đồ Phân Tích Đa Chiều (Chart.js)</span>
-                <h2 class="slide-title">Tương Quan Khung Hiệu Suất &amp; Khung Học Lực Thông Tư 22</h2>
+                <h2 class="slide-title">Tương Quan Xu Hướng Tiến Bộ &amp; Bậc Học Lực Thông Tư 22</h2>
                 <p class="slide-sub">Trực quan hóa nhịp độ vận động điểm số và phân tầng năng lực thực tế của học sinh</p>
             </div>
 
             <div class="charts-row">
                 <div class="chart-box">
-                    <h3>⚡ 1. Phân Bổ Khung Hiệu Suất (Momentum Trajectory)</h3>
+                    <h3 style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('trend-up', 16, '', 'color: #38bdf8;') ?>
+                        <span>1. Phân Bổ Xu Hướng Tiến Bộ (OLS Trend)</span>
+                    </h3>
                     <div class="chart-canvas-wrap">
                         <canvas id="chartMomentum"></canvas>
                     </div>
                 </div>
                 <div class="chart-box">
-                    <h3>📊 2. Phân Tầng Học Lực Theo Điểm Số (Mastery Tiers)</h3>
+                    <h3 style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('bar-chart', 16, '', 'color: #10b981;') ?>
+                        <span>2. Phân Tầng Học Lực (Thông Tư 22)</span>
+                    </h3>
                     <div class="chart-canvas-wrap">
                         <canvas id="chartTiers"></canvas>
                     </div>
@@ -696,7 +703,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                         <?php if (empty($urgentList)): ?>
                             <tr>
                                 <td colspan="7" style="text-align: center; padding: 32px; color: #6ee7b7; font-weight: 700;">
-                                    🎉 Tuyệt vời! Không có học sinh nào nằm trong vùng Nguy cấp hoặc Cần chú ý.
+                                    <?= get_svg_icon('check-circle', 18, '', 'vertical-align:middle;margin-right:6px;') ?> Không có học sinh nào nằm trong vùng Nguy cấp hoặc Cần chú ý.
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -705,11 +712,11 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                                     <td style="font-family: 'JetBrains Mono', monospace; color: #a5b4fc;"><?= htmlspecialchars($st['student_code'] ?: ('HS' . ($st['student_id'] ?? ''))) ?></td>
                                     <td style="font-weight: 700; color: #ffffff;"><?= htmlspecialchars($st['full_name']) ?></td>
                                     <td><?= htmlspecialchars(($st['class_name'] ?? $className) . ' • ' . ($st['subject'] ?? $subjectName)) ?></td>
-                                    <td><?= htmlspecialchars(($st['trend_icon'] ?? '') . ' ' . ($st['trend_label'] ?? '')) ?></td>
+                                    <td><?= htmlspecialchars($st['trend_label'] ?? '') ?></td>
                                     <td style="font-family: 'JetBrains Mono', monospace; font-weight: 800;"><?= $st['avg_score'] !== null && $st['avg_score'] !== '' ? number_format((float)$st['avg_score'], 1) : '—' ?></td>
                                     <td>
                                         <span class="pill <?= $st['level'] === 'red' ? 'red' : 'yellow' ?>">
-                                            <?= $st['level'] === 'red' ? '🔴 Nguy cấp' : '🟡 Cần chú ý' ?>
+                                            <?= $st['level'] === 'red' ? 'Nguy cấp' : 'Cần chú ý' ?>
                                         </span>
                                     </td>
                                     <td style="font-size: 12.5px; color: #cbd5e1; max-width: 420px;">
@@ -724,16 +731,16 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                 </div>
             </div>
             <div style="font-size: 12px; color: #94a3b8;">
-                💡 <i>Ghi chú: Sử dụng phím mũi tên <code>←</code> <code>→</code> trên bàn phím để chuyển nhanh giữa các Slide khi báo cáo trước Hội đồng.</i>
+                <i>Ghi chú: Sử dụng phím mũi tên <code>←</code> <code>→</code> trên bàn phím để chuyển nhanh giữa các Slide khi báo cáo trước Hội đồng.</i>
             </div>
         </section>
 
-        <!-- SLIDE 4: TUYÊN DƯƠNG BỨT PHÁ & ĐỀ XUẤT BGH -->
+        <!-- SLIDE 4: TUYÊN DƯƠNG TIẾN BỘ & ĐỀ XUẤT BGH -->
         <section class="slide" data-slide="3">
             <div>
                 <span class="slide-kicker">Slide 04 • Vinh Danh Nỗ Lực &amp; Đề Xuất</span>
-                <h2 class="slide-title">Gương Mặt Bứt Phá Xuất Sắc &amp; Kiến Nghị Chuyên Môn (<?= count($starList) ?> HS tiêu biểu)</h2>
-                <p class="slide-sub">Tuyên dương các học sinh có đà tiến bộ vượt khó hoặc duy trì phong độ đỉnh cao</p>
+                <h2 class="slide-title">Học Sinh Tiến Bộ Tiêu Biểu &amp; Kiến Nghị Chuyên Môn (<?= count($starList) ?> HS tiêu biểu)</h2>
+                <p class="slide-sub">Tuyên dương các học sinh có xu hướng tiến bộ vượt bậc hoặc duy trì phong độ xuất sắc</p>
 
                 <div class="slide-table-wrap">
                 <table class="slide-table">
@@ -742,7 +749,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                             <th>Mã HS</th>
                             <th>Họ và Tên</th>
                             <th>Lớp / Môn</th>
-                            <th>Động Năng</th>
+                            <th>Xu Hướng</th>
                             <th>Học Lực</th>
                             <th>ĐTBmhk</th>
                             <th>Định Hướng Phát Triển &amp; Bồi Dưỡng</th>
@@ -752,7 +759,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                         <?php if (empty($starList)): ?>
                             <tr>
                                 <td colspan="7" style="text-align: center; padding: 28px; color: #94a3b8;">
-                                    Đang tiếp tục cập nhật danh sách học sinh bứt phá trong học kỳ.
+                                    Đang tiếp tục cập nhật danh sách học sinh tiến bộ trong học kỳ.
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -761,8 +768,8 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                                     <td style="font-family: 'JetBrains Mono', monospace; color: #6ee7b7;"><?= htmlspecialchars($st['student_code'] ?: ('HS' . ($st['student_id'] ?? ''))) ?></td>
                                     <td style="font-weight: 700; color: #ffffff;"><?= htmlspecialchars($st['full_name']) ?></td>
                                     <td><?= htmlspecialchars(($st['class_name'] ?? $className) . ' • ' . ($st['subject'] ?? $subjectName)) ?></td>
-                                    <td><span class="pill green"><?= htmlspecialchars(($st['trend_icon'] ?? '📈') . ' ' . ($st['trend_label'] ?? 'Tiến bộ')) ?></span></td>
-                                    <td><?= htmlspecialchars($st['score_tier']['badge'] ?? '⭐ Xuất sắc') ?></td>
+                                    <td><span class="pill green"><?= htmlspecialchars(($st['trend_label'] ?? 'Tiến bộ')) ?></span></td>
+                                    <td><?= htmlspecialchars($st['score_tier']['label'] ?? 'Mức Tốt') ?></td>
                                     <td style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #6ee7b7;"><?= $st['avg_score'] !== null && $st['avg_score'] !== '' ? number_format((float)$st['avg_score'], 1) : '—' ?></td>
                                     <td style="font-size: 12.5px; color: #cbd5e1;">
                                         <?= htmlspecialchars($st['competency']['pedagogical_advice'] ?? '') ?>
@@ -776,7 +783,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
             </div>
 
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 14px 20px; font-size: 13.5px; color: #d1fae5;">
-                ✅ <b>Đề xuất Hội đồng Sư phạm:</b> Triển khai mô hình <i>"Đôi bạn cùng tiến"</i> ghép nhóm từ <b><?= $stats['tier_excellent'] ?> học sinh Giỏi</b> hỗ trợ trực tiếp cho <b><?= $stats['red'] + $stats['yellow'] ?> học sinh vùng Nguy cấp / Cần chú ý</b> ngay trong tuần kế tiếp.
+                <b>Đề xuất Hội đồng Sư phạm:</b> Triển khai mô hình <i>"Đôi bạn cùng tiến"</i> ghép nhóm từ <b><?= $stats['tier_excellent'] ?> học sinh Giỏi</b> hỗ trợ trực tiếp cho <b><?= $stats['red'] + $stats['yellow'] ?> học sinh vùng Nguy cấp / Cần chú ý</b> ngay trong tuần kế tiếp.
             </div>
         </section>
     </main>
@@ -823,7 +830,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                 new Chart(ctxMom, {
                     type: 'doughnut',
                     data: {
-                        labels: ['📈 Tiến bộ / Bứt phá', '🔄 Duy trì đều', '📉 Sa sút / Tuột dốc', '⏳ Chờ điểm'],
+                        labels: ['Tiến bộ rõ rệt', 'Duy trì ổn định', 'Có dấu hiệu sa sút', 'Chờ điểm số'],
                         datasets: [{
                             data: [<?= (int)$stats['momentum_up'] ?>, <?= (int)$stats['momentum_steady'] ?>, <?= (int)$stats['momentum_down'] ?>, <?= (int)$stats['momentum_pending'] ?>],
                             backgroundColor: ['#10b981', '#38bdf8', '#ef4444', '#64748b'],
@@ -846,7 +853,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                 new Chart(ctxTiers, {
                     type: 'bar',
                     data: {
-                        labels: ['⭐ Giỏi (≥8.0)', '✨ Khá (6.5-7.9)', '⚖️ Đạt (5.0-6.4)', '⚠️ Cần phụ đạo (<5.0)'],
+                        labels: ['Mức Tốt (≥8.0)', 'Mức Khá (6.5-7.9)', 'Mức Đạt (5.0-6.4)', 'Chưa Đạt (<5.0)'],
                         datasets: [{
                             label: 'Số lượng học sinh',
                             data: [<?= (int)$stats['tier_excellent'] ?>, <?= (int)$stats['tier_good'] ?>, <?= (int)$stats['tier_average'] ?>, <?= (int)$stats['tier_low'] ?>],

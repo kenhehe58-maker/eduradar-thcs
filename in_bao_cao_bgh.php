@@ -155,30 +155,30 @@ usort($atRiskStudents, function($a, $b) {
 // =============================================================================
 if ($format === 'xlsx') {
     $rows = [
-        ['BÁO CÁO PHÂN TÍCH ĐỘNG NĂNG & NGUY CƠ HỌC TẬP HỌC KỲ'],
+        ['BÁO CÁO PHÂN TÍCH XU HƯỚNG TIẾN BỘ & NGUY CƠ HỌC TẬP HỌC KỲ'],
         ['Kính gửi: Ban Giám Hiệu & Tổ Chuyên Môn - Hệ thống EduRadar THCS'],
         [''],
         ['Lớp:', $className, 'Môn học:', $subjectName, 'Sĩ số:', $total],
         ['Giáo viên lập báo cáo:', $teacherName, 'Ngày lập:', date('d/m/Y')],
         [''],
-        ['PHẦN 1: BẢNG TỔNG HỢP 2 KHUNG ĐÁNH GIÁ (HIỆU SUẤT & ĐIỂM SỐ)'],
+        ['PHẦN 1: BẢNG TỔNG HỢP 2 KHUNG ĐÁNH GIÁ (XU HƯỚNG TIẾN BỘ & ĐIỂM SỐ)'],
         ['Khung Đánh Giá', 'Phân loại', 'Số lượng (HS)', 'Tỷ lệ (%)', 'Ý nghĩa sư phạm'],
-        ['1. Khung Hiệu Suất (Momentum)', '🚀 Tăng tốc bức phá', $counts['trends']['accelerating'], $total > 0 ? round(($counts['trends']['accelerating'] / $total) * 100, 1) : 0, 'Điểm số liên tục tăng trưởng mạnh'],
-        ['', '📈 Đang tiến bộ', $counts['trends']['improving'], $total > 0 ? round(($counts['trends']['improving'] / $total) * 100, 1) : 0, 'Có xu hướng đi lên so với trước'],
-        ['', '🔄 Duy trì ổn định', $counts['trends']['steady'], $total > 0 ? round(($counts['trends']['steady'] / $total) * 100, 1) : 0, 'Điểm số giữ vững đều đặn'],
-        ['', '📉 Tuột dốc liên tục', $counts['trends']['declining'], $total > 0 ? round(($counts['trends']['declining'] / $total) * 100, 1) : 0, 'Cần tìm hiểu nguyên nhân tâm lý/phương pháp'],
-        ['', '⚠️ Báo động tụt dốc', $counts['trends']['drop_alarm'], $total > 0 ? round(($counts['trends']['drop_alarm'] / $total) * 100, 1) : 0, 'Giảm >= 2 điểm ở kỳ thi trọng số lớn'],
-        ['', '⏳ Chờ điểm số', $counts['trends']['pending'], $total > 0 ? round(($counts['trends']['pending'] / $total) * 100, 1) : 0, 'Chưa đủ dữ liệu tối thiểu 2 cột điểm'],
-        ['2. Khung Điểm Số (Học lực)', '🌟 Xuất sắc (>= 9.0)', $counts['tiers']['XUAT_SAC'], $total > 0 ? round(($counts['tiers']['XUAT_SAC'] / $total) * 100, 1) : 0, 'Bồi dưỡng học sinh giỏi'],
-        ['', '🟢 Tốt (>= 6.5)', $counts['tiers']['TOT'], $total > 0 ? round(($counts['tiers']['TOT'] / $total) * 100, 1) : 0, 'Phát huy năng lực vững vàng'],
-        ['', '🟡 Đạt (>= 5.0)', $counts['tiers']['DAT'], $total > 0 ? round(($counts['tiers']['DAT'] / $total) * 100, 1) : 0, 'Củng cố kiến thức cơ bản'],
-        ['', '🔴 Chưa đạt (< 5.0)', $counts['tiers']['CHUA_DAT'], $total > 0 ? round(($counts['tiers']['CHUA_DAT'] / $total) * 100, 1) : 0, 'Bắt buộc lập danh sách phụ đạo'],
-        ['3. Phân vùng rủi ro', '🔴 Nguy cấp (Vùng Đỏ)', $counts['red'], $total > 0 ? round(($counts['red'] / $total) * 100, 1) : 0, 'Can thiệp khẩn cấp ngay'],
-        ['', '🟡 Cần chú ý (Vùng Vàng)', $counts['yellow'], $total > 0 ? round(($counts['yellow'] / $total) * 100, 1) : 0, 'Kèm cặp và kiểm tra định kỳ'],
-        ['', '🟢 Ổn định (Vùng Xanh)', $counts['green'], $total > 0 ? round(($counts['green'] / $total) * 100, 1) : 0, 'Duy trì phong độ học tập'],
+        ['1. Xu Hướng Tiến Bộ (OLS Trend)', 'Tiến bộ rõ rệt', $counts['trends']['accelerating'], $total > 0 ? round(($counts['trends']['accelerating'] / $total) * 100, 1) : 0, 'Điểm số liên tục tăng trưởng mạnh'],
+        ['', 'Đang tiến bộ', $counts['trends']['improving'], $total > 0 ? round(($counts['trends']['improving'] / $total) * 100, 1) : 0, 'Có xu hướng đi lên so với trước'],
+        ['', 'Duy trì ổn định', $counts['trends']['steady'], $total > 0 ? round(($counts['trends']['steady'] / $total) * 100, 1) : 0, 'Điểm số giữ vững đều đặn'],
+        ['', 'Sa sút liên tục', $counts['trends']['declining'], $total > 0 ? round(($counts['trends']['declining'] / $total) * 100, 1) : 0, 'Cần tìm hiểu nguyên nhân tâm lý/phương pháp'],
+        ['', 'Báo động tụt dốc', $counts['trends']['drop_alarm'], $total > 0 ? round(($counts['trends']['drop_alarm'] / $total) * 100, 1) : 0, 'Giảm >= 2 điểm ở kỳ thi trọng số lớn'],
+        ['', 'Chờ điểm số', $counts['trends']['pending'], $total > 0 ? round(($counts['trends']['pending'] / $total) * 100, 1) : 0, 'Chưa đủ dữ liệu tối thiểu 2 cột điểm'],
+        ['2. Khung Điểm Số (Học lực)', 'Xuất sắc (>= 9.0)', $counts['tiers']['XUAT_SAC'], $total > 0 ? round(($counts['tiers']['XUAT_SAC'] / $total) * 100, 1) : 0, 'Bồi dưỡng học sinh giỏi'],
+        ['', 'Tốt (>= 6.5)', $counts['tiers']['TOT'], $total > 0 ? round(($counts['tiers']['TOT'] / $total) * 100, 1) : 0, 'Phát huy năng lực vững vàng'],
+        ['', 'Đạt (>= 5.0)', $counts['tiers']['DAT'], $total > 0 ? round(($counts['tiers']['DAT'] / $total) * 100, 1) : 0, 'Củng cố kiến thức cơ bản'],
+        ['', 'Chưa đạt (< 5.0)', $counts['tiers']['CHUA_DAT'], $total > 0 ? round(($counts['tiers']['CHUA_DAT'] / $total) * 100, 1) : 0, 'Bắt buộc lập danh sách phụ đạo'],
+        ['3. Phân vùng rủi ro', 'Nguy cấp (Vùng Đỏ)', $counts['red'], $total > 0 ? round(($counts['red'] / $total) * 100, 1) : 0, 'Can thiệp khẩn cấp ngay'],
+        ['', 'Cần chú ý (Vùng Vàng)', $counts['yellow'], $total > 0 ? round(($counts['yellow'] / $total) * 100, 1) : 0, 'Kèm cặp và kiểm tra định kỳ'],
+        ['', 'Ổn định (Vùng Xanh)', $counts['green'], $total > 0 ? round(($counts['green'] / $total) * 100, 1) : 0, 'Duy trì phong độ học tập'],
         [''],
         ['PHẦN 2: DANH SÁCH HỌC SINH CẦN CAN THIỆP & PHỤ ĐẠO SƯ PHẠM'],
-        ['STT', 'Mã HS', 'Họ và tên', 'TX1', 'TX2', 'TX3', 'TX4', 'GK', 'CK', 'ĐTB', 'Khung Động Năng', 'Khung Học Lực', 'Mức Rủi Ro', 'Chẩn Đoán & Kế Hoạch Sư Phạm', 'Ghi Chú Của Giáo Viên']
+        ['STT', 'Mã HS', 'Họ và tên', 'TX1', 'TX2', 'TX3', 'TX4', 'GK', 'CK', 'ĐTB', 'Xu Hướng Tiến Bộ', 'Khung Học Lực', 'Mức Rủi Ro', 'Chẩn Đoán & Kế Hoạch Sư Phạm', 'Ghi Chú Của Giáo Viên']
     ];
 
     $stt = 1;
@@ -518,21 +518,21 @@ if ($format === 'xlsx') {
     <!-- THANH CÔNG CỤ XUẤT BÁO CÁO -->
     <div class="action-bar">
         <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 18px;">📊</span>
+            <span style="color: #4f46e5;"><?= get_svg_icon('presentation', 20) ?></span>
             <div>
-                <strong style="font-size: 14px;">Báo Cáo Phân Tích Động Năng & Rủi Ro Lớp <?= htmlspecialchars($className) ?></strong>
+                <strong style="font-size: 14px;">Báo Cáo Phân Tích Xu Hướng Tiến Bộ & Rủi Ro Lớp <?= htmlspecialchars($className) ?></strong>
                 <div style="font-size: 12px; color: #64748b;">Hệ thống EduRadar THCS &bull; Khổ A4 tiêu chuẩn nộp BGH</div>
             </div>
         </div>
         <div style="display: flex; gap: 8px;">
-            <button onclick="window.print()" class="btn-action btn-print">
-                🖨️ In / Lưu PDF A4
+            <button onclick="window.print()" class="btn-action btn-print" style="display: inline-flex; align-items: center; gap: 5px;">
+                <?= get_svg_icon('printer', 14) ?> In / Lưu PDF A4
             </button>
             <?php 
                 $excelUrl = "in_bao_cao_bgh.php?format=xlsx" . ($isGuest ? "&guest=1" : "&class_id={$classId}&subject=" . urlencode($subject));
             ?>
-            <a href="<?= htmlspecialchars($excelUrl) ?>" class="btn-action btn-excel">
-                📥 Tải Báo Cáo Excel (.xlsx)
+            <a href="<?= htmlspecialchars($excelUrl) ?>" class="btn-action btn-excel" style="display: inline-flex; align-items: center; gap: 5px;">
+                <?= get_svg_icon('download', 14) ?> Tải Báo Cáo Excel (.xlsx)
             </a>
             <button onclick="window.close()" class="btn-action btn-close">
                 Đóng
@@ -560,7 +560,7 @@ if ($format === 'xlsx') {
 
         <!-- TIÊU ĐỀ BÁO CÁO -->
         <div class="report-title">
-            <h1>BÁO CÁO PHÂN TÍCH ĐỘNG NĂNG & NGUY CƠ HỌC TẬP HỌC KỲ</h1>
+            <h1>BÁO CÁO PHÂN TÍCH XU HƯỚNG TIẾN BỘ & NGUY CƠ HỌC TẬP HỌC KỲ</h1>
             <div class="subtitle">
                 (Phục vụ công tác hội chẩn sư phạm, phân loại học sinh và lập kế hoạch phụ đạo can thiệp sớm)
             </div>
@@ -587,42 +587,42 @@ if ($format === 'xlsx') {
         </div>
 
         <!-- PHẦN 1: TỔNG QUAN 2 KHUNG NĂNG LỰC -->
-        <div class="section-header">I. Tổng Hợp Thống Kê 2 Khung Đánh Giá (Momentum & Điểm Số)</div>
+        <div class="section-header">I. Tổng Hợp Thống Kê: Xu Hướng Tiến Bộ &amp; Mức Độ Tích Lũy (TT22)</div>
         <div class="stats-grid">
-            <!-- Cột 1: Khung Hiệu Suất -->
+            <!-- Cột 1: Xu Hướng Tiến Bộ -->
             <div class="stat-card">
-                <div class="card-title">1. Khung Hiệu Suất (Momentum)</div>
-                <div class="stat-item"><span>🚀 Tăng tốc bức phá:</span> <strong><?= $counts['trends']['accelerating'] ?></strong></div>
-                <div class="stat-item"><span>📈 Đang tiến bộ:</span> <strong><?= $counts['trends']['improving'] ?></strong></div>
-                <div class="stat-item"><span>🔄 Duy trì ổn định:</span> <strong><?= $counts['trends']['steady'] ?></strong></div>
-                <div class="stat-item"><span>📉 Tuột dốc liên tục:</span> <strong style="color: #ea580c;"><?= $counts['trends']['declining'] ?></strong></div>
-                <div class="stat-item"><span>⚠️ Báo động tụt dốc:</span> <strong style="color: #dc2626;"><?= $counts['trends']['drop_alarm'] ?></strong></div>
-                <div class="stat-item"><span>⏳ Chờ điểm số:</span> <strong><?= $counts['trends']['pending'] ?></strong></div>
+                <div class="card-title">1. Xu Hướng Tiến Bộ (OLS Trend)</div>
+                <div class="stat-item"><span>Tiến bộ rõ rệt:</span> <strong><?= $counts['trends']['accelerating'] ?></strong></div>
+                <div class="stat-item"><span>Đang tiến bộ:</span> <strong><?= $counts['trends']['improving'] ?></strong></div>
+                <div class="stat-item"><span>Duy trì ổn định:</span> <strong><?= $counts['trends']['steady'] ?></strong></div>
+                <div class="stat-item"><span>Sa sút liên tục:</span> <strong style="color: #ea580c;"><?= $counts['trends']['declining'] ?></strong></div>
+                <div class="stat-item"><span>Báo động tụt dốc:</span> <strong style="color: #dc2626;"><?= $counts['trends']['drop_alarm'] ?></strong></div>
+                <div class="stat-item"><span>Chờ điểm số:</span> <strong><?= $counts['trends']['pending'] ?></strong></div>
             </div>
 
             <!-- Cột 2: Khung Học Lực -->
             <div class="stat-card">
                 <div class="card-title">2. Khung Học Lực (Thông tư 22)</div>
-                <div class="stat-item"><span>🌟 Xuất sắc (>= 9.0):</span> <strong><?= $counts['tiers']['XUAT_SAC'] ?></strong></div>
-                <div class="stat-item"><span>🟢 Tốt (>= 6.5):</span> <strong><?= $counts['tiers']['TOT'] ?></strong></div>
-                <div class="stat-item"><span>🟡 Đạt (>= 5.0):</span> <strong><?= $counts['tiers']['DAT'] ?></strong></div>
-                <div class="stat-item"><span>🔴 Chưa đạt (&lt; 5.0):</span> <strong style="color: #dc2626;"><?= $counts['tiers']['CHUA_DAT'] ?></strong></div>
-                <div class="stat-item"><span>⏳ Chờ điểm số:</span> <strong><?= $counts['tiers']['CHO_DIEM'] ?></strong></div>
+                <div class="stat-item"><span>Xuất sắc (&ge; 9.0):</span> <strong><?= $counts['tiers']['XUAT_SAC'] ?></strong></div>
+                <div class="stat-item"><span>Tốt (&ge; 6.5):</span> <strong><?= $counts['tiers']['TOT'] ?></strong></div>
+                <div class="stat-item"><span>Đạt (&ge; 5.0):</span> <strong><?= $counts['tiers']['DAT'] ?></strong></div>
+                <div class="stat-item"><span>Chưa đạt (&lt; 5.0):</span> <strong style="color: #dc2626;"><?= $counts['tiers']['CHUA_DAT'] ?></strong></div>
+                <div class="stat-item"><span>Chờ điểm số:</span> <strong><?= $counts['tiers']['CHO_DIEM'] ?></strong></div>
             </div>
 
             <!-- Cột 3: Vùng Rủi Ro Radar -->
             <div class="stat-card <?= $counts['red'] > 0 ? 'red' : ($counts['yellow'] > 0 ? 'yellow' : 'green') ?>">
                 <div class="card-title">3. Phân Vùng Rủi Ro Cảnh Báo</div>
                 <div class="stat-item">
-                    <span>🔴 Nguy cấp (Vùng Đỏ):</span> 
+                    <span>Nguy cấp (Vùng Đỏ):</span> 
                     <strong style="color: #dc2626; font-size: 14px;"><?= $counts['red'] ?> HS (<?= $total > 0 ? round(($counts['red'] / $total) * 100, 1) : 0 ?>%)</strong>
                 </div>
                 <div class="stat-item">
-                    <span>🟡 Cần chú ý (Vùng Vàng):</span> 
+                    <span>Cần chú ý (Vùng Vàng):</span> 
                     <strong style="color: #d97706; font-size: 14px;"><?= $counts['yellow'] ?> HS (<?= $total > 0 ? round(($counts['yellow'] / $total) * 100, 1) : 0 ?>%)</strong>
                 </div>
                 <div class="stat-item">
-                    <span>🟢 An toàn (Vùng Xanh):</span> 
+                    <span>An toàn (Vùng Xanh):</span> 
                     <strong style="color: #16a34a; font-size: 14px;"><?= $counts['green'] ?> HS (<?= $total > 0 ? round(($counts['green'] / $total) * 100, 1) : 0 ?>%)</strong>
                 </div>
             </div>
@@ -644,7 +644,7 @@ if ($format === 'xlsx') {
                         <th style="width: 40px;">GK</th>
                         <th style="width: 40px;">CK</th>
                         <th style="width: 45px;">ĐTB</th>
-                        <th style="width: 120px;">Động Năng</th>
+                        <th style="width: 120px;">Xu Hướng</th>
                         <th style="width: 85px;">Khung Điểm</th>
                         <th style="width: 90px;">Mức Rủi Ro</th>
                         <th>Chẩn Đoán Sư Phạm & Kế Hoạch</th>

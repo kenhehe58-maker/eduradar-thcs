@@ -821,14 +821,16 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
 
     <?php if ($errorMsg): ?>
-        <div class="alert error mb-3" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
-            ⚠️ <?= htmlspecialchars($errorMsg) ?>
+        <div class="alert error mb-3" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <?= get_svg_icon('alert-triangle', 16) ?>
+            <span><?= htmlspecialchars($errorMsg) ?></span>
         </div>
     <?php endif; ?>
 
     <?php if ($realUserRole === 'admin' && $actingTeacherId > 0): ?>
-        <div class="alert mb-3" style="background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
-            👁️ <b>Chế độ Admin:</b> Bạn đang xem và có thể chỉnh sửa sổ điểm môn <b><?= htmlspecialchars($selectedSubject) ?></b> của giáo viên này.
+        <div class="alert mb-3" style="background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <?= get_svg_icon('shield-check', 16) ?>
+            <span><b>Chế độ Admin:</b> Bạn đang xem và có thể chỉnh sửa sổ điểm môn <b><?= htmlspecialchars($selectedSubject) ?></b> của giáo viên này.</span>
             <a href="admin.php" style="margin-left: 10px; font-weight: bold; text-decoration: underline;">Quay lại Admin</a>
         </div>
     <?php endif; ?>
@@ -948,7 +950,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php if (empty($studentList)): ?>
                         <tr>
                             <td colspan="11" style="text-align: center; padding: 48px 20px; color: #64748b; background: #fafafa;">
-                                <div style="font-size: 36px; margin-bottom: 10px;">📂</div>
+                                <div style="margin-bottom: 10px;"><?= get_svg_icon('users', 36, '', 'color: #94a3b8;') ?></div>
                                 <b style="font-size: 16px; color: #1e293b; display: block; margin-bottom: 6px;">
                                     Lớp <?= htmlspecialchars($curClassName) ?> hiện chưa có danh sách học sinh (Sĩ số: 0)
                                 </b>
@@ -958,8 +960,9 @@ require_once __DIR__ . '/includes/header.php';
                                 <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
                                     <?php foreach ($assignedClasses as $altC): ?>
                                         <?php if ($altC['student_count'] > 0): ?>
-                                            <a href="nhap_diem.php?class_id=<?= $altC['id'] ?>&subject=<?= urlencode($altC['subjects'][0] ?? 'Toán') ?><?= ($actingTeacherId > 0 && $realUserRole === 'admin') ? '&teacher_id=' . $actingTeacherId : '' ?>" class="btn primary" style="font-size: 13px; padding: 7px 16px; font-weight: 700;">
-                                                👉 Lớp <?= htmlspecialchars($altC['name']) ?> (<?= $altC['student_count'] ?> HS)
+                                            <a href="nhap_diem.php?class_id=<?= $altC['id'] ?>&subject=<?= urlencode($altC['subjects'][0] ?? 'Toán') ?><?= ($actingTeacherId > 0 && $realUserRole === 'admin') ? '&teacher_id=' . $actingTeacherId : '' ?>" class="btn primary" style="font-size: 13px; padding: 7px 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                                <?= get_svg_icon('arrow-right', 13) ?>
+                                                <span>Lớp <?= htmlspecialchars($altC['name']) ?> (<?= $altC['student_count'] ?> HS)</span>
                                             </a>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
@@ -1067,7 +1070,10 @@ require_once __DIR__ . '/includes/header.php';
                     <?php endif; ?>
                     <tr id="gbFilterEmptyRow" style="display: none;">
                         <td colspan="11" style="text-align: center; padding: 36px 20px; color: #64748b; font-weight: 600;">
-                            🔍 Không tìm thấy học sinh nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm.
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <?= get_svg_icon('search', 16) ?>
+                                <span>Không tìm thấy học sinh nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm.</span>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

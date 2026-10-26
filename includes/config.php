@@ -21,3 +21,7 @@ define('APP_NAME', 'EduRadar');
 
 // Ngưỡng cảnh báo học tập theo chuẩn THCS
 define('PASS_SCORE', 5.0);
+
+// Thư viện SVG icon chuẩn hóa (Monochrome vector icons)
+require_once __DIR__ . '/icons.php';
+

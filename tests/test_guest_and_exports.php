@@ -104,8 +104,8 @@ echo "  -> PASS: Excel (.xlsx) Phiếu Phụ Đạo khách xuất thành công (
 echo "[3] Xuất Báo Cáo BGH trong Chế độ Khách (in_bao_cao_bgh.php)...\n";
 $resBghPdf = http_req("$baseUrl/in_bao_cao_bgh.php?guest=1&format=pdf", 'GET', null, $cookies);
 assert($resBghPdf['code'] === 200, "Xuất Báo Cáo BGH PDF phải HTTP 200");
-assert(str_pos_check($resBghPdf['body'], 'BÁO CÁO PHÂN TÍCH ĐỘNG NĂNG'), "Phải có tiêu đề Báo Cáo BGH");
-assert(str_pos_check($resBghPdf['body'], 'Khung Hiệu Suất'), "Phải có thống kê Khung Hiệu Suất");
+assert(str_pos_check($resBghPdf['body'], 'BÁO CÁO PHÂN TÍCH'), "Phải có tiêu đề Báo Cáo BGH");
+assert(str_pos_check($resBghPdf['body'], 'Xu Hướng') || str_pos_check($resBghPdf['body'], 'Khung Hiệu Suất'), "Phải có thống kê Xu Hướng Tiến Bộ");
 echo "  -> PASS: PDF A4 Báo Cáo BGH khách hiển thị chuẩn xác.\n";
 
 $resBghXlsx = http_req("$baseUrl/in_bao_cao_bgh.php?guest=1&format=xlsx", 'GET', null, $cookies);
@@ -131,7 +131,7 @@ assert(str_pos_check($adminDash['body'], 'btnModalPrintPdf'), "Phải có nút I
 
 $adminBghPdf = http_req("$baseUrl/in_bao_cao_bgh.php?class_id=1&subject=" . urlencode('Toán học') . "&format=pdf", 'GET', null, $adminCookies);
 assert($adminBghPdf['code'] === 200, "Admin xem báo cáo BGH lớp 1 phải HTTP 200");
-assert(str_pos_check($adminBghPdf['body'], 'BÁO CÁO PHÂN TÍCH ĐỘNG NĂNG'), "Nội dung báo cáo chuẩn A4");
+assert(str_pos_check($adminBghPdf['body'], 'BÁO CÁO PHÂN TÍCH'), "Nội dung báo cáo chuẩn A4");
 
 $adminBghXlsx = http_req("$baseUrl/in_bao_cao_bgh.php?class_id=1&subject=" . urlencode('Toán học') . "&format=xlsx", 'GET', null, $adminCookies);
 assert($adminBghXlsx['code'] === 200, "Admin tải Excel báo cáo BGH lớp 1 phải HTTP 200");

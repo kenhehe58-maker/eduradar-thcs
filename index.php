@@ -434,26 +434,26 @@ require_once __DIR__ . '/includes/header.php';
 <div class="edexa-hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 20px; padding: 24px 28px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
     <div style="max-width: 680px;">
         <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; flex-wrap: wrap;">
-            <span>📅 NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
+            <span>NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
             <span>&bull;</span>
             <span><?= htmlspecialchars($academicCalendar['semester_name']) ?> (<?= htmlspecialchars($academicCalendar['phase_title']) ?>)</span>
             <span>&bull;</span>
-            <span style="color: #0369a1;">🎯 <?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
+            <span style="color: #0369a1;"><?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
         </div>
         <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
-            Đồng Hành Cùng Học Sinh Bứt Phá Năng Lực Học Tập
+            Hệ Thống Ra-đa Cảnh Báo Sớm Học Lực THCS
         </h1>
         <p style="font-size: 13.5px; color: var(--text-muted, #475569); margin: 0 0 16px 0; line-height: 1.5;">
-            Hệ thống Radar 2 khung đánh giá tự động: phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và gợi ý lộ trình bồi dưỡng cá nhân hóa tức thì.
+            Theo dõi tiến trình học tập, phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và hỗ trợ kế hoạch can thiệp sư phạm cá nhân hóa.
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             <a href="nhap_diem.php<?= $navQuery ?>" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
+                <?= get_svg_icon('file-text', 16) ?>
                 <span>Vào Sổ Điểm Bộ Môn</span>
             </a>
             <?php if (!empty($selectedClassId)): ?>
                 <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn btn-hero-slide" style="border: 1.5px solid var(--border-color, #cbd5e1); padding: 8px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    <?= get_svg_icon('presentation', 16) ?>
                     <span>Xuất Slide Báo Cáo BGH</span>
                 </a>
             <?php endif; ?>
@@ -482,11 +482,12 @@ require_once __DIR__ . '/includes/header.php';
 <!-- KHỐI TIÊU ĐỀ DASHBOARD -->
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 16px; flex-wrap: wrap;">
     <div>
-        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.4px; margin-bottom: 4px;">
-            📡 Radar Đánh Giá 2 Khung: Hiệu Suất & Học Lực
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.4px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+            <?= get_svg_icon('radar', 22, '', 'color: #2563eb;') ?>
+            <span>Ra-đa Giám Sát: Xu Hướng Tiến Bộ & Mức Độ Tích Lũy</span>
         </h2>
         <p class="muted small" style="margin: 0;">
-            <b>Khung Hiệu Suất</b> (Tăng &bull; Đều &bull; Giảm) kết hợp <b>Khung Điểm Số</b> theo chuẩn Thông tư 22/2021/TT-BGDĐT
+            <b>Xu hướng tiến bộ</b> (Tiến bộ &bull; Duy trì &bull; Sa sút) kết hợp <b>Mức độ tích lũy</b> theo chuẩn Thông tư 22/2021/TT-BGDĐT
         </p>
     </div>
 </div>
@@ -495,13 +496,13 @@ require_once __DIR__ . '/includes/header.php';
 <div class="class-subject-matrix-bar">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <?php if ($userRole === 'admin'): ?>
-            <div class="matrix-role-pill admin">
-                <span>👑</span>
+            <div class="matrix-role-pill admin" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= get_svg_icon('settings', 15) ?>
                 <span>Quản Trị Viên Trường &bull; Toàn Quyền Lớp & Phân Môn Toàn Trường (<?= count($filterClasses) ?> Lớp &bull; <?= count($filterSubjects) ?> Môn)</span>
             </div>
         <?php else: ?>
-            <div class="matrix-role-pill teacher">
-                <span>👨‍🏫</span>
+            <div class="matrix-role-pill teacher" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= get_svg_icon('user', 15) ?>
                 <span>Phân Công Giáo Viên: <?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username']) ?> &bull; Giới Hạn Theo Lớp & Môn Phụ Trách (<?= count($filterClasses) ?> Lớp &bull; <?= count($filterSubjects) ?> Môn)</span>
             </div>
         <?php endif; ?>
@@ -517,7 +518,10 @@ require_once __DIR__ . '/includes/header.php';
         <div class="matrix-form-row">
             <!-- 1. MỤC CHỌN LỚP HỌC -->
             <div class="matrix-field-group">
-                <label class="matrix-field-label" for="selectClassId">🏫 Chọn Lớp Học</label>
+                <label class="matrix-field-label" for="selectClassId" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('users', 14) ?>
+                    <span>Chọn Lớp Học</span>
+                </label>
                 <select name="class_id" id="selectClassId" class="matrix-select" onchange="this.form.submit()">
                     <?php if ($userRole === 'admin'): ?>
                         <option value="0" <?= $selectedClassId === 0 ? 'selected' : '' ?>>
@@ -541,11 +545,14 @@ require_once __DIR__ . '/includes/header.php';
 
             <!-- 2. MỤC CHỌN PHÂN MÔN -->
             <div class="matrix-field-group">
-                <label class="matrix-field-label" for="selectSubject">📚 Phân Môn Phụ Trách</label>
+                <label class="matrix-field-label" for="selectSubject" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('book-open', 14) ?>
+                    <span>Phân Môn Phụ Trách</span>
+                </label>
                 <?php if ($userRole === 'admin'): ?>
                     <select name="subject" id="selectSubject" class="matrix-select" onchange="this.form.submit()">
                         <option value="all" <?= $selectedSubject === 'all' ? 'selected' : '' ?>>
-                            📖 Tất cả môn học (<?= count($filterSubjects) ?> môn)
+                            Tất cả môn học (<?= count($filterSubjects) ?> môn)
                         </option>
                         <?php foreach ($filterSubjects as $subj): ?>
                             <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
@@ -604,14 +611,17 @@ require_once __DIR__ . '/includes/header.php';
             ?>
             <?php if ($reportClassId > 0): ?>
                 <div style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
-                    <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn-action-slip" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: linear-gradient(135deg, #0f172a, #312e81); color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);" title="Mở Slide thuyết trình báo cáo BGH tương tác (Chart.js)">
-                        📊 Slide Báo Cáo BGH
+                    <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn-action-slip" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #0f172a, #312e81); color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);" title="Mở Slide thuyết trình báo cáo BGH tương tác (Chart.js)">
+                        <?= get_svg_icon('presentation', 15) ?>
+                        <span>Slide Báo Cáo BGH</span>
                     </a>
-                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=pdf" target="_blank" class="btn-action-slip btn-slip-pdf" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" title="Xuất báo cáo động năng nộp BGH (Khổ A4 chuẩn)">
-                        🖨️ Báo Cáo BGH (PDF A4)
+                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=pdf" target="_blank" class="btn-action-slip btn-slip-pdf" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" title="Xuất báo cáo nộp BGH (Khổ A4 chuẩn)">
+                        <?= get_svg_icon('printer', 15) ?>
+                        <span>Báo Cáo BGH (PDF)</span>
                     </a>
-                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=xlsx" target="_blank" class="btn-action-slip btn-slip-excel" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; background: #10b981; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);" title="Xuất file Excel báo cáo động năng nộp BGH">
-                        📥 Báo Cáo BGH (Excel)
+                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=xlsx" target="_blank" class="btn-action-slip btn-slip-excel" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #10b981; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);" title="Xuất file Excel báo cáo nộp BGH">
+                        <?= get_svg_icon('download', 15) ?>
+                        <span>Báo Cáo BGH (Excel)</span>
                     </a>
                 </div>
             <?php endif; ?>
@@ -629,8 +639,8 @@ require_once __DIR__ . '/includes/header.php';
         <div class="matrix-class-chips-container" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-color);">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase;">
-                        ⚡ Lọc Nhanh Khối:
+                    <span style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                        <?= get_svg_icon('filter', 13) ?> Lọc theo Khối:
                     </span>
                     <button type="button" class="btn-grade-pill active" onclick="filterGradeChips('all', this)">
                         Tất cả (<?= count($filterClassesWithStudents) ?> lớp)
@@ -797,45 +807,58 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 <?php endif; ?>
 
-<!-- NHÓM 1: CÁC THẺ THỐNG KÊ KHUNG HIỆU SUẤT (ĐỨNG TRƯỚC & NỔI BẬT) -->
+<!-- NHÓM 1: CÁC THẺ THỐNG KÊ XU HƯỚNG TIẾN BỘ (ĐỨNG TRƯỚC & NỔI BẬT) -->
 <div style="margin-bottom: 24px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
-            ⚡ KHUNG 1: HIỆU SUẤT & ĐỘNG NĂNG HỌC TẬP (MOMENTUM)
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+            <?= get_svg_icon('trend-up', 16, '', 'color: #2563eb;') ?>
+            <span>1. Xu Hướng Tiến Bộ Học Tập (OLS Trend)</span>
         </span>
-        <span class="muted small">Tăng trưởng · Đi đều · Sa sút · Chờ điểm</span>
+        <span class="muted small">Tiến bộ · Duy trì · Sa sút · Chờ điểm</span>
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 16px;">
         <div class="card stat-card trend-up">
             <div class="card-header-row">
-                <span class="card-title">📈 Đang Tiến Bộ / Bứt Phá</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('trend-up', 16) ?>
+                    <span>Đang Tiến Bộ Rõ Rệt</span>
+                </span>
                 <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_up'] ?></b>
-            <span class="card-sub">Bài sau cao hơn bài trước hoặc CK bứt phá so với GK</span>
+            <span class="card-sub">Điểm số có chiều hướng đi lên hoặc thi định kỳ tiến bộ</span>
         </div>
 
         <div class="card stat-card green">
             <div class="card-header-row">
-                <span class="card-title">🔄 Đang Đi Đều / Duy Trì</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('activity', 16) ?>
+                    <span>Duy Trì Ổn Định</span>
+                </span>
                 <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_steady'] ?></b>
-            <span class="card-sub">Điểm số ổn định, không bị rơi rụng (cần bồi dưỡng bứt phá)</span>
+            <span class="card-sub">Điểm số giữ nhịp đều đặn, không sụt giảm phong độ</span>
         </div>
 
         <div class="card stat-card trend-down">
             <div class="card-header-row">
-                <span class="card-title">📉 Đang Sa Sút / Tuột Dốc</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('trend-down', 16) ?>
+                    <span>Có Dấu Hiệu Sa Sút</span>
+                </span>
                 <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_down'] ?></b>
-            <span class="card-sub">Chuỗi điểm TX tụt dốc hoặc thi CK sút giảm</span>
+            <span class="card-sub">Điểm kiểm tra sụt giảm liên tục, cần kịp thời nhắc nhở</span>
         </div>
 
         <div class="card stat-card" style="border-left: 4px solid #64748b;">
             <div class="card-header-row">
-                <span class="card-title">⏳ Đang Chờ Điểm Số</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('clock', 16) ?>
+                    <span>Chờ Cập Nhật Điểm</span>
+                </span>
                 <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_pending'] ?></b>
@@ -844,18 +867,22 @@ require_once __DIR__ . '/includes/header.php';
     </section>
 </div>
 
-<!-- NHÓM 2: THỐNG KÊ KHUNG ĐIỂM SỐ & VÙNG RỦI RO THÔNG TƯ 22 -->
+<!-- NHÓM 2: THỐNG KÊ MỨC ĐỘ TÍCH LŨY HỌC LỰC (THÔNG TƯ 22) -->
 <div style="margin-bottom: 28px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">
-            📊 KHUNG 2: PHÂN KHÚC ĐIỂM SỐ & CHẨN ĐOÁN RỦI RO (THÔNG TƯ 22)
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+            <?= get_svg_icon('bar-chart', 16, '', 'color: #059669;') ?>
+            <span>2. Mức Độ Tích Lũy Học Lực (Thông Tư 22)</span>
         </span>
         <span class="muted small">Tổng số <?= $stats['total'] ?> hồ sơ</span>
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat-card total">
             <div class="card-header-row">
-                <span class="card-title">👥 Tổng Hồ Sơ</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('users', 16) ?>
+                    <span>Tổng Hồ Sơ</span>
+                </span>
                 <span class="card-pct total">100%</span>
             </div>
             <b><?= $stats['total'] ?></b>
@@ -865,7 +892,10 @@ require_once __DIR__ . '/includes/header.php';
         <?php if ($stats['momentum_pending'] > 0): ?>
             <div class="card stat-card" style="border-left: 4px solid #94a3b8;">
                 <div class="card-header-row">
-                    <span class="card-title">⏳ Chờ Điểm Số</span>
+                    <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('clock', 16) ?>
+                        <span>Chờ Điểm Số</span>
+                    </span>
                     <span class="card-pct" style="color: #64748b; font-weight: 700;"><?= round(($stats['momentum_pending'] / max(1, $stats['total'])) * 100, 1) ?>%</span>
                 </div>
                 <b><?= $stats['momentum_pending'] ?></b>
@@ -875,7 +905,10 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="card stat-card green">
             <div class="card-header-row">
-                <span class="card-title">⭐ Giỏi & Khá</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('check-circle', 16, '', 'color: #16a34a;') ?>
+                    <span>Mức Tốt &amp; Khá</span>
+                </span>
                 <span class="card-pct green"><?= $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0 ?>%</span>
             </div>
             <b><?= $stats['tier_excellent'] + $stats['tier_good'] ?></b>
@@ -884,20 +917,29 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="card stat-card yellow">
             <div class="card-header-row">
-                <span class="card-title">🟡 Trung Bình</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('alert-circle', 16, '', 'color: #d97706;') ?>
+                    <span>Mức Đạt (Trung Bình)</span>
+                </span>
                 <span class="card-pct yellow"><?= $stats['total'] > 0 ? round(($stats['tier_average'] / $stats['total']) * 100, 1) : 0 ?>%</span>
             </div>
             <b><?= $stats['tier_average'] ?></b>
-            <span class="card-sub" title="Trung bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">5.0 ≤ ĐTB &lt; 6.5 (Cần chú ý)</span>
+            <span class="card-sub" title="Trung bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">5.0 ≤ ĐTB &lt; 6.5</span>
         </div>
 
         <div class="card stat-card red">
             <div class="card-header-row">
-                <span class="card-title">🔴 Yếu</span>
+                <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('alert-triangle', 16, '', 'color: #dc2626;') ?>
+                    <span>Chưa Đạt (Cần Hỗ Trợ)</span>
+                </span>
                 <span class="card-pct red"><?= $stats['total'] > 0 ? round(($stats['tier_low'] / $stats['total']) * 100, 1) : 0 ?>%</span>
             </div>
             <b><?= $stats['tier_low'] ?></b>
-            <span class="card-sub" title="Yếu (ĐTB < 5.0) · Nguy cấp">ĐTB &lt; 5.0 (Nguy cấp)</span>
+            <span class="card-sub" title="Chưa đạt (ĐTB < 5.0) · Cần can thiệp sớm">ĐTB &lt; 5.0</span>
+        </div>
+    </section>
+</div>
         </div>
     </section>
 </div>
@@ -930,8 +972,8 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- NÚT ẨN / HIỆN CỘT ĐIỂM CHI TIẾT (TX, GK, CK) -->
-            <button type="button" class="btn-toggle-score-cols <?= ($selectedSubject !== 'all') ? 'active' : '' ?>" id="btnToggleScoreCols" onclick="toggleScoreDetailColumns()" title="Bật/Tắt hiển thị các cột điểm thành phần TX, GK, CK">
-                <?= ($selectedSubject === 'all') ? '👁️ Hiện Điểm TX, GK, CK' : '⚡ Thu Gọn (Chỉ Xem ĐTB)' ?>
+            <button type="button" class="btn-toggle-score-cols <?= ($selectedSubject !== 'all') ? 'active' : '' ?>" id="btnToggleScoreCols" onclick="toggleScoreDetailColumns()" title="Bật/Tắt hiển thị các cột điểm thành phần TX, GK, CK" style="display: inline-flex; align-items: center; gap: 6px;">
+                <?= ($selectedSubject === 'all') ? get_svg_icon('eye', 14) . ' <span>Hiện Điểm TX, GK, CK</span>' : get_svg_icon('minus', 14) . ' <span>Thu Gọn (Chỉ Xem ĐTB)</span>' ?>
             </button>
         </div>
 
@@ -1210,23 +1252,24 @@ require_once __DIR__ . '/includes/header.php';
     <!-- THÔNG BÁO HƯỚNG DẪN RÕ RÀNG KHI LỚP CHƯA CÓ ĐIỂM SỐ GHI NHẬN -->
     <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 26px;">💡</span>
+            <div style="color: #2563eb;"><?= get_svg_icon('file-text', 26) ?></div>
             <div>
                 <div style="font-size: 14.5px; font-weight: 800; color: #1e40af;">
                     Lớp <?= htmlspecialchars($filterClasses[$selectedClassId] ?? '') ?>: Đang theo dõi hồ sơ học sinh, chưa có điểm số môn [<?= htmlspecialchars($selectedSubject === 'all' ? ($filterSubjects[0] ?? 'bộ môn') : $selectedSubject) ?>]
                 </div>
                 <div style="font-size: 12.5px; color: #3b82f6; margin-top: 2px;">
-                    Dữ liệu học sinh đã sẵn sàng. Giáo viên bộ môn có thể nhập điểm trực tiếp hoặc nạp file Excel để hệ thống tự động chẩn đoán 2 khung năng lực ngay lập tức.
+                    Dữ liệu học sinh đã sẵn sàng. Giáo viên bộ môn có thể nhập điểm trực tiếp hoặc nạp file Excel để hệ thống tự động phân tích tiến độ học tập ngay lập tức.
                 </div>
             </div>
         </div>
         <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject === 'all' ? ($filterSubjects[0] ?? 'Toán') : $selectedSubject) ?>" class="btn primary" style="padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-            📋 Mở Sổ Điểm Nhập Điểm Ngay
+            <?= get_svg_icon('file-text', 15) ?>
+            <span>Vào Sổ Điểm Nhập Điểm</span>
         </a>
     </div>
 <?php endif; ?>
 
-<!-- BẢNG RADAR 2 KHUNG ĐÁNH GIÁ: HIỆU SUẤT ĐỨNG TRƯỚC, KHUNG ĐIỂM, CHẨN ĐOÁN & KHUYẾN NGHỊ -->
+<!-- BẢNG RADAR ĐÁNH GIÁ: XU HƯỚNG TIẾN BỘ, BẬC HỌC LỰC TT22, CHẨN ĐOÁN & KHUYẾN NGHỊ -->
 <div class="radar-table-wrap">
     <table class="radar-table <?= ($selectedSubject === 'all') ? 'scores-hidden' : '' ?>" id="radarTable">
         <thead>
@@ -1757,14 +1800,16 @@ require_once __DIR__ . '/includes/header.php';
 
                             <td class="col-actions">
                                 <div class="actions-stack">
-                                    <button type="button" class="btn-open-detail" title="Xem chi tiết hồ sơ & Ghi nhận xét sư phạm">
-                                        👁️ Chi Tiết
+                                    <button type="button" class="btn-open-detail" title="Xem chi tiết hồ sơ & Ghi nhận xét sư phạm" style="display: inline-flex; align-items: center; gap: 5px;">
+                                        <?= get_svg_icon('eye', 13) ?>
+                                        <span>Chi Tiết</span>
                                     </button>
                                     <a href="nhap_diem.php?class_id=<?= urlencode((string)$s['class_id']) ?>&subject=<?= urlencode($s['subject']) ?>" 
                                        class="btn-goto-gradebook" 
                                        title="Vào sổ điểm lớp <?= htmlspecialchars($s['class_name']) ?> môn <?= htmlspecialchars($s['subject']) ?>"
-                                       onclick="event.stopPropagation();">
-                                        📋 Sổ Điểm
+                                       onclick="event.stopPropagation();" style="display: inline-flex; align-items: center; gap: 5px;">
+                                        <?= get_svg_icon('file-text', 13) ?>
+                                        <span>Sổ Điểm</span>
                                     </a>
                                 </div>
                             </td>
@@ -1805,26 +1850,29 @@ require_once __DIR__ . '/includes/header.php';
 
         <!-- Body -->
         <div class="competency-modal-body">
-            <!-- Apple Unified Segmented Stat Bar: ⚡ Hiệu Suất | 📊 Khung Điểm | 🎯 Vùng Rủi Ro -->
+            <!-- Apple Unified Segmented Stat Bar: Xu Hướng | Bậc TT22 | Trạng Thái -->
             <div class="modal-apple-stat-bar">
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">⚡ 1. Khung Hiệu Suất</span>
-                    <div class="modal-apple-stat-val" id="modalMomentumBadge">📈 Đang Tiến Bộ</div>
+                    <span class="modal-apple-stat-label">1. Xu Hướng Tiến Bộ</span>
+                    <div class="modal-apple-stat-val" id="modalMomentumBadge">Đang Tiến Bộ</div>
                 </div>
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">📊 2. Khung Điểm Số</span>
-                    <div class="modal-apple-stat-val" id="modalScoreTierBadge">⭐ Xuất Sắc</div>
+                    <span class="modal-apple-stat-label">2. Bậc Học Lực (TT 22)</span>
+                    <div class="modal-apple-stat-val" id="modalScoreTierBadge">Mức Tốt</div>
                 </div>
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">🎯 3. Phân Vùng Rủi Ro TT22</span>
-                    <div class="modal-apple-stat-val" id="modalRiskBadge">🟢 Ổn định</div>
+                    <span class="modal-apple-stat-label">3. Trạng Thái Cảnh Báo</span>
+                    <div class="modal-apple-stat-val" id="modalRiskBadge">Ổn định</div>
                 </div>
             </div>
 
             <!-- Hành trình điểm số: TX1 -> TX2 -> TX3 -> TX4 -> GK -> CK -> ĐTB (Không cuộn ngang) -->
             <div>
                 <div class="timeline-section-title">
-                    <span>📈 Chuỗi Điểm Số & Động Năng Tiến Bộ</span>
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('trend-up', 15, '', 'color: #2563eb;') ?>
+                        <span>Chuỗi Điểm Số & Diễn Biến Học Tập</span>
+                    </span>
                     <span class="muted small" style="text-transform: none; font-weight: 600;">Thông tư 22/2021/TT-BGDĐT</span>
                 </div>
                 <div class="score-timeline-ribbon" id="modalScoreTimeline">
@@ -1836,7 +1884,7 @@ require_once __DIR__ . '/includes/header.php';
             <div class="apple-pedagogical-card" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 16px;">🎯</span>
+                        <?= get_svg_icon('radar', 16, '', 'color: #2563eb;') ?>
                         <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Dự Báo Tiến Bộ &amp; Mục Tiêu Điểm Thi</span>
                         <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #fefce8; color: #b45309; border: 1px solid #fde047; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
                     </div>
@@ -1846,12 +1894,18 @@ require_once __DIR__ . '/includes/header.php';
                 <!-- 2 Hộp Phân Tích Thực Tế Dành Riêng Cho Giáo Viên: Xu Hướng & Phong Độ -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px;">
                     <div class="math-metric-card" id="modalSlopeCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">📈 Xu Hướng Học Tập (Tiến bộ / Sa sút)</div>
+                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
+                            <?= get_svg_icon('trend-up', 13) ?>
+                            <span>Xu Hướng Học Tập</span>
+                        </div>
                         <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
                         <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Chuỗi điểm đang phân tích...</div>
                     </div>
                     <div class="math-metric-card" id="modalStabilityCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Tâm Lý &amp; Độ Ổn Định Phong Độ</div>
+                        <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
+                            <?= get_svg_icon('activity', 13) ?>
+                            <span>Tâm Lý &amp; Độ Ổn Định Phong Độ</span>
+                        </div>
                         <div id="modalMathStability" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
                         <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Mức độ phân tán phong độ</div>
                     </div>
@@ -1859,8 +1913,9 @@ require_once __DIR__ . '/includes/header.php';
 
                 <!-- Target CK Projection Cards -->
                 <div class="math-target-card" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">
-                        🎯 Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:
+                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px;">
+                        <?= get_svg_icon('radar', 13) ?>
+                        <span>Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:</span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
                         <!-- Populated dynamically via JS -->
@@ -1872,8 +1927,9 @@ require_once __DIR__ . '/includes/header.php';
             <!-- Apple Unified Pedagogical Card -->
             <div class="apple-pedagogical-card">
                 <div class="apple-pedagogy-section">
-                    <div class="apple-pedagogy-title" style="color: #4338ca;">
-                        <span>🔍 Chẩn Đoán Chi Tiết Từ Hệ Thống Radar:</span>
+                    <div class="apple-pedagogy-title" style="color: #4338ca; display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('search', 14) ?>
+                        <span>Chẩn Đoán Chi Tiết Từ Hệ Thống Radar:</span>
                     </div>
                     <div class="apple-pedagogy-content" id="modalDiagnosticText">
                         Đang tải chẩn đoán...
@@ -1881,8 +1937,9 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
                 <div style="border-top: 1px dashed #e2e8f0;"></div>
                 <div class="apple-pedagogy-section">
-                    <div class="apple-pedagogy-title" style="color: #1d4ed8;">
-                        <span>💡 Năng Lực Tổng Thể & Khuyến Nghị Sư Phạm:</span>
+                    <div class="apple-pedagogy-title" style="color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('award', 14) ?>
+                        <span>Năng Lực Tổng Thể & Khuyến Nghị Sư Phạm:</span>
                     </div>
                     <div class="apple-pedagogy-content">
                         <b id="modalCompetencyTitle" style="color: #1e3a8a; display: block; margin-bottom: 4px;">Tiêu đề năng lực</b>
@@ -1892,7 +1949,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div style="border-top: 1px dashed #e2e8f0;"></div>
                 <details style="font-size: 12.5px; color: #475569; cursor: pointer;">
                     <summary style="font-weight: 800; color: #0f172a; outline: none; list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 2px 0;">
-                        <span>📘 Căn cứ Quy chế Thông tư 22/2021/TT-BGDĐT & Công thức ĐTBmhk</span>
+                        <span>Căn cứ Quy chế Thông tư 22/2021/TT-BGDĐT & Công thức ĐTBmhk</span>
                         <span style="font-size: 11px; color: #6366f1; font-weight: 700;">Xem quy tắc ▾</span>
                     </summary>
                     <div style="margin-top: 8px; padding: 10px 14px; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; line-height: 1.65; color: #334155;">
@@ -1907,8 +1964,9 @@ require_once __DIR__ . '/includes/header.php';
             <div class="teacher-note-section">
                 <div class="teacher-note-header">
                     <div>
-                        <div class="teacher-note-title">
-                            <span>📝 Sổ Tay Nhận Xét Sư Phạm Của Giáo Viên</span>
+                        <div class="teacher-note-title" style="display: flex; align-items: center; gap: 6px;">
+                            <?= get_svg_icon('edit', 15, '', 'color: #2563eb;') ?>
+                            <span>Sổ Tay Nhận Xét Sư Phạm Của Giáo Viên</span>
                         </div>
                         <div class="teacher-note-sub">
                             Ghi chú cá nhân hóa, kế hoạch bồi dưỡng học sinh giỏi hoặc phụ đạo học sinh sa sút (lưu trực tiếp vào CSDL)
@@ -1929,19 +1987,21 @@ require_once __DIR__ . '/includes/header.php';
                                 <div class="u001-float">
                                     <button class="u001-btn" type="button" id="btnSaveTeacherNote">
                                         <span class="u001-sheen" aria-hidden="true"></span>
-                                        <span class="u001-txt">💾 Lưu Nhận Xét Sư Phạm</span>
+                                        <span class="u001-txt">Lưu Nhận Xét Sư Phạm</span>
                                         <span class="u001-spin" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="10"/></svg></span>
-                                        <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Đã Lưu ✓</span>
+                                        <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Đã Lưu</span>
                                     </button>
                                 </div>
                             </div>
                             <span class="u001-live" aria-live="polite"></span>
                         </div>
-                        <a href="#" target="_blank" id="btnModalPrintPdf" class="btn-action btn-print" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #4f46e5; color: #ffffff;" title="In phiếu phụ đạo học sinh (PDF khổ A4)">
-                            🖨️ In Phiếu Phụ Đạo (PDF)
+                        <a href="#" target="_blank" id="btnModalPrintPdf" class="btn-action btn-print" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff;" title="In phiếu phụ đạo học sinh (PDF khổ A4)">
+                            <?= get_svg_icon('printer', 14) ?>
+                            <span>In Phiếu Phụ Đạo (PDF)</span>
                         </a>
-                        <a href="#" target="_blank" id="btnModalExportXlsx" class="btn-action btn-excel" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #10b981; color: #ffffff;" title="Tải file Excel phiếu phụ đạo học sinh">
-                            📥 Tải Phiếu Excel (.xlsx)
+                        <a href="#" target="_blank" id="btnModalExportXlsx" class="btn-action btn-excel" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #10b981; color: #ffffff;" title="Tải file Excel phiếu phụ đạo học sinh">
+                            <?= get_svg_icon('download', 14) ?>
+                            <span>Tải Phiếu Excel (.xlsx)</span>
                         </a>
                     </div>
                 </div>

@@ -490,12 +490,12 @@ require_once __DIR__ . '/includes/header.php';
 <!-- 1. HERO SHOWCASE BANNER -->
 <section class="welcome-hero">
     <div class="welcome-badge">
-        <span>📅 NĂM HỌC <?= htmlspecialchars($welcomeCalendar['school_year']) ?> &bull; <?= htmlspecialchars($welcomeCalendar['semester_name']) ?></span>
+        <span>NĂM HỌC <?= htmlspecialchars($welcomeCalendar['school_year']) ?> &bull; <?= htmlspecialchars($welcomeCalendar['semester_name']) ?></span>
         <span>&bull;</span>
         <span>EDURADAR THCS</span>
     </div>
     <h1 class="welcome-title">
-        Cảnh Báo Sớm &amp; Động Năng Học Tập THCS
+        Cảnh Báo Sớm &amp; Xu Hướng Tiến Bộ Học Sinh THCS
     </h1>
     <p class="welcome-desc">
         Hệ thống tự động phân tích biến thiên điểm số thường xuyên (ĐĐGtx) theo <b>Thông tư 22/2021/TT-BGDĐT</b>, hỗ trợ Thầy/Cô và Ban Giám Hiệu phát hiện sớm nguy cơ sụt giảm học lực để kịp thời can thiệp sư phạm.
@@ -503,15 +503,15 @@ require_once __DIR__ . '/includes/header.php';
 
     <div class="welcome-cta-group">
         <a href="index.php" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+            <?= get_svg_icon('radar', 18) ?>
             <span>Vào Cảnh Báo Sớm</span>
         </a>
         <a href="nhap_diem.php" class="btn" style="background: var(--card-bg, #ffffff); color: var(--text-heading, #0f172a); border: 1.5px solid var(--border-color, #cbd5e1); padding: 11px 22px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
+            <?= get_svg_icon('file-text', 18) ?>
             <span>Mở Sổ Điểm VnEdu</span>
         </a>
         <a href="bao_cao_slide_bgh.php" target="_blank" class="btn" style="background: var(--card-bg, #ffffff); color: var(--text-heading, #0f172a); border: 1.5px solid var(--border-color, #cbd5e1); padding: 11px 22px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <?= get_svg_icon('presentation', 18) ?>
             <span>Slide Báo Cáo BGH</span>
         </a>
     </div>
@@ -520,7 +520,7 @@ require_once __DIR__ . '/includes/header.php';
 <!-- 2. TOÀN TRƯỜNG KPI SUMMARY CARDS (BENTO PRO) -->
 <div class="welcome-kpi-grid">
     <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #eff6ff; color: #2563eb;">👥</div>
+        <div class="kpi-icon-box" style="background: #eff6ff; color: #2563eb;"><?= get_svg_icon('users', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">TỔNG HỌC SINH</span>
             <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
@@ -530,7 +530,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;">⭐</div>
+        <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;"><?= get_svg_icon('award', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">TỶ LỆ GIỎI &amp; KHÁ</span>
             <div style="font-size: 26px; font-weight: 800; color: #059669; font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
@@ -540,7 +540,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;">⚡</div>
+        <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;"><?= get_svg_icon('activity', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">BÀI ĐÁNH GIÁ</span>
             <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
@@ -550,7 +550,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #fef2f2; color: #dc2626;">🚨</div>
+        <div class="kpi-icon-box" style="background: #fef2f2; color: #dc2626;"><?= get_svg_icon('alert-triangle', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">CẦN PHỤ ĐẠO SỚM</span>
             <div style="font-size: 26px; font-weight: 800; color: #dc2626; font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
@@ -563,8 +563,9 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- 3. CỔNG CHỨC NĂNG CỐT LÕI (CORE PORTALS) -->
 <div style="margin-bottom: 14px;">
-    <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading, #0f172a); letter-spacing: -0.02em; margin-bottom: 4px;">
-        🎯 Cổng Chức Năng Cốt Lõi (Core Portals)
+    <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading, #0f172a); letter-spacing: -0.02em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+        <?= get_svg_icon('radar', 22, '', 'color: #2563eb;') ?>
+        <span>Cổng Chức Năng Cốt Lõi</span>
     </h2>
     <p style="font-size: 13.5px; color: var(--text-muted, #64748b); margin: 0 0 16px 0;">
         Truy cập nhanh vào các phân hệ nghiệp vụ chính của hệ thống EduRadar THCS.
@@ -575,23 +576,23 @@ require_once __DIR__ . '/includes/header.php';
     <!-- CỔNG 1: CẢNH BÁO SỚM -->
     <a href="index.php" class="launchpad-card">
         <div class="launchpad-card-header">
-            <span style="font-size: 28px;">📡</span>
+            <div style="color: #2563eb;"><?= get_svg_icon('activity', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(37, 99, 235, 0.12); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.25);">Chính Thức</span>
         </div>
-        <div class="launchpad-card-title">Cảnh Báo Sớm 2 Khung</div>
+        <div class="launchpad-card-title">Cảnh Báo Sớm & Xu Hướng</div>
         <div class="launchpad-card-desc">
-            Phân tích tự động biến thiên động năng học tập (Tiến bộ · Duy trì · Sa sút) kết hợp phân tầng Thông tư 22. Tự động đề xuất lộ trình sư phạm cho từng học sinh.
+            Phân tích tự động xu hướng tiến bộ học tập (Tiến bộ · Duy trì · Sa sút) kết hợp phân tầng Thông tư 22. Tự động đề xuất lộ trình sư phạm cho từng học sinh.
         </div>
         <div class="launchpad-card-footer">
             <span>Mở Bảng Cảnh Báo Sớm</span>
-            <span>→</span>
+            <?= get_svg_icon('chevron-right', 16) ?>
         </div>
     </a>
 
     <!-- CỔNG 2: SỔ ĐIỂM ĐIỆN TỬ VNEDU -->
     <a href="nhap_diem.php" class="launchpad-card">
         <div class="launchpad-card-header">
-            <span style="font-size: 28px;">📋</span>
+            <div style="color: #059669;"><?= get_svg_icon('file-text', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(5, 150, 105, 0.12); color: #059669; border: 1px solid rgba(5, 150, 105, 0.25);">Chuẩn VnEdu</span>
         </div>
         <div class="launchpad-card-title">Sổ Điểm Điện Tử VnEdu</div>
@@ -600,30 +601,30 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="launchpad-card-footer">
             <span>Mở Sổ Điểm Bộ Môn</span>
-            <span>→</span>
+            <?= get_svg_icon('chevron-right', 16) ?>
         </div>
     </a>
 
     <!-- CỔNG 3: QUÉT NHANH AI OCR -->
     <a href="quet_nhanh.php" class="launchpad-card">
         <div class="launchpad-card-header">
-            <span style="font-size: 28px;">⚡</span>
+            <div style="color: #d97706;"><?= get_svg_icon('qr-code', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(217, 119, 6, 0.12); color: #d97706; border: 1px solid rgba(217, 119, 6, 0.25);">Quét 1 Chạm</span>
         </div>
-        <div class="launchpad-card-title">Quét Nhanh Bảng Điểm AI</div>
+        <div class="launchpad-card-title">Quét Nhanh Bảng Điểm</div>
         <div class="launchpad-card-desc">
             Dành cho giáo viên muốn kiểm tra nhanh bảng điểm lớp ngoài hoặc khách dùng thử: nạp tệp Excel, CSV, hoặc ảnh bảng điểm và nhận báo cáo ngay trong 3 giây.
         </div>
         <div class="launchpad-card-footer">
             <span>Thử Nghiệm Quét Nhanh</span>
-            <span>→</span>
+            <?= get_svg_icon('chevron-right', 16) ?>
         </div>
     </a>
 
     <!-- CỔNG 4: SLIDE BÁO CÁO & THỐNG KÊ BGH -->
     <a href="bao_cao_slide_bgh.php" target="_blank" class="launchpad-card">
         <div class="launchpad-card-header">
-            <span style="font-size: 28px;">📊</span>
+            <div style="color: #db2777;"><?= get_svg_icon('presentation', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(219, 39, 119, 0.12); color: #db2777; border: 1px solid rgba(219, 39, 119, 0.25);">Trực Quan</span>
         </div>
         <div class="launchpad-card-title">Báo Cáo & Thống Kê BGH</div>
@@ -632,7 +633,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="launchpad-card-footer">
             <span>Trình Chiếu Slide BGH</span>
-            <span>→</span>
+            <?= get_svg_icon('chevron-right', 16) ?>
         </div>
     </a>
 
@@ -640,7 +641,7 @@ require_once __DIR__ . '/includes/header.php';
     <!-- CỔNG 5: QUẢN TRỊ ADMIN -->
     <a href="admin.php" class="launchpad-card">
         <div class="launchpad-card-header">
-            <span style="font-size: 28px;">🛡️</span>
+            <div style="color: #7e22ce;"><?= get_svg_icon('settings', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(126, 34, 206, 0.12); color: #7e22ce; border: 1px solid rgba(126, 34, 206, 0.25);">Quản Trị</span>
         </div>
         <div class="launchpad-card-title">Cổng Quản Trị Nhà Trường</div>
@@ -649,7 +650,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="launchpad-card-footer">
             <span>Cấu Hình & Quản Trị</span>
-            <span>→</span>
+            <?= get_svg_icon('chevron-right', 16) ?>
         </div>
     </a>
     <?php endif; ?>
@@ -659,8 +660,9 @@ require_once __DIR__ . '/includes/header.php';
 <div class="stepper-container">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
         <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0;">
-                🧭 Quy Trình 3 Bước Nghiệp Vụ
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <?= get_svg_icon('check-circle', 20, '', 'color: #2563eb;') ?>
+                <span>Quy Trình 3 Bước Nghiệp Vụ</span>
             </h3>
             <p style="font-size: 13px; color: var(--text-muted, #64748b); margin: 0;">
                 Quy trình tinh gọn giúp Thầy/Cô hoàn tất theo dõi và hỗ trợ học sinh nhanh chóng.
@@ -679,7 +681,7 @@ require_once __DIR__ . '/includes/header.php';
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
                 Vào <b>Sổ Điểm</b>, chọn lớp và môn. Nhập điểm ĐĐGtx (1–4), Giữa kỳ bằng bàn phím hoặc tải file Excel VnEdu.
             </p>
-            <a href="nhap_diem.php" style="font-size: 12.5px; font-weight: 700; color: #2563eb; text-decoration: none;">Vào Sổ Điểm →</a>
+            <a href="nhap_diem.php" style="font-size: 12.5px; font-weight: 700; color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Vào Sổ Điểm <?= get_svg_icon('chevron-right', 14) ?></a>
         </div>
 
         <!-- BƯỚC 2 -->
@@ -687,9 +689,9 @@ require_once __DIR__ . '/includes/header.php';
             <div class="step-number-badge" style="background: rgba(16, 185, 129, 0.15); color: #059669;">2</div>
             <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 2: Cảnh Báo &amp; Can Thiệp</b>
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Theo dõi phân tầng động năng, xem dự báo mục tiêu điểm thi và lưu nhận xét sư phạm trực tiếp.
+                Theo dõi tiến độ học tập, xem mục tiêu phấn đấu và ghi chú kế hoạch can thiệp sư phạm.
             </p>
-            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #059669; text-decoration: none;">Xem Cảnh Báo Sớm →</a>
+            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #059669; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Xem Cảnh Báo Sớm <?= get_svg_icon('chevron-right', 14) ?></a>
         </div>
 
         <!-- BƯỚC 3 -->
@@ -699,16 +701,17 @@ require_once __DIR__ . '/includes/header.php';
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
                 Trình chiếu Slide báo cáo BGH hoặc in phiếu học tập gửi phụ huynh chỉ với một thao tác.
             </p>
-            <a href="bao_cao_slide_bgh.php" target="_blank" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none;">Trình Chiếu Slide →</a>
+            <a href="bao_cao_slide_bgh.php" target="_blank" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Trình Chiếu Slide <?= get_svg_icon('chevron-right', 14) ?></a>
         </div>
     </div>
 </div>
 
-<!-- 5. TÌM KIẾM NHANH HỌC SINH VỚI INPUT MASK (LAW #1 INPUT MASKS & LAW #7 SEARCHABLE DROPDOWN) -->
+<!-- 5. TÌM KIẾM NHANH HỌC SINH VỚI INPUT MASK -->
 <div class="quick-search-box">
     <div>
-        <div style="font-size: 15px; font-weight: 800; color: var(--text-heading); margin-bottom: 4px;">
-            🔍 Tra Cứu Nhanh Hồ Sơ Học Sinh Toàn Trường
+        <div style="font-size: 15px; font-weight: 800; color: var(--text-heading); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+            <?= get_svg_icon('search', 18, '', 'color: #2563eb;') ?>
+            <span>Tra Cứu Nhanh Hồ Sơ Học Sinh Toàn Trường</span>
         </div>
         <div style="font-size: 12.5px; color: var(--text-muted);">
             Định dạng mã HS chuẩn: <code>2404XXXXXX</code> hoặc gõ họ tên học sinh để mở bảng điểm ngay lập tức.
@@ -717,7 +720,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <form method="GET" action="index.php" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
         <div class="search-input-mask-wrap">
-            <span>🔎</span>
+            <span style="display: flex; align-items: center;"><?= get_svg_icon('search', 16, '', 'color: #64748b;') ?></span>
             <input type="text" name="search" id="quickStudentSearchInput" placeholder="Ví dụ: 2404815683 hoặc Trần Lê Ngọc..." aria-label="Mã học sinh hoặc tên học sinh">
         </div>
         <button type="submit" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: 13.5px; border: none; cursor: pointer;">
@@ -730,8 +733,9 @@ require_once __DIR__ . '/includes/header.php';
 <div class="handbook-box">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
         <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0;">
-                📖 Cẩm Nang Sư Phạm: Quy Chuẩn Thông Tư 22/2021/TT-BGDĐT
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <?= get_svg_icon('book-open', 20, '', 'color: #2563eb;') ?>
+                <span>Cẩm Nang Sư Phạm: Quy Chuẩn Thông Tư 22/2021/TT-BGDĐT</span>
             </h3>
             <p style="font-size: 13px; color: var(--text-muted, #64748b); margin: 0;">
                 Quy định đánh giá học sinh THCS theo phương pháp kết hợp nhận xét và điểm số.

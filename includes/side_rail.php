@@ -541,13 +541,13 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
           <a href="logout.php" class="u040-it u040-logout-it" title="Đăng Xuất Khỏi Hệ Thống" aria-label="Đăng Xuất">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
             <span class="u040-logout-text">Đăng Xuất</span>
-            <span class="u040-dock-tip">🚪 Đăng Xuất</span>
+            <span class="u040-dock-tip">Đăng Xuất</span>
           </a>
         <?php else: ?>
           <a href="login.php" class="u040-it u040-logout-it" title="Đăng Nhập" aria-label="Đăng Nhập">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span class="u040-logout-text">Đăng Nhập</span>
-            <span class="u040-dock-tip">🔑 Đăng Nhập</span>
+            <span class="u040-dock-tip">Đăng Nhập</span>
           </a>
         <?php endif; ?>
       </div>

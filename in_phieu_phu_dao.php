@@ -427,7 +427,7 @@ if ($format === 'xlsx') {
     </table>
 
     <div style="font-weight: 800; font-size: 13.5px; color: #1e293b; margin-top: 10px;">
-        1. BẢNG TIẾN TRÌNH ĐIỂM SỐ & CHUỖI ĐỘNG NĂNG HỌC TẬP
+        1. BẢNG TIẾN TRÌNH ĐIỂM SỐ & DIỄN BIẾN HỌC TẬP
     </div>
     <table class="data-table">
         <thead>

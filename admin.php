@@ -1083,8 +1083,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <span class="badge-student-count <?= $c['student_count'] > 0 ? 'has-students' : '' ?>">
                                         <?= $c['student_count'] ?> HS
                                     </span>
-                                    <a href="admin.php?delete_class=<?= $c['id'] ?>" class="delete-class-btn" title="Xóa lớp <?= htmlspecialchars($c['name']) ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa lớp <?= htmlspecialchars($c['name']) ?>? Tất cả dữ liệu học sinh và điểm liên quan sẽ bị xóa theo!')" aria-label="Xóa lớp <?= htmlspecialchars($c['name']) ?>">
-                                        🗑️
+                                    <a href="admin.php?delete_class=<?= $c['id'] ?>" class="delete-class-btn" title="Xóa lớp <?= htmlspecialchars($c['name']) ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa lớp <?= htmlspecialchars($c['name']) ?>? Tất cả dữ liệu học sinh và điểm liên quan sẽ bị xóa theo!')" aria-label="Xóa lớp <?= htmlspecialchars($c['name']) ?>" style="display: inline-flex; align-items: center; justify-content: center;">
+                                        <?= get_svg_icon('trash', 12) ?>
                                     </a>
                                 </div>
                             <?php endforeach; ?>
@@ -1296,10 +1296,14 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             <?php endforeach; ?>
 
-            <div style="margin-top: 24px; display: flex; align-items: center; justify-content: space-between;">
-                <p class="muted small">💡 <i>Hệ thống tự động bỏ qua nếu lớp học đó đã được phân công cùng giáo viên và môn học.</i></p>
-                <button type="submit" class="btn primary" style="padding: 12px 28px; font-size: 15px; font-weight: 700;">
-                    ⚡ Cấp Quyền & Phân Công Cho Giáo Viên Đã Chọn
+            <div style="margin-top: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <p class="muted small" style="display: flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('check-circle', 14, '', 'color: #10b981;') ?>
+                    <i>Hệ thống tự động bỏ qua nếu lớp học đó đã được phân công cùng giáo viên và môn học.</i>
+                </p>
+                <button type="submit" class="btn primary" style="padding: 12px 28px; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                    <?= get_svg_icon('check-circle', 16) ?>
+                    <span>Cấp Quyền & Phân Công Cho Giáo Viên Đã Chọn</span>
                 </button>
             </div>
         </form>
@@ -1316,7 +1320,10 @@ require_once __DIR__ . '/includes/header.php';
     <!-- ===================================================================== -->
     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
         <div>
-            <h2>📋 Danh Sách Phân Công Giảng Dạy & Giám Sát Sổ Điểm</h2>
+            <h2 style="display: flex; align-items: center; gap: 8px;">
+                <?= get_svg_icon('file-text', 20, '', 'color: #2563eb;') ?>
+                <span>Danh Sách Phân Công Giảng Dạy & Giám Sát Sổ Điểm</span>
+            </h2>
             <span class="muted small">Admin có thể chuyển giao giáo viên trực tiếp trên bảng hoặc mở trực tiếp bảng điểm của bất kỳ môn/lớp nào.</span>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
@@ -1339,7 +1346,7 @@ require_once __DIR__ . '/includes/header.php';
                 <option value="Khối 8">Khối 8</option>
                 <option value="Khối 9">Khối 9</option>
             </select>
-            <input type="text" id="assignSearchInput" placeholder="🔍 Tìm kiếm nhanh..." onkeyup="filterAssignments()" style="padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13.5px; width: 180px;">
+            <input type="text" id="assignSearchInput" placeholder="Tìm kiếm nhanh..." onkeyup="filterAssignments()" style="padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13.5px; width: 180px;">
         </div>
     </div>
 
@@ -1390,13 +1397,15 @@ require_once __DIR__ . '/includes/header.php';
                             <td><span class="mono-code"><?= htmlspecialchars($a['username']) ?></span></td>
                             <td style="text-align: center;">
                                 <a href="admin.php?impersonate=<?= $a['teacher_id'] ?>&sub=<?= urlencode($a['subject']) ?>&cid=<?= $a['class_id'] ?>" 
-                                   class="btn primary" style="font-size: 12px; padding: 6px 14px;">
-                                    🔍 Mở Bảng Điểm Môn <?= htmlspecialchars($a['subject']) ?>
+                                   class="btn primary" style="font-size: 12px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 5px;">
+                                    <?= get_svg_icon('search', 13) ?>
+                                    <span>Mở Bảng Điểm <?= htmlspecialchars($a['subject']) ?></span>
                                 </a>
                             </td>
                             <td style="text-align: center;">
-                                <a href="admin.php?delete_assign=<?= $a['id'] ?>" class="btn-action-delete" title="Hủy phân công giáo viên này ở lớp này" onclick="return confirm('Bạn có chắc chắn muốn hủy phân công giáo viên này ở lớp này?')">
-                                    🗑️ Hủy Phân Công
+                                <a href="admin.php?delete_assign=<?= $a['id'] ?>" class="btn-action-delete" title="Hủy phân công giáo viên này ở lớp này" onclick="return confirm('Bạn có chắc chắn muốn hủy phân công giáo viên này ở lớp này?')" style="display: inline-flex; align-items: center; gap: 4px;">
+                                    <?= get_svg_icon('trash', 12) ?>
+                                    <span>Hủy Phân Công</span>
                                 </a>
                             </td>
                         </tr>
@@ -1413,18 +1422,24 @@ require_once __DIR__ . '/includes/header.php';
 <div class="admin-tab-pane" id="pane-logs" role="tabpanel">
     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
         <div>
-            <h2>🛡️ Nhật Ký Kiểm Toán Hệ Thống (Audit Logs)</h2>
+            <h2 style="display: flex; align-items: center; gap: 8px;">
+                <?= get_svg_icon('shield-check', 20, '', 'color: #2563eb;') ?>
+                <span>Nhật Ký Kiểm Toán Hệ Thống (Audit Logs)</span>
+            </h2>
             <span class="muted small">Tự động ghi nhận mọi hoạt động đăng nhập, phân công, nạp học sinh, sửa sổ điểm và các nỗ lực truy cập trái phép.</span>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
-            <input type="text" id="logSearchInput" placeholder="🔍 Tìm kiếm trong nhật ký..." onkeyup="filterAuditLogs()" style="padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; width: 220px;">
+            <input type="text" id="logSearchInput" placeholder="Tìm kiếm trong nhật ký..." onkeyup="filterAuditLogs()" style="padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; width: 220px;">
             <select onchange="window.location.href='admin.php?log_limit=' + this.value" style="padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px;">
                 <option value="10" <?= $logLimit === 10 ? 'selected' : '' ?>>Hiện 10 dòng</option>
                 <option value="25" <?= $logLimit === 25 ? 'selected' : '' ?>>Hiện 25 dòng</option>
                 <option value="50" <?= $logLimit === 50 ? 'selected' : '' ?>>Hiện 50 dòng</option>
                 <option value="100" <?= $logLimit === 100 ? 'selected' : '' ?>>Hiện 100 dòng</option>
             </select>
-            <a href="admin.php" class="btn outline" style="padding: 7px 12px; font-size: 12.5px;">🔄 Làm mới</a>
+            <a href="admin.php" class="btn outline" style="padding: 7px 12px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 5px;">
+                <?= get_svg_icon('activity', 13) ?>
+                <span>Làm mới</span>
+            </a>
         </div>
     </div>
 
