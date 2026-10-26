@@ -884,7 +884,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                     </div>
                     <div class="card-content">
                         <ul>
-                            <li><strong>Backend:</strong> PHP 8.2 native, tối ưu hóa bộ nhớ RAM tiêu thụ &lt; 25MB, chuẩn PSR-12.</li>
+                            <li><strong>Backend:</strong> PHP 8.2 thuần, kiểm soát bộ nhớ RAM tiêu thụ &lt; 25MB, chuẩn PSR-12.</li>
                             <li><strong>Bảo mật:</strong> Phân quyền RBAC 3 cấp (BGH, GVCN, GVBM), chống CSRF Token, Prepared Statements ngăn SQL Injection.</li>
                             <li><strong>Tuân thủ:</strong> Nhận diện chính xác 7 mốc kỳ niên khóa học đường từ lịch thời gian thực.</li>
                         </ul>
@@ -946,7 +946,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                         </p>
                         <ul style="padding-left: 20px; line-height: 1.8;">
                             <li><strong>Công cụ sử dụng:</strong> Mô hình ngôn ngữ lớn (Gemini, Claude) và các công cụ hỗ trợ lập trình (VS Code, Git, Google Antigravity).</li>
-                            <li><strong>Mục đích cho phép:</strong> Tra cứu văn bản quy chế (Thông tư 22/2021 và Thông tư 24/2025), gợi ý cấu trúc thuật toán giải ngược phương trình bậc nhất và hỗ trợ tối ưu hóa cú pháp CSS Responsive.</li>
+                            <li><strong>Mục đích cho phép:</strong> Tra cứu văn bản quy chế (Thông tư 22/2021 và Thông tư 24/2025), gợi ý cấu trúc thuật toán giải ngược phương trình bậc nhất và hỗ trợ hoàn thiện cú pháp CSS Responsive.</li>
                             <li><strong>Mức độ độc lập cốt lõi:</strong> Toàn bộ dữ liệu điểm số thực nghiệm (41 học sinh), logic nghiệp vụ cảnh báo vùng đỏ/vàng, việc cài đặt mã nguồn trên máy chủ XAMPP/MariaDB và các cuộc phỏng vấn giáo viên đều do <strong>nhóm học sinh tự thực hiện thực chất</strong> dưới sự định hướng sư phạm của giáo viên hướng dẫn.</li>
                             <li><strong>Cam kết liêm chính:</strong> Tuyệt đối KHÔNG sử dụng AI để giả mạo quá trình nghiên cứu, KHÔNG tạo lập dữ liệu khống, KHÔNG sao chép chiếm đoạt sản phẩm của người khác.</li>
                         </ul>

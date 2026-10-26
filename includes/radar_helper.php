@@ -361,9 +361,9 @@ function evaluateOverallCompetency(array $trendData, array $tierData, ?float $av
 
     if ($tier === 'excellent' && $momentum === 'steady') {
         return [
-            'competency_title'   => 'Duy trì phong độ đỉnh cao',
+            'competency_title'   => 'Duy trì phong độ xuất sắc',
             'pedagogical_advice' => 'Em làm chủ kiến thức rất chắc chắn và giữ vững nhịp độ xuất sắc qua từng bài đánh giá. Thầy/cô nên tạo điều kiện để em hỗ trợ bạn cùng bàn (Đôi bạn cùng tiến) hoặc bồi dưỡng đội tuyển học sinh giỏi.',
-            'profile_tag'        => 'Phong độ đỉnh cao (Vững vàng)',
+            'profile_tag'        => 'Phong độ xuất sắc (Vững vàng)',
         ];
     }
 

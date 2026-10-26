@@ -447,13 +447,13 @@ require_once __DIR__ . '/includes/header.php';
 .handbook-card.card-tot b { color: #15803d; }
 .handbook-card.card-tot p { color: #166534; }
 
-.handbook-card.card-kha { background: #eff6ff; border-color: #bfdbfe; }
-.handbook-card.card-kha b { color: #1d4ed8; }
-.handbook-card.card-kha p { color: #1e40af; }
+.handbook-card.card-kha { background: #fefce8; border-color: #fef08a; }
+.handbook-card.card-kha b { color: #b45309; }
+.handbook-card.card-kha p { color: #92400e; }
 
-.handbook-card.card-dat { background: #fffbeb; border-color: #fde68a; }
-.handbook-card.card-dat b { color: #b45309; }
-.handbook-card.card-dat p { color: #92400e; }
+.handbook-card.card-dat { background: #fff7ed; border-color: #fed7aa; }
+.handbook-card.card-dat b { color: #c2410c; }
+.handbook-card.card-dat p { color: #9a3412; }
 
 .handbook-card.card-chuadat { background: #fef2f2; border-color: #fecaca; }
 .handbook-card.card-chuadat b { color: #dc2626; }
@@ -463,13 +463,13 @@ require_once __DIR__ . '/includes/header.php';
 [data-theme="dark"] .handbook-card.card-tot b { color: #34d399 !important; }
 [data-theme="dark"] .handbook-card.card-tot p { color: #a7f3d0 !important; }
 
-[data-theme="dark"] .handbook-card.card-kha { background: rgba(59, 130, 246, 0.12) !important; border-color: rgba(59, 130, 246, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-kha b { color: #60a5fa !important; }
-[data-theme="dark"] .handbook-card.card-kha p { color: #bfdbfe !important; }
+[data-theme="dark"] .handbook-card.card-kha { background: rgba(234, 179, 8, 0.12) !important; border-color: rgba(234, 179, 8, 0.35) !important; }
+[data-theme="dark"] .handbook-card.card-kha b { color: #facc15 !important; }
+[data-theme="dark"] .handbook-card.card-kha p { color: #fef08a !important; }
 
-[data-theme="dark"] .handbook-card.card-dat { background: rgba(245, 158, 11, 0.12) !important; border-color: rgba(245, 158, 11, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-dat b { color: #fbbf24 !important; }
-[data-theme="dark"] .handbook-card.card-dat p { color: #fde68a !important; }
+[data-theme="dark"] .handbook-card.card-dat { background: rgba(249, 115, 22, 0.12) !important; border-color: rgba(249, 115, 22, 0.35) !important; }
+[data-theme="dark"] .handbook-card.card-dat b { color: #fb923c !important; }
+[data-theme="dark"] .handbook-card.card-dat p { color: #fed7aa !important; }
 
 [data-theme="dark"] .handbook-card.card-chuadat { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.35) !important; }
 [data-theme="dark"] .handbook-card.card-chuadat b { color: #f87171 !important; }

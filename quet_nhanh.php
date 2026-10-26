@@ -1091,8 +1091,20 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- 3. BẢNG RADAR 2 KHUNG ĐÁNH GIÁ -->
-        <div class="radar-table-wrap">
+        <!-- MOBILE VIEW SWITCHER -->
+        <div class="mobile-view-switcher" id="mobileViewSwitcher">
+            <button type="button" class="m-view-btn active" id="btnViewCards" onclick="switchMobileView('cards')">
+                <?= get_svg_icon('users', 14) ?>
+                <span>Dạng Thẻ Học Sinh</span>
+            </button>
+            <button type="button" class="m-view-btn" id="btnViewTable" onclick="switchMobileView('table')">
+                <?= get_svg_icon('bar-chart', 14) ?>
+                <span>Dạng Bảng Điểm</span>
+            </button>
+        </div>
+
+        <!-- 3. BẢNG RADAR ĐÁNH GIÁ ĐA CHIỀU -->
+        <div class="radar-table-wrap view-table-hidden">
             <table class="radar-table" id="radarTable">
                 <thead>
                     <tr>
@@ -1100,8 +1112,8 @@ require_once __DIR__ . '/includes/header.php';
                         <th style="width: 90px;">Mã HS</th>
                         <th style="min-width: 160px;">Họ và Tên Học Sinh</th>
                         <th style="min-width: 130px;">Lớp & Môn</th>
-                        <th style="min-width: 135px; background: #1e1b4b; color: #e0e7ff;">⚡ 1. HIỆU SUẤT</th>
-                        <th style="min-width: 120px; background: #0f172a;">📊 2. KHUNG ĐIỂM</th>
+                        <th style="min-width: 135px; background: #1e1b4b; color: #e0e7ff;">⚡ 1. XU HƯỚNG</th>
+                        <th style="min-width: 120px; background: #0f172a;">📊 2. BẬC TT22</th>
                         <th style="width: 75px; text-align: center;">ĐTB</th>
                         <th style="width: 135px; text-align: center;">ĐĐGtx (1-4)</th>
                         <th style="width: 55px; text-align: center;">GK</th>
@@ -1164,10 +1176,10 @@ require_once __DIR__ . '/includes/header.php';
                                 <span class="badge-subject">Môn <?= htmlspecialchars($s['subject'] ?? $guestData['subject']) ?></span>
                             </td>
 
-                            <!-- KHUNG 1: HIỆU SUẤT (ĐỨNG TRƯỚC) -->
+                            <!-- KHUNG 1: XU HƯỚNG TIẾN BỘ (ƯU TIÊN THEO DÕI) -->
                             <td>
                                 <span class="badge-momentum badge-momentum-<?= $s['momentum'] ?>" title="<?= htmlspecialchars($s['trend_description'] ?: $s['trend_label']) ?>">
-                                    <?= $s['trend_icon'] ?> <?= htmlspecialchars($s['trend_label']) ?>
+                                    <?= htmlspecialchars($s['trend_label']) ?>
                                 </span>
                             </td>
 
@@ -1264,6 +1276,87 @@ require_once __DIR__ . '/includes/header.php';
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- CHẾ ĐỘ XEM THẺ DÀNH RIÊNG CHO ĐIỆN THOẠI (MOBILE STUDENT CARDS) -->
+        <div class="mobile-student-cards" id="mobileStudentCards">
+            <?php if (empty($students)): ?>
+                <div style="text-align: center; padding: 32px 16px; background: #ffffff; border-radius: 16px; color: var(--text-muted); border: 1px solid #e2e8f0;">
+                    Chưa có học sinh nào trong bảng điểm.
+                </div>
+            <?php else: ?>
+                <?php foreach ($students as $s): ?>
+                    <?php
+                        $mSid = (int)$s['student_id'];
+                        $mAvg = ($s['avg_score'] !== null && $s['avg_score'] !== '') ? (float)$s['avg_score'] : null;
+                        $mRisk = $s['level'];
+                        $mRiskLabel = ($mRisk === 'red') ? 'Nguy cấp' : (($mRisk === 'yellow') ? 'Cần chú ý' : (($mRisk === 'green') ? 'Ổn định' : 'Chờ điểm'));
+                        $nameParts = explode(' ', trim($s['full_name']));
+                        $mInitials = mb_strtoupper(mb_substr(end($nameParts), 0, 2, 'UTF-8'), 'UTF-8');
+                    ?>
+                    <div class="m-student-card"
+                         data-student-id="<?= $mSid ?>"
+                         data-level="<?= $mRisk ?>"
+                         data-trend="<?= $s['trend'] ?>"
+                         data-momentum="<?= $s['momentum'] ?>"
+                         data-tier="<?= $s['score_tier']['tier'] ?>"
+                         data-txwarn="<?= !empty($s['has_tx_warning']) ? '1' : '0' ?>"
+                         data-search="<?= htmlspecialchars(mb_strtolower(($s['student_code'] ?? '') . ' ' . $s['full_name'] . ' ' . ($s['class_name'] ?? '') . ' ' . ($s['subject'] ?? ''), 'UTF-8')) ?>">
+                        
+                        <div class="m-card-header">
+                            <div class="m-avatar"><?= $mInitials ?></div>
+                            <div class="m-info">
+                                <div class="m-name"><?= htmlspecialchars($s['full_name']) ?></div>
+                                <div class="m-meta">
+                                    <span class="m-code"><?= htmlspecialchars(!empty($s['student_code']) ? $s['student_code'] : 'HS' . $mSid) ?></span>
+                                    <span>•</span>
+                                    <span>Lớp <?= htmlspecialchars($s['class_name'] ?? $cleanClassName) ?></span>
+                                    <span>•</span>
+                                    <span>Môn <?= htmlspecialchars($s['subject'] ?? $guestData['subject']) ?></span>
+                                </div>
+                            </div>
+                            <div class="m-badges">
+                                <span class="badge-tier <?= $s['score_tier']['class'] ?>"><?= htmlspecialchars($s['score_tier']['badge']) ?></span>
+                            </div>
+                        </div>
+
+                        <div class="m-metrics-row">
+                            <div class="m-metric">
+                                <span class="m-metric-label">ĐTB Môn</span>
+                                <span class="m-metric-val avg-<?= $mRisk ?>"><?= $mAvg !== null ? number_format($mAvg, 1) : '—' ?></span>
+                            </div>
+                            <div class="m-metric">
+                                <span class="m-metric-label">Xu Hướng</span>
+                                <span class="m-metric-val" style="font-size: 11.5px;"><?= htmlspecialchars($s['trend_label']) ?></span>
+                            </div>
+                            <div class="m-metric">
+                                <span class="m-metric-label">Vùng Rủi Ro</span>
+                                <span class="m-metric-val" style="color: <?= ($mRisk === 'red') ? '#dc2626' : (($mRisk === 'yellow') ? '#d97706' : '#16a34a') ?>; font-size: 11.5px;">
+                                    <?= $mRiskLabel ?>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- HỘP PHÂN TÍCH SƯ PHẠM DỄ HIỂU CHO GIÁO VIÊN -->
+                        <div class="m-pedagogy-box">
+                            <div class="m-pedagogy-title">
+                                <?= get_svg_icon('activity', 13) ?>
+                                <span><?= htmlspecialchars($s['competency']['competency_title'] ?? 'Đang phân tích') ?></span>
+                            </div>
+                            <div class="m-pedagogy-desc">
+                                <?= htmlspecialchars($s['competency']['pedagogical_advice'] ?? 'Đang cập nhật hướng dẫn hành động sư phạm.') ?>
+                            </div>
+                        </div>
+
+                        <div class="m-card-actions">
+                            <button type="button" class="btn-m-detail" onclick="openStudentModalFromId(<?= $mSid ?>)">
+                                <?= get_svg_icon('eye', 14) ?>
+                                <span>Chi Tiết &amp; Sổ Tay</span>
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
 
         <!-- MODAL CHI TIẾT NĂNG LỰC HỌC TẬP & SỔ TAY NHẬN XÉT SƯ PHẠM (CHẾ ĐỘ KHÁCH) -->
