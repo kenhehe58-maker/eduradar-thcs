@@ -1083,8 +1083,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <span class="badge-student-count <?= $c['student_count'] > 0 ? 'has-students' : '' ?>">
                                         <?= $c['student_count'] ?> HS
                                     </span>
-                                    <a href="admin.php?delete_class=<?= $c['id'] ?>" class="delete-class-btn" title="Xóa lớp <?= htmlspecialchars($c['name']) ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa lớp <?= htmlspecialchars($c['name']) ?>? Tất cả dữ liệu học sinh và điểm liên quan sẽ bị xóa theo!')">
-                                        ✕
+                                    <a href="admin.php?delete_class=<?= $c['id'] ?>" class="delete-class-btn" title="Xóa lớp <?= htmlspecialchars($c['name']) ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa lớp <?= htmlspecialchars($c['name']) ?>? Tất cả dữ liệu học sinh và điểm liên quan sẽ bị xóa theo!')" aria-label="Xóa lớp <?= htmlspecialchars($c['name']) ?>">
+                                        🗑️
                                     </a>
                                 </div>
                             <?php endforeach; ?>
@@ -1395,8 +1395,8 @@ require_once __DIR__ . '/includes/header.php';
                                 </a>
                             </td>
                             <td style="text-align: center;">
-                                <a href="admin.php?delete_assign=<?= $a['id'] ?>" class="btn outline" style="color: #dc2626; padding: 6px 10px;" onclick="return confirm('Bạn có chắc chắn muốn hủy phân công giáo viên này ở lớp này?')">
-                                    ✕
+                                <a href="admin.php?delete_assign=<?= $a['id'] ?>" class="btn-action-delete" title="Hủy phân công giáo viên này ở lớp này" onclick="return confirm('Bạn có chắc chắn muốn hủy phân công giáo viên này ở lớp này?')">
+                                    🗑️ Hủy Phân Công
                                 </a>
                             </td>
                         </tr>

@@ -594,11 +594,11 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
             </div>
         </div>
         <div class="deck-controls">
-            <button type="button" class="deck-btn" onclick="prevSlide()">← Slide Trước</button>
+            <button type="button" class="deck-btn" onclick="prevSlide()" title="Xem slide trước đó (Phím ←)">← Trước</button>
             <span id="slideCounter" style="font-size: 13px; font-weight: 800; padding: 0 8px; color: #cbd5e1;">1 / 4</span>
-            <button type="button" class="deck-btn primary" onclick="nextSlide()">Slide Tiếp →</button>
-            <button type="button" class="deck-btn" onclick="window.print()">🖨️ In / Lưu PDF</button>
-            <a href="<?= $isGuest ? 'quet_nhanh.php' : ('index.php' . ($classId > 0 ? '?class_id=' . $classId . ($subject !== '' ? '&subject=' . urlencode($subject) : '') : '')) ?>" class="deck-btn">✕ Đóng</a>
+            <button type="button" class="deck-btn primary" onclick="nextSlide()" title="Xem slide tiếp theo (Phím →)">Tiếp →</button>
+            <button type="button" class="deck-btn" onclick="window.print()" title="In báo cáo hội đồng sư phạm ra khổ giấy A4">🖨️ In Báo Cáo</button>
+            <a href="<?= $isGuest ? 'quet_nhanh.php' : ('index.php' . ($classId > 0 ? '?class_id=' . $classId . ($subject !== '' ? '&subject=' . urlencode($subject) : '') : '')) ?>" class="deck-btn" title="Đóng chế độ trình chiếu">✕ Đóng</a>
         </div>
     </header>
 

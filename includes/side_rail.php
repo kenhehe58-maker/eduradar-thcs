@@ -482,40 +482,40 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
           </a>
         </li>
         <li>
-          <a href="index.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Cảnh Báo Sớm">
+          <a href="index.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Cảnh Báo">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
-            <span class="u040-it-label">Cảnh Báo Sớm</span>
-            <span class="u040-dock-tip">Cảnh Báo Sớm 2 Khung</span>
+            <span class="u040-it-label">Cảnh Báo</span>
+            <span class="u040-dock-tip">Cảnh Báo Điểm Số</span>
           </a>
         </li>
         <li>
           <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Sổ Điểm">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
             <span class="u040-it-label">Sổ Điểm</span>
-            <span class="u040-dock-tip">Sổ Điểm Bộ Môn VnEdu</span>
+            <span class="u040-dock-tip">Sổ Điểm VnEdu</span>
           </a>
         </li>
         <li>
-          <a href="quet_nhanh.php" class="u040-it" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh AI">
+          <a href="quet_nhanh.php" class="u040-it" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span class="u040-it-label">Quét Nhanh AI</span>
+            <span class="u040-it-label">Quét Nhanh</span>
             <span class="u040-bd" aria-label="Mới">Mới</span>
-            <span class="u040-dock-tip">Quét Nhanh Bảng Điểm AI</span>
+            <span class="u040-dock-tip">Quét Nhanh 1 Chạm</span>
           </a>
         </li>
         <li>
-          <a href="bao_cao_slide_bgh.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'slides' ? 'aria-current="page"' : '' ?> aria-label="Báo Cáo & Thống Kê">
+          <a href="bao_cao_slide_bgh.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'slides' ? 'aria-current="page"' : '' ?> aria-label="Báo Cáo">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span class="u040-it-label">Báo Cáo & Thống Kê</span>
-            <span class="u040-dock-tip">Báo Cáo & Thống Kê BGH</span>
+            <span class="u040-it-label">Báo Cáo</span>
+            <span class="u040-dock-tip">Báo Cáo &amp; Slide BGH</span>
           </a>
         </li>
         <?php if ($userRole === 'admin'): ?>
           <li>
-            <a href="admin.php" class="u040-it" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Cổng Quản Trị Nhà Trường">
+            <a href="admin.php" class="u040-it" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Quản Trị">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.5"/></svg>
-              <span class="u040-it-label">Cổng Quản Trị</span>
-              <span class="u040-dock-tip">Cổng Quản Trị Admin</span>
+              <span class="u040-it-label">Quản Trị</span>
+              <span class="u040-dock-tip">Cổng Quản Trị Trường</span>
             </a>
           </li>
         <?php endif; ?>

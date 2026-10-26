@@ -1757,14 +1757,14 @@ require_once __DIR__ . '/includes/header.php';
 
                             <td class="col-actions">
                                 <div class="actions-stack">
-                                    <button type="button" class="btn-open-detail" title="Xem chi tiết & Ghi nhận xét sư phạm">
-                                        Chi tiết
+                                    <button type="button" class="btn-open-detail" title="Xem chi tiết hồ sơ & Ghi nhận xét sư phạm">
+                                        👁️ Chi Tiết
                                     </button>
                                     <a href="nhap_diem.php?class_id=<?= urlencode((string)$s['class_id']) ?>&subject=<?= urlencode($s['subject']) ?>" 
                                        class="btn-goto-gradebook" 
                                        title="Vào sổ điểm lớp <?= htmlspecialchars($s['class_name']) ?> môn <?= htmlspecialchars($s['subject']) ?>"
                                        onclick="event.stopPropagation();">
-                                        Sổ điểm
+                                        📋 Sổ Điểm
                                     </a>
                                 </div>
                             </td>

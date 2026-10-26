@@ -5531,3 +5531,68 @@ tr.gb-row-focused td {
 [data-theme="dark"] .vnedu-control-card > div:first-child {
   border-bottom-color: #1e293d !important;
 }
+
+/* PSYCHOLOGY OF COLORS: DESTRUCTIVE ACTION BUTTONS (RED) & ACTIONABLE LABELS */
+.delete-class-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-size: 11px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.delete-class-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  transform: scale(1.08);
+}
+[data-theme="dark"] .delete-class-btn {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .delete-class-btn:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.btn-action-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-action-delete:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+}
+[data-theme="dark"] .btn-action-delete {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .btn-action-delete:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}

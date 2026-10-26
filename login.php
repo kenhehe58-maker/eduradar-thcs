@@ -235,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
                 </svg>
             </div>
-            <h2>EDURADAR // AUTHENTICATION</h2>
+            <h2>Đăng Nhập EduRadar THCS</h2>
             <p>Hệ thống Đánh giá &amp; Cảnh báo sớm THCS (Chuẩn VnEdu / TT22)</p>
         </div>
 
@@ -251,16 +251,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="">
-            <div class="form-group mb-3">
-                <label>TÀI KHOẢN (USERNAME / VNEDU)</label>
-                <input id="uInput" type="text" name="username" placeholder="Nhập admin, gv_toan hoặc gv_van" required autofocus>
+            <div class="form-group" style="margin-bottom: 22px;">
+                <label style="display: block; margin-bottom: 8px; font-size: 11.5px; font-weight: 700; color: #475569; letter-spacing: 0.04em;">TÀI KHOẢN (USERNAME / VNEDU)</label>
+                <input id="uInput" type="text" name="username" placeholder="Nhập admin, gv_toan hoặc gv_van" required autofocus style="padding: 11px 14px; border-radius: 10px;">
             </div>
-            <div class="form-group mb-3">
-                <label>MẬT KHẨU</label>
-                <input id="pInput" type="password" name="password" placeholder="Nhập mật khẩu" required>
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label style="display: block; margin-bottom: 8px; font-size: 11.5px; font-weight: 700; color: #475569; letter-spacing: 0.04em;">MẬT KHẨU</label>
+                <input id="pInput" type="password" name="password" placeholder="Nhập mật khẩu" required style="padding: 11px 14px; border-radius: 10px;">
             </div>
-            <button type="submit" class="btn primary full-width" style="padding: 13px; font-size: 15px; justify-content: center;">
-                Đăng Nhập Hệ Thống
+            <button type="submit" class="btn primary full-width" style="padding: 13px; font-size: 15px; font-weight: 700; justify-content: center; border-radius: 12px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">
+                Đăng Nhập
             </button>
         </form>
 
