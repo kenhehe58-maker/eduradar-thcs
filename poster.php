@@ -423,6 +423,167 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
             color: #f1f5f9;
         }
 
+        /* Modal KHKT Dossier (Circular 24/2025/TT-BGDDT) */
+        .khkt-modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .khkt-modal-backdrop.open {
+            display: flex;
+        }
+        .khkt-modal-card {
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 20px;
+            max-width: 860px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            animation: modalFadeIn 0.25s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .khkt-modal-header {
+            padding: 20px 24px;
+            background: #0f172a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .khkt-modal-title {
+            font-size: 17px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .khkt-modal-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+            margin-top: 3px;
+        }
+        .khkt-modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .khkt-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .khkt-tabs {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0 16px;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .khkt-tab-btn {
+            appearance: none;
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .khkt-tab-btn:hover {
+            color: #0f172a;
+        }
+        .khkt-tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .khkt-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #334155;
+        }
+        .khkt-tab-content {
+            display: none;
+        }
+        .khkt-tab-content.active {
+            display: block;
+        }
+        .khkt-doc-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .khkt-doc-box h4 {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .khkt-sign-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px dashed #cbd5e1;
+            text-align: center;
+        }
+        .khkt-sign-box strong {
+            display: block;
+            font-size: 13px;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .khkt-sign-box span {
+            font-size: 11.5px;
+            color: #64748b;
+            display: block;
+            margin-bottom: 48px;
+        }
+        .khkt-sign-box .signer-name {
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 13px;
+        }
+
         /* Print Media Styles: 800mm x 1200mm Exact Output */
         @media print {
             body {
@@ -431,7 +592,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                 margin: 0 !important;
             }
 
-            .poster-toolbar {
+            .poster-toolbar, .khkt-modal-backdrop {
                 display: none !important;
             }
 
@@ -464,6 +625,10 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
         <button type="button" class="btn btn-print" onclick="window.print()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             In Poster / Xuất PDF (0.8m x 1.2m)
+        </button>
+        <button type="button" class="btn" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);" onclick="openKhktModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Hồ Sơ KHKT (Điều 14 &amp; 15)
         </button>
         <a href="bao_cao_slide_bgh.php" class="btn btn-back">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -732,12 +897,207 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
             <footer class="p-footer">
                 <div>
                     <strong>DỰ ÁN NGHIÊN CỨU KHKT EDURADAR THCS</strong> — HỆ THỐNG RA-ĐA CẢNH BÁO SỚM HỌC LỰC
+                    <div style="font-size: 10px; color: #64748b; margin-top: 2px;">
+                        Tuân thủ Thông tư 24/2025/TT-BGDĐT &amp; Dự thảo Quy chế KHKT Quốc gia 2026 • Lĩnh vực 8: Khoa học máy tính &amp; ATTT
+                    </div>
                 </div>
-                <div>
-                    Bộ Mã Nguồn Đã Kiểm Định 100% Sẵn Sàng Vận Hành • Bản Quyền © 2026 EduRadar THCS
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button type="button" onclick="openKhktModal()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.25); color: #38bdf8; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Minh Chứng &amp; Kê Khai AI (Điều 14 &amp; 15)
+                    </button>
+                    <div>Bản Quyền &copy; 2026 EduRadar THCS</div>
                 </div>
             </footer>
 
+        </div>
+    </div>
+
+    <!-- Modal KHKT Dossier (Circular 24/2025/TT-BGDDT) -->
+    <div class="khkt-modal-backdrop" id="khktModalBackdrop" onclick="if(event.target===this)closeKhktModal()">
+        <div class="khkt-modal-card">
+            <div class="khkt-modal-header">
+                <div>
+                    <div class="khkt-modal-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        HỒ SƠ LIÊM CHÍNH KHOA HỌC &amp; KÊ KHAI CÔNG CỤ SỐ (AI)
+                    </div>
+                    <div class="khkt-modal-subtitle">
+                        Hệ thống hóa từ Dự thảo Quy chế Bộ GD&amp;ĐT 2026 &amp; Thông tư 24/2025/TT-BGDĐT (Phụ lục 1 &amp; 2)
+                    </div>
+                </div>
+                <button type="button" class="khkt-modal-close" onclick="closeKhktModal()" title="Đóng">✕</button>
+            </div>
+
+            <div class="khkt-tabs">
+                <button type="button" class="khkt-tab-btn active" onclick="switchKhktTab(0, this)">1. Kê Khai Sử Dụng AI (Điều 15)</button>
+                <button type="button" class="khkt-tab-btn" onclick="switchKhktTab(1, this)">2. Nhật Ký Nghiên Cứu &amp; Git Log (Điều 14)</button>
+                <button type="button" class="khkt-tab-btn" onclick="switchKhktTab(2, this)">3. Tự Đánh Giá 100 Điểm (Phụ Lục 2)</button>
+                <button type="button" class="khkt-tab-btn" onclick="switchKhktTab(3, this)">4. Thông Tin Dự Án &amp; Lĩnh Vực (Phụ Lục 1)</button>
+            </div>
+
+            <div class="khkt-modal-body">
+                <!-- TAB 1: KÊ KHAI SỬ DỤNG AI -->
+                <div class="khkt-tab-content active" id="khktTab0">
+                    <div class="khkt-doc-box">
+                        <h4>MỤC ĐÍCH, PHẠM VI &amp; MỨC ĐỘ SỬ DỤNG CÔNG NGHỆ SỐ VÀ AI (Điều 15)</h4>
+                        <p style="margin-bottom: 10px;">
+                            Căn cứ Điều 15 Thông tư 24/2025/TT-BGDĐT về nguyên tắc sử dụng công nghệ số và trí tuệ nhân tạo, nhóm tác giả kê khai minh bạch và trung thực như sau:
+                        </p>
+                        <ul style="padding-left: 20px; line-height: 1.8;">
+                            <li><strong>Công cụ sử dụng:</strong> Mô hình ngôn ngữ lớn (Gemini, Claude) và các công cụ hỗ trợ lập trình (VS Code, Git, Google Antigravity).</li>
+                            <li><strong>Mục đích cho phép:</strong> Tra cứu văn bản quy chế (Thông tư 22/2021 và Thông tư 24/2025), gợi ý cấu trúc thuật toán giải ngược phương trình bậc nhất và hỗ trợ tối ưu hóa cú pháp CSS Responsive.</li>
+                            <li><strong>Mức độ độc lập cốt lõi:</strong> Toàn bộ dữ liệu điểm số thực nghiệm (41 học sinh), logic nghiệp vụ cảnh báo vùng đỏ/vàng, việc cài đặt mã nguồn trên máy chủ XAMPP/MariaDB và các cuộc phỏng vấn giáo viên đều do <strong>nhóm học sinh tự thực hiện thực chất</strong> dưới sự định hướng sư phạm của giáo viên hướng dẫn.</li>
+                            <li><strong>Cam kết liêm chính:</strong> Tuyệt đối KHÔNG sử dụng AI để giả mạo quá trình nghiên cứu, KHÔNG tạo lập dữ liệu khống, KHÔNG sao chép chiếm đoạt sản phẩm của người khác.</li>
+                        </ul>
+                    </div>
+
+                    <div class="khkt-sign-grid">
+                        <div class="khkt-sign-box">
+                            <strong>ĐẠI DIỆN HỌC SINH THỰC HIỆN DỰ ÁN</strong>
+                            <span>(Ký, ghi rõ họ tên và cam kết tính trung thực)</span>
+                            <div class="signer-name">Nguyễn Hoàng Nam &amp; Trần Mai Phương</div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Học sinh THCS - Đạt học lực Khá/Tốt</div>
+                        </div>
+                        <div class="khkt-sign-box">
+                            <strong>NGƯỜI HƯỚNG DẪN NGHIÊN CỨU THỨ NHẤT</strong>
+                            <span>(Ký, ghi rõ họ tên và xác nhận trách nhiệm liên đới theo Điều 5)</span>
+                            <div class="signer-name">ThS. Lê Văn Hùng</div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Giáo viên Tổ Tin học &amp; Đổi Mới Sư Phạm</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: NHẬT KÝ NGHIÊN CỨU & GIT LOG -->
+                <div class="khkt-tab-content" id="khktTab1">
+                    <div class="khkt-doc-box">
+                        <h4>TIẾN ĐỘ THỰC HIỆN LIÊN TỤC TRONG 12 THÁNG (Điều 4 &amp; Điều 14)</h4>
+                        <p style="margin-bottom: 12px;">
+                            Thời gian nghiên cứu: Không quá 12 tháng liên tục (Khởi động: 01/2025 • Đóng gói dữ liệu gốc: 01/2026 • Trước ngày khai mạc 30 ngày).
+                        </p>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="background: #e2e8f0; text-align: left;">
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1;">Giai đoạn</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1;">Nội dung triển khai</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1;">Minh chứng dữ liệu gốc</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 01 - 03/2025</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Khảo sát thực trạng tính điểm theo TT22; phát hiện nghịch lý "bản án muộn màng" khi kết thúc học kỳ.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Biên bản phỏng vấn 12 giáo viên THCS.</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 04 - 07/2025</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Xây dựng mô hình toán học OLS (độ dốc k), chỉ số ổn định σ và phương trình giải ngược điểm CK cần đạt.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Bản thảo công thức toán học có xác nhận của GV hướng dẫn.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 08 - 10/2025</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Lập trình nguyên mẫu PHP 8 native, thiết kế giao diện Bento Grid theo Dribbble và Apple Human Interface.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Lịch sử commit Git (Git log trên repository nội bộ).</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 11 - 12/2025</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Thử nghiệm thực tế trên mẫu 41 học sinh; kiểm thử OCR trong 4 điều kiện ánh sáng; xây dựng 65 automated tests.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Tệp log chạy 65 bài kiểm thử PASS 100%; ảnh chụp thực địa.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tháng 01/2026</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Đóng gói sản phẩm, lưu trữ dữ liệu gốc, chuẩn bị Poster A0 và Slide thuyết trình báo cáo Hội đồng.</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Bộ cài đặt offline XAMPP, Poster 0.8m x 1.2m hoàn chỉnh.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TIÊU CHÍ CHẤM ĐIỂM DỰ ÁN KỸ THUẬT -->
+                <div class="khkt-tab-content" id="khktTab2">
+                    <div class="khkt-doc-box">
+                        <h4>BẢNG ĐỐI CHIẾU TIÊU CHÍ CHẤM ĐIỂM DỰ ÁN KỸ THUẬT (Thang điểm 100 - Phụ lục 2)</h4>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="background: #e2e8f0; text-align: left;">
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1; width: 35px;">STT</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1;">Tiêu chí đánh giá</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1; width: 60px; text-align: center;">Điểm</th>
+                                    <th style="padding: 8px 10px; border: 1px solid #cbd5e1;">Minh chứng cụ thể của EduRadar THCS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">1</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Vấn đề nghiên cứu</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">10</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Giải quyết đòi hỏi cấp thiết từ thực tế: phát hiện sớm học sinh nguy cơ từ tuần thứ 4 trước khi kỳ thi kết thúc.</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">2</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Thiết kế và phương pháp</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">10</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Kết hợp tối ưu giữa mô hình toán hồi quy OLS và thuật toán giải ngược phương trình Thông tư 22.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">3</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Thực hiện (Chế tạo &amp; Kiểm tra)</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">15</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Nguyên mẫu phần mềm hoạt động thực tế trên máy chủ nội bộ; đã benchmark trên 4 kịch bản ánh sáng và góc quét.</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">4</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Hồ sơ, nhật ký &amp; minh chứng quá trình</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">10</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Nhật ký ghi nhận liên tục 12 tháng, lịch sử commit Git đầy đủ, dữ liệu gốc nguyên bản được lưu trữ an toàn.</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">5</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Trình bày và phỏng vấn</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">35</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Áp phích Bento Grid (10đ) đồ thị Ra-đa trực quan; học sinh nắm vững thuật toán cốt lõi sẵn sàng phỏng vấn trực tiếp (25đ).</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center;">6</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; font-weight: 700;">Tính sáng tạo</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1; text-align: center; font-weight: 800; color: #2563eb;">20</td>
+                                    <td style="padding: 8px 10px; border: 1px solid #cbd5e1;">Sáng kiến đánh giá đa chiều: tách bạch Xu hướng tiến bộ (OLS) và Điểm số tích lũy (TT22); ma trận can thiệp sư phạm 3x3.</td>
+                                </tr>
+                                <tr style="background: #eff6ff; font-weight: 800;">
+                                    <td colspan="2" style="padding: 10px; border: 1px solid #cbd5e1; text-align: right;">TỔNG ĐIỂM CHUẨN DỰ ÁN KỸ THUẬT:</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; text-align: center; color: #1e3a8a; font-size: 14px;">100</td>
+                                    <td style="padding: 10px; border: 1px solid #cbd5e1; color: #15803d;">Dự án đáp ứng toàn diện mọi yêu cầu của Phụ lục 2.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 4: THÔNG TIN DỰ ÁN & LĨNH VỰC -->
+                <div class="khkt-tab-content" id="khktTab3">
+                    <div class="khkt-doc-box">
+                        <h4>PHÂN LOẠI LĨNH VỰC THEO PHỤ LỤC 1 (THÔNG TƯ 24/2025/TT-BGDĐT)</h4>
+                        <ul style="padding-left: 20px; line-height: 1.8;">
+                            <li><strong>Tên dự án:</strong> EduRadar THCS: Hệ thống Ra-đa Cảnh Báo Sớm Học Lực &amp; Đánh Giá Tiến Độ Học Tập Đa Chiều.</li>
+                            <li><strong>Mã lĩnh vực đăng ký:</strong> <strong>Lĩnh vực 8: Khoa học máy tính và An toàn thông tin</strong> (Computer Science and Information Security).</li>
+                            <li><strong>Phân nhóm chuyên môn:</strong> Thuật toán, cấu trúc dữ liệu, cơ sở dữ liệu quan hệ, lập trình web native, an toàn bảo mật và phân quyền vai trò (RBAC).</li>
+                            <li><strong>Hình thức thực hiện:</strong> Dự án tập thể gồm 02 học sinh thuộc cùng cơ sở giáo dục THCS (Điều 3).</li>
+                            <li><strong>Đơn vị dự thi:</strong> Trường THCS Nguyễn Văn Trỗi — TP. Hồ Chí Minh.</li>
+                            <li><strong>An toàn &amp; Đạo đức:</strong> Dự án phần mềm giáo dục thuần túy, tuyệt đối không liên quan đến hóa chất, bức xạ, sinh học, vũ khí; tuân thủ nghiêm ngặt Luật An toàn thông tin mạng và Luật Trẻ em 2016.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 14px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="btn btn-print" onclick="window.print()" style="padding: 8px 16px; border-radius: 8px; font-size: 13px;">
+                    🖨️ In Hồ Sơ Minh Chứng
+                </button>
+                <button type="button" class="btn" onclick="closeKhktModal()" style="background: #e2e8f0; color: #334155; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; border: none; cursor: pointer;">
+                    Đóng
+                </button>
+            </div>
         </div>
     </div>
 
@@ -746,6 +1106,26 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
             const viewport = document.getElementById('posterViewport');
             viewport.style.transform = `scale(${factor})`;
         }
+
+        function openKhktModal() {
+            document.getElementById('khktModalBackdrop').classList.add('open');
+        }
+
+        function closeKhktModal() {
+            document.getElementById('khktModalBackdrop').classList.remove('open');
+        }
+
+        function switchKhktTab(index, btn) {
+            document.querySelectorAll('.khkt-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.khkt-tab-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            const target = document.getElementById('khktTab' + index);
+            if (target) target.classList.add('active');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeKhktModal();
+        });
     </script>
 </body>
 </html>
