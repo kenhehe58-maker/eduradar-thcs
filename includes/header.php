@@ -1,5 +1,9 @@
 <?php
 // includes/header.php - Edexa University Modern Layout Shell with Light / Dark Theme Support
+if (!headers_sent()) {
+    header('Content-Type: text/html; charset=UTF-8');
+    header('X-Content-Type-Options: nosniff');
+}
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
@@ -148,6 +152,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            -webkit-user-select: none;
             user-select: none;
         }
         .edexa-theme-toggle:hover {

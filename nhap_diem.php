@@ -704,7 +704,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="gb-meta-chip">
                     <span class="meta-label">Môn học:</span>
                     <strong style="color: var(--primary);"><?= htmlspecialchars($selectedSubject) ?></strong>
-                    <span class="meta-sub">• Học kỳ II</span>
+                    <span class="meta-sub">• <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ I') ?></span>
                 </div>
                 <div class="gb-meta-chip">
                     <span class="meta-label">Giáo viên dạy:</span>
@@ -720,7 +720,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php if ($actingTeacherId > 0 && $realUserRole === 'admin'): ?>
                         <input type="hidden" name="teacher_id" value="<?= $actingTeacherId ?>">
                     <?php endif; ?>
-                    <select name="class_id" onchange="this.form.submit()" class="gb-select-box">
+                    <select name="class_id" onchange="this.form.submit()" class="gb-select-box" aria-label="Chọn lớp học" title="Chọn lớp học">
                         <?php if (empty($classesInCurrentSubject)): ?>
                             <option value="">(Chưa có lớp cho môn này)</option>
                         <?php else: ?>
@@ -733,7 +733,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
-                    <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" class="gb-select-box">
+                    <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" class="gb-select-box" aria-label="Chọn phân môn phụ trách" title="Chọn phân môn phụ trách">
                         <?php 
                             $allSubjectsToDisplay = !empty($teacherSubjects) ? array_keys($teacherSubjects) : $availableSubjectsForClass;
                             foreach ($allSubjectsToDisplay as $sub): 
@@ -903,7 +903,7 @@ require_once __DIR__ . '/includes/header.php';
             <?php endif; ?>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" placeholder="Tìm theo tên, mã HS...">
+            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" placeholder="Tìm theo tên, mã HS..." title="Tìm kiếm học sinh theo tên hoặc mã số" aria-label="Tìm kiếm học sinh theo tên hoặc mã số">
         </div>
     </div>
 
@@ -1001,6 +1001,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx1]"
                                            value="<?= $s['tx1'] !== null ? (float)$s['tx1'] : '' ?>"
+                                           title="Điểm TX1 của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm TX1 của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="tx1"
                                            data-row="<?= $r ?>" data-col="0" placeholder="—" autocomplete="off">
                                 </td>
@@ -1008,6 +1010,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx2]"
                                            value="<?= $s['tx2'] !== null ? (float)$s['tx2'] : '' ?>"
+                                           title="Điểm TX2 của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm TX2 của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="tx2"
                                            data-row="<?= $r ?>" data-col="1" placeholder="—" autocomplete="off">
                                 </td>
@@ -1015,6 +1019,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx3]"
                                            value="<?= $s['tx3'] !== null ? (float)$s['tx3'] : '' ?>"
+                                           title="Điểm TX3 của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm TX3 của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="tx3"
                                            data-row="<?= $r ?>" data-col="2" placeholder="—" autocomplete="off">
                                 </td>
@@ -1022,6 +1028,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx4]"
                                            value="<?= $s['tx4'] !== null ? (float)$s['tx4'] : '' ?>"
+                                           title="Điểm TX4 của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm TX4 của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="tx4"
                                            data-row="<?= $r ?>" data-col="3" placeholder="—" autocomplete="off">
                                 </td>
@@ -1031,6 +1039,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-gk"
                                            name="scores[<?= $sId ?>][gk]"
                                            value="<?= $s['gk'] !== null ? (float)$s['gk'] : '' ?>"
+                                           title="Điểm Giữa kỳ của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm Giữa kỳ của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="gk"
                                            data-row="<?= $r ?>" data-col="4" placeholder="—" autocomplete="off">
                                 </td>
@@ -1040,6 +1050,8 @@ require_once __DIR__ . '/includes/header.php';
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-ck"
                                            name="scores[<?= $sId ?>][ck]"
                                            value="<?= $s['ck'] !== null ? (float)$s['ck'] : '' ?>"
+                                           title="Điểm Cuối kỳ của <?= htmlspecialchars($s['full_name']) ?>"
+                                           aria-label="Điểm Cuối kỳ của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="ck"
                                            data-row="<?= $r ?>" data-col="5" placeholder="—" autocomplete="off">
                                 </td>
@@ -1089,6 +1101,7 @@ require_once __DIR__ . '/includes/header.php';
             <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">
                 <input type="hidden" name="action" value="import_file">
                 <input type="file" name="gradebook_file" accept=".xlsx, .xls, .csv, .txt" required 
+                       title="Chọn tệp bảng điểm Excel hoặc CSV" aria-label="Chọn tệp bảng điểm Excel hoặc CSV"
                        style="padding: 10px; border: 1px dashed var(--border-color); border-radius: 8px; background: #f8fafc; font-size: 13px;">
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                     <button type="submit" class="btn primary" style="padding: 10px 18px; font-size: 13px; font-weight: 700;">

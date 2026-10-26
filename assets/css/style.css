@@ -3255,14 +3255,6 @@ body.liquid-glass-layout {
   color: #ffffff;
 }
 
-.content.full-width {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding: 24px 32px 100px 105px !important;
-  max-width: 1540px !important;
-  width: 100% !important;
-  flex: 1 0 auto;
-}
 .card, .class-evaluation-panel, .section-heading, section, [id] {
   scroll-margin-top: 95px !important;
 }
@@ -3419,6 +3411,7 @@ body.liquid-glass-layout {
   font-weight: 800;
   margin-left: 6px;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+  -webkit-user-select: none;
   user-select: none;
   flex-shrink: 0;
   vertical-align: middle;
