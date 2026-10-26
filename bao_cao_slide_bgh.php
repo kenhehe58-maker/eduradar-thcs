@@ -431,6 +431,149 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
             width: 28px;
             background: #6366f1;
         }
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                height: auto !important;
+                min-height: 100vh;
+            }
+            .deck-topbar {
+                position: sticky !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: auto !important;
+                min-height: 54px;
+                padding: 10px 14px !important;
+                border-radius: 0 0 16px 16px !important;
+                border-left: none;
+                border-right: none;
+                border-top: none;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+            }
+            .deck-brand {
+                font-size: 13.5px !important;
+                gap: 8px !important;
+                flex: 1 1 auto;
+            }
+            .deck-logo {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 14px !important;
+                border-radius: 8px !important;
+            }
+            .deck-brand > div > div:first-child {
+                font-size: 13px !important;
+                font-weight: 800;
+            }
+            .deck-brand > div > div:last-child {
+                font-size: 10.5px !important;
+            }
+            .deck-controls {
+                gap: 6px !important;
+                flex-wrap: wrap;
+            }
+            .deck-btn {
+                padding: 6px 10px !important;
+                font-size: 11.5px !important;
+                border-radius: 8px !important;
+            }
+            .slides-viewport {
+                position: relative !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: calc(100vh - 120px) !important;
+                padding: 14px 10px 84px 10px !important;
+                display: block !important;
+            }
+            .slide {
+                position: relative !important;
+                inset: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 20px 14px !important;
+                border-radius: 18px !important;
+                display: none !important;
+                opacity: 0 !important;
+                transform: none !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            }
+            .slide.active {
+                display: flex !important;
+                opacity: 1 !important;
+            }
+            .slide-title {
+                font-size: 20px !important;
+                line-height: 1.25 !important;
+                margin-bottom: 6px !important;
+            }
+            .slide-sub {
+                font-size: 12.5px !important;
+            }
+            .slide-kicker {
+                font-size: 10.5px !important;
+                padding: 4px 10px !important;
+                margin-bottom: 8px !important;
+            }
+            /* 2x2 Bento Grid for Slide 1 KPI Cards */
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+                margin: 16px 0 !important;
+            }
+            .kpi-card {
+                padding: 14px 12px !important;
+                border-radius: 14px !important;
+            }
+            .kpi-card .kpi-label {
+                font-size: 11px !important;
+                line-height: 1.25 !important;
+                white-space: normal !important;
+            }
+            .kpi-card .kpi-num {
+                font-size: 26px !important;
+                margin: 6px 0 2px 0 !important;
+            }
+            .kpi-card .kpi-desc {
+                font-size: 10.5px !important;
+                line-height: 1.3 !important;
+                white-space: normal !important;
+            }
+            /* 1 Column for Slide 2 Charts */
+            .charts-row {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+                margin-top: 10px !important;
+            }
+            .chart-box {
+                padding: 14px 12px !important;
+                border-radius: 14px !important;
+            }
+            .chart-canvas-wrap {
+                min-height: 180px !important;
+            }
+            /* Slide Tables Scrollable */
+            .slide-table-wrap {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin-top: 10px;
+                border-radius: 12px;
+            }
+            .slide-table {
+                min-width: 500px;
+                font-size: 12px !important;
+            }
+            .slide-table th, .slide-table td {
+                padding: 8px 10px !important;
+            }
+            .deck-footer {
+                bottom: 12px !important;
+                padding: 6px 14px !important;
+            }
+        }
         @media print {
             body { overflow: visible; background: #090d16; }
             .deck-topbar, .deck-footer { display: none !important; }
@@ -536,6 +679,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                 <h2 class="slide-title">Danh Sách Học Sinh Ưu Tiên Tiếp Sức &amp; Phụ Đạo (<?= count($urgentList) ?> HS)</h2>
                 <p class="slide-sub">Các trường hợp thuộc vùng Đỏ (Nguy cấp) và vùng Vàng (Cần chú ý) kèm khuyến nghị sư phạm cá nhân hóa</p>
 
+                <div class="slide-table-wrap">
                 <table class="slide-table">
                     <thead>
                         <tr>
@@ -577,6 +721,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                         <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
             <div style="font-size: 12px; color: #94a3b8;">
                 💡 <i>Ghi chú: Sử dụng phím mũi tên <code>←</code> <code>→</code> trên bàn phím để chuyển nhanh giữa các Slide khi báo cáo trước Hội đồng.</i>
@@ -590,6 +735,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                 <h2 class="slide-title">Gương Mặt Bứt Phá Xuất Sắc &amp; Kiến Nghị Chuyên Môn (<?= count($starList) ?> HS tiêu biểu)</h2>
                 <p class="slide-sub">Tuyên dương các học sinh có đà tiến bộ vượt khó hoặc duy trì phong độ đỉnh cao</p>
 
+                <div class="slide-table-wrap">
                 <table class="slide-table">
                     <thead>
                         <tr>
@@ -626,6 +772,7 @@ $starList   = array_values(array_filter($evaluatedStudents, fn($st) => ($st['mom
                         <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
             </div>
 
             <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 14px 20px; font-size: 13.5px; color: #d1fae5;">

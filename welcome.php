@@ -117,6 +117,92 @@ require_once __DIR__ . '/includes/header.php';
     margin-bottom: 28px;
 }
 
+@media (max-width: 768px) {
+    .welcome-hero {
+        padding: 22px 18px !important;
+        border-radius: 18px !important;
+        margin-bottom: 18px !important;
+    }
+    .welcome-badge {
+        font-size: 11px !important;
+        padding: 4px 10px !important;
+        margin-bottom: 10px !important;
+    }
+    .welcome-title {
+        font-size: 20px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 8px !important;
+    }
+    .welcome-desc {
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+        margin-bottom: 16px !important;
+    }
+    .welcome-cta-group {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+        gap: 8px !important;
+    }
+    .welcome-cta-group .btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 12px 16px !important;
+        box-sizing: border-box !important;
+    }
+    /* Mobile 2x2 Clean Bento KPI Grid */
+    .welcome-kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+    }
+    .kpi-card {
+        padding: 14px 12px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+    }
+    .kpi-icon-box {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 10px !important;
+        font-size: 18px !important;
+    }
+    .kpi-card span[style*="font-size: 11.5px"] {
+        font-size: 10px !important;
+        display: block !important;
+        line-height: 1.2 !important;
+    }
+    .kpi-card div[style*="font-size: 26px"] {
+        font-size: 20px !important;
+        margin: 2px 0 !important;
+    }
+    .kpi-card span[style*="font-size: 12px"] {
+        font-size: 11px !important;
+        display: block !important;
+    }
+    .launchpad-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .launchpad-card {
+        padding: 18px 16px !important;
+        border-radius: 16px !important;
+    }
+    .stepper-container {
+        padding: 18px 16px !important;
+        border-radius: 16px !important;
+        margin-bottom: 20px !important;
+    }
+    .quick-search-box {
+        padding: 18px 16px !important;
+        border-radius: 16px !important;
+    }
+    .handbook-box {
+        padding: 18px 16px !important;
+        border-radius: 16px !important;
+    }
+}
+
 .kpi-card {
     background: var(--card-bg, #ffffff);
     border: 1px solid var(--border-subtle, #e2e8f0);
@@ -409,10 +495,10 @@ require_once __DIR__ . '/includes/header.php';
         <span>EDURADAR THCS</span>
     </div>
     <h1 class="welcome-title">
-        Nền Tảng Cảnh Báo Sớm Điểm Số & Động Năng Học Tập Học Sinh THCS
+        Cảnh Báo Sớm &amp; Động Năng Học Tập THCS
     </h1>
     <p class="welcome-desc">
-        Chào mừng <b><?= htmlspecialchars($userName) ?></b> (<i><?= htmlspecialchars($userRoleTitle) ?></i>) đến với hệ thống. EduRadar kết hợp phân tích <b>2 Khung Đánh Giá</b>: nhận diện biến thiên điểm số thường xuyên (ĐĐGtx) và tự động chuẩn đoán nguy cơ theo <b>Thông tư 22/2021/TT-BGDĐT</b>, sẵn sàng số hóa toàn diện học bạ và báo cáo Ban Giám Hiệu.
+        Hệ thống tự động phân tích biến thiên điểm số thường xuyên (ĐĐGtx) theo <b>Thông tư 22/2021/TT-BGDĐT</b>, hỗ trợ Thầy/Cô và Ban Giám Hiệu phát hiện sớm nguy cơ sụt giảm học lực để kịp thời can thiệp sư phạm.
     </p>
 
     <div class="welcome-cta-group">
@@ -440,13 +526,13 @@ require_once __DIR__ . '/includes/header.php';
             <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
                 <?= number_format($totalStudents) ?>
             </div>
-            <span style="font-size: 12px; color: #10b981; font-weight: 700;">Trên toàn bộ <?= $totalClasses ?> lớp</span>
+            <span style="font-size: 12px; color: #10b981; font-weight: 700;">Toàn trường <?= $totalClasses ?> lớp</span>
         </div>
     </div>
     <div class="kpi-card">
         <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;">⭐</div>
         <div>
-            <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">TỶ LỆ GIỎI & KHÁ</span>
+            <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">TỶ LỆ GIỎI &amp; KHÁ</span>
             <div style="font-size: 26px; font-weight: 800; color: #059669; font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
                 <?= $pctGood ?>%
             </div>
@@ -456,11 +542,11 @@ require_once __DIR__ . '/includes/header.php';
     <div class="kpi-card">
         <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;">⚡</div>
         <div>
-            <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">BÀI ĐÁNH GIÁ ĐÃ NẠP</span>
+            <span style="font-size: 11.5px; font-weight: 800; color: var(--text-subtle, #64748b); text-transform: uppercase;">BÀI ĐÁNH GIÁ</span>
             <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
                 <?= number_format($totalScores) ?>
             </div>
-            <span style="font-size: 12px; color: #3b82f6; font-weight: 700;">Hệ CSDL MariaDB</span>
+            <span style="font-size: 12px; color: #3b82f6; font-weight: 700;">Học kỳ I</span>
         </div>
     </div>
     <div class="kpi-card">
@@ -569,19 +655,19 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
 </div>
 
-<!-- 4. STEPPER PROGRESS HƯỚNG DẪN 3 BƯỚC (LAW #3 MULTI-STEP PROGRESS & LAW #2 LAW OF PROXIMITY) -->
-<div class="stepper-container" style="border-left: 4px solid var(--primary, #2563eb);">
+<!-- 4. STEPPER PROGRESS HƯỚNG DẪN 3 BƯỚC -->
+<div class="stepper-container">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
         <div>
             <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0;">
-                🧭 Quy Trình Sư Phạm 3 Bước Nhanh (EduRadar Workflow)
+                🧭 Quy Trình 3 Bước Nghiệp Vụ
             </h3>
             <p style="font-size: 13px; color: var(--text-muted, #64748b); margin: 0;">
-                Quy chuẩn thao tác tinh gọn giúp giáo viên hoàn tất báo cáo và đồng hành cùng học sinh trong 5 phút.
+                Quy trình tinh gọn giúp Thầy/Cô hoàn tất theo dõi và hỗ trợ học sinh nhanh chóng.
             </p>
         </div>
-        <span class="badge handbook-badge" style="font-weight: 700; padding: 6px 12px; border-radius: 999px;">
-            Dành Cho Giáo Viên & Ban Giám Hiệu
+        <span class="badge handbook-badge" style="font-weight: 700; padding: 5px 12px; border-radius: 999px;">
+            Dành Cho GV &amp; BGH
         </span>
     </div>
 
@@ -589,31 +675,31 @@ require_once __DIR__ . '/includes/header.php';
         <!-- BƯỚC 1 -->
         <div class="step-card">
             <div class="step-number-badge" style="background: rgba(37, 99, 235, 0.15); color: #2563eb;">1</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 1: Chọn Lớp & Nhập Điểm</b>
+            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 1: Nhập Điểm Bộ Môn</b>
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Vào <b>Sổ Điểm</b>, chọn lớp và môn được phân công. Nhập trực tiếp điểm ĐĐGtx (1–4), Giữa kỳ, Cuối kỳ bằng bàn phím hoặc nạp file Excel.
+                Vào <b>Sổ Điểm</b>, chọn lớp và môn. Nhập điểm ĐĐGtx (1–4), Giữa kỳ bằng bàn phím hoặc tải file Excel VnEdu.
             </p>
-            <a href="nhap_diem.php" style="font-size: 12px; font-weight: 700; color: #2563eb; text-decoration: none;">Vào Sổ Điểm →</a>
+            <a href="nhap_diem.php" style="font-size: 12.5px; font-weight: 700; color: #2563eb; text-decoration: none;">Vào Sổ Điểm →</a>
         </div>
 
         <!-- BƯỚC 2 -->
         <div class="step-card">
             <div class="step-number-badge" style="background: rgba(16, 185, 129, 0.15); color: #059669;">2</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 2: Theo Dõi Cảnh Báo Sớm</b>
+            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 2: Cảnh Báo &amp; Can Thiệp</b>
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Vào <b>Cảnh Báo Sớm</b>, hệ thống tự động phân tích: <i>Khung 1 (Hiệu suất động năng)</i> và <i>Khung 2 (Bậc điểm TT22)</i>. Bấm <b>Chi tiết</b> để ghi nhận xét sư phạm.
+                Theo dõi phân tầng động năng, xem dự báo mục tiêu điểm thi và lưu nhận xét sư phạm trực tiếp.
             </p>
-            <a href="index.php" style="font-size: 12px; font-weight: 700; color: #059669; text-decoration: none;">Xem Cảnh Báo Sớm →</a>
+            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #059669; text-decoration: none;">Xem Cảnh Báo Sớm →</a>
         </div>
 
         <!-- BƯỚC 3 -->
         <div class="step-card">
             <div class="step-number-badge" style="background: rgba(245, 158, 11, 0.15); color: #d97706;">3</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 3: Xuất Báo Cáo Ban Giám Hiệu</b>
+            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 3: Xuất Báo Cáo &amp; Slide</b>
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Mở <b>Báo Cáo & Thống Kê</b> để trình chiếu Slide thuyết trình Chart.js hoặc tải báo cáo học tập định dạng PDF / Excel nộp nhà trường và gửi phụ huynh.
+                Trình chiếu Slide báo cáo BGH hoặc in phiếu học tập gửi phụ huynh chỉ với một thao tác.
             </p>
-            <a href="bao_cao_slide_bgh.php" target="_blank" style="font-size: 12px; font-weight: 700; color: #d97706; text-decoration: none;">Trình Chiếu Slide →</a>
+            <a href="bao_cao_slide_bgh.php" target="_blank" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none;">Trình Chiếu Slide →</a>
         </div>
     </div>
 </div>

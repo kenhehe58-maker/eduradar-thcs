@@ -201,28 +201,45 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             }
             .glass-topbar-inner {
                 padding: 10px 14px !important;
-                flex-direction: column !important;
-                align-items: flex-start !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: space-between !important;
                 gap: 8px !important;
             }
             .edexa-welcome-wrap {
-                width: 100% !important;
-                justify-content: space-between !important;
-            }
-            .edexa-welcome-text {
-                font-size: 15px !important;
-            }
-            .glass-status-group {
-                width: 100% !important;
+                width: auto !important;
                 justify-content: flex-start !important;
                 gap: 6px !important;
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 2px !important;
+            }
+            .edexa-welcome-text {
+                font-size: 14px !important;
+                max-width: 190px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            .edexa-role-pill {
+                display: none !important;
+            }
+            .glass-status-group {
+                width: auto !important;
+                justify-content: flex-end !important;
+                gap: 6px !important;
+                flex-wrap: nowrap !important;
             }
             .glass-status-chip {
                 padding: 4px 8px !important;
                 font-size: 11px !important;
+            }
+            .glass-status-chip.chip-mobile-hide {
+                display: none !important;
+            }
+            .edexa-theme-toggle {
+                padding: 6px 10px !important;
+            }
+            .edexa-theme-toggle #themeLabel {
+                display: none !important;
             }
             .content.full-width {
                 margin-left: 0 !important;
@@ -254,19 +271,14 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
             <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title']) ?>">
-                <span class="tech-indicator">CAL</span>
-                <span><?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
+                <span>📅 NH <?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
             </div>
-            <div class="glass-status-chip" title="Trạng thái kết nối máy chủ CSDL MariaDB (Port 3306)">
-                <span class="chip-pulse"></span>
-                <span>MARIADB : 3306 [ACTIVE]</span>
-            </div>
-            <div class="glass-status-chip" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
+            <div class="glass-status-chip chip-mobile-hide" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
                 <span class="tech-indicator">SPEC</span>
-                <span>TT22/2021/TT-BGDDT</span>
+                <span>Thông tư 22</span>
             </div>
             <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
-            <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối">
+            <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
                 <span class="theme-icon" id="themeIcon">☀️</span>
                 <span id="themeLabel">Light Theme</span>
             </button>

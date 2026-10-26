@@ -3346,6 +3346,48 @@ body.liquid-glass-layout {
     padding: 16px 14px !important;
     max-height: 90vh !important;
   }
+  /* Mobile Hero Banner & KPI Optimization */
+  .edexa-hero-banner {
+    padding: 18px 16px !important;
+    border-radius: 16px !important;
+    margin-bottom: 16px !important;
+    gap: 14px !important;
+  }
+  .edexa-hero-banner h1 {
+    font-size: 19px !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+  }
+  .edexa-hero-banner p {
+    font-size: 12.5px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 12px !important;
+  }
+  .edexa-hero-banner .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 11px 14px !important;
+    box-sizing: border-box !important;
+  }
+  .edexa-hero-banner > div:last-child {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+  .hero-kpi-box {
+    min-width: 0 !important;
+    padding: 10px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  /* Mobile Form Fields & Touch Ergonomics */
+  select, input[type="text"], input[type="search"] {
+    font-size: 15px !important;
+  }
+  .btn, button {
+    min-height: 40px;
+  }
 }
 @media (max-width: 640px) {
   .content.full-width {
