@@ -92,3 +92,51 @@ if (!function_exists('render_circular_gauge')) {
         </div>';
     }
 }
+
+if (!function_exists('get_simple_icon')) {
+    /**
+     * Tích hợp kho icon toàn cầu Simple Icons (d:\simple-icons)
+     *
+     * @param string $slug  Tên icon (ví dụ: 'github', 'mysql', 'dribbble', 'googlesheets')
+     * @param int    $size  Kích thước (px)
+     * @param string $class CSS class bổ sung
+     * @param string $style Inline style (ví dụ: 'fill: #4f46e5;')
+     * @return string
+     */
+    function get_simple_icon(string $slug, int $size = 18, string $class = '', string $style = ''): string
+    {
+        static $iconCache = [];
+        $slug = strtolower(trim($slug));
+        
+        $classAttr = $class !== '' ? ' class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '"' : '';
+        $styleAttr = $style !== '' ? ' style="' . htmlspecialchars($style, ENT_QUOTES, 'UTF-8') . '"' : '';
+
+        if (!isset($iconCache[$slug])) {
+            $path = 'd:/simple-icons/icons/' . $slug . '.svg';
+            if (file_exists($path)) {
+                $raw = (string)file_get_contents($path);
+                if (preg_match('/<path\s+[^>]*d="([^"]+)"/i', $raw, $m)) {
+                    $iconCache[$slug] = $m[1];
+                } else {
+                    $iconCache[$slug] = false;
+                }
+            } else {
+                $iconCache[$slug] = false;
+            }
+        }
+
+        if ($iconCache[$slug] !== false) {
+            return sprintf(
+                '<svg role="img" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 24 24" fill="currentColor"%s%s aria-hidden="true"><path d="%s"/></svg>',
+                $size,
+                $size,
+                $classAttr,
+                $styleAttr,
+                $iconCache[$slug]
+            );
+        }
+
+        // Fallback sang get_svg_icon thông thường
+        return get_svg_icon($slug, $size, $class, $style);
+    }
+}

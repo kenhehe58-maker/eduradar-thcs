@@ -391,6 +391,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 
     try {
+        $oldScoreStmt = $pdo->prepare("SELECT tx1, tx2, tx3, tx4, gk, ck, avg_score FROM scores WHERE student_id = ? AND subject = ?");
+        $oldScoreStmt->execute([$studentId, $postSubject]);
+        $oldScores = $oldScoreStmt->fetch(PDO::FETCH_ASSOC);
+
         $upStmt = $pdo->prepare("
             INSERT INTO scores (student_id, subject, tx1, tx2, tx3, tx4, gk, ck, avg_score, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
@@ -405,6 +409,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 updated_at = NOW()
         ");
         $upStmt->execute([$studentId, $postSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
+
+        // Ghi nhận Audit Log cho từng ô điểm có thay đổi
+        $fieldsToCheck = ['tx1' => $tx1, 'tx2' => $tx2, 'tx3' => $tx3, 'tx4' => $tx4, 'gk' => $gk, 'ck' => $ck];
+        foreach ($fieldsToCheck as $fKey => $newFVal) {
+            $oldFVal = isset($oldScores[$fKey]) && $oldScores[$fKey] !== null ? (float)$oldScores[$fKey] : null;
+            if ($oldFVal !== $newFVal) {
+                log_score_audit(
+                    $studentId,
+                    $postSubject,
+                    $fKey,
+                    $oldFVal,
+                    $newFVal,
+                    $realUserId,
+                    $_SESSION['username'] ?? 'Giáo viên',
+                    $oldScores ? 'update' : 'insert',
+                    'Cập nhật điểm trực tiếp (AJAX)'
+                );
+            }
+        }
+
         echo json_encode([
             'success'    => true,
             'student_id' => $studentId,
@@ -458,6 +482,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $savedCount = 0;
         $pdo->beginTransaction();
         try {
+            $existingScoreMap = [];
+            if (!empty($validStudentMap)) {
+                $idList = implode(',', array_map('intval', array_keys($validStudentMap)));
+                $exQ = $pdo->query("SELECT student_id, tx1, tx2, tx3, tx4, gk, ck, avg_score FROM scores WHERE subject = " . $pdo->quote($selectedSubject) . " AND student_id IN ($idList)");
+                foreach ($exQ->fetchAll(PDO::FETCH_ASSOC) as $exRow) {
+                    $existingScoreMap[(int)$exRow['student_id']] = $exRow;
+                }
+            }
+
             foreach ($_POST['scores'] as $studentId => $row) {
                 $studentId = (int)$studentId;
                 // Bỏ qua học sinh không thuộc lớp được chọn (chống BOLA)
@@ -488,6 +521,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
                 $upsertStmt->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
                 $savedCount++;
+
+                // Ghi audit log nếu có ô điểm thay đổi
+                $exStudent = $existingScoreMap[$studentId] ?? null;
+                $chkFields = ['tx1' => $tx1, 'tx2' => $tx2, 'tx3' => $tx3, 'tx4' => $tx4, 'gk' => $gk, 'ck' => $ck];
+                foreach ($chkFields as $fK => $nVal) {
+                    $oVal = isset($exStudent[$fK]) && $exStudent[$fK] !== null ? (float)$exStudent[$fK] : null;
+                    if ($oVal !== $nVal) {
+                        log_score_audit(
+                            $studentId,
+                            $selectedSubject,
+                            $fK,
+                            $oVal,
+                            $nVal,
+                            $realUserId,
+                            $_SESSION['username'] ?? 'Giáo viên',
+                            $exStudent ? 'update' : 'insert',
+                            'Lưu bảng điểm lớp'
+                        );
+                    }
+                }
             }
 
             $pdo->commit();

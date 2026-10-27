@@ -664,6 +664,64 @@ document.addEventListener('DOMContentLoaded', function () {
             btnModalExportXlsx.href = 'in_phieu_phu_dao.php?student_id=' + currentStudentId + '&subject=' + encodeURIComponent(currentSubject) + '&format=xlsx';
         }
 
+        // Tải lịch sử Audit Log & Kế hoạch can thiệp (System Design Primer)
+        const auditContainer = document.getElementById('modalAuditHistoryContainer');
+        if (auditContainer) {
+            if (currentStudentId && currentStudentId !== 'null') {
+                auditContainer.innerHTML = '<span style="color: #64748b;">Đang tải dữ liệu truy vết...</span>';
+                fetch(`api_student_history.php?student_id=${currentStudentId}&subject=${encodeURIComponent(currentSubject)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.success) {
+                            auditContainer.innerHTML = '<span style="color: #64748b;">Chưa có dữ liệu lịch sử.</span>';
+                            return;
+                        }
+                        let html = '';
+                        if (data.interventions && data.interventions.length > 0) {
+                            const latestInterv = data.interventions[0];
+                            const statusText = latestInterv.status === 'improved' ? '🟢 Có chuyển biến tốt' : (latestInterv.status === 'achieved' ? '✨ Đã đạt mục tiêu' : '⏳ Đang can thiệp');
+                            html += `
+                                <div style="background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;">
+                                    <div style="font-weight: 700; color: #92400e; font-size: 12px; display: flex; justify-content: space-between;">
+                                        <span>📋 Kế hoạch: ${latestInterv.action_type}</span>
+                                        <span>${statusText}</span>
+                                    </div>
+                                    ${latestInterv.teacher_notes ? `<div style="font-size: 11px; color: #78350f; margin-top: 3px; font-style: italic;">"${latestInterv.teacher_notes}"</div>` : ''}
+                                </div>
+                            `;
+                        }
+                        if (data.audit_logs && data.audit_logs.length > 0) {
+                            html += '<div style="font-weight: 700; color: #334155; margin-bottom: 4px; font-size: 11px; text-transform: uppercase;">Nhật Ký Chỉnh Sửa Điểm Gần Đây:</div>';
+                            html += '<div style="display: flex; flex-direction: column; gap: 4px; max-height: 140px; overflow-y: auto;">';
+                            data.audit_logs.forEach(log => {
+                                const oldVal = log.old_value !== null ? parseFloat(log.old_value).toFixed(1) : '-';
+                                const newVal = log.new_value !== null ? parseFloat(log.new_value).toFixed(1) : '-';
+                                const fName = (log.score_field || '').toUpperCase();
+                                html += `
+                                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; padding: 4px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #f1f5f9;">
+                                        <div>
+                                            <span style="font-weight: 700; color: #4338ca;">[${fName}]</span>
+                                            <span style="color: #64748b;">${oldVal}</span> → <span style="font-weight: 800; color: #059669;">${newVal}</span>
+                                            <span style="color: #94a3b8; font-size: 10px;">(${log.changed_by_name || 'GV'})</span>
+                                        </div>
+                                        <span style="color: #94a3b8; font-size: 10px;">${log.created_at ? log.created_at.substring(5, 16) : ''}</span>
+                                    </div>
+                                `;
+                            });
+                            html += '</div>';
+                        } else if (!data.interventions || data.interventions.length === 0) {
+                            html = '<span style="color: #64748b; font-style: italic;">Dữ liệu điểm số nguyên bản, chưa qua chỉnh sửa.</span>';
+                        }
+                        auditContainer.innerHTML = html;
+                    })
+                    .catch(() => {
+                        auditContainer.innerHTML = '<span style="color: #64748b;">Dữ liệu điểm số nguyên bản.</span>';
+                    });
+            } else {
+                auditContainer.innerHTML = '<span style="color: #64748b; font-style: italic;">Chế độ khách mô phỏng (không ghi log máy chủ).</span>';
+            }
+        }
+
         // Dành cho Tuyến Khách (Guest Mode)
         const guestIdx = row.dataset.studentIdx !== undefined ? row.dataset.studentIdx : '';
         modal.dataset.currentIdx = guestIdx;

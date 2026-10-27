@@ -9,9 +9,18 @@
             <span>&copy; <?= date('Y') ?> <b>EDURADAR // THCS</b> &mdash; Data-Dense Early Warning Telemetry Engine (TT22/2021/TT-BGDDT).</span>
         </div>
         <div class="tech-footer-metrics">
-            <span class="tech-footer-chip">ENGINE: PHP 8.0</span>
-            <span class="tech-footer-chip">DB: MARIADB 10.4</span>
-            <span class="tech-footer-chip">PRECISION: TABULAR NUMS</span>
+            <span class="tech-footer-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                <?= function_exists('get_simple_icon') ? get_simple_icon('php', 14) : '' ?>
+                <span>PHP 8.0</span>
+            </span>
+            <span class="tech-footer-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                <?= function_exists('get_simple_icon') ? get_simple_icon('mysql', 14) : '' ?>
+                <span>MARIADB</span>
+            </span>
+            <span class="tech-footer-chip" style="display: inline-flex; align-items: center; gap: 5px;">
+                <?= function_exists('get_simple_icon') ? get_simple_icon('github', 13) : '' ?>
+                <span>EDURADAR CORE</span>
+            </span>
         </div>
     </footer>
 </main>

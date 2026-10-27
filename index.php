@@ -2112,6 +2112,20 @@ require_once __DIR__ . '/includes/header.php';
                 </details>
             </div>
 
+            <!-- Sổ Can Thiệp Sư Phạm & Lịch Sử Sửa Điểm (Audit Trail) -->
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800; color: #1e293b;">
+                        <?= get_svg_icon('clock', 14, '', 'color: #4f46e5;') ?>
+                        <span>Lịch Sử Chỉnh Sửa &amp; Kế Hoạch Can Thiệp Sư Phạm</span>
+                    </div>
+                    <span style="font-size: 11px; background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Audit Trail</span>
+                </div>
+                <div id="modalAuditHistoryContainer" style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                    Đang tải lịch sử chỉnh sửa điểm...
+                </div>
+            </div>
+
             <!-- Sổ tay ghi chú & Nhận xét sư phạm (Có thể sửa khi nhấn vô) -->
             <div class="teacher-note-section">
                 <div class="teacher-note-header">

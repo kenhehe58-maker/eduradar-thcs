@@ -104,3 +104,110 @@ function logAction(string $action, string $details = ''): void
     $username = $_SESSION['username'] ?? 'Khách';
     log_action($userId, $username, $action, $details);
 }
+
+/**
+ * Ghi vết lịch sử thay đổi điểm số vào bảng score_audit_logs (Chuẩn Event Sourcing & Audit Trail)
+ */
+function log_score_audit(
+    int $studentId,
+    string $subject,
+    string $scoreField,
+    ?float $oldVal,
+    ?float $newVal,
+    ?int $userId = null,
+    ?string $userName = null,
+    string $actionType = 'update',
+    string $note = ''
+): void {
+    if ($oldVal === $newVal) return; // Không thay đổi thì bỏ qua
+    try {
+        $pdo = db();
+        if ($userId === null) {
+            $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+        }
+        if ($userName === null || $userName === '') {
+            $userName = $_SESSION['username'] ?? 'Giáo viên';
+        }
+        $stmt = $pdo->prepare("
+            INSERT INTO score_audit_logs (student_id, subject, score_field, old_value, new_value, changed_by_user_id, changed_by_name, action_type, note, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([$studentId, $subject, $scoreField, $oldVal, $newVal, $userId, $userName, $actionType, $note]);
+    } catch (\Throwable $e) {
+        error_log('Score audit log error: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Truy vấn lịch sử chỉnh sửa điểm của học sinh
+ */
+function get_student_score_audit_logs(int $studentId, ?string $subject = null, int $limit = 20): array
+{
+    try {
+        $pdo = db();
+        if ($subject !== null && $subject !== '' && $subject !== 'all') {
+            $stmt = $pdo->prepare("SELECT * FROM score_audit_logs WHERE student_id = ? AND subject = ? ORDER BY created_at DESC LIMIT ?");
+            $stmt->bindValue(1, $studentId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $subject, PDO::PARAM_STR);
+            $stmt->bindValue(3, $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM score_audit_logs WHERE student_id = ? ORDER BY created_at DESC LIMIT ?");
+            $stmt->bindValue(1, $studentId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $limit, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Throwable $e) {
+        return [];
+    }
+}
+
+/**
+ * Ghi nhận hành động can thiệp sư phạm vào sổ theo dõi can thiệp
+ */
+function record_student_intervention(
+    int $studentId,
+    string $subject,
+    string $riskLevel,
+    string $actionType,
+    float $targetScore,
+    string $status,
+    string $notes,
+    ?int $userId = null
+): bool {
+    try {
+        $pdo = db();
+        if ($userId === null) {
+            $userId = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
+        }
+        $stmt = $pdo->prepare("
+            INSERT INTO student_interventions (student_id, subject, risk_level, action_type, target_score, status, teacher_notes, created_by_user_id, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ");
+        return $stmt->execute([$studentId, $subject, $riskLevel, $actionType, $targetScore, $status, $notes, $userId]);
+    } catch (\Throwable $e) {
+        error_log('Intervention record error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+/**
+ * Lấy danh sách hồ sơ can thiệp sư phạm của học sinh
+ */
+function get_student_interventions(int $studentId, ?string $subject = null): array
+{
+    try {
+        $pdo = db();
+        if ($subject !== null && $subject !== '' && $subject !== 'all') {
+            $stmt = $pdo->prepare("SELECT * FROM student_interventions WHERE student_id = ? AND subject = ? ORDER BY updated_at DESC");
+            $stmt->execute([$studentId, $subject]);
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM student_interventions WHERE student_id = ? ORDER BY updated_at DESC");
+            $stmt->execute([$studentId]);
+        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (\Throwable $e) {
+        return [];
+    }
+}

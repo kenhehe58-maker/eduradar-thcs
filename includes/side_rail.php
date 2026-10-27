@@ -562,6 +562,13 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
           </a>
         </li>
         <li>
+          <a href="ban_do_nhiet.php" class="u040-it" <?= $activeNav === 'heatmap' ? 'aria-current="page"' : '' ?> aria-label="Bản Đồ">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+            <span class="u040-it-label">Bản Đồ</span>
+            <span class="u040-dock-tip">Bản Đồ Nhiệt &amp; Can Thiệp</span>
+          </a>
+        </li>
+        <li>
           <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Sổ Điểm">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
             <span class="u040-it-label">Sổ Điểm</span>
