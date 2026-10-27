@@ -5810,3 +5810,132 @@ tr.gb-row-focused td {
   background: #dc2626 !important;
   color: #ffffff !important;
 }
+
+/* ==========================================================================
+   RAMOTION UPSTREAM SAAS CIRCULAR TELEMETRY GAUGES (DRIBBLE CASE STUDY)
+   ========================================================================== */
+.radial-ring-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.radial-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.radial-bg {
+  fill: none;
+  stroke: var(--border-subtle, #e2e8f0);
+  stroke-width: 3.5;
+}
+[data-theme="dark"] .radial-bg {
+  stroke: #223049;
+}
+.radial-fill {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Color Accents matching pedagogical 4-tier standard */
+.radial-ring-wrap.green .radial-fill,
+.stat-card.trend-up .radial-fill,
+.stat-card.green .radial-fill {
+  stroke: #16a34a !important; /* Green */
+}
+.radial-ring-wrap.yellow .radial-fill,
+.stat-card.yellow .radial-fill,
+.stat-card.tx-warn .radial-fill {
+  stroke: #d97706 !important; /* Yellow */
+}
+.radial-ring-wrap.red .radial-fill,
+.stat-card.red .radial-fill,
+.stat-card.trend-down .radial-fill {
+  stroke: #dc2626 !important; /* Red */
+}
+.radial-ring-wrap.blue .radial-fill,
+.stat-card.blue .radial-fill,
+.stat-card.total .radial-fill {
+  stroke: #4f46e5 !important; /* Indigo/Blue */
+}
+.radial-ring-wrap.gray .radial-fill {
+  stroke: #64748b !important;
+}
+
+.radial-ring-text {
+  position: absolute;
+  font-size: 10.5px;
+  font-weight: 800;
+  font-family: var(--comp-score-font, monospace);
+  color: var(--text-heading, #0f172a);
+  letter-spacing: -0.02em;
+}
+[data-theme="dark"] .radial-ring-text {
+  color: #f1f5f9;
+}
+
+/* Mobile Ramotion Circular Telemetry Grid Layout (<= 768px) */
+@media (max-width: 768px) {
+  .radar-stats-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  .stat-card {
+    padding: 12px 10px !important;
+    border-radius: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    min-height: 105px !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+  }
+  .stat-card .card-header-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    margin-bottom: 4px !important;
+  }
+  .stat-card .card-pct {
+    display: none !important; /* Integrated directly into circular gauge ring! */
+  }
+  .stat-card .radial-ring-wrap {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  .stat-card .radial-ring-text {
+    font-size: 9.5px !important;
+  }
+  .stat-card .card-title {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+    max-width: calc(100% - 44px) !important;
+  }
+  .stat-card .card-title svg {
+    display: none !important;
+  }
+  .stat-card b {
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+    margin-top: 2px !important;
+    display: block !important;
+  }
+  .stat-card .card-sub {
+    font-size: 9.5px !important;
+    line-height: 1.2 !important;
+    margin-top: 2px !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    color: var(--text-muted, #64748b) !important;
+  }
+}

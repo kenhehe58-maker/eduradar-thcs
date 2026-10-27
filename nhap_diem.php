@@ -385,13 +385,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $sTx = array_sum($txList);
 
     $avg = null;
-    if ($gk !== null && $ck !== null) {
+    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ các cột ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
+    if ($nTx > 0 && $gk !== null && $ck !== null) {
         $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
-    } else {
-        $weight = $nTx + ($gk !== null ? 2 : 0) + ($ck !== null ? 3 : 0);
-        if ($weight > 0) {
-            $avg = round(($sTx + 2 * ($gk ?? 0.0) + 3 * ($ck ?? 0.0)) / $weight, 1);
-        }
     }
 
     try {
@@ -485,13 +481,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $sTx = array_sum($txList);
 
                 $avg = null;
-                if ($gk !== null && $ck !== null) {
+                // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
+                if ($nTx > 0 && $gk !== null && $ck !== null) {
                     $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
-                } else {
-                    $weight = $nTx + ($gk !== null ? 2 : 0) + ($ck !== null ? 3 : 0);
-                    if ($weight > 0) {
-                        $avg = round(($sTx + 2 * ($gk ?? 0.0) + 3 * ($ck ?? 0.0)) / $weight, 1);
-                    }
                 }
 
                 $upsertStmt->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
@@ -634,13 +626,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                     $sTx = array_sum($txList);
 
                     $avg = null;
-                    if ($gk !== null && $ck !== null) {
+                    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
+                    if ($nTx > 0 && $gk !== null && $ck !== null) {
                         $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
-                    } else {
-                        $w = $nTx + ($gk !== null ? 2 : 0) + ($ck !== null ? 3 : 0);
-                        if ($w > 0) {
-                            $avg = round(($sTx + 2 * ($gk ?? 0.0) + 3 * ($ck ?? 0.0)) / $w, 1);
-                        }
                     }
 
                     $upsertScore->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);

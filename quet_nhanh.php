@@ -928,6 +928,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('trend-up', 16) ?>
                             <span>Đang Tiến Bộ Rõ Rệt</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['up_pct'], 'green') ?>
                         <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['momentum_up'] ?></b>
@@ -940,6 +941,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('activity', 16) ?>
                             <span>Duy Trì Ổn Định</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['steady_pct'], 'yellow') ?>
                         <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['momentum_steady'] ?></b>
@@ -952,6 +954,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('trend-down', 16) ?>
                             <span>Có Dấu Hiệu Sa Sút</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['down_pct'], 'red') ?>
                         <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['momentum_down'] ?></b>
@@ -964,6 +967,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('clock', 16) ?>
                             <span>Chờ Cập Nhật Điểm</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['pending_pct'], 'gray') ?>
                         <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['momentum_pending'] ?></b>
@@ -988,6 +992,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('alert-triangle', 16, '', 'color: #dc2626;') ?>
                             <span>Vùng Nguy Cấp</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['red_pct'], 'red') ?>
                         <span class="card-pct red"><?= $stats['red_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['red'] ?></b>
@@ -1000,6 +1005,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('alert-circle', 16, '', 'color: #d97706;') ?>
                             <span>Vùng Cần Chú Ý</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['yellow_pct'], 'yellow') ?>
                         <span class="card-pct yellow"><?= $stats['yellow_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['yellow'] ?></b>
@@ -1012,6 +1018,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('check-circle', 16, '', 'color: #10b981;') ?>
                             <span>Vùng Ổn Định</span>
                         </span>
+                        <?= render_circular_gauge((float)$stats['green_pct'], 'green') ?>
                         <span class="card-pct green"><?= $stats['green_pct'] ?>%</span>
                     </div>
                     <b><?= $stats['green'] ?></b>
@@ -1024,8 +1031,10 @@ require_once __DIR__ . '/includes/header.php';
                             <?= get_svg_icon('award', 16, '', 'color: #7c3aed;') ?>
                             <span>Giỏi / Khá (6.5+)</span>
                         </span>
+                        <?php $gkPct = $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0; ?>
+                        <?= render_circular_gauge((float)$gkPct, 'purple') ?>
                         <span class="card-pct" style="background: #f5f3ff; color: #6d28d9;">
-                            <?= $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0 ?>%
+                            <?= $gkPct ?>%
                         </span>
                     </div>
                     <b><?= $stats['tier_excellent'] + $stats['tier_good'] ?></b>

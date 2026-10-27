@@ -319,7 +319,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
 }
 
-/* Mobile Bottom Navigation Bar (Golden Standard UX for Phones <= 768px) */
+/* Mobile Bottom Navigation Bar (Image 2 Golden Standard: Short & Sweet Labels, Apple Fluid Physics) */
 @media (max-width: 768px) {
   .ux-rail-container {
     position: fixed !important;
@@ -328,30 +328,34 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     bottom: 0 !important;
     top: auto !important;
     width: 100% !important;
-    height: 60px !important;
+    height: 66px !important;
     z-index: 1050 !important;
     border-right: none !important;
-    border-top: 1px solid var(--border-subtle, #e2e8f0) !important;
-    background: var(--card-bg, #ffffff) !important;
-    box-shadow: 0 -3px 16px rgba(15, 23, 42, 0.08) !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.9) !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.07) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
   [data-theme="dark"] .ux-rail-container {
-    background: #0f172a !important;
-    border-top-color: #23324d !important;
-    box-shadow: 0 -3px 16px rgba(0, 0, 0, 0.4) !important;
+    background: rgba(15, 23, 42, 0.96) !important;
+    border-top-color: rgba(35, 50, 77, 0.9) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45) !important;
   }
   .u040-fixed {
     height: 100% !important;
     width: 100% !important;
     display: flex !important;
     flex-direction: row !important;
+    align-items: center !important;
   }
   .u040-rail {
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
-    padding: 0 8px !important;
+    padding: 0 4px !important;
     width: 100% !important;
     height: 100% !important;
     box-sizing: border-box !important;
@@ -360,9 +364,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   .u040-divider,
   .u040-me,
   .u040-brand-info,
-  .u040-it-label,
   .u040-me-text,
-  .u040-logout-text,
   .u040-dock-tip,
   .u040-bd {
     display: none !important;
@@ -373,7 +375,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     justify-content: space-around !important;
     align-items: center !important;
     flex: 1 1 auto !important;
-    width: calc(100% - 50px) !important;
+    width: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
@@ -392,38 +394,109 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 44px !important;
-    flex: 0 0 44px !important;
+    width: auto !important;
+    flex: 0 0 auto !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 2px !important;
     border-top: none !important;
   }
+  /* Nav item styled per Image 2: Icon on top, short single-word label below */
   .u040-it {
-    display: inline-flex !important;
-    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 100% !important;
+    min-width: 44px !important;
+    max-width: 58px !important;
+    height: 54px !important;
+    padding: 4px 2px !important;
     margin: 0 !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     flex-shrink: 0 !important;
+    gap: 3px !important;
+    text-decoration: none !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
   .u040-it svg {
     width: 20px !important;
     height: 20px !important;
+    stroke: #64748b !important;
+    stroke-width: 2px !important;
+    fill: none !important;
+    transition: stroke 0.2s ease, transform 0.2s ease !important;
   }
+  .u040-it-label {
+    display: block !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.01em !important;
+    transition: color 0.2s ease !important;
+  }
+  /* Active Tab: Soft pill highlight & vibrant accent per Image 2 */
+  .u040-it[aria-current="page"],
+  .u040-it.active {
+    background: #eef2ff !important;
+  }
+  [data-theme="dark"] .u040-it[aria-current="page"],
+  [data-theme="dark"] .u040-it.active {
+    background: rgba(99, 102, 241, 0.18) !important;
+  }
+  .u040-it[aria-current="page"] svg,
+  .u040-it.active svg {
+    stroke: #4f46e5 !important;
+    transform: scale(1.06) !important;
+  }
+  [data-theme="dark"] .u040-it[aria-current="page"] svg,
+  [data-theme="dark"] .u040-it.active svg {
+    stroke: #818cf8 !important;
+  }
+  .u040-it[aria-current="page"] .u040-it-label,
+  .u040-it.active .u040-it-label {
+    color: #4f46e5 !important;
+    font-weight: 700 !important;
+  }
+  [data-theme="dark"] .u040-it[aria-current="page"] .u040-it-label,
+  [data-theme="dark"] .u040-it.active .u040-it-label {
+    color: #818cf8 !important;
+  }
+
+  /* Single Logout Button on Mobile: Short label 'Thoát' */
   .u040-logout-it {
-    display: inline-flex !important;
-    width: 40px !important;
-    height: 40px !important;
-    margin: 0 !important;
-    margin-top: 0 !important;
-    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
-    border-radius: 10px !important;
+    width: 100% !important;
+    min-width: 44px !important;
+    max-width: 52px !important;
+    height: 54px !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 4px 2px !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    gap: 3px !important;
     flex-shrink: 0 !important;
+  }
+  .u040-logout-it svg {
+    stroke: #dc2626 !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .u040-logout-text {
+    display: block !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    color: #dc2626 !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
   }
 }
 .u040-logout-it {
@@ -498,7 +571,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
         <li>
           <a href="quet_nhanh.php" class="u040-it" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span class="u040-it-label">Quét Nhanh</span>
+            <span class="u040-it-label">Quét</span>
             <span class="u040-bd" aria-label="Mới">Mới</span>
             <span class="u040-dock-tip">Quét Nhanh 1 Chạm</span>
           </a>
@@ -540,7 +613,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
           <!-- THE ONLY LOGOUT BUTTON IN THE ENTIRE SYSTEM -->
           <a href="logout.php" class="u040-it u040-logout-it" title="Đăng Xuất Khỏi Hệ Thống" aria-label="Đăng Xuất">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            <span class="u040-logout-text">Đăng Xuất</span>
+            <span class="u040-logout-text">Thoát</span>
             <span class="u040-dock-tip">Đăng Xuất</span>
           </a>
         <?php else: ?>

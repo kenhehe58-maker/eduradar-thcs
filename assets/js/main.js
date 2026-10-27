@@ -348,10 +348,17 @@ document.addEventListener('DOMContentLoaded', function () {
             modalMomentumBadge.innerHTML = momBadgeHtml;
         }
 
+        const hasGk = row.dataset.gk !== undefined && row.dataset.gk !== null && row.dataset.gk !== '';
+        const hasCk = row.dataset.ck !== undefined && row.dataset.ck !== null && row.dataset.ck !== '';
+        const hasTx = [row.dataset.tx1, row.dataset.tx2, row.dataset.tx3, row.dataset.tx4].some(v => v !== undefined && v !== null && v !== '');
+        const isFullScore = hasGk && hasCk && hasTx;
+
         const tier = row.dataset.tier || '';
-        const avgVal = parseFloat(row.dataset.avg || '-1');
+        const avgVal = isFullScore ? parseFloat(row.dataset.avg || '-1') : -1;
         let tierBadgeHtml = '';
-        if (tier === 'excellent' || avgVal >= 8.0) {
+        if (!isFullScore || tier === 'pending' || isNaN(avgVal) || avgVal < 0) {
+            tierBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+        } else if (tier === 'excellent' || avgVal >= 8.0) {
             tierBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Tốt / Giỏi</span>';
         } else if (tier === 'good' || (avgVal >= 6.5 && avgVal < 8.0)) {
             tierBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Khá</span>';
@@ -389,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 { name: 'TX 4', val: row.dataset.tx4, isGk: false, isCk: false, isAvg: false },
                 { name: 'GK (x2)', val: row.dataset.gk, isGk: true, isCk: false, isAvg: false },
                 { name: 'CK (x3)', val: row.dataset.ck, isGk: false, isCk: true, isAvg: false },
-                { name: 'ĐTB', val: row.dataset.avg, isGk: false, isCk: false, isAvg: true },
+                { name: 'ĐTB', val: isFullScore ? row.dataset.avg : null, isGk: false, isCk: false, isAvg: true },
             ];
 
             scoreNodes.forEach(function (node, idx) {

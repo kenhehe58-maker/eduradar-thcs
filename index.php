@@ -351,6 +351,12 @@ foreach ($rows as $r) {
         }
     }
 
+    // Căn cứ Thông tư 22/2021/TT-BGDĐT: Chưa đủ các cột điểm (thiếu CK hoặc GK hoặc TX) thì không tính và không hiện ĐTB
+    if ($ck === null || $gk === null || empty($txList)) {
+        $avg = null;
+        $r['avg_score'] = null;
+    }
+
     $evaluation = evaluateRiskZone($avg, $gk, $ck, $txList);
     $mathProfile = diagnose_student_mathematical_profile($txList, $gk, $ck);
     $students[] = array_merge($r, $evaluation, ['tx_list' => $txList, 'math_profile' => $mathProfile]);
@@ -823,6 +829,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('trend-up', 16) ?>
                     <span>Đang Tiến Bộ Rõ Rệt</span>
                 </span>
+                <?= render_circular_gauge((float)$stats['up_pct'], 'green') ?>
                 <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_up'] ?></b>
@@ -835,6 +842,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('activity', 16) ?>
                     <span>Duy Trì Ổn Định</span>
                 </span>
+                <?= render_circular_gauge((float)$stats['steady_pct'], 'yellow') ?>
                 <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_steady'] ?></b>
@@ -847,6 +855,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('trend-down', 16) ?>
                     <span>Có Dấu Hiệu Sa Sút</span>
                 </span>
+                <?= render_circular_gauge((float)$stats['down_pct'], 'red') ?>
                 <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_down'] ?></b>
@@ -859,6 +868,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('clock', 16) ?>
                     <span>Chờ Cập Nhật Điểm</span>
                 </span>
+                <?= render_circular_gauge((float)$stats['pending_pct'], 'gray') ?>
                 <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_pending'] ?></b>
@@ -883,6 +893,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('users', 16) ?>
                     <span>Tổng Hồ Sơ</span>
                 </span>
+                <?= render_circular_gauge(100.0, 'blue') ?>
                 <span class="card-pct total">100%</span>
             </div>
             <b><?= $stats['total'] ?></b>
@@ -890,50 +901,58 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <?php if ($stats['momentum_pending'] > 0): ?>
+            <?php $pendingPct = round(($stats['momentum_pending'] / max(1, $stats['total'])) * 100, 1); ?>
             <div class="card stat-card" style="border-left: 4px solid #94a3b8;">
                 <div class="card-header-row">
                     <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('clock', 16) ?>
                         <span>Chờ Điểm Số</span>
                     </span>
-                    <span class="card-pct" style="color: #64748b; font-weight: 700;"><?= round(($stats['momentum_pending'] / max(1, $stats['total'])) * 100, 1) ?>%</span>
+                    <?= render_circular_gauge((float)$pendingPct, 'gray') ?>
+                    <span class="card-pct" style="color: #64748b; font-weight: 700;"><?= $pendingPct ?>%</span>
                 </div>
                 <b><?= $stats['momentum_pending'] ?></b>
                 <span class="card-sub">Chưa có bài kiểm tra ghi nhận</span>
             </div>
         <?php endif; ?>
 
+        <?php $goodPct = $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card green">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('check-circle', 16, '', 'color: #16a34a;') ?>
                     <span>Mức Tốt &amp; Khá</span>
                 </span>
-                <span class="card-pct green"><?= $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0 ?>%</span>
+                <?= render_circular_gauge((float)$goodPct, 'green') ?>
+                <span class="card-pct green"><?= $goodPct ?>%</span>
             </div>
             <b><?= $stats['tier_excellent'] + $stats['tier_good'] ?></b>
             <span class="card-sub">ĐTB từ 6.5 trở lên</span>
         </div>
 
+        <?php $avgPct = $stats['total'] > 0 ? round(($stats['tier_average'] / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card yellow">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-circle', 16, '', 'color: #d97706;') ?>
                     <span>Mức Đạt (Trung Bình)</span>
                 </span>
-                <span class="card-pct yellow"><?= $stats['total'] > 0 ? round(($stats['tier_average'] / $stats['total']) * 100, 1) : 0 ?>%</span>
+                <?= render_circular_gauge((float)$avgPct, 'yellow') ?>
+                <span class="card-pct yellow"><?= $avgPct ?>%</span>
             </div>
             <b><?= $stats['tier_average'] ?></b>
             <span class="card-sub" title="Trung bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">5.0 ≤ ĐTB &lt; 6.5</span>
         </div>
 
+        <?php $lowPct = $stats['total'] > 0 ? round(($stats['tier_low'] / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card red">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-triangle', 16, '', 'color: #dc2626;') ?>
                     <span>Chưa Đạt (Cần Hỗ Trợ)</span>
                 </span>
-                <span class="card-pct red"><?= $stats['total'] > 0 ? round(($stats['tier_low'] / $stats['total']) * 100, 1) : 0 ?>%</span>
+                <?= render_circular_gauge((float)$lowPct, 'red') ?>
+                <span class="card-pct red"><?= $lowPct ?>%</span>
             </div>
             <b><?= $stats['tier_low'] ?></b>
             <span class="card-sub" title="Chưa đạt (ĐTB < 5.0) · Cần can thiệp sớm">ĐTB &lt; 5.0</span>

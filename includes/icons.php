@@ -70,3 +70,25 @@ if (!function_exists('get_svg_icon')) {
         );
     }
 }
+
+if (!function_exists('render_circular_gauge')) {
+    /**
+     * Render SVG Donut Radial Progress Gauge (Ramotion Upstream SaaS Style)
+     *
+     * @param float  $pct        Tỷ lệ phần trăm (0 - 100)
+     * @param string $colorClass Tùy chọn class màu: 'green', 'yellow', 'red', 'blue', 'gray'
+     * @return string
+     */
+    function render_circular_gauge(float $pct, string $colorClass = ''): string
+    {
+        $pctClamped = max(0.0, min(100.0, round($pct, 1)));
+        $cls = $colorClass !== '' ? ' ' . htmlspecialchars($colorClass, ENT_QUOTES, 'UTF-8') : '';
+        return '<div class="radial-ring-wrap' . $cls . '" title="' . $pctClamped . '%" aria-label="' . $pctClamped . '%">
+            <svg class="radial-ring-svg" viewBox="0 0 36 36" aria-hidden="true">
+                <path class="radial-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="radial-fill" stroke-dasharray="' . $pctClamped . ', 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            </svg>
+            <span class="radial-ring-text">' . $pctClamped . '%</span>
+        </div>';
+    }
+}
