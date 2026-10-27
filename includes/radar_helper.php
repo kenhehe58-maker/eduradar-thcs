@@ -38,36 +38,44 @@ declare(strict_types=1);
  */
 function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, array $validTx = []): array
 {
-    if ($avg === null && empty($validTx) && $gk === null && $ck === null) {
+    // TT22: Đầu năm chưa có điểm thi (chưa có GK và chưa có CK) => Không tính ĐTBm, xếp loại Chờ điểm
+    if ($avg === null && $gk === null && $ck === null) {
         return [
             'tier'       => 'pending',
             'label'      => 'Chờ điểm',
-            'badge'      => '⏳ Chưa có điểm',
+            'badge'      => '⏳ Chờ điểm',
             'icon'       => '⏳',
             'class'      => 'tier-pending',
             'color'      => '#64748b',
             'bg'         => '#f1f5f9',
+            'border'     => '#e2e8f0',
             'threshold'  => 'Đang cập nhật',
         ];
     }
 
     $score = $avg;
     if ($score === null) {
-        $vals = $validTx;
-        if ($gk !== null) $vals[] = $gk;
-        if ($ck !== null) $vals[] = $ck;
-        $score = !empty($vals) ? round(array_sum($vals) / count($vals), 1) : null;
+        if ($ck !== null && !empty($validTx)) {
+            $sTx = array_sum($validTx);
+            $nTx = count($validTx);
+            $score = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+        } elseif ($gk !== null && !empty($validTx)) {
+            $sTx = array_sum($validTx);
+            $nTx = count($validTx);
+            $score = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
+        }
     }
 
     if ($score === null) {
         return [
             'tier'       => 'pending',
             'label'      => 'Chờ điểm',
-            'badge'      => '⏳ Chưa có điểm',
+            'badge'      => '⏳ Chờ điểm',
             'icon'       => '⏳',
             'class'      => 'tier-pending',
             'color'      => '#64748b',
             'bg'         => '#f1f5f9',
+            'border'     => '#e2e8f0',
             'threshold'  => 'Đang cập nhật',
         ];
     }

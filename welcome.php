@@ -21,7 +21,7 @@ $pdo = db();
 // Truy vấn số liệu thống kê thực tế từ CSDL MariaDB
 $totalStudents = (int)$pdo->query("SELECT COUNT(*) FROM students")->fetchColumn();
 $totalClasses = (int)$pdo->query("SELECT COUNT(*) FROM classes")->fetchColumn();
-$totalScores = (int)$pdo->query("SELECT COUNT(*) FROM scores WHERE avg_score IS NOT NULL")->fetchColumn();
+$totalScores = (int)$pdo->query("SELECT COUNT(*) FROM scores WHERE avg_score IS NOT NULL OR gk IS NOT NULL OR tx1 IS NOT NULL")->fetchColumn();
 
 // Thống kê phân tầng điểm toàn trường
 $scoreStats = $pdo->query("
@@ -29,10 +29,9 @@ $scoreStats = $pdo->query("
         COUNT(CASE WHEN avg_score >= 8.0 THEN 1 END) as excellent_count,
         COUNT(CASE WHEN avg_score >= 6.5 AND avg_score < 8.0 THEN 1 END) as good_count,
         COUNT(CASE WHEN avg_score >= 5.0 AND avg_score < 6.5 THEN 1 END) as average_count,
-        COUNT(CASE WHEN avg_score < 5.0 THEN 1 END) as low_count,
-        COUNT(*) as total_evaluated
+        COUNT(CASE WHEN (avg_score < 5.0 AND avg_score IS NOT NULL) OR (gk < 5.0 AND gk IS NOT NULL) THEN 1 END) as low_count,
+        COUNT(CASE WHEN avg_score IS NOT NULL OR gk IS NOT NULL THEN 1 END) as total_evaluated
     FROM scores 
-    WHERE avg_score IS NOT NULL
 ")->fetch();
 
 $totalEval = max(1, (int)($scoreStats['total_evaluated'] ?? 0));

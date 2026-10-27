@@ -385,9 +385,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $sTx = array_sum($txList);
 
     $avg = null;
-    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ các cột ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
-    if ($nTx > 0 && $gk !== null && $ck !== null) {
-        $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
+    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2).
+    // Nếu chưa có điểm thi (không có GK và không có CK, lúc đầu năm) thì không hiện ĐTBm.
+    if ($nTx > 0) {
+        if ($ck !== null) {
+            $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+        } elseif ($gk !== null) {
+            $avg = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
+        }
     }
 
     try {
@@ -514,9 +519,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $sTx = array_sum($txList);
 
                 $avg = null;
-                // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
-                if ($nTx > 0 && $gk !== null && $ck !== null) {
-                    $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
+                // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2)
+                if ($nTx > 0) {
+                    if ($ck !== null) {
+                        $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+                    } elseif ($gk !== null) {
+                        $avg = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
+                    }
                 }
 
                 $upsertStmt->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
@@ -679,9 +688,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                     $sTx = array_sum($txList);
 
                     $avg = null;
-                    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBmhk chỉ được tính khi có đủ ĐĐGtx (>=1), ĐĐGgk và ĐĐGck
-                    if ($nTx > 0 && $gk !== null && $ck !== null) {
-                        $avg = round(($sTx + 2 * $gk + 3 * $ck) / ($nTx + 5), 1);
+                    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2)
+                    if ($nTx > 0) {
+                        if ($ck !== null) {
+                            $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+                        } elseif ($gk !== null) {
+                            $avg = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
+                        }
                     }
 
                     $upsertScore->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);

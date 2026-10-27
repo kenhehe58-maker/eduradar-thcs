@@ -5819,7 +5819,7 @@ tr.gb-row-focused td {
   width: 44px;
   height: 44px;
   flex-shrink: 0;
-  display: inline-flex;
+  display: none; /* Ẩn mặc định trên màn hình lớn (Desktop) để không bị trùng lặp số % như ảnh 1 */
   align-items: center;
   justify-content: center;
 }
@@ -5907,6 +5907,7 @@ tr.gb-row-focused td {
     display: none !important; /* Integrated directly into circular gauge ring! */
   }
   .stat-card .radial-ring-wrap {
+    display: inline-flex !important;
     width: 40px !important;
     height: 40px !important;
   }

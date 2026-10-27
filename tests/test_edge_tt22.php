@@ -108,6 +108,21 @@ $target_exceeded = calculate_target_scores([3.0, 3.5, 3.0], 3.5);
 assert_tt22("Target Solver: Exceeds 10.0 Flag for Mức Tốt", $target_exceeded['targets']['tot']['feasibility'] === 'impossible_ck_only');
 assert_tt22("Target Solver: Raw Required CK > 10.0", $target_exceeded['targets']['tot']['raw_required'] > 10.0);
 
+// --- SUITE 6: Academic Milestone Formula Invariants ---
+echo "\n--- SUITE 6: Academic Milestone Formula Invariants ---\n";
+// Case 1: Đầu năm (Chỉ có điểm TX, chưa có GK và chưa có CK) => Không tính ĐTB
+$diagNoExam = evaluateRiskZone(null, null, null, [7.0, 8.0]);
+assert_tt22("Đầu năm: Không có điểm thi (no GK, no CK) => Level pending", $diagNoExam['score_tier']['tier'] === 'pending');
+
+// Case 2: Đã thi Giữa kỳ (GK1 = 4.5, TX = 3.6, 3.2, 3.1, 4.1, CK = null)
+// (14.0 + 9.0) / 6 = 3.8 => Tính được ĐTB giữa kỳ = 3.8 và xếp mức Chưa đạt
+$txMid = [3.6, 3.2, 3.1, 4.1];
+$gkMid = 4.5;
+$avgMid = round((array_sum($txMid) + 2 * $gkMid) / (count($txMid) + 2), 1);
+assert_tt22("Giữa kỳ: Đã có điểm GK => ĐTB giữa kỳ = 3.8", $avgMid === 3.8);
+$diagMid = evaluateRiskZone($avgMid, $gkMid, null, $txMid);
+assert_tt22("Giữa kỳ: ĐTB 3.8 < 5.0 => Báo Chưa đạt", $diagMid['score_tier']['tier'] === 'low');
+
 echo "\n========================================================================\n";
 echo "  EDGE-CASE TT22 TEST SUMMARY: $passed PASSED, $failed FAILED\n";
 echo "========================================================================\n";

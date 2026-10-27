@@ -351,10 +351,20 @@ foreach ($rows as $r) {
         }
     }
 
-    // Căn cứ Thông tư 22/2021/TT-BGDĐT: Chưa đủ các cột điểm (thiếu CK hoặc GK hoặc TX) thì không tính và không hiện ĐTB
-    if ($ck === null || $gk === null || empty($txList)) {
+    // Căn cứ Thông tư 22/2021/TT-BGDĐT: Tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2).
+    // Nếu chưa có điểm thi (không có GK và không có CK, lúc đầu năm) hoặc chưa có điểm TX thì không hiện ĐTB
+    if (($gk === null && $ck === null) || empty($txList)) {
         $avg = null;
         $r['avg_score'] = null;
+    } elseif ($avg === null && !empty($txList)) {
+        $sTx = array_sum($txList);
+        $nTx = count($txList);
+        if ($ck !== null) {
+            $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+        } else {
+            $avg = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
+        }
+        $r['avg_score'] = $avg;
     }
 
     $evaluation = evaluateRiskZone($avg, $gk, $ck, $txList);
@@ -378,7 +388,7 @@ $studentOverallMap = [];
 
 if ($selectedClassId > 0) {
     $allClassScoresStmt = $pdo->prepare("
-        SELECT s.id as student_id, s.full_name, sc.subject, sc.avg_score 
+        SELECT s.id as student_id, s.full_name, sc.subject, sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score 
         FROM students s
         LEFT JOIN scores sc ON s.id = sc.student_id
         WHERE s.class_id = ?
@@ -393,8 +403,24 @@ if ($selectedClassId > 0) {
                 'scores' => []
             ];
         }
-        if ($row['subject'] !== null && $row['avg_score'] !== null && $row['avg_score'] !== '') {
-            $studentScoresGrouped[$sid]['scores'][$row['subject']] = (float)$row['avg_score'];
+        if ($row['subject'] !== null) {
+            $subAvg = ($row['avg_score'] !== null && $row['avg_score'] !== '') ? (float)$row['avg_score'] : null;
+            if ($subAvg === null) {
+                $txList = array_values(array_filter([$row['tx1'], $row['tx2'], $row['tx3'], $row['tx4']], fn($v) => $v !== null && $v !== ''));
+                $nTx = count($txList);
+                $gk = ($row['gk'] !== null && $row['gk'] !== '') ? (float)$row['gk'] : null;
+                $ck = ($row['ck'] !== null && $row['ck'] !== '') ? (float)$row['ck'] : null;
+                if ($nTx > 0) {
+                    if ($ck !== null) {
+                        $subAvg = round((array_sum($txList) + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
+                    } elseif ($gk !== null) {
+                        $subAvg = round((array_sum($txList) + 2 * $gk) / ($nTx + 2), 1);
+                    }
+                }
+            }
+            if ($subAvg !== null) {
+                $studentScoresGrouped[$sid]['scores'][$row['subject']] = $subAvg;
+            }
         }
     }
 
