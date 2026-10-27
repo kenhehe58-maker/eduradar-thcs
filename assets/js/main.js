@@ -116,21 +116,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Filter mobile student cards
-        const mobileCards = document.querySelectorAll('.m-student-card');
-        mobileCards.forEach(function (card) {
-            const searchAttr = (card.dataset.search || '').toLowerCase();
+        // Filter mobile student rows
+        const mobileRows = document.querySelectorAll('.m-student-row');
+        mobileRows.forEach(function (mRow) {
+            const searchAttr = (mRow.dataset.search || '').toLowerCase();
             let okFilter = false;
             if (currentFilters.length === 0 || currentFilters.includes('all')) {
                 okFilter = true;
             } else {
-                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(card, f); });
+                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(mRow, f); });
             }
             const okSearch = !q || searchAttr.includes(q);
             if (okFilter && okSearch) {
-                card.style.display = 'flex';
+                mRow.style.display = 'flex';
             } else {
-                card.style.display = 'none';
+                mRow.style.display = 'none';
             }
         });
 
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Global helper for opening student detail modal from mobile card
+    // Global helper for opening student detail modal from mobile list row
     window.openStudentModalFromId = function(studentId) {
         const row = document.querySelector('tr.radar-row[data-student-id="' + studentId + '"]');
         if (row) {
@@ -147,6 +147,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (btn) btn.click();
         }
     };
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList.contains('m-student-row')) {
+            e.preventDefault();
+            e.target.click();
+        }
+    });
 
     // Global helper for toggling between cards and table on mobile
     window.switchMobileView = function(view) {
@@ -641,6 +648,52 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 modalMathTargetAlert.style.display = 'none';
             }
+        }
+
+        // 4. Phân Tích Phổ Điểm & Thế Mạnh Sở Trường Năng Lực (Requirement 2)
+        const profileCard = document.getElementById('modalSubjectProfileCard');
+        const aptitudeBadge = document.getElementById('modalAptitudeBadge');
+        const barsGrid = document.getElementById('modalSubjectBarsGrid');
+        const summaryEl = document.getElementById('modalProfileSummary');
+
+        if (row.dataset.profile) {
+            try {
+                const prof = JSON.parse(row.dataset.profile);
+                if (prof && prof.scores && Object.keys(prof.scores).length > 0) {
+                    if (profileCard) profileCard.style.display = 'block';
+                    if (aptitudeBadge) aptitudeBadge.textContent = prof.aptitude || 'Năng lực tổng hợp';
+                    if (summaryEl) summaryEl.textContent = prof.profile_summary || '';
+                    
+                    if (barsGrid) {
+                        let barsHtml = '';
+                        for (const [subName, scoreVal] of Object.entries(prof.scores)) {
+                            const num = parseFloat(scoreVal);
+                            const pct = Math.min(100, Math.max(0, (num / 10) * 100));
+                            let color = '#3b82f6';
+                            if (num >= 8.0) { color = '#16a34a'; }
+                            else if (num >= 6.5) { color = '#f59e0b'; }
+                            else if (num < 5.0) { color = '#dc2626'; }
+                            
+                            barsHtml += '<div class="modal-subject-bar-item">' +
+                                '<div class="modal-sub-bar-header">' +
+                                    '<span class="modal-sub-name">' + subName + '</span>' +
+                                    '<span class="modal-sub-val" style="color: ' + color + ';">' + num.toFixed(1) + '</span>' +
+                                '</div>' +
+                                '<div class="modal-sub-progress-track">' +
+                                    '<div class="modal-sub-progress-fill" style="width: ' + pct + '%; background: ' + color + ';"></div>' +
+                                '</div>' +
+                            '</div>';
+                        }
+                        barsGrid.innerHTML = barsHtml;
+                    }
+                } else {
+                    if (profileCard) profileCard.style.display = 'none';
+                }
+            } catch (e) {
+                if (profileCard) profileCard.style.display = 'none';
+            }
+        } else {
+            if (profileCard) profileCard.style.display = 'none';
         }
 
         // Teacher note

@@ -456,6 +456,86 @@ if ($selectedClassId > 0) {
     }
 }
 
+// =============================================================================
+// PHÂN TÍCH PHỔ ĐIỂM & THẾ MẠNH SỞ TRƯỜNG TỪNG HỌC SINH (HUMANIZER PEDAGOGY)
+// =============================================================================
+$studentSubjectProfiles = [];
+if (!empty($studentScoresGrouped)) {
+    foreach ($studentScoresGrouped as $sid => $data) {
+        $scores = $data['scores'];
+        if (empty($scores)) {
+            $studentSubjectProfiles[$sid] = [
+                'scores' => [],
+                'strengths' => [],
+                'needs_focus' => [],
+                'aptitude' => 'Chờ cập nhật điểm',
+                'profile_summary' => 'Em chưa có đủ cột điểm kiểm tra để phân tích phổ điểm các môn.'
+            ];
+            continue;
+        }
+
+        arsort($scores);
+        $strengths = [];
+        $needsFocus = [];
+        foreach ($scores as $sub => $sc) {
+            if ($sc >= 7.5) {
+                $strengths[$sub] = $sc;
+            } elseif ($sc < 6.0) {
+                $needsFocus[$sub] = $sc;
+            }
+        }
+        if (empty($strengths)) {
+            $strengths = array_slice($scores, 0, min(2, count($scores)), true);
+        }
+
+        $scienceKeywords = ['toán', 'khoa học', 'khtn', 'tin', 'công nghệ'];
+        $humanitiesKeywords = ['ngữ văn', 'văn', 'lịch sử', 'địa lí', 'tiếng anh', 'anh', 'gdcd'];
+
+        $scienceScores = [];
+        $humanitiesScores = [];
+        foreach ($scores as $sub => $sc) {
+            $subLower = mb_strtolower($sub, 'UTF-8');
+            foreach ($scienceKeywords as $k) {
+                if (str_contains($subLower, $k)) { $scienceScores[] = $sc; break; }
+            }
+            foreach ($humanitiesKeywords as $k) {
+                if (str_contains($subLower, $k)) { $humanitiesScores[] = $sc; break; }
+            }
+        }
+
+        $avgScience = !empty($scienceScores) ? round(array_sum($scienceScores) / count($scienceScores), 1) : null;
+        $avgHumanities = !empty($humanitiesScores) ? round(array_sum($humanitiesScores) / count($humanitiesScores), 1) : null;
+
+        $aptitude = 'Năng lực phát triển đồng đều';
+        if ($avgScience !== null && $avgHumanities !== null && ($avgScience - $avgHumanities) >= 1.0) {
+            $aptitude = 'Thiên hướng Tự nhiên & Tư duy Logic';
+            $profileSummary = "Em có năng khiếu nổi trội ở các môn Khoa học Tự nhiên (ĐTB nhóm đạt {$avgScience}đ). Tư duy tính toán và giải quyết vấn đề mạch lạc; thầy/cô có thể bồi dưỡng thêm các bài toán vận dụng thực tế.";
+        } elseif ($avgHumanities !== null && $avgScience !== null && ($avgHumanities - $avgScience) >= 1.0) {
+            $aptitude = 'Thiên hướng Xã hội & Ngôn ngữ';
+            $profileSummary = "Em có thế mạnh rõ nét ở các môn Khoa học Xã hội và Ngôn ngữ (ĐTB nhóm đạt {$avgHumanities}đ). Khả năng cảm thụ, ghi nhớ và diễn đạt tốt; thầy/cô nên khuyến khích em rèn luyện thêm kỹ năng viết và thuyết trình.";
+        } elseif (min($scores) >= 8.0) {
+            $aptitude = 'Năng lực xuất sắc toàn diện';
+            $profileSummary = "Em nắm vững kiến thức ở tất cả các môn học, phong độ học tập rất vững vàng. Thầy/cô nên khuyến khích em tham gia câu lạc bộ học thuật hoặc bồi dưỡng học sinh giỏi.";
+        } elseif (min($scores) >= 6.5) {
+            $aptitude = 'Nền tảng đồng đều, học lực Khá';
+            $profileSummary = "Em giữ nhịp học tập đồng đều qua các môn. Nếu chọn 1–2 môn yêu thích nhất để tập trung bồi dưỡng mũi nhọn, em hoàn toàn có khả năng bứt phá lên nhóm Tốt.";
+        } else {
+            $aptitude = 'Cần củng cố kiến thức nền tảng';
+            $lowestSub = array_key_last($scores);
+            $lowestVal = end($scores);
+            $profileSummary = "Điểm số giữa các môn có sự chênh lệch. Cần ưu tiên dành thời gian củng cố môn {$lowestSub} ({$lowestVal}đ) để lấp các lỗ hổng kiến thức cốt lõi.";
+        }
+
+        $studentSubjectProfiles[$sid] = [
+            'scores' => $scores,
+            'strengths' => $strengths,
+            'needs_focus' => $needsFocus,
+            'aptitude' => $aptitude,
+            'profile_summary' => $profileSummary
+        ];
+    }
+}
+
 $academicCalendar = get_academic_calendar_phase();
 $activeNav = 'dashboard';
 $pageTitle = 'Radar Cảnh Báo Sớm & Năng Lực Học Tập';
@@ -1490,6 +1570,7 @@ $tt22Slices = [
                             data-advice="<?= htmlspecialchars($firstSub['competency']['pedagogical_advice'] ?? '') ?>"
                             data-competency-title="<?= htmlspecialchars($firstSub['competency']['competency_title'] ?? '') ?>"
                             data-note="<?= htmlspecialchars($firstSub['teacher_note'] ?? '') ?>"
+                            data-profile='<?= htmlspecialchars(json_encode($studentSubjectProfiles[$sid] ?? [], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>'
                             data-name="<?= htmlspecialchars(mb_strtolower($mainStudent['full_name'], 'UTF-8')) ?>" 
                             data-search="<?= htmlspecialchars(mb_strtolower(($mainStudent['student_code'] ?? '') . ' ' . $mainStudent['full_name'] . ' ' . $mainStudent['class_name'] . ' ' . implode(' ', array_column($subjects, 'subject')) . ' ' . $firstSub['diagnostic'], 'UTF-8')) ?>">
                             <td class="col-stt" style="white-space: nowrap;">
@@ -1777,6 +1858,7 @@ $tt22Slices = [
                             data-advice="<?= htmlspecialchars($s['competency']['pedagogical_advice'] ?? '') ?>"
                             data-competency-title="<?= htmlspecialchars($s['competency']['competency_title'] ?? '') ?>"
                             data-note="<?= htmlspecialchars($s['teacher_note'] ?? '') ?>"
+                            data-profile='<?= htmlspecialchars(json_encode($studentSubjectProfiles[$s['student_id']] ?? [], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>'
                             data-name="<?= htmlspecialchars(mb_strtolower($s['full_name'], 'UTF-8')) ?>" 
                             data-search="<?= htmlspecialchars(mb_strtolower(($s['student_code'] ?? '') . ' ' . $s['full_name'] . ' ' . $s['class_name'] . ' ' . $s['subject'] . ' ' . $s['diagnostic'] . ' ' . ($s['competency']['competency_title'] ?? '') . ' ' . ($s['teacher_note'] ?? ''), 'UTF-8')) ?>">
                             <td class="col-stt"><?= $stt++ ?></td>
@@ -1923,14 +2005,21 @@ $tt22Slices = [
     </table>
 </div>
 
-<!-- CHẾ ĐỘ XEM THẺ DÀNH RIÊNG CHO ĐIỆN THOẠI (MOBILE STUDENT CARDS) -->
-<div class="mobile-student-cards" id="mobileStudentCards">
+<!-- DANH SÁCH HỌC SINH TINH GỌN KÈM 2 BÓNG MÀU TRỰC QUAN CHO ĐIỆN THOẠI (APPLE MINIMALIST ROSTER) -->
+<div class="mobile-student-list" id="mobileStudentList">
+    <div class="mobile-list-header">
+        <span class="m-list-title">Danh Sách Học Sinh (<?= count($selectedSubject === 'all' ? $studentsGrouped : $students) ?>)</span>
+        <div class="m-list-legend">
+            <span class="legend-item"><span class="legend-dot dot-tier-sample"></span>Học lực</span>
+            <span class="legend-item"><span class="legend-dot dot-trend-sample"></span>Tiến độ</span>
+        </div>
+    </div>
     <?php if (empty($students)): ?>
         <div style="text-align: center; padding: 32px 16px; background: #ffffff; border-radius: 16px; color: var(--text-muted); border: 1px solid #e2e8f0;">
             Chưa có học sinh nào trong phạm vi lớp được chọn.
         </div>
     <?php else: ?>
-        <?php foreach (($selectedSubject === 'all' ? $studentsGrouped : $students) as $sidKey => $mItem): ?>
+        <?php $mStt = 1; foreach (($selectedSubject === 'all' ? $studentsGrouped : $students) as $sidKey => $mItem): ?>
             <?php
                 if ($selectedSubject === 'all') {
                     $mStudent = $mItem['student'];
@@ -1965,11 +2054,13 @@ $tt22Slices = [
                     $mAvg = ($mItem['avg_score'] !== null && $mItem['avg_score'] !== '') ? (float)$mItem['avg_score'] : null;
                 }
 
-                $mNameParts = explode(' ', trim($mStudent['full_name']));
-                $mInitials = mb_strtoupper(mb_substr(end($mNameParts), 0, 2, 'UTF-8'), 'UTF-8');
-                $mRiskLabel = ($mRisk === 'red') ? 'Nguy cấp' : (($mRisk === 'yellow') ? 'Cần chú ý' : (($mRisk === 'green') ? 'Ổn định' : 'Chờ điểm'));
+                $mTierKey = $mFirstSub['score_tier']['tier'] ?? 'pending';
+                $mTierName = $mFirstSub['score_tier']['label'] ?? 'Chờ điểm';
+                $mTrendKey = $mFirstSub['momentum'] ?? 'pending';
+                $mTrendName = $mFirstSub['trend_label'] ?? 'Chờ điểm';
+                $mCode = !empty($mStudent['student_code']) ? $mStudent['student_code'] : 'HS' . $mSid;
             ?>
-            <div class="m-student-card" 
+            <div class="m-student-row" 
                  data-student-id="<?= $mSid ?>"
                  data-level="<?= $mRisk ?>"
                  data-trend="<?= $mFirstSub['trend'] ?>"
@@ -1977,67 +2068,35 @@ $tt22Slices = [
                  data-tier="<?= $mFirstSub['score_tier']['tier'] ?>"
                  data-overall="<?= htmlspecialchars($mOverall) ?>"
                  data-txwarn="<?= !empty($mFirstSub['has_tx_warning']) ? '1' : '0' ?>"
-                 data-search="<?= htmlspecialchars(mb_strtolower(($mStudent['student_code'] ?? '') . ' ' . $mStudent['full_name'] . ' ' . $mStudent['class_name'] . ' ' . implode(' ', array_column($mSubjects, 'subject')), 'UTF-8')) ?>">
+                 data-search="<?= htmlspecialchars(mb_strtolower(($mStudent['student_code'] ?? '') . ' ' . $mStudent['full_name'] . ' ' . $mStudent['class_name'] . ' ' . implode(' ', array_column($mSubjects, 'subject')), 'UTF-8')) ?>"
+                 onclick="openStudentModalFromId(<?= $mSid ?>)"
+                 role="button"
+                 tabindex="0"
+                 title="Chạm để mở thẻ chi tiết học sinh <?= htmlspecialchars($mStudent['full_name']) ?>">
                 
-                <div class="m-card-header">
-                    <div class="m-avatar"><?= $mInitials ?></div>
-                    <div class="m-info">
-                        <div class="m-name"><?= htmlspecialchars($mStudent['full_name']) ?></div>
-                        <div class="m-meta">
-                            <span class="m-code"><?= htmlspecialchars(!empty($mStudent['student_code']) ? $mStudent['student_code'] : 'HS' . $mSid) ?></span>
-                            <span>•</span>
-                            <span><?= htmlspecialchars($mStudent['class_name']) ?></span>
-                            <?php if ($selectedSubject === 'all'): ?>
-                                <span>•</span>
-                                <span><?= count($mSubjects) ?> môn</span>
-                            <?php else: ?>
-                                <span>•</span>
-                                <span><?= htmlspecialchars($mFirstSub['subject']) ?></span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="m-badges">
-                        <span class="badge-tier <?= $mTierClass ?>"><?= htmlspecialchars($mTierBadge) ?></span>
+                <span class="m-row-stt"><?= $mStt++ ?></span>
+                <div class="m-row-info">
+                    <div class="m-row-name"><?= htmlspecialchars($mStudent['full_name']) ?></div>
+                    <div class="m-row-sub">
+                        <span style="font-family: var(--font-mono); font-weight: 700; color: #4338ca;"><?= htmlspecialchars($mCode) ?></span>
+                        <span>•</span>
+                        <span>Lớp <?= htmlspecialchars($mStudent['class_name']) ?></span>
+                        <?php if ($selectedSubject !== 'all'): ?>
+                            <span>•</span><span>Môn <?= htmlspecialchars($mFirstSub['subject']) ?></span>
+                        <?php else: ?>
+                            <span>•</span><span><?= count($mSubjects) ?> môn</span>
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                <div class="m-metrics-row">
-                    <div class="m-metric">
-                        <span class="m-metric-label">ĐTB Học Kỳ</span>
-                        <span class="m-metric-val avg-<?= $mRisk ?>"><?= $mAvg !== null ? number_format($mAvg, 1) : '—' ?></span>
+                <div class="m-row-status">
+                    <!-- 2 BÓNG MÀU TRỰC QUAN (DUAL STATUS DOTS): HỌC LỰC & TIẾN ĐỘ -->
+                    <div class="m-dual-dots" title="Học lực: <?= htmlspecialchars($mTierName) ?> | Tiến độ: <?= htmlspecialchars($mTrendName) ?>">
+                        <span class="m-dot-pill dot-tier-<?= $mTierKey ?>" title="Học lực TT22: <?= htmlspecialchars($mTierName) ?>"></span>
+                        <span class="m-dot-pill dot-trend-<?= $mTrendKey ?>" title="Xu hướng OLS: <?= htmlspecialchars($mTrendName) ?>"></span>
                     </div>
-                    <div class="m-metric">
-                        <span class="m-metric-label">Xu Hướng</span>
-                        <span class="m-metric-val" style="font-size: 11.5px;"><?= htmlspecialchars($mFirstSub['trend_label']) ?></span>
-                    </div>
-                    <div class="m-metric">
-                        <span class="m-metric-label">Vùng Rủi Ro</span>
-                        <span class="m-metric-val" style="color: <?= ($mRisk === 'red') ? '#dc2626' : (($mRisk === 'yellow') ? '#d97706' : '#16a34a') ?>; font-size: 11.5px;">
-                            <?= $mRiskLabel ?>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- HỘP PHÂN TÍCH SƯ PHẠM DỄ HIỂU CHO GIÁO VIÊN -->
-                <div class="m-pedagogy-box">
-                    <div class="m-pedagogy-title">
-                        <?= get_svg_icon('activity', 13) ?>
-                        <span><?= htmlspecialchars($mFirstSub['competency']['competency_title'] ?? 'Đang phân tích') ?></span>
-                    </div>
-                    <div class="m-pedagogy-desc">
-                        <?= htmlspecialchars($mFirstSub['competency']['pedagogical_advice'] ?? 'Đang cập nhật hướng dẫn hành động sư phạm.') ?>
-                    </div>
-                </div>
-
-                <div class="m-card-actions">
-                    <button type="button" class="btn-m-detail" onclick="openStudentModalFromId(<?= $mSid ?>)">
-                        <?= get_svg_icon('eye', 14) ?>
-                        <span>Chi Tiết &amp; Sổ Tay</span>
-                    </button>
-                    <a href="nhap_diem.php?class_id=<?= urlencode((string)$mStudent['class_id']) ?>&subject=<?= urlencode($mFirstSub['subject']) ?>" class="btn-m-gradebook">
-                        <?= get_svg_icon('file-text', 14) ?>
-                        <span>Vào Sổ Điểm</span>
-                    </a>
+                    <span class="m-row-avg avg-<?= $mRisk ?>"><?= $mAvg !== null ? number_format($mAvg, 1) : '—' ?></span>
+                    <span class="m-row-chevron">›</span>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -2139,6 +2198,35 @@ $tt22Slices = [
                         <!-- Populated dynamically via JS -->
                     </div>
                     <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; display: none; padding: 8px 12px; border-radius: 8px; line-height: 1.5;"></div>
+                </div>
+            </div>
+
+            <!-- KHU VỰC PHÂN TÍCH PHỔ ĐIỂM & THẾ MẠNH SỞ TRƯỜNG NĂNG LỰC TỪNG MÔN -->
+            <div class="apple-pedagogical-card" id="modalSubjectProfileCard" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0; display: none;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <?= get_svg_icon('award', 16, '', 'color: #4f46e5;') ?>
+                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Phổ Điểm Môn Học &amp; Sở Trường Năng Lực</span>
+                    </div>
+                    <span id="modalAptitudeBadge" style="font-size: 11px; font-weight: 800; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 10px; border-radius: 9999px;">
+                        Thiên hướng năng lực
+                    </span>
+                </div>
+
+                <!-- Thanh phổ điểm từng môn học mini -->
+                <div id="modalSubjectBarsGrid" class="modal-subject-bars-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Hộp nhận định thế mạnh & định hướng bồi dưỡng -->
+                <div style="background: #f8fafc; border-radius: 12px; padding: 12px 14px; border: 1px solid #e2e8f0;">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; color: #1e293b; margin-bottom: 5px;">
+                        <?= get_svg_icon('activity', 13, '', 'color: #2563eb;') ?>
+                        <span>Đánh Giá Sở Trường &amp; Khuyến Nghị Sư Phạm:</span>
+                    </div>
+                    <p id="modalProfileSummary" style="font-size: 12px; color: #334155; line-height: 1.5; margin: 0;">
+                        Đang phân tích phổ điểm các môn...
+                    </p>
                 </div>
             </div>
 

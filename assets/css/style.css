@@ -6198,3 +6198,225 @@ tr.gb-row-focused td {
     display: none !important;
   }
 }
+
+/* =============================================================================
+ * MOBILE COMPACT ROSTER WITH DUAL STATUS DOTS (APPLE LIST / DRIBBLE MINIMALIST)
+ * ============================================================================= */
+.mobile-student-list {
+  display: none;
+}
+
+.modal-subject-bar-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.modal-sub-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.modal-sub-name {
+  color: #1e293b;
+}
+.modal-sub-val {
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+}
+.modal-sub-progress-track {
+  width: 100%;
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.modal-sub-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .mobile-view-switcher {
+    display: none !important;
+  }
+  .radar-table-wrap {
+    display: none !important;
+  }
+  .mobile-student-cards {
+    display: none !important;
+  }
+  .mobile-student-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 24px !important;
+  }
+  
+  .mobile-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px 8px 4px;
+    border-bottom: 1px dashed var(--border-color, #e2e8f0);
+    margin-bottom: 2px;
+  }
+  .m-list-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--text-heading, #0f172a);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .m-list-legend {
+    font-size: 10.5px;
+    color: var(--text-muted, #64748b);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .legend-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .dot-tier-sample { background: #16a34a; }
+  .dot-trend-sample { background: #3b82f6; }
+
+  /* Compact Roster Row */
+  .m-student-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 14px;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  }
+  .m-student-row:active {
+    transform: scale(0.985);
+    background: #f8fafc;
+  }
+  .m-row-stt {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #64748b;
+    width: 20px;
+    flex-shrink: 0;
+    text-align: center;
+    font-family: var(--font-mono, monospace);
+  }
+  .m-row-info {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .m-row-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-heading, #0f172a);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+  }
+  .m-row-sub {
+    font-size: 10.5px;
+    color: var(--text-muted, #64748b);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .m-row-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  
+  /* 2 BÓNG MÀU TRỰC QUAN (DUAL STATUS DOTS) KỀ NHAU */
+  .m-dual-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 6px;
+    background: #f1f5f9;
+    border-radius: 9999px;
+  }
+  .m-dot-pill {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1.5px #ffffff;
+  }
+  
+  /* Bóng 1: Học lực TT22 */
+  .dot-tier-excellent { background: #16a34a; }
+  .dot-tier-good { background: #f59e0b; }
+  .dot-tier-average { background: #ea580c; }
+  .dot-tier-low { background: #dc2626; }
+  .dot-tier-pending { background: #94a3b8; }
+
+  /* Bóng 2: Xu hướng OLS */
+  .dot-trend-up, .dot-trend-surge { background: #10b981; }
+  .dot-trend-steady, .dot-trend-stable { background: #3b82f6; }
+  .dot-trend-down, .dot-trend-drop { background: #ef4444; }
+  .dot-trend-pending { background: #94a3b8; }
+
+  .m-row-avg {
+    font-size: 12px;
+    font-weight: 800;
+    min-width: 32px;
+    text-align: center;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: var(--font-mono, monospace);
+  }
+  .m-row-avg.avg-green {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+  }
+  .m-row-avg.avg-yellow {
+    background: #fefce8;
+    color: #b45309;
+    border: 1px solid #fef08a;
+  }
+  .m-row-avg.avg-red {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  .m-row-avg.avg-pending {
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+  .m-row-chevron {
+    font-size: 16px;
+    color: #94a3b8;
+    font-weight: 700;
+    line-height: 1;
+  }
+}

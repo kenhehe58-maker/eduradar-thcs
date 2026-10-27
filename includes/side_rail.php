@@ -319,7 +319,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
 }
 
-/* Mobile Bottom Navigation Bar (Image 2 Golden Standard: Short & Sweet Labels, Apple Fluid Physics) */
+/* Mobile Bottom Navigation Bar (Image 2 Modern Refinement: Ultra-sleek, compact, Apple iOS Dock) */
 @media (max-width: 768px) {
   .ux-rail-container {
     position: fixed !important;
@@ -328,19 +328,19 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     bottom: 0 !important;
     top: auto !important;
     width: 100% !important;
-    height: 66px !important;
+    height: 54px !important;
     z-index: 1050 !important;
     border-right: none !important;
-    border-top: 1px solid rgba(226, 232, 240, 0.9) !important;
-    background: rgba(255, 255, 255, 0.96) !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.07) !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.85) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.05) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
   [data-theme="dark"] .ux-rail-container {
-    background: rgba(15, 23, 42, 0.96) !important;
-    border-top-color: rgba(35, 50, 77, 0.9) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-top-color: rgba(35, 50, 77, 0.85) !important;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45) !important;
   }
   .u040-fixed {
@@ -397,47 +397,50 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     width: auto !important;
     flex: 0 0 auto !important;
     margin: 0 !important;
-    padding: 0 2px !important;
+    padding: 0 4px !important;
     border-top: none !important;
   }
-  /* Nav item styled per Image 2: Icon on top, short single-word label below */
+  /* Nav item styled: compact, 18px icon, 9px crisp label */
   .u040-it {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 44px !important;
-    max-width: 58px !important;
-    height: 54px !important;
-    padding: 4px 2px !important;
+    min-width: 42px !important;
+    max-width: 52px !important;
+    height: 46px !important;
+    padding: 3px 2px !important;
     margin: 0 !important;
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     flex-shrink: 0 !important;
-    gap: 3px !important;
+    gap: 2px !important;
     text-decoration: none !important;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
   }
   .u040-it svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 18px !important;
+    height: 18px !important;
     stroke: #64748b !important;
     stroke-width: 2px !important;
     fill: none !important;
-    transition: stroke 0.2s ease, transform 0.2s ease !important;
+    transition: stroke 0.15s ease, transform 0.15s ease !important;
   }
   .u040-it-label {
     display: block !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     font-weight: 600 !important;
     color: #64748b !important;
-    line-height: 1.1 !important;
+    line-height: 1 !important;
     text-align: center !important;
     white-space: nowrap !important;
-    letter-spacing: -0.01em !important;
-    transition: color 0.2s ease !important;
+    letter-spacing: -0.02em !important;
+    transition: color 0.15s ease !important;
   }
-  /* Active Tab: Soft pill highlight & vibrant accent per Image 2 */
+  /* Active Tab: subtle rounded tint pill */
   .u040-it[aria-current="page"],
   .u040-it.active {
     background: #eef2ff !important;
@@ -448,8 +451,8 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   .u040-it[aria-current="page"] svg,
   .u040-it.active svg {
-    stroke: #4f46e5 !important;
-    transform: scale(1.06) !important;
+    stroke: #2563eb !important;
+    transform: scale(1.08) !important;
   }
   [data-theme="dark"] .u040-it[aria-current="page"] svg,
   [data-theme="dark"] .u040-it.active svg {
@@ -457,44 +460,47 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   .u040-it[aria-current="page"] .u040-it-label,
   .u040-it.active .u040-it-label {
-    color: #4f46e5 !important;
-    font-weight: 700 !important;
+    color: #2563eb !important;
+    font-weight: 800 !important;
   }
   [data-theme="dark"] .u040-it[aria-current="page"] .u040-it-label,
   [data-theme="dark"] .u040-it.active .u040-it-label {
     color: #818cf8 !important;
   }
 
-  /* Single Logout Button on Mobile: Short label 'Thoát' */
+  /* Single Logout Button on Mobile: Compact & Elegant */
   .u040-logout-it {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 44px !important;
-    max-width: 52px !important;
-    height: 54px !important;
+    min-width: 42px !important;
+    max-width: 50px !important;
+    height: 46px !important;
     margin: 0 !important;
-    margin-top: 0 !important;
-    padding: 4px 2px !important;
-    border-radius: 12px !important;
+    padding: 3px 2px !important;
+    border-radius: 10px !important;
     background: transparent !important;
+    border: none !important;
     box-shadow: none !important;
-    gap: 3px !important;
+    gap: 2px !important;
     flex-shrink: 0 !important;
   }
+  .u040-logout-it:active {
+    background: rgba(239, 68, 68, 0.1) !important;
+  }
   .u040-logout-it svg {
-    stroke: #dc2626 !important;
-    width: 20px !important;
-    height: 20px !important;
+    stroke: #ef4444 !important;
+    width: 18px !important;
+    height: 18px !important;
   }
   .u040-logout-text {
     display: block !important;
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    color: #dc2626 !important;
-    line-height: 1.1 !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    color: #ef4444 !important;
+    line-height: 1 !important;
     text-align: center !important;
     white-space: nowrap !important;
   }
