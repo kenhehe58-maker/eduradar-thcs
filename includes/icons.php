@@ -140,3 +140,92 @@ if (!function_exists('get_simple_icon')) {
         return get_svg_icon($slug, $size, $class, $style);
     }
 }
+
+if (!function_exists('render_segmented_donut_ring')) {
+    /**
+     * Render SVG Segmented Donut Ring (Apple Activity Ring / Dribbble SaaS Style)
+     *
+     * @param array  $slices       Mảng các phân đoạn: [['count' => 7, 'color' => '#10b981', 'label' => '...']]
+     * @param string $centerNumber Con số lớn ở giữa
+     * @param string $centerLabel  Nhãn phụ ở giữa
+     * @param string $title        Tiêu đề thẻ
+     * @param string $sheetType    Loại modal ('trend' hoặc 'tt22')
+     * @return string
+     */
+    function render_segmented_donut_ring(array $slices, string $centerNumber, string $centerLabel, string $title, string $sheetType): string
+    {
+        $r = 44.0;
+        $cx = 60.0;
+        $cy = 60.0;
+        $strokeWidth = 10.0;
+        $circumference = 2 * M_PI * $r; // ~276.46
+
+        $total = 0;
+        $activeSlices = [];
+        foreach ($slices as $s) {
+            $cnt = max(0, (int)($s['count'] ?? 0));
+            $total += $cnt;
+            if ($cnt > 0) {
+                $activeSlices[] = $s;
+            }
+        }
+
+        $activeCount = count($activeSlices);
+        $pathsSvg = '';
+
+        if ($total === 0 || $activeCount === 0) {
+            $pathsSvg .= sprintf(
+                '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="#e2e8f0" stroke-width="%.1f" stroke-dasharray="6, 6" />',
+                $cx, $cy, $r, $strokeWidth
+            );
+        } else {
+            // Đáy nền xám nhạt trung tính
+            $pathsSvg .= sprintf(
+                '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="#f1f5f9" stroke-width="%.1f" />',
+                $cx, $cy, $r, $strokeWidth
+            );
+
+            // Khoảng hở giữa các đoạn có bo góc mềm mại
+            $gap = $activeCount > 1 ? 6.0 : 0.0;
+            $currentOffset = 0.0;
+
+            foreach ($activeSlices as $slice) {
+                $cnt = (int)$slice['count'];
+                $arc = ($cnt / $total) * $circumference;
+                $color = htmlspecialchars($slice['color'] ?? '#3b82f6', ENT_QUOTES, 'UTF-8');
+                $dashLength = max(2.0, $arc - $gap);
+                $dashSpace = $circumference - $dashLength;
+
+                $pathsSvg .= sprintf(
+                    '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="%s" stroke-width="%.1f" stroke-linecap="round" stroke-dasharray="%.2f %.2f" stroke-dashoffset="%.2f" transform="rotate(-90 %.1f %.1f)" />',
+                    $cx, $cy, $r, $color, $strokeWidth, $dashLength, $dashSpace, -$currentOffset, $cx, $cy
+                );
+
+                $currentOffset += $arc;
+            }
+        }
+
+        $safeNum = htmlspecialchars($centerNumber, ENT_QUOTES, 'UTF-8');
+        $safeLabel = htmlspecialchars($centerLabel, ENT_QUOTES, 'UTF-8');
+        $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $safeSheet = htmlspecialchars($sheetType, ENT_QUOTES, 'UTF-8');
+
+        return '<div class="segmented-ring-card">
+            <div class="ring-svg-wrapper">
+                <svg class="segmented-ring-svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+                    ' . $pathsSvg . '
+                    <text x="60" y="56" text-anchor="middle" class="ring-center-num">' . $safeNum . '</text>
+                    <text x="60" y="73" text-anchor="middle" class="ring-center-label">' . $safeLabel . '</text>
+                </svg>
+            </div>
+            <div class="ring-card-footer">
+                <span class="ring-card-title">' . $safeTitle . '</span>
+                <button type="button" class="btn-ring-help" onclick="openRingHelp(\'' . $safeSheet . '\')" aria-label="Giải thích màu sắc ' . $safeTitle . '">
+                    <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>';
+    }
+}

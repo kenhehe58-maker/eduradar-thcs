@@ -839,6 +839,48 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 <?php endif; ?>
 
+<?php
+// Chuẩn bị dữ liệu cho 2 vòng tròn phân đoạn SVG trên Mobile (Apple Activity Rings / Dribbble SaaS Style)
+$trendSlices = [
+    ['label' => 'Đang tiến bộ rõ rệt', 'count' => (int)$stats['momentum_up'], 'pct' => (float)$stats['up_pct'], 'color' => '#10b981', 'desc' => 'Điểm số có chiều hướng đi lên hoặc thi định kỳ tiến bộ hơn thường xuyên.'],
+    ['label' => 'Duy trì ổn định', 'count' => (int)$stats['momentum_steady'], 'pct' => (float)$stats['steady_pct'], 'color' => '#3b82f6', 'desc' => 'Điểm số giữ nhịp đều đặn, phong độ đồng đều không có bài tụt sâu.'],
+    ['label' => 'Có dấu hiệu sa sút', 'count' => (int)$stats['momentum_down'], 'pct' => (float)$stats['down_pct'], 'color' => '#ef4444', 'desc' => 'Điểm kiểm tra sụt giảm liên tục hoặc thi định kỳ sụt giảm bất thường.'],
+    ['label' => 'Chờ cập nhật điểm', 'count' => (int)$stats['momentum_pending'], 'pct' => (float)$stats['pending_pct'], 'color' => '#94a3b8', 'desc' => 'Chưa có bài kiểm tra nào ghi nhận trong sổ điểm.'],
+];
+
+$goodCount = (int)($stats['tier_excellent'] + $stats['tier_good']);
+$goodPctVal = $stats['total'] > 0 ? round(($goodCount / $stats['total']) * 100, 1) : 0;
+$avgCount = (int)$stats['tier_average'];
+$avgPctVal = $stats['total'] > 0 ? round(($avgCount / $stats['total']) * 100, 1) : 0;
+$lowCount = (int)$stats['tier_low'];
+$lowPctVal = $stats['total'] > 0 ? round(($lowCount / $stats['total']) * 100, 1) : 0;
+
+$tt22Slices = [
+    ['label' => 'Mức Tốt & Khá', 'count' => $goodCount, 'pct' => $goodPctVal, 'color' => '#10b981', 'desc' => 'ĐTB ≥ 6.5, phong độ vững vàng và nắm chắc kiến thức.'],
+    ['label' => 'Mức Đạt (Trung bình)', 'count' => $avgCount, 'pct' => $avgPctVal, 'color' => '#f59e0b', 'desc' => '5.0 ≤ ĐTB < 6.5, đạt chuẩn kiến thức kỹ năng cơ bản.'],
+    ['label' => 'Chưa Đạt (Cần hỗ trợ)', 'count' => $lowCount, 'pct' => $lowPctVal, 'color' => '#ef4444', 'desc' => 'ĐTB < 5.0 hoặc có điểm dưới ngưỡng khống chế cần bồi dưỡng.'],
+];
+?>
+
+<!-- KHỐI 2 VÒNG TRÒN PHÂN ĐOẠN CHO MÀN HÌNH ĐIỆN THOẠI (DRIBBLE / APPLE ACTIVITY STYLE) -->
+<div class="mobile-rings-overview">
+    <?= render_segmented_donut_ring(
+        $trendSlices, 
+        $stats['up_pct'] . '%', 
+        'Tiến Bộ', 
+        'Xu Hướng Tiến Bộ', 
+        'trend'
+    ) ?>
+    <?= render_segmented_donut_ring(
+        $tt22Slices, 
+        (string)$stats['total'], 
+        '#Học Sinh', 
+        'Mức Độ Tích Lũy', 
+        'tt22'
+    ) ?>
+</div>
+
+<div class="desktop-stats-group">
 <!-- NHÓM 1: CÁC THẺ THỐNG KÊ XU HƯỚNG TIẾN BỘ (ĐỨNG TRƯỚC & NỔI BẬT) -->
 <div style="margin-bottom: 24px;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -985,8 +1027,6 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </section>
 </div>
-        </div>
-    </section>
 </div>
 
 <!-- THANH CÔNG CỤ LỌC CHIP ĐA CHIỀU & TÌM KIẾM TỨC THÌ (APPLE PRO TOOLBAR) -->
@@ -2201,6 +2241,37 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- BOTTOM SHEET MODAL GIẢI THÍCH MÀU SẮC (CHO ĐIỆN THOẠI) -->
+<div class="ring-help-sheet-backdrop" id="ringHelpBackdrop" onclick="closeRingHelp()"></div>
+<div class="ring-help-sheet" id="ringHelpSheet" role="dialog" aria-modal="true" aria-labelledby="ringHelpSheetTitle">
+    <div class="ring-sheet-handle"></div>
+    <div class="ring-sheet-header">
+        <div>
+            <h3 id="ringHelpSheetTitle" class="ring-sheet-title">Giải Thích Màu Sắc</h3>
+            <p id="ringHelpSheetSub" style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;"></p>
+        </div>
+        <button type="button" class="btn-close-sheet" onclick="closeRingHelp()" aria-label="Đóng popup">✕</button>
+    </div>
+    <div class="ring-sheet-body" id="ringHelpSheetContent">
+        <!-- Nội dung giải thích màu sắc do JavaScript tự động render -->
+    </div>
+</div>
+
+<script id="ringHelpData" type="application/json">
+<?= json_encode([
+    'trend' => [
+        'title' => '1. Xu Hướng Tiến Bộ (OLS)',
+        'sub' => 'Đo lường nhịp độ học tập qua các cột điểm theo thuật toán OLS',
+        'items' => $trendSlices
+    ],
+    'tt22' => [
+        'title' => '2. Mức Tích Lũy (Thông Tư 22)',
+        'sub' => 'Phân loại kết quả học tập theo Thông tư 22/2021/TT-BGDĐT',
+        'items' => $tt22Slices
+    ]
+], JSON_UNESCAPED_UNICODE) ?>
+</script>
 
 <?php
 $extraScripts = '

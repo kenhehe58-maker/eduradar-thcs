@@ -954,4 +954,67 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     };
+
+    // -------------------------------------------------------------------------
+    // 7. MOBILE RING GAUGE HELP BOTTOM-SHEET MODAL
+    // -------------------------------------------------------------------------
+    window.openRingHelp = function(type) {
+        const backdrop = document.getElementById('ringHelpBackdrop');
+        const sheet = document.getElementById('ringHelpSheet');
+        const titleEl = document.getElementById('ringHelpSheetTitle');
+        const subEl = document.getElementById('ringHelpSheetSub');
+        const contentEl = document.getElementById('ringHelpSheetContent');
+        const dataScript = document.getElementById('ringHelpData');
+
+        if (!backdrop || !sheet || !dataScript) return;
+
+        try {
+            const allData = JSON.parse(dataScript.textContent);
+            const data = allData[type];
+            if (!data) return;
+
+            if (titleEl) titleEl.textContent = data.title;
+            if (subEl) subEl.textContent = data.sub;
+
+            if (contentEl) {
+                let html = '';
+                data.items.forEach(function(item) {
+                    const countBadge = item.count !== undefined 
+                        ? '<span class="ring-sheet-item-count">' + item.count + ' HS (' + item.pct + '%)</span>' 
+                        : '';
+                    html += '<div class="ring-sheet-item">' +
+                        '<span class="ring-sheet-dot" style="background: ' + item.color + ';"></span>' +
+                        '<div class="ring-sheet-item-content">' +
+                            '<div class="ring-sheet-item-header">' +
+                                '<span class="ring-sheet-item-name">' + item.label + '</span>' +
+                                countBadge +
+                            '</div>' +
+                            '<p class="ring-sheet-item-desc">' + item.desc + '</p>' +
+                        '</div>' +
+                    '</div>';
+                });
+                contentEl.innerHTML = html;
+            }
+
+            backdrop.classList.add('active');
+            sheet.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } catch (e) {
+            console.error('Error rendering ring help sheet:', e);
+        }
+    };
+
+    window.closeRingHelp = function() {
+        const backdrop = document.getElementById('ringHelpBackdrop');
+        const sheet = document.getElementById('ringHelpSheet');
+        if (backdrop) backdrop.classList.remove('active');
+        if (sheet) sheet.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeRingHelp();
+        }
+    });
 });
