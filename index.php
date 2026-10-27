@@ -701,120 +701,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <form method="GET" action="index.php" id="matrixFilterForm">
-        <div class="matrix-form-row">
-            <!-- 1. MỤC CHỌN LỚP HỌC -->
-            <div class="matrix-field-group">
-                <label class="matrix-field-label" for="selectClassId" style="display: flex; align-items: center; gap: 6px;">
-                    <?= get_svg_icon('users', 14) ?>
-                    <span>Chọn Lớp Học</span>
-                </label>
-                <select name="class_id" id="selectClassId" class="matrix-select" onchange="this.form.submit()">
-                    <?php if ($userRole === 'admin'): ?>
-                        <option value="0" <?= $selectedClassId === 0 ? 'selected' : '' ?>>
-                            Tất cả các lớp (<?= count($filterClasses) ?> lớp - <?= array_sum($classCounts) ?> HS)
-                        </option>
-                        <?php foreach ($filterClasses as $cId => $cName): ?>
-                            <option value="<?= $cId ?>" <?= $selectedClassId === $cId ? 'selected' : '' ?>>
-                                Lớp <?= htmlspecialchars($cName) ?> (<?= $classCounts[$cId] ?? 0 ?> HS)
-                            </option>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <?php foreach ($filterClasses as $cId => $cName): ?>
-                            <?php $assignedSubs = $teacherClassSubjectMap[$cId]['subjects'] ?? []; ?>
-                            <option value="<?= $cId ?>" <?= $selectedClassId === $cId ? 'selected' : '' ?>>
-                                Lớp <?= htmlspecialchars($cName) ?> [Môn: <?= implode(', ', $assignedSubs) ?>] (<?= $classCounts[$cId] ?? 0 ?> HS)
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-            </div>
-
-            <!-- 2. MỤC CHỌN PHÂN MÔN -->
-            <div class="matrix-field-group">
-                <label class="matrix-field-label" for="selectSubject" style="display: flex; align-items: center; gap: 6px;">
-                    <?= get_svg_icon('book-open', 14) ?>
-                    <span>Phân Môn Phụ Trách</span>
-                </label>
-                <?php if ($userRole === 'admin'): ?>
-                    <select name="subject" id="selectSubject" class="matrix-select" onchange="this.form.submit()">
-                        <option value="all" <?= $selectedSubject === 'all' ? 'selected' : '' ?>>
-                            Tất cả môn học (<?= count($filterSubjects) ?> môn)
-                        </option>
-                        <?php foreach ($filterSubjects as $subj): ?>
-                            <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
-                                Môn <?= htmlspecialchars($subj) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                <?php else: ?>
-                    <?php 
-                        $curClassSubs = ($selectedClassId > 0 && isset($teacherClassSubjectMap[$selectedClassId]))
-                            ? $teacherClassSubjectMap[$selectedClassId]['subjects']
-                            : $filterSubjects;
-                    ?>
-                    <select name="subject" id="selectSubject" class="matrix-select" <?= count($curClassSubs) <= 1 ? 'disabled style="background: #f1f5f9; cursor: not-allowed; color: #1e293b; font-weight: 700;"' : 'onchange="this.form.submit()"' ?>>
-                        <?php foreach ($curClassSubs as $subj): ?>
-                            <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
-                                Môn <?= htmlspecialchars($subj) ?> (Được phân công)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <?php if (count($curClassSubs) <= 1): ?>
-                        <input type="hidden" name="subject" value="<?= htmlspecialchars($selectedSubject) ?>">
-                    <?php endif; ?>
-                <?php endif; ?>
-            </div>
-
-            <!-- 3. NÚT LIQUID GLASS (PROMPT #001) CHO LỌC DỮ LIỆU -->
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Lucian UX/UI Prompt #001 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#001 -->
-                <div class="ux u001" id="u001FilterBtnWrapper" data-state="idle">
-                    <div class="u001-blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-                    <div class="u001-mag">
-                        <div class="u001-float">
-                            <button class="u001-btn btn-compact" type="submit" id="btnFilterApply">
-                                <span class="u001-sheen" aria-hidden="true"></span>
-                                <span class="u001-txt">ÁP DỤNG LỌC</span>
-                                <span class="u001-spin" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="10"/></svg></span>
-                                <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Xong</span>
-                            </button>
-                        </div>
-                    </div>
-                    <span class="u001-live" aria-live="polite"></span>
-                </div>
-
-                <?php if ($selectedClassId > 0 || $selectedSubject !== 'all'): ?>
-                    <a href="index.php" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 700; padding: 6px 10px; border-radius: 6px; background: #eef2ff;">
-                        ✕ Bỏ Lọc
-                    </a>
-                <?php endif; ?>
-            </div>
-
-            <!-- 4. XUẤT BÁO CÁO BGH NỘP TRƯỜNG -->
-            <?php 
-                $reportClassId = $selectedClassId > 0 ? $selectedClassId : (!empty($filterClasses) ? array_key_first($filterClasses) : 0);
-                $reportSubject = $selectedSubject !== 'all' ? $selectedSubject : (!empty($filterSubjects) ? $filterSubjects[0] : 'Toán học');
-            ?>
-            <?php if ($reportClassId > 0): ?>
-                <div style="margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap;">
-                    <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn-action-slip" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #0f172a, #312e81); color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);" title="Mở Slide thuyết trình báo cáo BGH tương tác (Chart.js)">
-                        <?= get_svg_icon('presentation', 15) ?>
-                        <span>Slide Báo Cáo BGH</span>
-                    </a>
-                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=pdf" target="_blank" class="btn-action-slip btn-slip-pdf" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" title="Xuất báo cáo nộp BGH (Khổ A4 chuẩn)">
-                        <?= get_svg_icon('printer', 15) ?>
-                        <span>Báo Cáo BGH (PDF)</span>
-                    </a>
-                    <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=xlsx" target="_blank" class="btn-action-slip btn-slip-excel" style="padding: 9px 14px; border-radius: 9px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #10b981; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);" title="Xuất file Excel báo cáo nộp BGH">
-                        <?= get_svg_icon('download', 15) ?>
-                        <span>Báo Cáo BGH (Excel)</span>
-                    </a>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <!-- DẢI PHÍM CHỌN NHANH LỚP (GOM THEO KHỐI & CUỘN NGANG TINH TẾ - CHỈ HIỆN LỚP CÓ HỌC SINH) -->
+        <!-- 1. DẢI PHÍM CHỌN NHANH LỚP (ĐÃ CHUYỂN LÊN ĐẦU, BỎ BỚT CHỌN LỚP THỪA) -->
         <?php
             $filterClassesWithStudents = [];
             foreach ($filterClasses as $cid => $cname) {
@@ -823,11 +710,11 @@ require_once __DIR__ . '/includes/header.php';
                 }
             }
         ?>
-        <div class="matrix-class-chips-container" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border-color);">
+        <div class="matrix-class-chips-container" style="margin-top: 10px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                     <span style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
-                        <?= get_svg_icon('filter', 13) ?> Lọc theo Khối:
+                        <?= get_svg_icon('users', 14) ?> Chọn Lớp Theo Khối:
                     </span>
                     <button type="button" class="btn-grade-pill active" onclick="filterGradeChips('all', this)">
                         Tất cả (<?= count($filterClassesWithStudents) ?> lớp)
@@ -845,8 +732,8 @@ require_once __DIR__ . '/includes/header.php';
                         </button>
                     <?php endforeach; ?>
                 </div>
-                <div style="font-size: 11.5px; color: #64748b;">
-                    💡 <i>Cuộn ngang để xem toàn bộ danh sách lớp</i>
+                <div style="font-size: 11px; color: #64748b;">
+                    💡 <i>Vuốt ngang để chọn nhanh lớp học</i>
                 </div>
             </div>
 
@@ -877,7 +764,58 @@ require_once __DIR__ . '/includes/header.php';
                 <?php endforeach; ?>
             </div>
         </div>
-    </form>
+
+        <!-- 2. HÀNG CHỌN PHÂN MÔN & THAO TÁC LỌC -->
+        <form method="GET" action="index.php" id="matrixFilterForm" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
+            <input type="hidden" name="class_id" value="<?= (int)$selectedClassId ?>">
+            <div class="matrix-form-row" style="align-items: center; justify-content: flex-start; gap: 14px;">
+                <div class="matrix-field-group" style="min-width: 220px;">
+                    <label class="matrix-field-label" for="selectSubject" style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('book-open', 14) ?>
+                        <span>Phân Môn Đang Xem:</span>
+                    </label>
+                    <?php if ($userRole === 'admin'): ?>
+                        <select name="subject" id="selectSubject" class="matrix-select" onchange="this.form.submit()">
+                            <option value="all" <?= $selectedSubject === 'all' ? 'selected' : '' ?>>
+                                Tất cả môn học (<?= count($filterSubjects) ?> môn)
+                            </option>
+                            <?php foreach ($filterSubjects as $subj): ?>
+                                <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
+                                    Môn <?= htmlspecialchars($subj) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php else: ?>
+                        <?php 
+                            $curClassSubs = ($selectedClassId > 0 && isset($teacherClassSubjectMap[$selectedClassId]))
+                                ? $teacherClassSubjectMap[$selectedClassId]['subjects']
+                                : $filterSubjects;
+                        ?>
+                        <select name="subject" id="selectSubject" class="matrix-select" <?= count($curClassSubs) <= 1 ? 'disabled style="background: #f1f5f9; cursor: not-allowed; color: #1e293b; font-weight: 700;"' : 'onchange="this.form.submit()"' ?>>
+                            <?php foreach ($curClassSubs as $subj): ?>
+                                <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
+                                    Môn <?= htmlspecialchars($subj) ?> (Được phân công)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if (count($curClassSubs) <= 1): ?>
+                            <input type="hidden" name="subject" value="<?= htmlspecialchars($selectedSubject) ?>">
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 18px;">
+                    <button class="btn primary" type="submit" style="padding: 7px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; background: #2563eb; color: #ffffff; border: none; cursor: pointer;">
+                        Áp Dụng
+                    </button>
+                    <?php if ($selectedClassId > 0 || $selectedSubject !== 'all'): ?>
+                        <a href="index.php" style="font-size: 12.5px; color: var(--primary); text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: #eef2ff;">
+                            ✕ Đặt lại mặc định
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
 </div>
 
 <?php if ($selectedClassId > 0 && isset($filterClasses[$selectedClassId])): ?>
@@ -2129,8 +2067,12 @@ $tt22Slices = [
                     $mAvg = ($mItem['avg_score'] !== null && $mItem['avg_score'] !== '') ? (float)$mItem['avg_score'] : null;
                 }
 
-                $mTierKey = $mFirstSub['score_tier']['tier'] ?? 'pending';
-                $mTierName = $mFirstSub['score_tier']['label'] ?? 'Chờ điểm';
+                $mTierKey = ($selectedSubject === 'all')
+                    ? ($studentOverallMap[$mSid]['level'] ?? $mFirstSub['score_tier']['tier'] ?? 'pending')
+                    : ($mFirstSub['score_tier']['tier'] ?? 'pending');
+                $mTierName = ($selectedSubject === 'all')
+                    ? ($studentOverallMap[$mSid]['label'] ?? $mFirstSub['score_tier']['label'] ?? 'Chờ điểm')
+                    : ($mFirstSub['score_tier']['label'] ?? 'Chờ điểm');
                 $mTrendKey = $mFirstSub['momentum'] ?? 'pending';
                 $mTrendName = $mFirstSub['trend_label'] ?? 'Chờ điểm';
                 $mCode = !empty($mStudent['student_code']) ? $mStudent['student_code'] : 'HS' . $mSid;
@@ -2140,7 +2082,7 @@ $tt22Slices = [
                  data-level="<?= $mRisk ?>"
                  data-trend="<?= $mFirstSub['trend'] ?>"
                  data-momentum="<?= $mFirstSub['momentum'] ?>"
-                 data-tier="<?= $mFirstSub['score_tier']['tier'] ?>"
+                 data-tier="<?= $mTierKey ?>"
                  data-overall="<?= htmlspecialchars($mOverall) ?>"
                  data-txwarn="<?= !empty($mFirstSub['has_tx_warning']) ? '1' : '0' ?>"
                  data-search="<?= htmlspecialchars(mb_strtolower(($mStudent['student_code'] ?? '') . ' ' . $mStudent['full_name'] . ' ' . $mStudent['class_name'] . ' ' . implode(' ', array_column($mSubjects, 'subject')), 'UTF-8')) ?>"
@@ -2177,6 +2119,39 @@ $tt22Slices = [
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
+
+<?php 
+    $reportClassId = $selectedClassId > 0 ? $selectedClassId : (!empty($filterClasses) ? array_key_first($filterClasses) : 0);
+    $reportSubject = $selectedSubject !== 'all' ? $selectedSubject : (!empty($filterSubjects) ? $filterSubjects[0] : 'Toán học');
+?>
+<?php if ($reportClassId > 0): ?>
+    <!-- KHU VỰC XUẤT BÁO CÁO NỘP BAN GIÁM HIỆU (ĐƯỢC CHUYỂN XUỐNG ĐÁY TRANG HỢP LÝ) -->
+    <div class="bottom-report-export-bar" style="margin-top: 24px; margin-bottom: 24px; padding: 16px 20px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div>
+            <div style="font-weight: 800; font-size: 14px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+                <?= get_svg_icon('printer', 16, '', 'color: #4f46e5;') ?>
+                <span>Xuất Báo Cáo &amp; Dữ Liệu Nộp Ban Giám Hiệu</span>
+            </div>
+            <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">
+                Tải bản in A4 hoặc bảng tính Excel tổng hợp lớp <b><?= htmlspecialchars($filterClasses[$selectedClassId] ?? 'Toàn trường') ?></b>
+            </p>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn-action-slip" style="padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #0f172a, #312e81); color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);" title="Mở Slide thuyết trình báo cáo BGH">
+                <?= get_svg_icon('presentation', 14) ?>
+                <span>Slide Báo Cáo BGH</span>
+            </a>
+            <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=pdf" target="_blank" class="btn-action-slip btn-slip-pdf" style="padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" title="Xuất báo cáo nộp BGH (Khổ A4 chuẩn)">
+                <?= get_svg_icon('printer', 14) ?>
+                <span>Báo Cáo BGH (PDF)</span>
+            </a>
+            <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=xlsx" target="_blank" class="btn-action-slip btn-slip-excel" style="padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #10b981; color: #ffffff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);" title="Xuất file Excel báo cáo nộp BGH">
+                <?= get_svg_icon('download', 14) ?>
+                <span>Báo Cáo BGH (Excel)</span>
+            </a>
+        </div>
+    </div>
+<?php endif; ?>
 
 <!-- MODAL CHI TIẾT NĂNG LỰC HỌC TẬP & SỔ TAY NHẬN XÉT SƯ PHẠM (EXPANDABLE DETAIL MODAL) -->
 <div id="competencyDetailModal" class="competency-modal-overlay" style="display: none;">
@@ -2218,14 +2193,14 @@ $tt22Slices = [
                 </div>
             </div>
 
-            <!-- Hành trình điểm số: TX1 -> TX2 -> TX3 -> TX4 -> GK -> CK -> ĐTB (Không cuộn ngang) -->
+            <!-- Hành trình điểm số: TX1 -> TX2 -> TX3 -> TX4 -> GK -> CK -> ĐTB (Cho phép vuốt ngang mượt mà trên điện thoại) -->
             <div>
-                <div class="timeline-section-title">
+                <div class="timeline-section-title" style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('trend-up', 15, '', 'color: #2563eb;') ?>
-                        <span>Chuỗi Điểm Số & Diễn Biến Học Tập</span>
+                        <span>Chuỗi Điểm Số &amp; Diễn Biến Học Tập</span>
                     </span>
-                    <span class="muted small" style="text-transform: none; font-weight: 600;">Thông tư 22/2021/TT-BGDĐT</span>
+                    <span class="muted small" style="text-transform: none; font-weight: 600;">(Vuốt ngang để xem đủ điểm)</span>
                 </div>
                 <div class="score-timeline-ribbon" id="modalScoreTimeline">
                     <!-- Populated dynamically via JS -->
@@ -2263,7 +2238,7 @@ $tt22Slices = [
                     </div>
                 </div>
 
-                <!-- Target CK Projection Cards -->
+                <!-- Target CK Projection Cards (Không bịa đặt kế hoạch hành động) -->
                 <div class="math-target-card" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
                     <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px;">
                         <?= get_svg_icon('radar', 13) ?>
@@ -2272,7 +2247,6 @@ $tt22Slices = [
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
                         <!-- Populated dynamically via JS -->
                     </div>
-                    <div id="modalMathTargetAlert" style="margin-top: 10px; font-size: 12px; font-weight: 700; display: none; padding: 8px 12px; border-radius: 8px; line-height: 1.5;"></div>
                 </div>
             </div>
 
@@ -2293,7 +2267,7 @@ $tt22Slices = [
                     <!-- Populated dynamically via JS -->
                 </div>
 
-                <!-- Hộp nhận định thế mạnh, môn yếu & kế hoạch cải thiện cá nhân hóa -->
+                <!-- Hộp nhận định thế mạnh & điểm trũng (Chỉ ghi nhận tình trạng thực tế) -->
                 <div class="modal-profile-sections-wrapper" style="display: flex; flex-direction: column; gap: 10px;">
                     <!-- 1. Môn học sở trường & thế mạnh -->
                     <div class="profile-feedback-box strength-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px;">
@@ -2318,19 +2292,10 @@ $tt22Slices = [
                         </div>
                         <p id="modalWeaknessesText" style="font-size: 12px; color: #78350f; line-height: 1.5; margin: 0;"></p>
                     </div>
-
-                    <!-- 3. Kế hoạch cải thiện sư phạm hành động cụ thể -->
-                    <div class="profile-feedback-box plan-box" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 14px;">
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #1e40af; margin-bottom: 5px;">
-                            <?= get_svg_icon('activity', 14, '', 'color: #2563eb;') ?>
-                            <span>Kế Hoạch Cải Thiện Cụ Thể (Sư Phạm Hành Động):</span>
-                        </div>
-                        <p id="modalActionPlanText" style="font-size: 12px; color: #1e3a8a; line-height: 1.5; margin: 0;"></p>
-                    </div>
                 </div>
             </div>
 
-            <!-- Apple Unified Pedagogical Card -->
+            <!-- Apple Unified Pedagogical Card (Chỉ ghi tình trạng thực tế) -->
             <div class="apple-pedagogical-card">
                 <div class="apple-pedagogy-section">
                     <div class="apple-pedagogy-title" style="color: #4338ca; display: flex; align-items: center; gap: 6px;">
@@ -2345,25 +2310,13 @@ $tt22Slices = [
                 <div class="apple-pedagogy-section">
                     <div class="apple-pedagogy-title" style="color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('award', 14) ?>
-                        <span>Năng Lực Tổng Thể & Khuyến Nghị Sư Phạm:</span>
+                        <span>Tình Trạng Năng Lực Học Tập Hiện Tại:</span>
                     </div>
                     <div class="apple-pedagogy-content">
                         <b id="modalCompetencyTitle" style="color: #1e3a8a; display: block; margin-bottom: 4px;">Tiêu đề năng lực</b>
-                        <div id="modalPedagogicalAdvice">Nội dung khuyến nghị sư phạm hành động...</div>
+                        <div id="modalPedagogicalAdvice">Tình trạng học tập...</div>
                     </div>
                 </div>
-                <div style="border-top: 1px dashed #e2e8f0;"></div>
-                <details style="font-size: 12.5px; color: #475569; cursor: pointer;">
-                    <summary style="font-weight: 800; color: #0f172a; outline: none; list-style: none; display: flex; align-items: center; justify-content: space-between; padding: 2px 0;">
-                        <span>Căn cứ Quy chế Thông tư 22/2021/TT-BGDĐT & Công thức ĐTBmhk</span>
-                        <span style="font-size: 11px; color: #6366f1; font-weight: 700;">Xem quy tắc ▾</span>
-                    </summary>
-                    <div style="margin-top: 8px; padding: 10px 14px; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; line-height: 1.65; color: #334155;">
-                        <div>• <b>Công thức ĐTBmhk (Điều 9 TT22):</b> <code>(Tổng ĐĐGtx + 2 × ĐĐGgk + 3 × ĐĐGck) ÷ (Số cột ĐĐGtx + 5)</code>.</div>
-                        <div>• <b>Bậc Học Lực (Thông tư 22):</b> <b>Tốt/Xuất sắc</b> (ĐTB ≥ 8.0) · <b>Khá</b> (6.5 ≤ ĐTB &lt; 8.0) · <b>Đạt/TB</b> (5.0 ≤ ĐTB &lt; 6.5) · <b>Chưa đạt/Cần phụ đạo</b> (ĐTB &lt; 5.0).</div>
-                        <div>• <b>Phân vùng Cảnh báo sớm EduRadar:</b> <b style="color:#dc2626;">🔴 Nguy cấp</b> khi ĐTB &lt; 3.5, CK &lt; 3.0, hỏng cả GK &amp; CK (&lt; 5.0), hoặc có ≥ 2 cột TX &lt; 3.5; <b style="color:#d97706;">🟡 Cần chú ý</b> khi 3.5 ≤ ĐTB &lt; 5.0 hoặc chuỗi điểm đang sa sút.</div>
-                    </div>
-                </details>
             </div>
 
             <!-- Sổ Can Thiệp Sư Phạm & Lịch Sử Sửa Điểm (Audit Trail) -->
@@ -2371,16 +2324,16 @@ $tt22Slices = [
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <div style="display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800; color: #1e293b;">
                         <?= get_svg_icon('clock', 14, '', 'color: #4f46e5;') ?>
-                        <span>Lịch Sử Chỉnh Sửa &amp; Kế Hoạch Can Thiệp Sư Phạm</span>
+                        <span>Lịch Sử Chỉnh Sửa Điểm (Audit Trail)</span>
                     </div>
-                    <span style="font-size: 11px; background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Audit Trail</span>
+                    <span style="font-size: 11px; background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Nhật ký</span>
                 </div>
                 <div id="modalAuditHistoryContainer" style="font-size: 12px; color: #64748b; line-height: 1.5;">
                     Đang tải lịch sử chỉnh sửa điểm...
                 </div>
             </div>
 
-            <!-- Sổ tay ghi chú & Nhận xét sư phạm (Có thể sửa khi nhấn vô) -->
+            <!-- Sổ tay ghi chú & Nhận xét sư phạm (Thầy/Cô ghi tình trạng thực tế) -->
             <div class="teacher-note-section">
                 <div class="teacher-note-header">
                     <div>
@@ -2389,7 +2342,7 @@ $tt22Slices = [
                             <span>Sổ Tay Nhận Xét Sư Phạm Của Giáo Viên</span>
                         </div>
                         <div class="teacher-note-sub">
-                            Ghi chú cá nhân hóa, kế hoạch bồi dưỡng học sinh giỏi hoặc phụ đạo học sinh sa sút (lưu trực tiếp vào CSDL)
+                            Ghi nhận tình trạng học tập thực tế và diễn biến điểm số của học sinh (Lưu trực tiếp vào CSDL)
                         </div>
                     </div>
                     <span id="teacherNoteSavedTime" class="muted small"></span>

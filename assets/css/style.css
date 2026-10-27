@@ -4061,23 +4061,26 @@ body.liquid-glass-layout {
   padding-left: 20px;
 }
 
-/* STREAMLINED SCORE PROGRESSION (NO HORIZONTAL OVERFLOW SCROLL) */
+/* FLUID SCORE PROGRESSION WITH SMOOTH HORIZONTAL SWIPE ON MOBILE (IMAGE 2 FIX) */
 .score-timeline-ribbon {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 8px 12px;
-  gap: 4px;
+  padding: 10px 12px;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 .score-timeline-node {
-  flex: 1;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: 52px;
   text-align: center;
-  padding: 6px 4px;
-  border-radius: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
 }
@@ -4613,8 +4616,11 @@ body.liquid-glass-layout {
     border-bottom: none;
   }
   .score-timeline-ribbon {
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
   }
 }
 @media (max-width: 768px) {

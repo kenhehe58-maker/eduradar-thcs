@@ -208,16 +208,48 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             }
             .edexa-welcome-wrap {
                 width: auto !important;
-                justify-content: flex-start !important;
-                gap: 6px !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                min-width: 0 !important;
+                flex: 1 1 auto !important;
+            }
+            .edexa-app-badge-m {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 28px !important;
+                height: 28px !important;
+                border-radius: 8px !important;
+                background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+                color: #ffffff !important;
+                font-weight: 800 !important;
+                font-size: 11px !important;
+                letter-spacing: -0.5px !important;
+                flex-shrink: 0 !important;
+            }
+            .edexa-user-m-wrap {
+                display: flex !important;
+                flex-direction: column !important;
+                min-width: 0 !important;
             }
             .edexa-welcome-text {
-                font-size: 14px !important;
-                max-width: 190px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: block;
+                font-size: 13.5px !important;
+                font-weight: 800 !important;
+                color: var(--text-heading, #0f172a) !important;
+                line-height: 1.25 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                display: block !important;
+                max-width: none !important;
+            }
+            .edexa-sub-m {
+                display: block !important;
+                font-size: 11px !important;
+                font-weight: 600 !important;
+                color: #64748b !important;
+                line-height: 1.2 !important;
             }
             .edexa-role-pill {
                 display: none !important;
@@ -227,16 +259,17 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 justify-content: flex-end !important;
                 gap: 6px !important;
                 flex-wrap: nowrap !important;
+                flex-shrink: 0 !important;
             }
             .glass-status-chip {
-                padding: 4px 8px !important;
-                font-size: 11px !important;
-            }
-            .glass-status-chip.chip-mobile-hide {
                 display: none !important;
             }
             .edexa-theme-toggle {
-                padding: 6px 10px !important;
+                padding: 6px !important;
+                width: 32px !important;
+                height: 32px !important;
+                border-radius: 50% !important;
+                justify-content: center !important;
             }
             .edexa-theme-toggle #themeLabel {
                 display: none !important;
@@ -249,6 +282,9 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 box-sizing: border-box !important;
             }
         }
+        .edexa-app-badge-m, .edexa-sub-m {
+            display: none;
+        }
     </style>
     <?php if (!empty($extraHead)) echo $extraHead; ?>
 </head>
@@ -258,11 +294,15 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
 <header class="glass-topbar">
     <div class="glass-topbar-inner">
         <div class="edexa-welcome-wrap">
-            <a href="welcome.php" style="text-decoration: none; color: inherit;" title="Về Trang Chào Mừng & Khởi Động EduRadar">
-                <span class="edexa-welcome-text">
-                    Chào mừng trở lại, <?= htmlspecialchars($currentUserFullName) ?>!
-                </span>
-            </a>
+            <span class="edexa-app-badge-m">ER</span>
+            <div class="edexa-user-m-wrap">
+                <a href="welcome.php" style="text-decoration: none; color: inherit;" title="Về Trang Chào Mừng & Khởi Động EduRadar">
+                    <span class="edexa-welcome-text">
+                        Chào <?= htmlspecialchars($currentUserFullName) ?>
+                    </span>
+                </a>
+                <span class="edexa-sub-m">HK I &bull; NH <?= htmlspecialchars($headerCalendar['school_year']) ?></span>
+            </div>
             <span class="edexa-role-pill">
                 <?= htmlspecialchars(($currentUserRole === 'admin') ? 'Quản Trị Viên' : 'Giáo Viên Bộ Môn') ?>
             </span>

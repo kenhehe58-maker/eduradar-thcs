@@ -95,17 +95,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const q = (search?.value || '').toLowerCase().trim();
         let visibleCount = 0;
 
+        // Phân loại nhóm bộ lọc đa chiều (Faceted Filtering: AND giữa các nhóm, OR trong cùng nhóm)
+        const trendFilters = currentFilters.filter(function(f) { return f.startsWith('trend:'); });
+        const tierFilters = currentFilters.filter(function(f) { return f.startsWith('tier:'); });
+        const riskFilters = currentFilters.filter(function(f) { return ['red', 'yellow', 'green', 'pending', 'tx:warn'].includes(f); });
+        const overallFilters = currentFilters.filter(function(f) { return f.startsWith('overall:'); });
+
+        function matchElementMulti(el) {
+            if (currentFilters.length === 0 || currentFilters.includes('all')) {
+                return true;
+            }
+            const matchTrend = trendFilters.length === 0 || trendFilters.some(function(f) { return matchRowSingleFilter(el, f); });
+            const matchTier = tierFilters.length === 0 || tierFilters.some(function(f) { return matchRowSingleFilter(el, f); });
+            const matchRisk = riskFilters.length === 0 || riskFilters.some(function(f) { return matchRowSingleFilter(el, f); });
+            const matchOverall = overallFilters.length === 0 || overallFilters.some(function(f) { return matchRowSingleFilter(el, f); });
+
+            return matchTrend && matchTier && matchRisk && matchOverall;
+        }
+
         rows.forEach(function (r) {
             const name = (r.dataset.name || '').toLowerCase();
             const searchAttr = (r.dataset.search || '').toLowerCase();
 
-            let okFilter = false;
-            if (currentFilters.length === 0 || currentFilters.includes('all')) {
-                okFilter = true;
-            } else {
-                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(r, f); });
-            }
-
+            const okFilter = matchElementMulti(r);
             const okSearch = !q || name.includes(q) || searchAttr.includes(q);
 
             if (okFilter && okSearch) {
@@ -120,12 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const mobileRows = document.querySelectorAll('.m-student-row');
         mobileRows.forEach(function (mRow) {
             const searchAttr = (mRow.dataset.search || '').toLowerCase();
-            let okFilter = false;
-            if (currentFilters.length === 0 || currentFilters.includes('all')) {
-                okFilter = true;
-            } else {
-                okFilter = currentFilters.some(function(f) { return matchRowSingleFilter(mRow, f); });
-            }
+            const okFilter = matchElementMulti(mRow);
             const okSearch = !q || searchAttr.includes(q);
             if (okFilter && okSearch) {
                 mRow.style.display = 'flex';
@@ -635,22 +642,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // 4. Khuyến nghị sư phạm hành động cụ thể cho Giáo viên
-        if (modalMathTargetAlert) {
-            let alertMsg = (row.dataset.mathAlert || '').trim();
-            alertMsg = alertMsg.replace(/^[🎯⚠️🚨🌟\s:]+/, '');
-            if (alertMsg.length > 0) {
-                modalMathTargetAlert.innerHTML = `🎯 <b>Kế hoạch hành động cho Thầy/Cô:</b> ${alertMsg}`;
-                modalMathTargetAlert.style.display = 'block';
-                modalMathTargetAlert.style.background = '#fffbeb';
-                modalMathTargetAlert.style.color = '#92400e';
-                modalMathTargetAlert.style.border = '1px solid #fde047';
-            } else {
-                modalMathTargetAlert.style.display = 'none';
-            }
-        }
-
-        // 4. Phân Tích Phổ Điểm, Môn Giỏi/Yếu & Kế Hoạch Sư Phạm (Requirement 2)
+        // 4. Phân Tích Phổ Điểm & Thế Mạnh Nổi Trội (Chỉ ghi nhận tình trạng thực tế)
         const profileCard = document.getElementById('modalSubjectProfileCard');
         const aptitudeBadge = document.getElementById('modalAptitudeBadge');
         const barsGrid = document.getElementById('modalSubjectBarsGrid');
@@ -658,7 +650,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const strengthsText = document.getElementById('modalStrengthsText');
         const weaknessesPills = document.getElementById('modalWeaknessesPills');
         const weaknessesText = document.getElementById('modalWeaknessesText');
-        const actionPlanText = document.getElementById('modalActionPlanText');
 
         if (row.dataset.profile) {
             try {
@@ -680,8 +671,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         }).join('');
                     }
                     if (weaknessesText) weaknessesText.textContent = prof.weaknesses_text || '';
-
-                    if (actionPlanText) actionPlanText.textContent = prof.action_plan || '';
                     
                     if (barsGrid) {
                         let barsHtml = '';
