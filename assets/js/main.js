@@ -650,11 +650,15 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // 4. Phân Tích Phổ Điểm & Thế Mạnh Sở Trường Năng Lực (Requirement 2)
+        // 4. Phân Tích Phổ Điểm, Môn Giỏi/Yếu & Kế Hoạch Sư Phạm (Requirement 2)
         const profileCard = document.getElementById('modalSubjectProfileCard');
         const aptitudeBadge = document.getElementById('modalAptitudeBadge');
         const barsGrid = document.getElementById('modalSubjectBarsGrid');
-        const summaryEl = document.getElementById('modalProfileSummary');
+        const strengthsPills = document.getElementById('modalStrengthsPills');
+        const strengthsText = document.getElementById('modalStrengthsText');
+        const weaknessesPills = document.getElementById('modalWeaknessesPills');
+        const weaknessesText = document.getElementById('modalWeaknessesText');
+        const actionPlanText = document.getElementById('modalActionPlanText');
 
         if (row.dataset.profile) {
             try {
@@ -662,7 +666,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (prof && prof.scores && Object.keys(prof.scores).length > 0) {
                     if (profileCard) profileCard.style.display = 'block';
                     if (aptitudeBadge) aptitudeBadge.textContent = prof.aptitude || 'Năng lực tổng hợp';
-                    if (summaryEl) summaryEl.textContent = prof.profile_summary || '';
+                    
+                    if (strengthsPills) {
+                        strengthsPills.innerHTML = (prof.strengths_list || []).map(function(s) {
+                            return '<span style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 9999px;">' + s + '</span>';
+                        }).join('');
+                    }
+                    if (strengthsText) strengthsText.textContent = prof.strengths_text || prof.profile_summary || '';
+
+                    if (weaknessesPills) {
+                        weaknessesPills.innerHTML = (prof.weaknesses_list || []).map(function(w) {
+                            return '<span style="background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 9999px;">' + w + '</span>';
+                        }).join('');
+                    }
+                    if (weaknessesText) weaknessesText.textContent = prof.weaknesses_text || '';
+
+                    if (actionPlanText) actionPlanText.textContent = prof.action_plan || '';
                     
                     if (barsGrid) {
                         let barsHtml = '';

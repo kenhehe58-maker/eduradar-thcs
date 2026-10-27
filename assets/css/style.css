@@ -5948,17 +5948,103 @@ tr.gb-row-focused td {
   display: none;
 }
 
+/* =============================================================================
+ * MILESTONE BANNER (DRIBBLE SAAS / APPLE CLEAN STATUS PILL - IMAGE 1 FIX)
+ * ============================================================================= */
+.academic-milestone-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 5px 12px;
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+.milestone-badge-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #1e40af;
+  letter-spacing: 0.02em;
+}
+.milestone-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2563eb;
+  box-shadow: 0 0 0 2px #dbeafe;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.milestone-divider {
+  color: #93c5fd;
+  font-weight: 300;
+}
+.milestone-phase-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.milestone-focus-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: #0369a1;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 2px 9px;
+}
+.milestone-focus-tag .focus-prefix {
+  font-weight: 800;
+}
+.milestone-focus-tag .focus-desc {
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .academic-milestone-banner {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .milestone-badge-row {
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    flex-wrap: wrap !important;
+  }
+  .milestone-focus-tag {
+    font-size: 10.5px !important;
+    line-height: 1.35 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    word-break: break-word !important;
+  }
+}
+
 .segmented-ring-card {
-  background: var(--bg-card, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 20px;
-  padding: 16px 10px 14px 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 18px;
+  padding: 14px 10px 12px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   text-align: center;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(15, 23, 42, 0.02);
   position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -5987,30 +6073,30 @@ tr.gb-row-focused td {
   font-size: 21px;
   font-weight: 800;
   fill: var(--text-heading, #0f172a);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
 }
 
 .ring-center-label {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
   fill: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .ring-card-footer {
-  margin-top: 10px;
+  margin-top: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
 }
 
 .ring-card-title {
   font-size: 11.5px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-heading, #1e293b);
   white-space: nowrap;
   overflow: hidden;
@@ -6018,26 +6104,27 @@ tr.gb-row-focused td {
 }
 
 .btn-ring-help {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   padding: 0;
-  min-width: 24px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  min-width: 18px;
+  flex-shrink: 0;
 }
 
 .btn-ring-help:hover, .btn-ring-help:active {
   background: #e2e8f0;
-  color: #1e293b;
-  transform: scale(1.08);
+  color: #0f172a;
+  transform: scale(1.1);
+}
 }
 
 /* Bottom Sheet Modal */

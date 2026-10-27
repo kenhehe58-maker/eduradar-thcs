@@ -319,7 +319,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
 }
 
-/* Mobile Bottom Navigation Bar (Image 2 Modern Refinement: Ultra-sleek, compact, Apple iOS Dock) */
+/* Mobile Bottom Navigation Bar (Ultra-sleek, compact Apple Dock / Dribbble SaaS) */
 @media (max-width: 768px) {
   .ux-rail-container {
     position: fixed !important;
@@ -328,20 +328,20 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     bottom: 0 !important;
     top: auto !important;
     width: 100% !important;
-    height: 54px !important;
+    height: 50px !important;
     z-index: 1050 !important;
     border-right: none !important;
-    border-top: 1px solid rgba(226, 232, 240, 0.85) !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+    background: rgba(255, 255, 255, 0.94) !important;
     backdrop-filter: blur(20px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-    box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.04) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
   [data-theme="dark"] .ux-rail-container {
-    background: rgba(15, 23, 42, 0.95) !important;
+    background: rgba(15, 23, 42, 0.94) !important;
     border-top-color: rgba(35, 50, 77, 0.85) !important;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45) !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4) !important;
   }
   .u040-fixed {
     height: 100% !important;
@@ -379,7 +379,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
-    gap: 2px !important;
+    gap: 1px !important;
   }
   .u040-nav li {
     display: flex !important;
@@ -395,24 +395,24 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     align-items: center !important;
     justify-content: center !important;
     width: auto !important;
-    flex: 0 0 auto !important;
+    flex: 1 1 0 !important;
     margin: 0 !important;
-    padding: 0 4px !important;
+    padding: 0 !important;
     border-top: none !important;
   }
-  /* Nav item styled: compact, 18px icon, 9px crisp label */
+  /* Nav item styled: ultra-compact, 17px icon, 8.5px crisp label */
   .u040-it {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 42px !important;
-    max-width: 52px !important;
-    height: 46px !important;
-    padding: 3px 2px !important;
+    min-width: 0 !important;
+    max-width: 48px !important;
+    height: 42px !important;
+    padding: 2px 1px !important;
     margin: 0 !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     flex-shrink: 0 !important;
     gap: 2px !important;
     text-decoration: none !important;
@@ -422,8 +422,8 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     transition: all 0.15s ease !important;
   }
   .u040-it svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 17px !important;
+    height: 17px !important;
     stroke: #64748b !important;
     stroke-width: 2px !important;
     fill: none !important;
@@ -431,7 +431,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   .u040-it-label {
     display: block !important;
-    font-size: 9.5px !important;
+    font-size: 8.5px !important;
     font-weight: 600 !important;
     color: #64748b !important;
     line-height: 1 !important;
@@ -475,12 +475,12 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 42px !important;
-    max-width: 50px !important;
-    height: 46px !important;
+    min-width: 0 !important;
+    max-width: 48px !important;
+    height: 42px !important;
     margin: 0 !important;
-    padding: 3px 2px !important;
-    border-radius: 10px !important;
+    padding: 2px 1px !important;
+    border-radius: 8px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -492,12 +492,12 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   .u040-logout-it svg {
     stroke: #ef4444 !important;
-    width: 18px !important;
-    height: 18px !important;
+    width: 17px !important;
+    height: 17px !important;
   }
   .u040-logout-text {
     display: block !important;
-    font-size: 9.5px !important;
+    font-size: 8.5px !important;
     font-weight: 700 !important;
     color: #ef4444 !important;
     line-height: 1 !important;

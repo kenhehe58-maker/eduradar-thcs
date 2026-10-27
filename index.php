@@ -457,6 +457,7 @@ if ($selectedClassId > 0) {
 }
 
 // =============================================================================
+// =============================================================================
 // PHÂN TÍCH PHỔ ĐIỂM & THẾ MẠNH SỞ TRƯỜNG TỪNG HỌC SINH (HUMANIZER PEDAGOGY)
 // =============================================================================
 $studentSubjectProfiles = [];
@@ -469,6 +470,11 @@ if (!empty($studentScoresGrouped)) {
                 'strengths' => [],
                 'needs_focus' => [],
                 'aptitude' => 'Chờ cập nhật điểm',
+                'strengths_list' => [],
+                'strengths_text' => 'Em chưa có đủ cột điểm kiểm tra để phân tích thế mạnh môn học.',
+                'weaknesses_list' => [],
+                'weaknesses_text' => 'Chưa ghi nhận điểm trũng.',
+                'action_plan' => 'Thầy/cô vui lòng cập nhật điểm kiểm tra thường xuyên và định kỳ vào sổ điểm.',
                 'profile_summary' => 'Em chưa có đủ cột điểm kiểm tra để phân tích phổ điểm các môn.'
             ];
             continue;
@@ -526,11 +532,73 @@ if (!empty($studentScoresGrouped)) {
             $profileSummary = "Điểm số giữa các môn có sự chênh lệch. Cần ưu tiên dành thời gian củng cố môn {$lowestSub} ({$lowestVal}đ) để lấp các lỗ hổng kiến thức cốt lõi.";
         }
 
+        // 1. Danh sách môn giỏi kèm điểm
+        $strengthsList = [];
+        foreach ($strengths as $stSub => $stVal) {
+            $strengthsList[] = "{$stSub}: " . number_format($stVal, 1) . 'đ';
+        }
+        $strengthsSubjects = array_keys($strengths);
+
+        // Đánh giá thế mạnh cụ thể
+        $hasSci = false; $hasHum = false;
+        foreach ($strengthsSubjects as $sSub) {
+            $sLower = mb_strtolower($sSub, 'UTF-8');
+            foreach ($scienceKeywords as $k) { if (str_contains($sLower, $k)) { $hasSci = true; break; } }
+            foreach ($humanitiesKeywords as $k) { if (str_contains($sLower, $k)) { $hasHum = true; break; } }
+        }
+        if ($hasSci && $hasHum) {
+            $strengthsText = 'Em có năng lực tiếp thu cân bằng tốt, vừa nhanh nhạy trong tư duy định lượng logic vừa có khả năng cảm thụ và diễn đạt ngôn ngữ mạch lạc.';
+        } elseif ($hasSci) {
+            $strengthsText = 'Em nổi trội về tư duy logic, phản xạ tính toán và khả năng giải quyết các vấn đề khoa học định lượng nhanh nhạy.';
+        } elseif ($hasHum) {
+            $strengthsText = 'Em có thế mạnh về cảm thụ văn học, vốn từ phong phú, ghi nhớ dữ kiện tốt và diễn đạt ý tưởng trôi chảy.';
+        } else {
+            $strengthsText = 'Em giữ vững phong độ làm bài ở các môn thế mạnh, chuẩn bị bài chu đáo trước khi đến lớp.';
+        }
+
+        // 2. Danh sách môn còn yếu kèm điểm
+        $weaknessesList = [];
+        foreach ($needsFocus as $wfSub => $wfVal) {
+            $weaknessesList[] = "{$wfSub}: " . number_format($wfVal, 1) . 'đ';
+        }
+        if (empty($weaknessesList) && count($scores) > 2) {
+            $lowestVal = min($scores);
+            if ($lowestVal < 7.0) {
+                foreach ($scores as $sSub => $sVal) {
+                    if ($sVal == $lowestVal) {
+                        $weaknessesList[] = "{$sSub}: " . number_format($sVal, 1) . 'đ';
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Đánh giá điểm trũng cần lưu ý
+        if (!empty($weaknessesList)) {
+            $weakNames = implode(', ', $weaknessesList);
+            $weaknessesText = "Điểm trũng tập trung ở: {$weakNames}. Em còn lúng túng khi gặp các dạng bài tổng hợp hoặc thiếu tự tin khi kiểm tra.";
+        } else {
+            $weaknessesText = 'Em không có môn nào dưới chuẩn. Phổ điểm các môn được duy trì ở mức Đạt/Khá trở lên rất an toàn.';
+        }
+
+        // 3. Kế hoạch cải thiện sư phạm hành động cụ thể (Cần cải thiện như thế nào)
+        if (!empty($weaknessesList)) {
+            $firstWeakName = explode(':', $weaknessesList[0])[0];
+            $actionPlan = "Kế hoạch can thiệp: Giáo viên bộ môn {$firstWeakName} giao phiếu bài tập củng cố mức độ Đạt để em lấy lại căn bản; phân công bạn học khá kèm cặp 1-1; đồng thời bồi dưỡng thêm bài toán thực tế cho môn sở trường (" . implode(', ', array_slice($strengthsList, 0, 2)) . ") để khích lệ tinh thần.";
+        } else {
+            $actionPlan = "Định hướng phát triển: Tiếp tục giữ nhịp học tập đều đặn; giáo viên có thể bồi dưỡng các bài tập nâng cao tư duy ở môn sở trường để chuẩn bị cho các kỳ thi học sinh giỏi cấp trường.";
+        }
+
         $studentSubjectProfiles[$sid] = [
             'scores' => $scores,
             'strengths' => $strengths,
             'needs_focus' => $needsFocus,
             'aptitude' => $aptitude,
+            'strengths_list' => $strengthsList,
+            'strengths_text' => $strengthsText,
+            'weaknesses_list' => $weaknessesList,
+            'weaknesses_text' => $weaknessesText,
+            'action_plan' => $actionPlan,
             'profile_summary' => $profileSummary
         ];
     }
@@ -545,12 +613,19 @@ require_once __DIR__ . '/includes/header.php';
 <!-- EDEXA HERO NOTICE BOARD / WELCOME CARD (DRIBBLE SHOT INSPIRATION) -->
 <div class="edexa-hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 20px; padding: 24px 28px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
     <div style="max-width: 680px;">
-        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; flex-wrap: wrap;">
-            <span>NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
-            <span>&bull;</span>
-            <span><?= htmlspecialchars($academicCalendar['semester_name']) ?> (<?= htmlspecialchars($academicCalendar['phase_title']) ?>)</span>
-            <span>&bull;</span>
-            <span style="color: #0369a1;"><?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
+        <!-- MILESTONE HEADER BANNER (DRIBBLE SAAS / APPLE CLEAN STATUS PILL) -->
+        <div class="academic-milestone-banner">
+            <div class="milestone-badge-row">
+                <span class="milestone-dot" aria-hidden="true"></span>
+                <span class="milestone-txt-year">NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
+                <span class="milestone-divider" aria-hidden="true">&bull;</span>
+                <span class="milestone-txt-sem"><?= htmlspecialchars($academicCalendar['semester_name']) ?></span>
+                <span class="milestone-phase-badge"><?= htmlspecialchars($academicCalendar['phase_title']) ?></span>
+            </div>
+            <div class="milestone-focus-tag">
+                <span class="focus-prefix">Trọng tâm:</span>
+                <span class="focus-desc"><?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
+            </div>
         </div>
         <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
             Hệ Thống Ra-đa Cảnh Báo Sớm Học Lực THCS
@@ -954,7 +1029,7 @@ $tt22Slices = [
     <?= render_segmented_donut_ring(
         $tt22Slices, 
         (string)$stats['total'], 
-        '#Học Sinh', 
+        'Học Sinh', 
         'Mức Độ Tích Lũy', 
         'tt22'
     ) ?>
@@ -2218,15 +2293,40 @@ $tt22Slices = [
                     <!-- Populated dynamically via JS -->
                 </div>
 
-                <!-- Hộp nhận định thế mạnh & định hướng bồi dưỡng -->
-                <div style="background: #f8fafc; border-radius: 12px; padding: 12px 14px; border: 1px solid #e2e8f0;">
-                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; color: #1e293b; margin-bottom: 5px;">
-                        <?= get_svg_icon('activity', 13, '', 'color: #2563eb;') ?>
-                        <span>Đánh Giá Sở Trường &amp; Khuyến Nghị Sư Phạm:</span>
+                <!-- Hộp nhận định thế mạnh, môn yếu & kế hoạch cải thiện cá nhân hóa -->
+                <div class="modal-profile-sections-wrapper" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- 1. Môn học sở trường & thế mạnh -->
+                    <div class="profile-feedback-box strength-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #166534;">
+                                <?= get_svg_icon('award', 14, '', 'color: #16a34a;') ?>
+                                <span>Môn Học Sở Trường &amp; Thế Mạnh Nổi Trội:</span>
+                            </div>
+                            <div id="modalStrengthsPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
+                        </div>
+                        <p id="modalStrengthsText" style="font-size: 12px; color: #14532d; line-height: 1.5; margin: 0;"></p>
                     </div>
-                    <p id="modalProfileSummary" style="font-size: 12px; color: #334155; line-height: 1.5; margin: 0;">
-                        Đang phân tích phổ điểm các môn...
-                    </p>
+
+                    <!-- 2. Môn còn yếu & điểm trũng cần lưu ý -->
+                    <div class="profile-feedback-box weakness-box" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 14px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #92400e;">
+                                <?= get_svg_icon('alert-triangle', 14, '', 'color: #d97706;') ?>
+                                <span>Môn Còn Yếu &amp; Điểm Trũng Cần Lưu Ý:</span>
+                            </div>
+                            <div id="modalWeaknessesPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
+                        </div>
+                        <p id="modalWeaknessesText" style="font-size: 12px; color: #78350f; line-height: 1.5; margin: 0;"></p>
+                    </div>
+
+                    <!-- 3. Kế hoạch cải thiện sư phạm hành động cụ thể -->
+                    <div class="profile-feedback-box plan-box" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 14px;">
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #1e40af; margin-bottom: 5px;">
+                            <?= get_svg_icon('activity', 14, '', 'color: #2563eb;') ?>
+                            <span>Kế Hoạch Cải Thiện Cụ Thể (Sư Phạm Hành Động):</span>
+                        </div>
+                        <p id="modalActionPlanText" style="font-size: 12px; color: #1e3a8a; line-height: 1.5; margin: 0;"></p>
+                    </div>
                 </div>
             </div>
 

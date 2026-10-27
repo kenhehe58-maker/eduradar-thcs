@@ -157,7 +157,7 @@ if (!function_exists('render_segmented_donut_ring')) {
         $r = 44.0;
         $cx = 60.0;
         $cy = 60.0;
-        $strokeWidth = 10.0;
+        $strokeWidth = 8.5;
         $circumference = 2 * M_PI * $r; // ~276.46
 
         $total = 0;
@@ -179,26 +179,27 @@ if (!function_exists('render_segmented_donut_ring')) {
                 $cx, $cy, $r, $strokeWidth
             );
         } else {
-            // Đáy nền xám nhạt trung tính
+            // Đáy nền xám nhạt trung tính siêu mịn
             $pathsSvg .= sprintf(
                 '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="#f1f5f9" stroke-width="%.1f" />',
                 $cx, $cy, $r, $strokeWidth
             );
 
-            // Khoảng hở giữa các đoạn có bo góc mềm mại
-            $gap = $activeCount > 1 ? 6.0 : 0.0;
+            // Khoảng hở chuẩn xác tránh va chạm cap giữa các cung
+            $gap = $activeCount > 1 ? 5.0 : 0.0;
             $currentOffset = 0.0;
 
             foreach ($activeSlices as $slice) {
                 $cnt = (int)$slice['count'];
                 $arc = ($cnt / $total) * $circumference;
                 $color = htmlspecialchars($slice['color'] ?? '#3b82f6', ENT_QUOTES, 'UTF-8');
-                $dashLength = max(2.0, $arc - $gap);
+                $dashLength = max(2.5, $arc - $gap);
                 $dashSpace = $circumference - $dashLength;
+                $cap = ($arc > 12.0) ? 'round' : 'butt';
 
                 $pathsSvg .= sprintf(
-                    '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="%s" stroke-width="%.1f" stroke-linecap="round" stroke-dasharray="%.2f %.2f" stroke-dashoffset="%.2f" transform="rotate(-90 %.1f %.1f)" />',
-                    $cx, $cy, $r, $color, $strokeWidth, $dashLength, $dashSpace, -$currentOffset, $cx, $cy
+                    '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="%s" stroke-width="%.1f" stroke-linecap="%s" stroke-dasharray="%.2f %.2f" stroke-dashoffset="%.2f" transform="rotate(-90 %.1f %.1f)" />',
+                    $cx, $cy, $r, $color, $strokeWidth, $cap, $dashLength, $dashSpace, -$currentOffset, $cx, $cy
                 );
 
                 $currentOffset += $arc;
@@ -206,7 +207,8 @@ if (!function_exists('render_segmented_donut_ring')) {
         }
 
         $safeNum = htmlspecialchars($centerNumber, ENT_QUOTES, 'UTF-8');
-        $safeLabel = htmlspecialchars($centerLabel, ENT_QUOTES, 'UTF-8');
+        // Bỏ ký tự '#' nếu có để hiển thị sư phạm chuẩn mực
+        $safeLabel = htmlspecialchars(ltrim($centerLabel, '#'), ENT_QUOTES, 'UTF-8');
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
         $safeSheet = htmlspecialchars($sheetType, ENT_QUOTES, 'UTF-8');
 
@@ -214,15 +216,17 @@ if (!function_exists('render_segmented_donut_ring')) {
             <div class="ring-svg-wrapper">
                 <svg class="segmented-ring-svg" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
                     ' . $pathsSvg . '
-                    <text x="60" y="56" text-anchor="middle" class="ring-center-num">' . $safeNum . '</text>
+                    <text x="60" y="55" text-anchor="middle" class="ring-center-num">' . $safeNum . '</text>
                     <text x="60" y="73" text-anchor="middle" class="ring-center-label">' . $safeLabel . '</text>
                 </svg>
             </div>
             <div class="ring-card-footer">
                 <span class="ring-card-title">' . $safeTitle . '</span>
-                <button type="button" class="btn-ring-help" onclick="openRingHelp(\'' . $safeSheet . '\')" aria-label="Giải thích màu sắc ' . $safeTitle . '">
-                    <svg viewBox="0 0 20 20" width="15" height="15" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                <button type="button" class="btn-ring-help" onclick="openRingHelp(\'' . $safeSheet . '\')" title="Giải thích ý nghĩa ' . $safeTitle . '" aria-label="Giải thích ý nghĩa ' . $safeTitle . '">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
                 </button>
             </div>
