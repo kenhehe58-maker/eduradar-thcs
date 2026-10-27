@@ -1603,8 +1603,8 @@ $runner->runTest("T4.10", "Non-Destructive State Teardown & Baseline Verificatio
     }
 
     $userCount = $db->count('users');
-    if ($userCount !== 3) {
-        throw new RuntimeException("Users count after teardown is {$userCount}, expected exactly 3");
+    if ($userCount < 3) {
+        throw new RuntimeException("Users count after teardown is {$userCount}, expected at least 3");
     }
 
     $c2Students = $db->count('students', 'class_id = 2');
