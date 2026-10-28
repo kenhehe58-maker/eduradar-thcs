@@ -710,7 +710,13 @@ require_once __DIR__ . '/includes/header.php';
                     <span style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
                         <?= get_svg_icon('users', 14) ?> Chọn Lớp Theo Khối:
                     </span>
-                    <button type="button" class="btn-grade-pill active" onclick="filterGradeChips('all', this)">
+                    <?php 
+                        $initGrade = 'all';
+                        if ($selectedClassId > 0 && isset($classGrades[$selectedClassId])) {
+                            $initGrade = $classGrades[$selectedClassId];
+                        }
+                    ?>
+                    <button type="button" class="btn-grade-pill <?= $initGrade === 'all' ? 'active' : '' ?>" onclick="filterGradeChips('all', this)">
                         Tất cả (<?= count($filterClassesWithStudents) ?> lớp)
                     </button>
                     <?php foreach ([6, 7, 8, 9] as $g): ?>
@@ -721,7 +727,7 @@ require_once __DIR__ . '/includes/header.php';
                             }
                             if ($gCount === 0) continue;
                         ?>
-                        <button type="button" class="btn-grade-pill" onclick="filterGradeChips(<?= $g ?>, this)">
+                        <button type="button" class="btn-grade-pill <?= $initGrade == $g ? 'active' : '' ?>" onclick="filterGradeChips(<?= $g ?>, this)">
                             Khối <?= $g ?> (<?= $gCount ?>)
                         </button>
                     <?php endforeach; ?>
@@ -747,10 +753,12 @@ require_once __DIR__ . '/includes/header.php';
                             $cSubs = $teacherClassSubjectMap[$cId]['subjects'];
                             $chipSub = in_array($selectedSubject, $cSubs, true) ? $selectedSubject : ($cSubs[0] ?? $selectedSubject);
                         }
+                        $isPreHidden = ($initGrade !== 'all' && $cg != $initGrade);
                     ?>
                     <a href="index.php?class_id=<?= $cId ?>&subject=<?= urlencode($chipSub) ?>" 
                        class="class-chip-btn <?= $selectedClassId === $cId ? 'active' : '' ?>"
                        data-grade="<?= $cg ?>"
+                       style="<?= $isPreHidden ? 'display: none;' : '' ?>"
                        title="Xem học sinh lớp <?= htmlspecialchars($cName) ?>">
                         Lớp <?= htmlspecialchars($cName) ?>
                         <span class="class-chip-badge"><?= $classCounts[$cId] ?? 0 ?></span>
@@ -1218,34 +1226,26 @@ $tt22Slices = [
         <!-- PHÂN NHÓM 1: XU HƯỚNG TIẾN BỘ (OLS) -->
         <div class="chip-segment-group group-trend" role="group" aria-label="Lọc theo Xu hướng tiến bộ OLS">
             <span class="segment-label">Xu hướng</span>
-            <?php if ($stats['momentum_up'] > 0): ?>
-                <button type="button" class="chip chip-trend-up" data-filter="trend:up" title="Học sinh có xu hướng điểm đi lên (k > 0)">
-                    <span class="chip-dot dot-trend-up"></span>
-                    <span>Tiến bộ</span>
-                    <span class="chip-count">(<?= $stats['momentum_up'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['momentum_steady'] > 0): ?>
-                <button type="button" class="chip chip-trend-steady" data-filter="trend:steady" title="Học sinh duy trì phong độ đều đặn">
-                    <span class="chip-dot dot-trend-steady"></span>
-                    <span>Duy trì</span>
-                    <span class="chip-count">(<?= $stats['momentum_steady'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['momentum_down'] > 0): ?>
-                <button type="button" class="chip chip-trend-down" data-filter="trend:down" title="Học sinh có chiều hướng sa sút điểm (k < 0)">
-                    <span class="chip-dot dot-trend-down"></span>
-                    <span>Sa sút</span>
-                    <span class="chip-count">(<?= $stats['momentum_down'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['momentum_pending'] > 0): ?>
-                <button type="button" class="chip chip-pending" data-filter="trend:pending" title="Chưa đủ dữ liệu chuỗi điểm để tính xu hướng">
-                    <span class="chip-dot dot-pending"></span>
-                    <span>Chờ điểm</span>
-                    <span class="chip-count">(<?= $stats['momentum_pending'] ?>)</span>
-                </button>
-            <?php endif; ?>
+            <button type="button" class="chip chip-trend-up" data-filter="trend:up" title="Học sinh có xu hướng điểm đi lên (k > 0)">
+                <span class="chip-dot dot-trend-up"></span>
+                <span>Tiến bộ</span>
+                <span class="chip-count">(<?= $stats['momentum_up'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-trend-steady" data-filter="trend:steady" title="Học sinh duy trì phong độ đều đặn">
+                <span class="chip-dot dot-trend-steady"></span>
+                <span>Duy trì</span>
+                <span class="chip-count">(<?= $stats['momentum_steady'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-trend-down" data-filter="trend:down" title="Học sinh có chiều hướng sa sút điểm (k < 0)">
+                <span class="chip-dot dot-trend-down"></span>
+                <span>Sa sút</span>
+                <span class="chip-count">(<?= $stats['momentum_down'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-pending" data-filter="trend:pending" title="Chưa đủ dữ liệu chuỗi điểm để tính xu hướng">
+                <span class="chip-dot dot-pending"></span>
+                <span>Chờ điểm</span>
+                <span class="chip-count">(<?= $stats['momentum_pending'] ?>)</span>
+            </button>
         </div>
 
         <span class="toolbar-sep" aria-hidden="true"></span>
@@ -1253,34 +1253,26 @@ $tt22Slices = [
         <!-- PHÂN NHÓM 2: THANG ĐIỂM HỌC LỰC (THÔNG TƯ 22) -->
         <div class="chip-segment-group group-tier" role="group" aria-label="Lọc theo Thang điểm Thông tư 22">
             <span class="segment-label">Mức học lực</span>
-            <?php if ($stats['tier_excellent'] > 0): ?>
-                <button type="button" class="chip chip-tier-excellent" data-filter="tier:excellent" title="Mức Tốt (ĐTB ≥ 8.0)">
-                    <span class="chip-dot dot-tier-excellent"></span>
-                    <span>Tốt</span>
-                    <span class="chip-count">(<?= $stats['tier_excellent'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['tier_good'] > 0): ?>
-                <button type="button" class="chip chip-tier-good" data-filter="tier:good" title="Mức Khá (6.5 ≤ ĐTB < 8.0)">
-                    <span class="chip-dot dot-tier-good"></span>
-                    <span>Khá</span>
-                    <span class="chip-count">(<?= $stats['tier_good'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['tier_average'] > 0): ?>
-                <button type="button" class="chip chip-tier-average" data-filter="tier:average" title="Mức Đạt (5.0 ≤ ĐTB < 6.5)">
-                    <span class="chip-dot dot-tier-average"></span>
-                    <span>Đạt</span>
-                    <span class="chip-count">(<?= $stats['tier_average'] ?>)</span>
-                </button>
-            <?php endif; ?>
-            <?php if ($stats['tier_low'] > 0): ?>
-                <button type="button" class="chip chip-tier-low" data-filter="tier:low" title="Mức Chưa đạt (ĐTB < 5.0)">
-                    <span class="chip-dot dot-tier-low"></span>
-                    <span>Chưa đạt</span>
-                    <span class="chip-count">(<?= $stats['tier_low'] ?>)</span>
-                </button>
-            <?php endif; ?>
+            <button type="button" class="chip chip-tier-excellent" data-filter="tier:excellent" title="Mức Tốt (ĐTB ≥ 8.0)">
+                <span class="chip-dot dot-tier-excellent"></span>
+                <span>Tốt</span>
+                <span class="chip-count">(<?= $stats['tier_excellent'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-tier-good" data-filter="tier:good" title="Mức Khá (6.5 ≤ ĐTB < 8.0)">
+                <span class="chip-dot dot-tier-good"></span>
+                <span>Khá</span>
+                <span class="chip-count">(<?= $stats['tier_good'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-tier-average" data-filter="tier:average" title="Mức Đạt (5.0 ≤ ĐTB < 6.5)">
+                <span class="chip-dot dot-tier-average"></span>
+                <span>Đạt</span>
+                <span class="chip-count">(<?= $stats['tier_average'] ?>)</span>
+            </button>
+            <button type="button" class="chip chip-tier-low" data-filter="tier:low" title="Mức Chưa đạt (ĐTB < 5.0)">
+                <span class="chip-dot dot-tier-low"></span>
+                <span>Chưa đạt</span>
+                <span class="chip-count">(<?= $stats['tier_low'] ?>)</span>
+            </button>
             <?php if ($stats['tier_pending'] > 0): ?>
                 <button type="button" class="chip chip-pending" data-filter="tier:pending" title="Chưa có điểm tổng kết">
                     <span class="chip-dot dot-pending"></span>

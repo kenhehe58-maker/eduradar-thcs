@@ -1399,15 +1399,15 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        // 4. Cards, Panels, KPI Boxes & Feature Grid across all pages
+        // 4. Cards, Panels, KPI Boxes & Feature Grid across all pages (Bao phủ toàn bộ các thẻ trên trang)
         const allCards = document.querySelectorAll(
-            '.launchpad-card, .kpi-card, .hero-kpi-box, .stat-card, .stats .card, .feature-item, .panel-box, .grade-card, .assign-grade-box, .step-card, .handbook-card, .eval-stat-item, .toolbar-unified, .spreadsheet-toolbar, .gradebook-filter-bar, .upload-form-grid'
+            '.launchpad-card, .kpi-card, .hero-kpi-box, .stat-card, .stats .card, .feature-item, .panel-box, .grade-card, .assign-grade-box, .step-card, .handbook-card, .eval-stat-item, .toolbar-unified, .spreadsheet-toolbar, .gradebook-filter-bar, .upload-form-grid, .stepper-container, .quick-search-box, .handbook-box'
         );
         if (allCards.length > 0) {
-            tl.fromTo(Array.from(allCards).slice(0, 40),
-                { opacity: 0, y: 18, scale: 0.98 },
-                { opacity: 1, y: 0, scale: 1, duration: 0.42, stagger: 0.03, ease: 'power3.out', clearProps: 'transform,opacity' },
-                0.1
+            tl.fromTo(Array.from(allCards),
+                { opacity: 0, y: 14 },
+                { opacity: 1, y: 0, duration: 0.38, stagger: 0.02, ease: 'power2.out', clearProps: 'transform,opacity' },
+                0.08
             );
         }
 
@@ -1532,70 +1532,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // 12. Awwwards Micro-Interactions: 3D Tilt for Bento Cards
-        const tiltCards = document.querySelectorAll('.welcome-kpi-grid .kpi-card, .launchpad-grid .launchpad-card');
-        tiltCards.forEach(card => {
-            if (card.dataset.gsapTiltBound) return;
-            card.dataset.gsapTiltBound = '1';
-            card.style.transformStyle = 'preserve-3d';
-            card.style.perspective = '1000px';
-
-            card.addEventListener('mousemove', function(e) {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                const rotX = -(y / (rect.height / 2)) * 6; // Tối đa 6 độ, tinh tế không bị lố
-                const rotY = (x / (rect.width / 2)) * 6;
-
-                gsap.to(card, {
-                    rotateX: rotX,
-                    rotateY: rotY,
-                    transformPerspective: 1000,
-                    duration: 0.35,
-                    ease: 'power2.out'
-                });
-            });
-
-            card.addEventListener('mouseleave', function() {
-                gsap.to(card, {
-                    rotateX: 0,
-                    rotateY: 0,
-                    duration: 0.5,
-                    ease: 'power3.out',
-                    clearProps: 'rotateX,rotateY'
-                });
-            });
-        });
-
-        // 13. Awwwards Micro-Interactions: Magnetic CTA Buttons
-        const magneticBtns = document.querySelectorAll('.welcome-cta-group .btn');
-        magneticBtns.forEach(btn => {
-            if (btn.dataset.gsapMagBound) return;
-            btn.dataset.gsapMagBound = '1';
-
-            btn.addEventListener('mousemove', function(e) {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-
-                gsap.to(btn, {
-                    x: x * 0.22,
-                    y: y * 0.22,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                });
-            });
-
-            btn.addEventListener('mouseleave', function() {
-                gsap.to(btn, {
-                    x: 0,
-                    y: 0,
-                    duration: 0.45,
-                    ease: 'back.out(2)',
-                    clearProps: 'x,y'
-                });
-            });
-        });
+        // 12. Micro-Interactions: Nhẹ nhàng, không nghiêng lố
+        // Đã gỡ bỏ 3D tilt và magnetic chuột quá mức theo yêu cầu giao diện sư phạm tối giản
     };
 
     // Run entrance animations smoothly

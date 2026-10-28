@@ -91,7 +91,7 @@ require_once __DIR__ . '/includes/header.php';
     max-width: 840px;
 }
 
-/* AWWWARDS MASKED TEXT REVEAL SPECIFICATION */
+/* MASKED TEXT REVEAL: Chữ luôn hiển thị an toàn làm fallback, GSAP trượt lên tự nhiên */
 .masked-text-title {
     margin: 0 0 14px 0;
 }
@@ -102,7 +102,6 @@ require_once __DIR__ . '/includes/header.php';
 }
 .masked-line-inner {
     display: inline-block;
-    transform: translateY(110%);
     will-change: transform;
 }
 
