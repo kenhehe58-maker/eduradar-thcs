@@ -5,6 +5,105 @@
  */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
 
+/* =========================================================================
+   DEVICE-READY PRELOADER & TELEMETRY INITIAL CURTAIN
+   ========================================================================= */
+#eduradar-device-curtain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+    pointer-events: auto;
+}
+[data-theme="dark"] #eduradar-device-curtain {
+    background: #0b1120;
+}
+#eduradar-device-curtain.loaded {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+.curtain-center-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 320px;
+    text-align: center;
+}
+.curtain-brand-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    animation: curtainPulse 1.6s ease-in-out infinite;
+}
+.curtain-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+[data-theme="dark"] .curtain-title {
+    color: #f8fafc;
+}
+.curtain-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+}
+[data-theme="dark"] .curtain-sub {
+    color: #94a3b8;
+}
+.curtain-track {
+    width: 180px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 4px;
+}
+[data-theme="dark"] .curtain-track {
+    background: #1e293b;
+}
+.curtain-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: #2563eb;
+    border-radius: 9999px;
+    animation: curtainLoading 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes curtainLoading {
+    0% { left: 0%; width: 0%; }
+    50% { left: 25%; width: 60%; }
+    100% { left: 100%; width: 0%; }
+}
+@keyframes curtainPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 :root {
     /* =========================================================================
        1. CORE BRAND TOKENS (HIGH-CONTRAST TECH TELEMETRY SYSTEM)
