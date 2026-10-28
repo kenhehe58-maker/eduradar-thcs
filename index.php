@@ -2460,16 +2460,30 @@ $extraScripts = '
 <script>
 function filterGradeChips(grade, btn) {
     document.querySelectorAll(".btn-grade-pill").forEach(function(b) { b.classList.remove("active"); });
-    if (btn) btn.classList.add("active");
+    if (btn) {
+        btn.classList.add("active");
+        if (window.gsap) {
+            gsap.fromTo(btn, { scale: 0.92 }, { scale: 1, duration: 0.25, ease: "back.out(2)", clearProps: "transform" });
+        }
+    }
     var chips = document.querySelectorAll("#matrixClassChipsScroll .class-chip-btn");
+    var visibleChips = [];
     chips.forEach(function(chip) {
         var g = chip.getAttribute("data-grade");
         if (grade === "all" || g === "all" || g == grade) {
             chip.style.display = "inline-flex";
+            visibleChips.push(chip);
         } else {
             chip.style.display = "none";
         }
     });
+    if (window.gsap && visibleChips.length > 0) {
+        gsap.killTweensOf(visibleChips);
+        gsap.fromTo(visibleChips,
+            { opacity: 0, scale: 0.9, y: 6 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.26, stagger: 0.015, ease: "back.out(1.6)", clearProps: "transform" }
+        );
+    }
 }
 document.addEventListener("DOMContentLoaded", function() {
     var activeChip = document.querySelector("#matrixClassChipsScroll .class-chip-btn.active");

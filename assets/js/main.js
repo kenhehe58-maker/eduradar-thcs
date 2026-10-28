@@ -162,13 +162,24 @@ document.addEventListener('DOMContentLoaded', function () {
             mobileEmptyRow.style.display = (mobileVisibleCount === 0 && mobileRows.length > 0) ? 'block' : 'none';
         }
 
-        if (window.gsap && visibleCount > 0) {
-            const newlyVisible = Array.from(rows).filter(r => r.style.display !== 'none');
-            if (newlyVisible.length > 0) {
-                gsap.fromTo(newlyVisible, 
-                    { opacity: 0, y: 3 }, 
-                    { opacity: 1, y: 0, duration: 0.22, stagger: 0.012, ease: 'power1.out', clearProps: 'transform,opacity' }
-                );
+        if (window.gsap) {
+            if (visibleCount > 0) {
+                const newlyVisible = Array.from(rows).filter(r => r.style.display !== 'none').slice(0, 35);
+                if (newlyVisible.length > 0) {
+                    gsap.fromTo(newlyVisible, 
+                        { opacity: 0, y: 6 }, 
+                        { opacity: 1, y: 0, duration: 0.25, stagger: 0.012, ease: 'power2.out', clearProps: 'transform,opacity' }
+                    );
+                }
+            }
+            if (mobileVisibleCount > 0) {
+                const newlyVisibleMobile = Array.from(mobileRows).filter(r => r.style.display !== 'none').slice(0, 25);
+                if (newlyVisibleMobile.length > 0) {
+                    gsap.fromTo(newlyVisibleMobile, 
+                        { opacity: 0, y: 6 }, 
+                        { opacity: 1, y: 0, duration: 0.25, stagger: 0.015, ease: 'power2.out', clearProps: 'transform,opacity' }
+                    );
+                }
             }
         }
     }
@@ -241,6 +252,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     currentFilters = activeChips;
                 }
+            }
+            if (window.gsap) {
+                gsap.fromTo(this, { scale: 0.92 }, { scale: 1, duration: 0.25, ease: 'back.out(2)', clearProps: 'transform' });
             }
             applyFilter();
         });
@@ -837,26 +851,54 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.style.display = 'flex';
         modal.classList.add('active');
         if (window.gsap) {
-            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power2.out' });
+            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power2.out' });
             const modalBox = modal.querySelector('.competency-modal-card');
             if (modalBox) {
                 gsap.fromTo(modalBox, 
-                    { opacity: 0, scale: 0.93, y: 22 }, 
-                    { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'back.out(1.5)', clearProps: 'transform' }
+                    { opacity: 0, scale: 0.92, y: 24 }, 
+                    { opacity: 1, scale: 1, y: 0, duration: 0.38, ease: 'back.out(1.4)', clearProps: 'transform' }
+                );
+            }
+            const statItems = modal.querySelectorAll('.modal-apple-stat-item, .modal-badge-card');
+            if (statItems.length > 0) {
+                gsap.fromTo(statItems,
+                    { opacity: 0, y: 12 },
+                    { opacity: 1, y: 0, stagger: 0.04, duration: 0.35, ease: 'power2.out', clearProps: 'transform' }
                 );
             }
             const timelineNodes = modal.querySelectorAll('.score-timeline-ribbon .score-timeline-node');
             if (timelineNodes.length > 0) {
                 gsap.fromTo(timelineNodes, 
-                    { opacity: 0, scale: 0.72 }, 
-                    { opacity: 1, scale: 1, stagger: 0.04, duration: 0.35, ease: 'back.out(2)' }
+                    { opacity: 0, scale: 0.75, y: 10 }, 
+                    { opacity: 1, scale: 1, y: 0, stagger: 0.035, duration: 0.35, ease: 'back.out(1.8)', clearProps: 'transform' }
+                );
+            }
+            const mathCards = modal.querySelectorAll('.math-metric-card');
+            if (mathCards.length > 0) {
+                gsap.fromTo(mathCards,
+                    { opacity: 0, y: 14, scale: 0.96 },
+                    { opacity: 1, y: 0, scale: 1, stagger: 0.05, duration: 0.38, ease: 'back.out(1.4)', clearProps: 'transform' }
                 );
             }
             const targetCards = modal.querySelectorAll('.target-card-item');
             if (targetCards.length > 0) {
                 gsap.fromTo(targetCards, 
                     { opacity: 0, y: 14 }, 
-                    { opacity: 1, y: 0, stagger: 0.06, duration: 0.4, ease: 'back.out(1.4)' }
+                    { opacity: 1, y: 0, stagger: 0.05, duration: 0.38, ease: 'back.out(1.4)', clearProps: 'transform' }
+                );
+            }
+            const pedCards = modal.querySelectorAll('.apple-pedagogical-card, .modal-info-box');
+            if (pedCards.length > 0) {
+                gsap.fromTo(pedCards,
+                    { opacity: 0, y: 12 },
+                    { opacity: 1, y: 0, stagger: 0.04, duration: 0.35, ease: 'power2.out', clearProps: 'transform' }
+                );
+            }
+            const subjBars = modal.querySelectorAll('#modalSubjectBarsGrid > div');
+            if (subjBars.length > 0) {
+                gsap.fromTo(subjBars,
+                    { opacity: 0, x: -10 },
+                    { opacity: 1, x: 0, stagger: 0.025, duration: 0.32, ease: 'power2.out', clearProps: 'transform' }
                 );
             }
         }
@@ -1083,11 +1125,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const btn = document.getElementById('btnToggleScoreCols');
         if (!table) return;
         const isHidden = table.classList.contains('scores-hidden');
+        if (window.gsap && btn) {
+            gsap.fromTo(btn, { scale: 0.93 }, { scale: 1, duration: 0.25, ease: 'back.out(2)', clearProps: 'transform' });
+        }
         if (isHidden) {
             table.classList.remove('scores-hidden');
             if (btn) {
                 btn.classList.add('active');
                 btn.textContent = 'Thu gọn cột điểm';
+            }
+            if (window.gsap) {
+                const detailCells = table.querySelectorAll('tbody tr:not([style*="display: none"]) .col-detail-score');
+                if (detailCells.length > 0) {
+                    gsap.fromTo(Array.from(detailCells).slice(0, 120),
+                        { opacity: 0, scale: 0.92 },
+                        { opacity: 1, scale: 1, duration: 0.22, stagger: 0.003, ease: 'power2.out', clearProps: 'transform,opacity' }
+                    );
+                }
             }
         } else {
             table.classList.add('scores-hidden');
@@ -1142,6 +1196,18 @@ document.addEventListener('DOMContentLoaded', function () {
             backdrop.classList.add('active');
             sheet.classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            if (window.gsap) {
+                gsap.fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power2.out' });
+                gsap.fromTo(sheet, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.32, ease: 'back.out(1.4)', clearProps: 'transform' });
+                const sheetItems = sheet.querySelectorAll('.ring-sheet-item');
+                if (sheetItems.length > 0) {
+                    gsap.fromTo(sheetItems,
+                        { opacity: 0, y: 12 },
+                        { opacity: 1, y: 0, duration: 0.28, stagger: 0.04, ease: 'power2.out', clearProps: 'transform' }
+                    );
+                }
+            }
         } catch (e) {
             console.error('Error rendering ring help sheet:', e);
         }
@@ -1221,13 +1287,15 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // -------------------------------------------------------------------------
-    // 8. GSAP ENGINE: REFINED ENTRANCE & SMOOTH SCROLL (ZERO JITTER)
+    // 8. GSAP ENGINE: FULL-SITE ENTRANCE & INTERACTION SUITE (ZERO SCROLL JITTER)
     // -------------------------------------------------------------------------
     if (window.gsap) {
         const plugins = [];
         if (window.ScrollTrigger) plugins.push(window.ScrollTrigger);
         if (window.ScrollToPlugin) plugins.push(window.ScrollToPlugin);
         if (window.Flip) plugins.push(window.Flip);
+        if (window.CustomEase) plugins.push(window.CustomEase);
+        if (window.TextPlugin) plugins.push(window.TextPlugin);
         if (plugins.length > 0) {
             try {
                 gsap.registerPlugin(...plugins);
@@ -1238,64 +1306,183 @@ document.addEventListener('DOMContentLoaded', function () {
     window.runEduRadarEntrance = function() {
         if (!window.gsap) return;
 
-        // 1. Hero & Header: Gentle fade in and settle (no bounce, no jitter)
-        const hero = document.querySelector('.welcome-hero, .dashboard-header, .gb-header-card, .topbar');
-        if (hero) {
-            gsap.fromTo(hero, 
-                { opacity: 0, y: -10 }, 
-                { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' }
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        // 1. Sidebar Navigation Items (includes/side_rail.php)
+        const navItems = document.querySelectorAll('.u040-nav > li > .u040-it');
+        if (navItems.length > 0) {
+            tl.fromTo(navItems,
+                { opacity: 0, x: -12 },
+                { opacity: 1, x: 0, duration: 0.35, stagger: 0.04, clearProps: 'transform,opacity' },
+                0
+            );
+            const activeNav = document.querySelector('.u040-it[aria-current="page"]');
+            if (activeNav) {
+                gsap.fromTo(activeNav,
+                    { scale: 0.94 },
+                    { scale: 1, duration: 0.45, ease: 'back.out(2)', clearProps: 'transform' }
+                );
+            }
+            navItems.forEach(function(item) {
+                if (item.dataset.gsapBound) return;
+                item.dataset.gsapBound = '1';
+                const iconSvg = item.querySelector('svg');
+                const labelSpan = item.querySelector('.u040-lb');
+                item.addEventListener('mouseenter', function() {
+                    if (iconSvg) gsap.to(iconSvg, { scale: 1.16, rotate: -4, duration: 0.24, ease: 'back.out(2)' });
+                    if (labelSpan) gsap.to(labelSpan, { x: 3, duration: 0.22, ease: 'power2.out' });
+                });
+                item.addEventListener('mouseleave', function() {
+                    if (iconSvg) gsap.to(iconSvg, { scale: 1, rotate: 0, duration: 0.22, ease: 'power2.out', clearProps: 'transform' });
+                    if (labelSpan) gsap.to(labelSpan, { x: 0, duration: 0.22, ease: 'power2.out', clearProps: 'transform' });
+                });
+            });
+        }
+
+        // 2. Hero, Page Headers & Top Sections across all 5 pages
+        const heroSections = document.querySelectorAll(
+            '.welcome-hero, .hero-banner-card, .gb-header-card, .guest-banner, header.top, .matrix-filter-card, .class-evaluation-panel, .no-scores-alert-banner'
+        );
+        if (heroSections.length > 0) {
+            tl.fromTo(heroSections,
+                { opacity: 0, y: -14 },
+                { opacity: 1, y: 0, duration: 0.42, stagger: 0.06, clearProps: 'transform,opacity' },
+                0.02
             );
         }
 
-        // 2. Bento cards, Launchpad cards, KPI badges: Gentle upward rise
-        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card, .welcome-step, .eval-sub-card');
-        if (cards.length > 0) {
-            gsap.fromTo(cards, 
-                { opacity: 0, y: 12 }, 
-                { opacity: 1, y: 0, duration: 0.35, stagger: 0.025, ease: 'power2.out', clearProps: 'transform' }
+        // 3. Navigation Strips, Tabs & Filter Pills across all pages
+        const stripsAndPills = document.querySelectorAll(
+            '.class-chip-btn, .btn-grade-pill, .gb-chips-strip a, .btn-admin-tab, .btn-gb-filter, .chip'
+        );
+        if (stripsAndPills.length > 0) {
+            tl.fromTo(Array.from(stripsAndPills).slice(0, 45),
+                { opacity: 0, scale: 0.9, y: 8 },
+                { opacity: 1, scale: 1, y: 0, duration: 0.34, stagger: 0.015, ease: 'back.out(1.6)', clearProps: 'transform,opacity' },
+                0.08
             );
         }
 
-        // 3. Filter toolbar & chips
-        const filterChips = document.querySelectorAll('.chip, .filter-chip, .btn-grade-pill');
-        if (filterChips.length > 0) {
-            gsap.fromTo(filterChips,
-                { opacity: 0, scale: 0.96 },
-                { opacity: 1, scale: 1, duration: 0.3, stagger: 0.015, ease: 'power2.out', clearProps: 'transform' }
+        // 4. Cards, Panels, KPI Boxes & Feature Grid across all pages
+        const allCards = document.querySelectorAll(
+            '.launchpad-card, .kpi-card, .hero-kpi-box, .stat-card, .stats .card, .feature-item, .panel-box, .grade-card, .assign-grade-box, .step-card, .handbook-card, .eval-stat-item, .toolbar-unified, .spreadsheet-toolbar, .gradebook-filter-bar, .upload-form-grid'
+        );
+        if (allCards.length > 0) {
+            tl.fromTo(Array.from(allCards).slice(0, 40),
+                { opacity: 0, y: 18, scale: 0.98 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.42, stagger: 0.03, ease: 'power3.out', clearProps: 'transform,opacity' },
+                0.1
             );
         }
 
-        // 4. Radar table rows cascade (subtle, quick)
-        const radarRows = document.querySelectorAll('.radar-table tbody tr.radar-row:not(#radarEmptyRow)');
-        if (radarRows.length > 0) {
-            const targetRows = Array.from(radarRows).slice(0, 35);
-            gsap.fromTo(targetRows, 
-                { opacity: 0, y: 8 }, 
-                { opacity: 1, y: 0, duration: 0.3, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+        // 5. GSAP Live Number Counter for KPIs & Stat Cards across all pages
+        const numberEls = document.querySelectorAll(
+            '.stat-card b, .stats .card b, .hero-kpi-box div[style*="font-size: 26px"], .kpi-card div[style*="font-size: 26px"], .eval-stat-value'
+        );
+        numberEls.forEach(function(el) {
+            if (el.dataset.gsapCounted) return;
+            const raw = (el.textContent || '').trim();
+            if (!/^\d+(\.\d+)?%?$/.test(raw)) return;
+            const isPct = raw.endsWith('%');
+            const isFloat = raw.includes('.');
+            const endVal = parseFloat(raw);
+            if (isNaN(endVal) || endVal === 0) return;
+            el.dataset.gsapCounted = '1';
+            const proxy = { val: 0 };
+            gsap.to(proxy, {
+                val: endVal,
+                duration: 0.85,
+                delay: 0.12,
+                ease: 'power2.out',
+                onUpdate: function() {
+                    const formatted = isFloat ? proxy.val.toFixed(1) : Math.round(proxy.val).toString();
+                    el.textContent = formatted + (isPct ? '%' : '');
+                },
+                onComplete: function() {
+                    el.textContent = raw;
+                }
+            });
+        });
+
+        // 6. GSAP SVG Circular Ring & Segmented Donut Draw (index.php)
+        const radialFills = document.querySelectorAll('.radial-fill');
+        radialFills.forEach(function(circle) {
+            const targetDash = circle.getAttribute('stroke-dasharray');
+            if (targetDash) {
+                gsap.fromTo(circle,
+                    { attr: { 'stroke-dasharray': '0, 100' } },
+                    { attr: { 'stroke-dasharray': targetDash }, duration: 0.95, delay: 0.15, ease: 'power3.out' }
+                );
+            }
+        });
+        const donutSegs = document.querySelectorAll('.donut-segment');
+        if (donutSegs.length > 0) {
+            gsap.fromTo(donutSegs,
+                { opacity: 0 },
+                { opacity: 1, duration: 0.5, stagger: 0.08, delay: 0.18, ease: 'power2.out' }
             );
         }
 
-        // 5. Spreadsheet table rows (nhap_diem.php)
-        const gbRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
-        if (gbRows.length > 0) {
-            const targetGb = Array.from(gbRows).slice(0, 35);
-            gsap.fromTo(targetGb, 
-                { opacity: 0, y: 8 }, 
-                { opacity: 1, y: 0, duration: 0.3, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+        // 7. Dropzone & Floating Orb on Quét Nhanh (quet_nhanh.php) & Admin (admin.php)
+        const dropzones = document.querySelectorAll('#u032DropzoneWrap, #adminStudentDropzone');
+        if (dropzones.length > 0) {
+            tl.fromTo(dropzones,
+                { opacity: 0, scale: 0.96, y: 14 },
+                { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'back.out(1.4)', clearProps: 'transform,opacity' },
+                0.12
+            );
+        }
+        const orb = document.querySelector('.u032-orb');
+        if (orb && !orb.dataset.gsapFloating) {
+            orb.dataset.gsapFloating = '1';
+            gsap.to(orb, {
+                y: -6,
+                duration: 1.8,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut'
+            });
+        }
+
+        // 8. Table Rows & Mobile Student Cards Cascade across all pages
+        const tableRows = document.querySelectorAll(
+            '.radar-table tbody tr.radar-row:not(#radarEmptyRow), #gradebookTable tbody tr[data-student-id], #assignmentTable tbody tr, #auditLogTable tbody tr, .m-student-row'
+        );
+        if (tableRows.length > 0) {
+            const visibleRows = Array.from(tableRows).filter(r => r.style.display !== 'none').slice(0, 35);
+            if (visibleRows.length > 0) {
+                tl.fromTo(visibleRows,
+                    { opacity: 0, y: 10 },
+                    { opacity: 1, y: 0, duration: 0.34, stagger: 0.012, ease: 'power2.out', clearProps: 'transform,opacity' },
+                    0.15
+                );
+            }
+        }
+
+        // 9. Class Pills inside Admin Khối/Lớp cards (admin.php)
+        const classPills = document.querySelectorAll('.class-pill, .class-chip-box');
+        if (classPills.length > 0) {
+            tl.fromTo(Array.from(classPills).slice(0, 60),
+                { opacity: 0, scale: 0.88 },
+                { opacity: 1, scale: 1, duration: 0.3, stagger: 0.008, ease: 'back.out(1.5)', clearProps: 'transform,opacity' },
+                0.18
             );
         }
 
-        // 6. Schedule banner
+        // 10. VnEdu Schedule Banner (nhap_diem.php)
         const banner = document.getElementById('vneduScheduleBar');
         if (banner) {
-            gsap.fromTo(banner, 
-                { opacity: 0, y: -8 }, 
-                { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', clearProps: 'transform' }
+            tl.fromTo(banner,
+                { opacity: 0, y: -8 },
+                { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', clearProps: 'transform,opacity' },
+                0.08
             );
         }
 
-        // 7. Smooth Anchor Scrolling via ScrollToPlugin (if user clicks hash links)
+        // 11. Smooth Anchor Scrolling via ScrollToPlugin
         document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(link => {
+            if (link.dataset.gsapScrollBound) return;
+            link.dataset.gsapScrollBound = '1';
             link.addEventListener('click', function(e) {
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target && window.ScrollToPlugin) {

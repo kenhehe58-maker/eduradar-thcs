@@ -1477,7 +1477,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.applyGbFilter = function (filterVal, btn) {
         currentGbFilter = filterVal;
         document.querySelectorAll('.btn-gb-filter').forEach(function (b) { b.classList.remove('active'); });
-        if (btn) btn.classList.add('active');
+        if (btn) {
+            btn.classList.add('active');
+            if (window.gsap) {
+                gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.25, ease: 'back.out(2)', clearProps: 'transform' });
+            }
+        }
         filterGradebookRows();
     };
 
@@ -1489,6 +1494,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function filterGradebookRows() {
         const rows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
         let count = 0;
+        const visibleRows = [];
         rows.forEach(function (r) {
             const tier = r.getAttribute('data-tier') || 'pending';
             const name = (r.getAttribute('data-name') || '').toLowerCase();
@@ -1500,10 +1506,19 @@ document.addEventListener('DOMContentLoaded', function () {
             if (okTier && okSearch) {
                 r.style.display = '';
                 count++;
+                visibleRows.push(r);
             } else {
                 r.style.display = 'none';
             }
         });
+
+        if (window.gsap && visibleRows.length > 0) {
+            gsap.killTweensOf(visibleRows);
+            gsap.fromTo(visibleRows.slice(0, 30),
+                { opacity: 0, y: 8 },
+                { opacity: 1, y: 0, duration: 0.26, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+            );
+        }
 
         const emptyRow = document.getElementById('gbFilterEmptyRow');
         if (emptyRow) {

@@ -840,23 +840,23 @@ require_once __DIR__ . '/includes/header.php';
         <div class="features-grid">
             <div class="feature-item">
                 <span class="feature-icon" style="color: #2563eb;"><?= get_svg_icon('download', 22) ?></span>
-                <div class="feature-title">1. Trích Xuất Bảng Điểm 1 Chạm</div>
+                <div class="feature-title">Trích xuất bảng điểm tự động</div>
                 <div class="feature-desc">
                     Tự động nhận diện chính xác các cột Họ và tên, Mã định danh, Ngày sinh, ĐĐGtx (1-4), Điểm GK, CK từ bảng tính Excel VnEdu và SMAS.
                 </div>
             </div>
             <div class="feature-item">
                 <span class="feature-icon" style="color: #059669;"><?= get_svg_icon('activity', 22) ?></span>
-                <div class="feature-title">2. Chẩn Đoán Xu Hướng Sư Phạm</div>
+                <div class="feature-title">Chẩn đoán xu hướng học lực</div>
                 <div class="feature-desc">
                     Đối sánh kép: Xu hướng tiến bộ học tập (tiến bộ, duy trì, sa sút) kết hợp Khung Chuẩn Điểm Số Thông tư 22/2021/TT-BGDĐT.
                 </div>
             </div>
             <div class="feature-item">
-                <span class="feature-icon" style="color: #d97706;"><?= get_svg_icon('presentation', 22) ?></span>
-                <div class="feature-title">3. Trình Chiếu & Báo Cáo BGH</div>
+                <span class="feature-icon" style="color: #d97706;"><?= get_svg_icon('file-text', 22) ?></span>
+                <div class="feature-title">Xuất phiếu &amp; Báo cáo tổng hợp</div>
                 <div class="feature-desc">
-                    Mở Slide thuyết trình tương tác phục vụ họp giao ban, xuất báo cáo PDF chuẩn A4 hoặc trích xuất bảng tổng hợp gửi phụ huynh.
+                    Xuất báo cáo tổng hợp PDF chuẩn A4 hoặc trích xuất phiếu kết quả học tập gửi phụ huynh nhanh chóng.
                 </div>
             </div>
         </div>
@@ -912,18 +912,18 @@ require_once __DIR__ . '/includes/header.php';
         <!-- NHÓM 1: CÁC THẺ THỐNG KÊ XU HƯỚNG TIẾN BỘ (ĐỨNG TRƯỚC & NỔI BẬT) -->
         <div style="margin-bottom: 24px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('trend-up', 16, '', 'color: #2563eb;') ?>
-                    <span>1. Xu Hướng Tiến Bộ Học Tập (OLS Trend)</span>
+                    <span>Xu hướng tiến bộ</span>
                 </span>
-                <span class="muted small">Tăng trưởng · Đi đều · Sa sút · Chờ điểm</span>
+                <span class="muted small">Tiến bộ · Duy trì · Sa sút · Chờ điểm</span>
             </div>
             <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 16px;">
                 <div class="card stat-card trend-up">
                     <div class="card-header-row">
                         <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                             <?= get_svg_icon('trend-up', 16) ?>
-                            <span>Đang Tiến Bộ Rõ Rệt</span>
+                            <span>Đang tiến bộ</span>
                         </span>
                         <?= render_circular_gauge((float)$stats['up_pct'], 'green') ?>
                         <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
@@ -936,7 +936,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="card-header-row">
                         <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                             <?= get_svg_icon('activity', 16) ?>
-                            <span>Duy Trì Ổn Định</span>
+                            <span>Duy trì ổn định</span>
                         </span>
                         <?= render_circular_gauge((float)$stats['steady_pct'], 'yellow') ?>
                         <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
@@ -949,7 +949,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="card-header-row">
                         <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                             <?= get_svg_icon('trend-down', 16) ?>
-                            <span>Có Dấu Hiệu Sa Sút</span>
+                            <span>Cần chú ý sa sút</span>
                         </span>
                         <?= render_circular_gauge((float)$stats['down_pct'], 'red') ?>
                         <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
@@ -962,7 +962,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="card-header-row">
                         <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                             <?= get_svg_icon('clock', 16) ?>
-                            <span>Chờ Cập Nhật Điểm</span>
+                            <span>Chờ bổ sung điểm</span>
                         </span>
                         <?= render_circular_gauge((float)$stats['pending_pct'], 'gray') ?>
                         <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
@@ -976,9 +976,9 @@ require_once __DIR__ . '/includes/header.php';
         <!-- NHÓM 2: CÁC THẺ THỐNG KÊ MỨC ĐỘ TÍCH LŨY & PHÂN VÙNG CẢNH BÁO -->
         <div style="margin-bottom: 24px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('bar-chart', 16, '', 'color: #059669;') ?>
-                    <span>2. Mức Độ Tích Lũy & Phân Vùng Cảnh Báo (TT 22)</span>
+                    <span>Mức học lực &amp; Phân vùng cảnh báo (TT 22)</span>
                 </span>
                 <span class="muted small">Nguy cấp · Cần chú ý · Ổn định</span>
             </div>
@@ -1663,6 +1663,6 @@ require_once __DIR__ . '/includes/header.php';
     }
 </script>
 <?php
-$extraScripts = '<script src="assets/js/main.js"></script>';
+$extraScripts = '<script src="assets/js/main.js?v=' . filemtime(__DIR__ . '/assets/js/main.js') . '"></script>';
 require_once __DIR__ . '/includes/footer.php';
 ?>

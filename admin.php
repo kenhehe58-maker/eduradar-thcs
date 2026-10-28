@@ -1523,13 +1523,20 @@ function updateSelectedCount() {
         el.innerText = `Đã chọn: ${checked} / ${total} lớp`;
         el.style.fontWeight = checked > 0 ? '700' : 'normal';
         el.style.color = checked > 0 ? 'var(--primary)' : 'var(--text-muted)';
+        if (window.gsap) {
+            gsap.fromTo(el, { scale: 1.08 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
+        }
     }
 
     // Cập nhật trạng thái hiển thị của chip box
     document.querySelectorAll('.class-chip-box').forEach(box => {
         const input = box.querySelector('input[type="checkbox"]');
+        const wasSelected = box.classList.contains('selected');
         if (input && input.checked) {
             box.classList.add('selected');
+            if (!wasSelected && window.gsap) {
+                gsap.fromTo(box, { scale: 0.92 }, { scale: 1, duration: 0.22, ease: 'back.out(2)' });
+            }
         } else {
             box.classList.remove('selected');
         }
@@ -1544,6 +1551,7 @@ function filterAssignments() {
     const selGrade = (document.getElementById('assignGradeFilter')?.value || '').trim();
 
     const rows = document.querySelectorAll('#assignmentTable tbody tr');
+    const visibleRows = [];
     rows.forEach(row => {
         const text = row.innerText.toLowerCase();
         const rSub = row.getAttribute('data-subject') || '';
@@ -1555,18 +1563,43 @@ function filterAssignments() {
         const matchTeacher = !selTeacher || rTeacher.includes(selTeacher);
         const matchGrade = !selGrade || rGrade === selGrade;
 
-        row.style.display = (matchQuery && matchSub && matchTeacher && matchGrade) ? '' : 'none';
+        if (matchQuery && matchSub && matchTeacher && matchGrade) {
+            row.style.display = '';
+            visibleRows.push(row);
+        } else {
+            row.style.display = 'none';
+        }
     });
+    if (window.gsap && visibleRows.length > 0) {
+        gsap.killTweensOf(visibleRows);
+        gsap.fromTo(visibleRows.slice(0, 25),
+            { opacity: 0, y: 6 },
+            { opacity: 1, y: 0, duration: 0.25, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+        );
+    }
 }
 
 // 5. Lọc tìm kiếm bảng nhật ký kiểm toán theo thời gian thực
 function filterAuditLogs() {
     const query = document.getElementById('logSearchInput').value.toLowerCase();
     const rows = document.querySelectorAll('#auditLogTable tbody tr');
+    const visibleRows = [];
     rows.forEach(row => {
         const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
+        if (text.includes(query)) {
+            row.style.display = '';
+            visibleRows.push(row);
+        } else {
+            row.style.display = 'none';
+        }
     });
+    if (window.gsap && visibleRows.length > 0) {
+        gsap.killTweensOf(visibleRows);
+        gsap.fromTo(visibleRows.slice(0, 25),
+            { opacity: 0, y: 6 },
+            { opacity: 1, y: 0, duration: 0.25, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+        );
+    }
 }
 
 // 6. Thêm trường môn thứ 2 (dạy kiêm nhiệm nhiều môn)
@@ -1744,7 +1777,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })();
 
-// 8. Chuyển đổi qua lại giữa các Tab chức năng Admin (Apple Segmented Tabs)
+// 8. Chuyển đổi qua lại giữa các Tab chức năng Admin (Apple Segmented Tabs + GSAP Motion)
 function switchAdminTab(tabName, btn) {
     document.querySelectorAll('.admin-tab-pane').forEach(function(pane) {
         pane.classList.remove('active');
@@ -1762,6 +1795,32 @@ function switchAdminTab(tabName, btn) {
     if (activeBtn) {
         activeBtn.classList.add('active');
         activeBtn.setAttribute('aria-selected', 'true');
+        if (window.gsap) {
+            gsap.fromTo(activeBtn, { scale: 0.96 }, { scale: 1, duration: 0.28, ease: 'back.out(2)', clearProps: 'transform' });
+        }
+    }
+    if (activePane && window.gsap) {
+        var panels = activePane.querySelectorAll('.panel-box');
+        if (panels.length > 0) {
+            gsap.fromTo(panels,
+                { opacity: 0, y: 14 },
+                { opacity: 1, y: 0, duration: 0.36, stagger: 0.06, ease: 'power2.out', clearProps: 'transform' }
+            );
+        }
+        var subItems = activePane.querySelectorAll('.grade-card, .assign-grade-box, .class-chip-box');
+        if (subItems.length > 0) {
+            gsap.fromTo(Array.from(subItems).slice(0, 40),
+                { opacity: 0, y: 10, scale: 0.97 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.3, stagger: 0.015, ease: 'power2.out', clearProps: 'transform' }
+            );
+        }
+        var tableRows = activePane.querySelectorAll('tbody tr');
+        if (tableRows.length > 0) {
+            gsap.fromTo(Array.from(tableRows).slice(0, 30),
+                { opacity: 0, x: -10 },
+                { opacity: 1, x: 0, duration: 0.28, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+            );
+        }
     }
     try {
         var u = new URL(window.location.href);
@@ -1781,6 +1840,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <?php
-$extraScripts = '<script src="assets/js/main.js"></script>';
+$extraScripts = '<script src="assets/js/main.js?v=' . filemtime(__DIR__ . '/assets/js/main.js') . '"></script>';
 require_once __DIR__ . '/includes/footer.php';
 ?>
