@@ -1222,18 +1222,32 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // -------------------------------------------------------------------------
-    // 8. GSAP MASTER ENTRANCE & CASCADE TELEMETRY ANIMATIONS
+    // 8. FULL GSAP ENGINE: PLUGINS, ENTRANCE, SCROLLTRIGGER & INTERACTION PHYSICS
     // -------------------------------------------------------------------------
+    if (window.gsap) {
+        // Safe registration of full GSAP plugin suite from vendor repo
+        const plugins = [];
+        if (window.ScrollTrigger) plugins.push(window.ScrollTrigger);
+        if (window.ScrollToPlugin) plugins.push(window.ScrollToPlugin);
+        if (window.Flip) plugins.push(window.Flip);
+        if (window.TextPlugin) plugins.push(window.TextPlugin);
+        if (plugins.length > 0) {
+            try {
+                gsap.registerPlugin(...plugins);
+            } catch (e) {}
+        }
+    }
+
     window.runEduRadarEntrance = function() {
         if (!window.gsap) return;
 
-        // Hero & Topbar
+        // 1. Hero & Topbar Entrance
         const hero = document.querySelector('.welcome-hero, .dashboard-header, .gb-header-card');
         if (hero) {
-            gsap.fromTo(hero, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
+            gsap.fromTo(hero, { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' });
         }
 
-        // Bento cards, Launchpad cards, KPI badges
+        // 2. Bento cards, Launchpad cards, KPI badges
         const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card, .welcome-step');
         if (cards.length > 0) {
             gsap.fromTo(cards, 
@@ -1242,8 +1256,8 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        // Filter toolbar & chips
-        const filterChips = document.querySelectorAll('.chip, .filter-chip');
+        // 3. Filter toolbar & chips
+        const filterChips = document.querySelectorAll('.chip, .filter-chip, .btn-grade-pill');
         if (filterChips.length > 0) {
             gsap.fromTo(filterChips,
                 { opacity: 0, scale: 0.88 },
@@ -1251,7 +1265,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        // Radar dashboard table rows cascade
+        // 4. Radar dashboard table rows cascade
         const radarRows = document.querySelectorAll('.radar-table tbody tr.radar-row:not(#radarEmptyRow)');
         if (radarRows.length > 0) {
             const targetRows = Array.from(radarRows).slice(0, 40);
@@ -1261,7 +1275,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        // Spreadsheet table rows entrance (nhap_diem.php)
+        // 5. Spreadsheet table rows entrance (nhap_diem.php)
         const gbRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
         if (gbRows.length > 0) {
             const targetGb = Array.from(gbRows).slice(0, 40);
@@ -1271,7 +1285,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        // Schedule banner
+        // 6. Schedule banner
         const banner = document.getElementById('vneduScheduleBar');
         if (banner) {
             gsap.fromTo(banner, 
@@ -1279,6 +1293,72 @@ document.addEventListener('DOMContentLoaded', function () {
                 { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.2)' }
             );
         }
+
+        // 7. ScrollTrigger Reveal on Scroll ("Kéo chuột mượt mà")
+        if (window.ScrollTrigger) {
+            const scrollSections = document.querySelectorAll('.dashboard-section, .admin-card, .audit-card, .tech-system-footer, .welcome-step, .settings-panel, .batch-card');
+            scrollSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top > window.innerHeight * 0.85) {
+                    gsap.fromTo(section,
+                        { opacity: 0, y: 32, scale: 0.98 },
+                        {
+                            opacity: 1,
+                            y: 0,
+                            scale: 1,
+                            duration: 0.6,
+                            ease: 'power2.out',
+                            scrollTrigger: {
+                                trigger: section,
+                                start: 'top 92%',
+                                toggleActions: 'play none none none'
+                            }
+                        }
+                    );
+                }
+            });
+
+            // Smooth parallax on hero when scrolling
+            const heroParallax = document.querySelector('.welcome-hero, .dashboard-header');
+            if (heroParallax) {
+                gsap.to(heroParallax, {
+                    yPercent: 8,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: heroParallax,
+                        start: 'top top',
+                        end: 'bottom top',
+                        scrub: 0.4
+                    }
+                });
+            }
+        }
+
+        // 8. Smooth Anchor Scrolling via ScrollToPlugin
+        document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target && window.ScrollToPlugin) {
+                    e.preventDefault();
+                    gsap.to(window, {
+                        duration: 0.6,
+                        scrollTo: { y: target, offsetY: 70 },
+                        ease: 'power2.out'
+                    });
+                }
+            });
+        });
+
+        // 9. Tactile Hover Feedback on Cards
+        const hoverTargets = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .kpi-card, .stat-badge, .welcome-step, .stat-card');
+        hoverTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(el, { y: -3, scale: 1.015, duration: 0.22, ease: 'power2.out' });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { y: 0, scale: 1.0, duration: 0.28, ease: 'power2.out' });
+            });
+        });
     };
 
     // Run entrance animations smoothly
