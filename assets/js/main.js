@@ -1536,50 +1536,8 @@ document.addEventListener('DOMContentLoaded', function () {
         // Đã gỡ bỏ 3D tilt và magnetic chuột quá mức theo yêu cầu giao diện sư phạm tối giản
     };
 
-    // -------------------------------------------------------------------------
-    // 13. DEVICE-READY PRELOADER DISMISSAL & SYNCHRONIZED ENTRANCE ANIMATION
-    // Đảm bảo chỉ khi toàn bộ tài nguyên (DOM, Stylesheets, WebFonts, Images)
-    // tải xong hoàn toàn trên thiết bị của người dùng, giao diện mới hiển thị
-    // và hiệu ứng GSAP mới bắt đầu kích hoạt đồng thời, chống giật khựng/FOUC.
-    // -------------------------------------------------------------------------
-    function initDeviceReadyEntrance() {
-        const curtain = document.getElementById('eduradar-device-curtain');
-        
-        // Đợi cả webfonts hoàn tất render (nếu API có sẵn)
-        const fontReady = (document.fonts && document.fonts.ready) 
-            ? document.fonts.ready 
-            : Promise.resolve();
-
-        fontReady.then(function() {
-            // Chờ thêm 1 requestAnimationFrame để layout engine của trình duyệt tính toán geometry xong
-            requestAnimationFrame(function() {
-                setTimeout(function() {
-                    if (curtain) {
-                        curtain.classList.add('loaded');
-                        setTimeout(function() {
-                            if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
-                        }, 400);
-                    }
-
-                    // Kích hoạt toàn bộ hiệu ứng GSAP mượt mà
-                    if (window.gsap && typeof window.runEduRadarEntrance === 'function') {
-                        window.runEduRadarEntrance();
-                    }
-                }, 120); // Micro-buffer ổn định khung hình
-            });
-        }).catch(function() {
-            if (curtain) curtain.classList.add('loaded');
-            if (window.gsap && typeof window.runEduRadarEntrance === 'function') {
-                window.runEduRadarEntrance();
-            }
-        });
-    }
-
-    if (document.readyState === 'complete') {
-        initDeviceReadyEntrance();
-    } else {
-        window.addEventListener('load', initDeviceReadyEntrance);
-        // Fallback bảo vệ tối đa 2.5s phòng khi mạng chậm giữ hình ảnh quá lâu
-        setTimeout(initDeviceReadyEntrance, 2500);
+    // Run entrance animations smoothly
+    if (window.gsap) {
+        window.runEduRadarEntrance();
     }
 });

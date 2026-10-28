@@ -296,20 +296,6 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
 </head>
 <body class="liquid-glass-layout">
 
-<!-- DEVICE-READY PRELOADER OVERLAY -->
-<div id="eduradar-device-curtain" aria-hidden="true">
-    <div class="curtain-center-box">
-        <div class="curtain-brand-badge">ER</div>
-        <div>
-            <div class="curtain-title">EduRadar THCS</div>
-            <div class="curtain-sub">Đang đồng bộ giao diện thiết bị...</div>
-        </div>
-        <div class="curtain-track">
-            <div class="curtain-bar"></div>
-        </div>
-    </div>
-</div>
-
 <!-- TOP EDEXA GREETING & STATUS BAR -->
 <header class="glass-topbar">
     <div class="glass-topbar-inner">
