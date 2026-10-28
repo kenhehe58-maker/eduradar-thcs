@@ -38,6 +38,6 @@ if (ini_get("session.use_cookies")) {
 // Hủy dữ liệu session lưu trên máy chủ
 session_destroy();
 
-// Chuyển hướng an toàn về trang đăng nhập
-header('Location: login.php');
+// Chuyển hướng an toàn về trang chủ
+header('Location: welcome.php');
 exit;

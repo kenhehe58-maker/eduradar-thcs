@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_SESSION['user_id'])) {
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         header('Location: admin.php');
     } else {
-        header('Location: index.php');
+        header('Location: welcome.php');
     }
     exit;
 }
@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập thành công vào hệ thống."
             );
 
-            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên vào index.php
+            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên & Người dùng vào trang chủ welcome.php
             if ($user['role'] === 'admin') {
                 header('Location: admin.php');
             } else {
-                header('Location: index.php');
+                header('Location: welcome.php');
             }
             exit;
         } else {
