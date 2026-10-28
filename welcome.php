@@ -91,6 +91,21 @@ require_once __DIR__ . '/includes/header.php';
     max-width: 840px;
 }
 
+/* AWWWARDS MASKED TEXT REVEAL SPECIFICATION */
+.masked-text-title {
+    margin: 0 0 14px 0;
+}
+.masked-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 4px;
+}
+.masked-line-inner {
+    display: inline-block;
+    transform: translateY(110%);
+    will-change: transform;
+}
+
 .welcome-desc {
     font-size: 15px;
     color: var(--text-muted, #475569);
@@ -491,8 +506,9 @@ require_once __DIR__ . '/includes/header.php';
         <span>&bull;</span>
         <span>EduRadar THCS</span>
     </div>
-    <h1 class="welcome-title">
-        Theo dõi tiến trình &amp; Cảnh báo sớm học lực THCS
+    <h1 class="welcome-title masked-text-title" aria-label="Theo dõi tiến trình & Cảnh báo sớm học lực THCS">
+        <div class="masked-line"><span class="masked-line-inner">Theo dõi tiến trình &amp;</span></div>
+        <div class="masked-line"><span class="masked-line-inner">Cảnh báo sớm học lực THCS</span></div>
     </h1>
     <p class="welcome-desc">
         Hệ thống tự động phân tích biến thiên điểm số thường xuyên (ĐĐGtx) theo <b>Thông tư 22/2021/TT-BGDĐT</b>, hỗ trợ giáo viên bộ môn và Ban Giám hiệu nắm bắt kịp thời nguy cơ sa sút để phối hợp can thiệp sớm.

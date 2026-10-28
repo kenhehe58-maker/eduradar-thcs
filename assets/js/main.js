@@ -1351,6 +1351,42 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
+        // 2.1. Awwwards Masked Text Reveal (h1.welcome-title / .masked-text-title)
+        const maskedInners = document.querySelectorAll('.masked-text-title .masked-line-inner');
+        if (maskedInners.length > 0) {
+            tl.fromTo(maskedInners,
+                { y: '110%' },
+                { y: '0%', duration: 1.0, ease: 'power4.out', stagger: 0.15, clearProps: 'transform' },
+                0.1
+            );
+        }
+
+        // 2.2. Awwwards Hero Subtitle & CTA Reveal
+        const heroDesc = document.querySelector('.welcome-hero .welcome-desc');
+        const heroBadge = document.querySelector('.welcome-hero .welcome-badge');
+        const heroCta = document.querySelector('.welcome-hero .welcome-cta-group');
+        if (heroBadge) {
+            tl.fromTo(heroBadge, 
+                { opacity: 0, y: -8, scale: 0.94 }, 
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'back.out(1.5)', clearProps: 'transform,opacity' }, 
+                0.05
+            );
+        }
+        if (heroDesc) {
+            tl.fromTo(heroDesc, 
+                { opacity: 0, y: 12 }, 
+                { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out', clearProps: 'transform,opacity' }, 
+                0.35
+            );
+        }
+        if (heroCta) {
+            tl.fromTo(heroCta.children, 
+                { opacity: 0, y: 14, scale: 0.95 }, 
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'back.out(1.4)', clearProps: 'transform,opacity' }, 
+                0.45
+            );
+        }
+
         // 3. Navigation Strips, Tabs & Filter Pills across all pages
         const stripsAndPills = document.querySelectorAll(
             '.class-chip-btn, .btn-grade-pill, .gb-chips-strip a, .btn-admin-tab, .btn-gb-filter, .chip'
@@ -1493,6 +1529,71 @@ document.addEventListener('DOMContentLoaded', function () {
                         ease: 'power2.out'
                     });
                 }
+            });
+        });
+
+        // 12. Awwwards Micro-Interactions: 3D Tilt for Bento Cards
+        const tiltCards = document.querySelectorAll('.welcome-kpi-grid .kpi-card, .launchpad-grid .launchpad-card');
+        tiltCards.forEach(card => {
+            if (card.dataset.gsapTiltBound) return;
+            card.dataset.gsapTiltBound = '1';
+            card.style.transformStyle = 'preserve-3d';
+            card.style.perspective = '1000px';
+
+            card.addEventListener('mousemove', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const rotX = -(y / (rect.height / 2)) * 6; // Tối đa 6 độ, tinh tế không bị lố
+                const rotY = (x / (rect.width / 2)) * 6;
+
+                gsap.to(card, {
+                    rotateX: rotX,
+                    rotateY: rotY,
+                    transformPerspective: 1000,
+                    duration: 0.35,
+                    ease: 'power2.out'
+                });
+            });
+
+            card.addEventListener('mouseleave', function() {
+                gsap.to(card, {
+                    rotateX: 0,
+                    rotateY: 0,
+                    duration: 0.5,
+                    ease: 'power3.out',
+                    clearProps: 'rotateX,rotateY'
+                });
+            });
+        });
+
+        // 13. Awwwards Micro-Interactions: Magnetic CTA Buttons
+        const magneticBtns = document.querySelectorAll('.welcome-cta-group .btn');
+        magneticBtns.forEach(btn => {
+            if (btn.dataset.gsapMagBound) return;
+            btn.dataset.gsapMagBound = '1';
+
+            btn.addEventListener('mousemove', function(e) {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                gsap.to(btn, {
+                    x: x * 0.22,
+                    y: y * 0.22,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                gsap.to(btn, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.45,
+                    ease: 'back.out(2)',
+                    clearProps: 'x,y'
+                });
             });
         });
     };
