@@ -746,9 +746,6 @@ require_once __DIR__ . '/includes/header.php';
                 </a>
             <?php endif; ?>
             <?php if ($hasData): ?>
-                <a href="bao_cao_slide_bgh.php?guest=1" target="_blank" class="btn-guest-action" style="background: #0f172a; color: #ffffff;">
-                    Slide Báo Cáo BGH
-                </a>
                 <a href="in_bao_cao_bgh.php?guest=1&format=pdf" target="_blank" class="btn-guest-action btn-guest-pdf">
                     In Báo Cáo BGH (A4/PDF)
                 </a>

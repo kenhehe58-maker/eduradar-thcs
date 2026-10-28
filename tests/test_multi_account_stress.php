@@ -171,15 +171,6 @@ assertStress(
     "S5.02 Sandbox Isolation: Sử dụng Quét Nhanh (Guest Sample) không làm hỏng phiên làm việc của Giáo viên"
 );
 
-// 6. Kiểm tra Slide Báo Cáo BGH (`bao_cao_slide_bgh.php`)
-$resSlideAdmin = httpReq("$baseUrl/bao_cao_slide_bgh.php?class_id={$toanClassId}&subject=" . urlencode($toanSubject), $cookieAdmin);
-$resSlideToan  = httpReq("$baseUrl/bao_cao_slide_bgh.php?class_id={$toanClassId}&subject=" . urlencode($toanSubject), $cookieToan);
-$resSlideHack  = httpReq("$baseUrl/bao_cao_slide_bgh.php?class_id={$toanClassId}&subject=" . urlencode($vanSubject), $cookieToan);
-
-assertStress($resSlideAdmin['status'] === 200 && strpos($resSlideAdmin['body'], 'Chart.js') !== false, "S6.01 Admin mở Slide Báo Cáo BGH tương tác thành công (HTTP 200)");
-assertStress($resSlideToan['status'] === 200 && strpos($resSlideToan['body'], 'Slide 01') !== false,   "S6.02 GV Toán mở Slide Báo Cáo BGH của lớp mình thành công (HTTP 200)");
-assertStress($resSlideHack['status'] === 403, "S6.03 Anti-BOLA Slide BGH: Chặn GV Toán xuất Slide môn [{$vanSubject}] (HTTP 403)");
-
 @unlink($cookieAdmin);
 @unlink($cookieToan);
 @unlink($cookieVan);

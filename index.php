@@ -638,12 +638,6 @@ require_once __DIR__ . '/includes/header.php';
                 <?= get_svg_icon('file-text', 16) ?>
                 <span>Vào Sổ Điểm Bộ Môn</span>
             </a>
-            <?php if (!empty($selectedClassId)): ?>
-                <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn btn-hero-slide" style="border: 1.5px solid var(--border-color, #cbd5e1); padding: 8px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                    <?= get_svg_icon('presentation', 16) ?>
-                    <span>Xuất Slide Báo Cáo BGH</span>
-                </a>
-            <?php endif; ?>
         </div>
     </div>
     <div style="display: flex; gap: 14px; flex-wrap: wrap;">
@@ -2187,10 +2181,6 @@ $tt22Slices = [
             </p>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="bao_cao_slide_bgh.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" target="_blank" class="btn-action-slip" style="padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #0f172a, #312e81); color: #ffffff; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.28);" title="Mở Slide thuyết trình báo cáo BGH">
-                <?= get_svg_icon('presentation', 14) ?>
-                <span>Slide Báo Cáo BGH</span>
-            </a>
             <a href="in_bao_cao_bgh.php?class_id=<?= $reportClassId ?>&subject=<?= urlencode($reportSubject) ?>&format=pdf" target="_blank" class="btn-action-slip btn-slip-pdf" style="padding: 8px 14px; border-radius: 9px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);" title="Xuất báo cáo nộp BGH (Khổ A4 chuẩn)">
                 <?= get_svg_icon('printer', 14) ?>
                 <span>Báo Cáo BGH (PDF)</span>

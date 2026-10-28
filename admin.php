@@ -964,9 +964,6 @@ require_once __DIR__ . '/includes/header.php';
             <p class="muted">Quản lý lớp học THCS (Khối 6–9), phân công giảng dạy, nạp danh sách học sinh và theo dõi toàn trường.</p>
         </div>
         <div class="top-actions" style="display: flex; align-items: center; gap: 12px;">
-            <a href="bao_cao_slide_bgh.php" target="_blank" class="btn primary" style="background: #0f172a; border-color: #0f172a; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; color: #fff;">
-                Trình Chiếu Slide BGH Toàn Trường
-            </a>
             <span class="badge" style="background: #e0e7ff; color: #3730a3; padding: 6px 14px; font-size: 12px; font-weight: 700;">
                 QUẢN TRỊ VIÊN
             </span>

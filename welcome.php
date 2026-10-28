@@ -509,10 +509,6 @@ require_once __DIR__ . '/includes/header.php';
             <?= get_svg_icon('file-text', 18) ?>
             <span>Mở Sổ Điểm VnEdu</span>
         </a>
-        <a href="bao_cao_slide_bgh.php" target="_blank" class="btn" style="background: var(--card-bg, #ffffff); color: var(--text-heading, #0f172a); border: 1.5px solid var(--border-color, #cbd5e1); padding: 11px 22px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            <?= get_svg_icon('presentation', 18) ?>
-            <span>Slide Báo Cáo BGH</span>
-        </a>
     </div>
 </section>
 
@@ -620,22 +616,6 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </a>
 
-    <!-- CỔNG 4: SLIDE BÁO CÁO & THỐNG KÊ BGH -->
-    <a href="bao_cao_slide_bgh.php" target="_blank" class="launchpad-card">
-        <div class="launchpad-card-header">
-            <div style="color: #db2777;"><?= get_svg_icon('presentation', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: rgba(219, 39, 119, 0.12); color: #db2777; border: 1px solid rgba(219, 39, 119, 0.25);">Trực Quan</span>
-        </div>
-        <div class="launchpad-card-title">Báo Cáo & Thống Kê BGH</div>
-        <div class="launchpad-card-desc">
-            Hệ thống Slide thuyết trình HTML tương tác với đồ họa Chart.js sắc nét, phục vụ trình chiếu trong các cuộc họp giao ban, thanh tra hoặc sơ kết học kỳ.
-        </div>
-        <div class="launchpad-card-footer">
-            <span>Trình Chiếu Slide BGH</span>
-            <?= get_svg_icon('chevron-right', 16) ?>
-        </div>
-    </a>
-
     <?php if ($userRole === 'admin'): ?>
     <!-- CỔNG 5: QUẢN TRỊ ADMIN -->
     <a href="admin.php" class="launchpad-card">
@@ -696,11 +676,11 @@ require_once __DIR__ . '/includes/header.php';
         <!-- BƯỚC 3 -->
         <div class="step-card">
             <div class="step-number-badge" style="background: rgba(245, 158, 11, 0.15); color: #d97706;">3</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 3: Xuất Báo Cáo &amp; Slide</b>
+            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Bước 3: Can Thiệp &amp; Xuất Phiếu</b>
             <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Trình chiếu Slide báo cáo BGH hoặc in phiếu học tập gửi phụ huynh chỉ với một thao tác.
+                Theo dõi radar cảnh báo sớm và xuất phiếu học tập gửi phụ huynh chỉ với một thao tác.
             </p>
-            <a href="bao_cao_slide_bgh.php" target="_blank" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Trình Chiếu Slide <?= get_svg_icon('chevron-right', 14) ?></a>
+            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Xem Radar Cảnh Báo <?= get_svg_icon('chevron-right', 14) ?></a>
         </div>
     </div>
 </div>

@@ -582,13 +582,6 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
             <span class="u040-dock-tip">Quét Nhanh 1 Chạm</span>
           </a>
         </li>
-        <li>
-          <a href="bao_cao_slide_bgh.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'slides' ? 'aria-current="page"' : '' ?> aria-label="Báo Cáo">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span class="u040-it-label">Báo Cáo</span>
-            <span class="u040-dock-tip">Báo Cáo &amp; Slide BGH</span>
-          </a>
-        </li>
         <?php if ($userRole === 'admin'): ?>
           <li>
             <a href="admin.php" class="u040-it" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Quản Trị">
