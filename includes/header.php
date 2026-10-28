@@ -25,6 +25,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time() ?>">
+    <script src="assets/js/gsap.min.js"></script>
     <script>
         // Khởi tạo Theme ngay lập tức trước khi render DOM để chống giật nháy màn hình (Anti-Flicker)
         (function() {

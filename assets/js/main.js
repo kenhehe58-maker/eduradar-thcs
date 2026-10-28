@@ -164,10 +164,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (window.gsap && visibleCount > 0) {
             const newlyVisible = Array.from(rows).filter(r => r.style.display !== 'none');
-            gsap.fromTo(newlyVisible, 
-                { opacity: 0, y: 3 }, 
-                { opacity: 1, y: 0, duration: 0.22, stagger: 0.012, ease: 'power1.out', clearProps: 'transform,opacity' }
-            );
+            if (newlyVisible.length > 0) {
+                gsap.fromTo(newlyVisible, 
+                    { opacity: 0, y: 3 }, 
+                    { opacity: 1, y: 0, duration: 0.22, stagger: 0.012, ease: 'power1.out', clearProps: 'transform,opacity' }
+                );
+            }
         }
     }
 
@@ -843,12 +845,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'back.out(1.5)', clearProps: 'transform' }
                 );
             }
-            gsap.from('.score-timeline-ribbon .timeline-step', {
-                opacity: 0, scale: 0.75, stagger: 0.04, duration: 0.25, ease: 'back.out(2)'
-            });
-            gsap.from('.target-card-item', {
-                opacity: 0, y: 10, stagger: 0.06, duration: 0.3, ease: 'power2.out'
-            });
+            const timelineNodes = modal.querySelectorAll('.score-timeline-ribbon .score-timeline-node');
+            if (timelineNodes.length > 0) {
+                gsap.fromTo(timelineNodes, 
+                    { opacity: 0, scale: 0.72 }, 
+                    { opacity: 1, scale: 1, stagger: 0.04, duration: 0.35, ease: 'back.out(2)' }
+                );
+            }
+            const targetCards = modal.querySelectorAll('.target-card-item');
+            if (targetCards.length > 0) {
+                gsap.fromTo(targetCards, 
+                    { opacity: 0, y: 14 }, 
+                    { opacity: 1, y: 0, stagger: 0.06, duration: 0.4, ease: 'back.out(1.4)' }
+                );
+            }
         }
     }
 
@@ -1177,9 +1187,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (btnIcon) btnIcon.textContent = '🔒';
 
             if (window.gsap) {
+                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.92 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' });
+                gsap.fromTo('#btnLockIcon', { rotate: -180 }, { rotate: 0, duration: 0.45, ease: 'power2.out' });
                 gsap.fromTo('.cell-ck .score-input', 
-                    { scale: 0.94, backgroundColor: '#fef3c7' }, 
-                    { scale: 1, backgroundColor: '', duration: 0.4, stagger: 0.012, ease: 'power2.out', clearProps: 'backgroundColor,transform' }
+                    { scale: 0.9, backgroundColor: '#fef08a' }, 
+                    { scale: 1, backgroundColor: '#ffffff', duration: 0.55, stagger: 0.015, ease: 'power2.out', clearProps: 'backgroundColor,transform' }
                 );
             }
         } else {
@@ -1200,9 +1212,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (btnIcon) btnIcon.textContent = '🔓';
 
             if (window.gsap) {
+                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.92 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' });
                 gsap.fromTo('.cell-ck .score-input.is-locked-vnedu', 
-                    { opacity: 0.5 }, 
-                    { opacity: 1, duration: 0.3, stagger: 0.01 }
+                    { opacity: 0.4, scale: 0.95 }, 
+                    { opacity: 1, scale: 1, duration: 0.35, stagger: 0.01, ease: 'power1.out', clearProps: 'transform' }
                 );
             }
         }
@@ -1211,56 +1224,65 @@ document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
     // 8. GSAP MASTER ENTRANCE & CASCADE TELEMETRY ANIMATIONS
     // -------------------------------------------------------------------------
-    if (window.gsap) {
+    window.runEduRadarEntrance = function() {
+        if (!window.gsap) return;
+
+        // Hero & Topbar
+        const hero = document.querySelector('.welcome-hero, .dashboard-header, .gb-header-card');
+        if (hero) {
+            gsap.fromTo(hero, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' });
+        }
+
         // Bento cards, Launchpad cards, KPI badges
-        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card');
+        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card, .welcome-step');
         if (cards.length > 0) {
-            gsap.from(cards, {
-                opacity: 0,
-                y: 15,
-                duration: 0.42,
-                stagger: 0.035,
-                ease: 'power2.out',
-                clearProps: 'transform,opacity'
-            });
+            gsap.fromTo(cards, 
+                { opacity: 0, y: 28, scale: 0.96 }, 
+                { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.045, ease: 'back.out(1.3)' }
+            );
+        }
+
+        // Filter toolbar & chips
+        const filterChips = document.querySelectorAll('.chip, .filter-chip');
+        if (filterChips.length > 0) {
+            gsap.fromTo(filterChips,
+                { opacity: 0, scale: 0.88 },
+                { opacity: 1, scale: 1, duration: 0.4, stagger: 0.025, ease: 'back.out(1.5)' }
+            );
         }
 
         // Radar dashboard table rows cascade
         const radarRows = document.querySelectorAll('.radar-table tbody tr.radar-row:not(#radarEmptyRow)');
         if (radarRows.length > 0) {
-            gsap.from(radarRows, {
-                opacity: 0,
-                y: 8,
-                duration: 0.35,
-                stagger: 0.015,
-                ease: 'power1.out',
-                clearProps: 'transform,opacity'
-            });
+            const targetRows = Array.from(radarRows).slice(0, 40);
+            gsap.fromTo(targetRows, 
+                { opacity: 0, y: 16 }, 
+                { opacity: 1, y: 0, duration: 0.45, stagger: 0.02, ease: 'power2.out' }
+            );
         }
 
         // Spreadsheet table rows entrance (nhap_diem.php)
         const gbRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
         if (gbRows.length > 0) {
-            gsap.from(gbRows, {
-                opacity: 0,
-                y: 6,
-                duration: 0.35,
-                stagger: 0.012,
-                ease: 'power1.out',
-                clearProps: 'transform,opacity'
-            });
+            const targetGb = Array.from(gbRows).slice(0, 40);
+            gsap.fromTo(targetGb, 
+                { opacity: 0, y: 14 }, 
+                { opacity: 1, y: 0, duration: 0.45, stagger: 0.018, ease: 'power2.out' }
+            );
         }
 
         // Schedule banner
         const banner = document.getElementById('vneduScheduleBar');
         if (banner) {
-            gsap.from(banner, {
-                opacity: 0,
-                x: -16,
-                duration: 0.45,
-                ease: 'power2.out',
-                clearProps: 'transform,opacity'
-            });
+            gsap.fromTo(banner, 
+                { opacity: 0, x: -30, scale: 0.97 }, 
+                { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.2)' }
+            );
         }
+    };
+
+    // Run entrance animations smoothly
+    if (window.gsap) {
+        window.runEduRadarEntrance();
     }
 });
