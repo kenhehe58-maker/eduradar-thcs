@@ -371,11 +371,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         if (modalStudentBirthday) {
-            modalStudentBirthday.textContent = birthday ? '• 🎂 ' + birthday : '';
+            modalStudentBirthday.textContent = birthday ? '· Ngày sinh: ' + birthday : '';
             modalStudentBirthday.style.display = birthday ? 'inline' : 'none';
         }
         if (modalStudentPhone) {
-            modalStudentPhone.textContent = phone ? '• 📞 ' + phone : '';
+            modalStudentPhone.textContent = phone ? '· SĐT: ' + phone : '';
             modalStudentPhone.style.display = phone ? 'inline' : 'none';
         }
 
@@ -383,17 +383,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const mom = row.dataset.momentum || 'steady';
         let momBadgeHtml = '';
         if (mom === 'drop') {
-            momBadgeHtml = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Tuột dốc</span>';
+            momBadgeHtml = '<span style="color: #dc2626; font-size: 14px; font-weight: 700;">Giảm sút</span>';
         } else if (mom === 'down') {
-            momBadgeHtml = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Sa sút</span>';
+            momBadgeHtml = '<span style="color: #ea580c; font-size: 14px; font-weight: 700;">Chiều hướng giảm</span>';
         } else if (mom === 'steady') {
-            momBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Duy trì đều</span>';
+            momBadgeHtml = '<span style="color: #b45309; font-size: 14px; font-weight: 700;">Duy trì ổn định</span>';
         } else if (mom === 'surge') {
-            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Tiến bộ vượt bậc</span>';
+            momBadgeHtml = '<span style="color: #16a34a; font-size: 14px; font-weight: 700;">Tiến bộ rõ</span>';
         } else if (mom === 'up') {
-            momBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Đang tiến bộ</span>';
+            momBadgeHtml = '<span style="color: #16a34a; font-size: 14px; font-weight: 700;">Đang tiến bộ</span>';
         } else {
-            momBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+            momBadgeHtml = '<span style="color: #64748b; font-size: 14px; font-weight: 700;">Chờ điểm</span>';
         }
         if (modalMomentumBadge) {
             modalMomentumBadge.innerHTML = momBadgeHtml;
@@ -409,17 +409,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const avgVal = hasExamScore ? parseFloat(row.dataset.avg || '-1') : -1;
         let tierBadgeHtml = '';
         if (!hasExamScore || tier === 'pending' || isNaN(avgVal) || avgVal < 0) {
-            tierBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+            tierBadgeHtml = '<span style="color: #64748b; font-size: 14px; font-weight: 700;">Chờ điểm</span>';
         } else if (tier === 'excellent' || avgVal >= 8.0) {
-            tierBadgeHtml = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Tốt / Giỏi</span>';
+            tierBadgeHtml = '<span style="color: #16a34a; font-size: 14px; font-weight: 700;">Mức Tốt</span>';
         } else if (tier === 'good' || (avgVal >= 6.5 && avgVal < 8.0)) {
-            tierBadgeHtml = '<span style="color: #b45309; font-size: 15px; font-weight: 800;">🟡 Khá</span>';
+            tierBadgeHtml = '<span style="color: #b45309; font-size: 14px; font-weight: 700;">Mức Khá</span>';
         } else if (tier === 'average' || (avgVal >= 5.0 && avgVal < 6.5)) {
-            tierBadgeHtml = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Trung bình</span>';
+            tierBadgeHtml = '<span style="color: #ea580c; font-size: 14px; font-weight: 700;">Mức Đạt</span>';
         } else if (tier === 'low' || (avgVal >= 0 && avgVal < 5.0)) {
-            tierBadgeHtml = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Chưa đạt</span>';
+            tierBadgeHtml = '<span style="color: #dc2626; font-size: 14px; font-weight: 700;">Chưa đạt</span>';
         } else {
-            tierBadgeHtml = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm</span>';
+            tierBadgeHtml = '<span style="color: #64748b; font-size: 14px; font-weight: 700;">Chờ điểm</span>';
         }
         if (modalScoreTierBadge) {
             modalScoreTierBadge.innerHTML = tierBadgeHtml;
@@ -428,13 +428,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const riskLevel = row.dataset.level || 'green';
         if (modalRiskBadge) {
             if (riskLevel === 'red') {
-                modalRiskBadge.innerHTML = '<span style="color: #dc2626; font-size: 15px; font-weight: 800;">🔴 Nguy cấp</span>';
+                modalRiskBadge.innerHTML = '<span style="color: #dc2626; font-size: 14px; font-weight: 700;">Cần hỗ trợ sớm</span>';
             } else if (riskLevel === 'yellow') {
-                modalRiskBadge.innerHTML = '<span style="color: #ea580c; font-size: 15px; font-weight: 800;">🟠 Cần chú ý</span>';
+                modalRiskBadge.innerHTML = '<span style="color: #ea580c; font-size: 14px; font-weight: 700;">Cần chú ý</span>';
             } else if (riskLevel === 'pending') {
-                modalRiskBadge.innerHTML = '<span style="color: #64748b; font-size: 15px; font-weight: 800;">⏳ Chờ điểm số</span>';
+                modalRiskBadge.innerHTML = '<span style="color: #64748b; font-size: 14px; font-weight: 700;">Chờ điểm số</span>';
             } else {
-                modalRiskBadge.innerHTML = '<span style="color: #16a34a; font-size: 15px; font-weight: 800;">🟢 Ổn định</span>';
+                modalRiskBadge.innerHTML = '<span style="color: #16a34a; font-size: 14px; font-weight: 700;">Ổn định</span>';
             }
         }
 
@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modalMathAcademicBadge.textContent = `${sem} · ${phase}`;
         }
         if (modalMathTargetPrompt) {
-            modalMathTargetPrompt.textContent = `🎯 Điểm Cuối Kỳ I (CK1) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:`;
+            modalMathTargetPrompt.textContent = 'Điểm Cuối kỳ (CK) cần đạt để đạt mục tiêu:';
         }
 
         // 1. Phân tích Xu Hướng Học Tập cho Giáo Viên (chuyển hóa từ OLS Slope k)
@@ -541,41 +541,41 @@ document.addEventListener('DOMContentLoaded', function () {
         let slopeBorder = '#86efac';
 
         if (isNaN(slope) || row.dataset.mathSlope === undefined || row.dataset.mathSlope === '') {
-            slopeStatusText = '⏳ Đang theo dõi chuỗi điểm';
+            slopeStatusText = 'Đang theo dõi chuỗi điểm';
             slopeDescText = 'Cần tối thiểu 2 bài kiểm tra thường xuyên để phân tích xu hướng.';
             slopeColor = '#64748b';
             slopeBg = '#f8fafc';
             slopeBorder = '#e2e8f0';
         } else if (slope <= -0.5) {
-            slopeStatusText = '🔴 Đang tuột dốc liên tiếp';
+            slopeStatusText = 'Điểm số có chiều hướng giảm';
             slopeColor = '#dc2626';
             slopeBg = '#fef2f2';
             slopeBorder = '#fca5a5';
-            slopeDescText = 'Điểm các bài kiểm tra gần đây sụt giảm rõ rệt. Em đang có dấu hiệu hổng kiến thức ở các bài học gần đây, thầy cô cần kèm cặp và ôn tập ngay!';
+            slopeDescText = 'Điểm các bài kiểm tra gần đây có chiều hướng giảm. Thầy cô nên lưu ý củng cố lại kiến thức trọng tâm cho học sinh.';
         } else if (slope < -0.2) {
-            slopeStatusText = '🟠 Có dấu hiệu sa sút';
+            slopeStatusText = 'Cần lưu ý bài kiểm tra gần đây';
             slopeColor = '#ea580c';
             slopeBg = '#fff7ed';
             slopeBorder = '#fed7aa';
             slopeDescText = 'Điểm kiểm tra bài sau có chiều hướng giảm nhẹ so với bài trước. Cần nhắc nhở tinh thần học tập và kiểm tra bài tập về nhà.';
         } else if (slope <= 0.2) {
-            slopeStatusText = '🟡 Phong độ đi đều, ổn định';
+            slopeStatusText = 'Điểm số duy trì ổn định';
             slopeColor = '#b45309';
             slopeBg = '#fefce8';
             slopeBorder = '#fde047';
-            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô nên động viên, giao thêm bài tập nâng cao vừa sức để em nâng cao kết quả học tập.';
+            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô có thể động viên học sinh thử sức thêm các bài nâng cao.';
         } else if (slope < 0.6) {
-            slopeStatusText = '🟢 Đang có đà tiến bộ tốt';
+            slopeStatusText = 'Đang có chiều hướng tiến bộ';
             slopeColor = '#16a34a';
             slopeBg = '#f0fdf4';
             slopeBorder = '#86efac';
-            slopeDescText = 'Điểm số có sự vươn lên rõ qua từng bài kiểm tra. Ý thức học tập rất tích cực, thầy cô nên biểu dương trước lớp.';
+            slopeDescText = 'Điểm số có sự vươn lên qua từng bài kiểm tra. Học sinh có thái độ học tập tích cực, nên kịp thời biểu dương.';
         } else {
-            slopeStatusText = '🟢 Tiến bộ vượt bậc';
+            slopeStatusText = 'Tiến bộ rõ rệt';
             slopeColor = '#16a34a';
             slopeBg = '#f0fdf4';
             slopeBorder = '#86efac';
-            slopeDescText = 'Điểm số tăng rõ rệt, em nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra có độ khó cao.';
+            slopeDescText = 'Điểm số tăng rõ rệt, học sinh nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra.';
         }
 
         if (modalMathSlope) {
@@ -599,25 +599,25 @@ document.addEventListener('DOMContentLoaded', function () {
         let stabBorder = '#86efac';
 
         if (isNaN(stdDev) || row.dataset.mathStddev === undefined || row.dataset.mathStddev === '') {
-            stabStatusText = '⏳ Đang theo dõi phong độ';
+            stabStatusText = 'Đang theo dõi phong độ';
             stabDescText = 'Cần thêm bài kiểm tra để đánh giá độ ổn định phong độ.';
             stabColor = '#64748b';
             stabBg = '#f8fafc';
             stabBorder = '#e2e8f0';
         } else if (stdDev >= 1.5) {
-            stabStatusText = '🔴 Rất thất thường (Chênh lệch lớn)';
+            stabStatusText = 'Biên độ điểm dao động lớn';
             stabColor = '#dc2626';
             stabBg = '#fef2f2';
             stabBorder = '#fca5a5';
-            stabDescText = 'Khoảng cách giữa bài cao nhất và bài thấp nhất chênh lệch nhiều. Tâm lý làm bài thi chưa vững, dễ chủ quan hoặc lúng túng khi gặp câu hỏi mới.';
+            stabDescText = 'Khoảng cách giữa bài cao nhất và bài thấp nhất chênh lệch nhiều. Cần rèn luyện thêm kỹ năng làm bài thi bình tĩnh, cẩn trọng.';
         } else if (stdDev >= 0.8) {
-            stabStatusText = '🟠 Dao động (Chưa thật vững)';
+            stabStatusText = 'Điểm số có dao động nhẹ';
             stabColor = '#ea580c';
             stabBg = '#fff7ed';
             stabBorder = '#fed7aa';
             stabDescText = 'Điểm số có sự trồi sụt giữa các bài kiểm tra. Cần rèn luyện tính cẩn thận và thói quen soát lại bài trước khi nộp.';
         } else {
-            stabStatusText = '🟢 Rất đều tay & Vững vàng';
+            stabStatusText = 'Phong độ thi cử rất đều';
             stabColor = '#16a34a';
             stabBg = '#f0fdf4';
             stabBorder = '#86efac';
@@ -657,11 +657,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 let scoreText = '-';
                 let subText = 'Điểm CK tối thiểu';
                 if (t.status === 'already_achieved' || t.status === 'guaranteed') {
-                    scoreText = '✓ ĐÃ ĐẠT';
+                    scoreText = 'ĐÃ ĐẠT';
                     subText = 'Chỉ cần thi ≥ 0đ';
                 } else if (t.status === 'impossible_exceeds_10' || t.status === 'impossible_ck_only') {
                     scoreText = '> 10.0';
-                    subText = '⚠️ Cần gỡ thêm TX';
+                    subText = 'Cần gỡ thêm điểm TX';
                 } else if (t.val !== undefined && t.val !== '' && !isNaN(parseFloat(t.val))) {
                     scoreText = `${parseFloat(t.val).toFixed(1)} đ`;
                     subText = 'Điểm CK tối thiểu';
@@ -778,11 +778,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         let html = '';
                         if (data.interventions && data.interventions.length > 0) {
                             const latestInterv = data.interventions[0];
-                            const statusText = latestInterv.status === 'improved' ? '🟢 Có chuyển biến tốt' : (latestInterv.status === 'achieved' ? '✨ Đã đạt mục tiêu' : '⏳ Đang can thiệp');
+                            const statusText = latestInterv.status === 'improved' ? 'Có chuyển biến tốt' : (latestInterv.status === 'achieved' ? 'Đã đạt mục tiêu' : 'Đang can thiệp');
                             html += `
                                 <div style="background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;">
                                     <div style="font-weight: 700; color: #92400e; font-size: 12px; display: flex; justify-content: space-between;">
-                                        <span>📋 Kế hoạch: ${latestInterv.action_type}</span>
+                                        <span>Kế hoạch: ${latestInterv.action_type}</span>
                                         <span>${statusText}</span>
                                     </div>
                                     ${latestInterv.teacher_notes ? `<div style="font-size: 11px; color: #78350f; margin-top: 3px; font-style: italic;">"${latestInterv.teacher_notes}"</div>` : ''}
@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (teacherNoteStatus) {
                         teacherNoteStatus.style.display = 'inline-flex';
-                        teacherNoteStatus.textContent = '✓ ' + (data.message || 'Đã lưu nhận xét thành công!');
+                        teacherNoteStatus.textContent = data.message || 'Đã lưu nhận xét thành công!';
                     }
                     if (teacherNoteSavedTime && data.updated_at) {
                         teacherNoteSavedTime.textContent = 'Cập nhật lúc: ' + data.updated_at;
@@ -1087,13 +1087,13 @@ document.addEventListener('DOMContentLoaded', function () {
             table.classList.remove('scores-hidden');
             if (btn) {
                 btn.classList.add('active');
-                btn.innerHTML = '⚡ Thu Gọn (Chỉ Xem ĐTB)';
+                btn.textContent = 'Thu gọn cột điểm';
             }
         } else {
             table.classList.add('scores-hidden');
             if (btn) {
                 btn.classList.remove('active');
-                btn.innerHTML = '👁️ Hiện Điểm TX, GK, CK';
+                btn.textContent = 'Hiện tất cả điểm';
             }
         }
     };
@@ -1176,22 +1176,21 @@ document.addEventListener('DOMContentLoaded', function () {
             lockedInputs.forEach(inp => {
                 inp.removeAttribute('readonly');
                 inp.classList.remove('is-locked-vnedu');
-                if (inp.placeholder === '🔒') inp.placeholder = '—';
+                inp.placeholder = '—';
             });
             if (indicator) {
-                indicator.textContent = '🔓 Đã mở sớm';
+                indicator.textContent = 'Đã mở sớm';
                 indicator.style.background = '#dcfce7';
                 indicator.style.color = '#15803d';
             }
-            if (btnLabel) btnLabel.textContent = 'Khóa lại theo lịch VnEdu';
-            if (btnIcon) btnIcon.textContent = '🔒';
+            if (btnLabel) btnLabel.textContent = 'Khóa theo lịch VnEdu';
+            if (btnIcon) btnIcon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
             if (window.gsap) {
-                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.92 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' });
-                gsap.fromTo('#btnLockIcon', { rotate: -180 }, { rotate: 0, duration: 0.45, ease: 'power2.out' });
+                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.95 }, { scale: 1, duration: 0.25, ease: 'power2.out' });
                 gsap.fromTo('.cell-ck .score-input', 
-                    { scale: 0.9, backgroundColor: '#fef08a' }, 
-                    { scale: 1, backgroundColor: '#ffffff', duration: 0.55, stagger: 0.015, ease: 'power2.out', clearProps: 'backgroundColor,transform' }
+                    { backgroundColor: '#fef08a' }, 
+                    { backgroundColor: '#ffffff', duration: 0.4, stagger: 0.01, ease: 'power2.out', clearProps: 'backgroundColor' }
                 );
             }
         } else {
@@ -1200,37 +1199,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!inp.value || inp.value.trim() === '') {
                     inp.setAttribute('readonly', 'readonly');
                     inp.classList.add('is-locked-vnedu');
-                    inp.placeholder = '🔒';
+                    inp.placeholder = '—';
                 }
             });
             if (indicator) {
-                indicator.textContent = '🔒 Mở 15/12';
+                indicator.textContent = 'Khóa theo lịch (15/12)';
                 indicator.style.background = '';
                 indicator.style.color = '';
             }
             if (btnLabel) btnLabel.textContent = 'Mở khóa nhập sớm';
-            if (btnIcon) btnIcon.textContent = '🔓';
+            if (btnIcon) btnIcon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>';
 
             if (window.gsap) {
-                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.92 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' });
+                gsap.fromTo('.btn-vnedu-toggle-lock', { scale: 0.95 }, { scale: 1, duration: 0.25, ease: 'power2.out' });
                 gsap.fromTo('.cell-ck .score-input.is-locked-vnedu', 
-                    { opacity: 0.4, scale: 0.95 }, 
-                    { opacity: 1, scale: 1, duration: 0.35, stagger: 0.01, ease: 'power1.out', clearProps: 'transform' }
+                    { opacity: 0.6 }, 
+                    { opacity: 1, duration: 0.25, stagger: 0.008, ease: 'power1.out', clearProps: 'opacity' }
                 );
             }
         }
     };
 
     // -------------------------------------------------------------------------
-    // 8. FULL GSAP ENGINE: PLUGINS, ENTRANCE, SCROLLTRIGGER & INTERACTION PHYSICS
+    // 8. GSAP ENGINE: REFINED ENTRANCE & SMOOTH SCROLL (ZERO JITTER)
     // -------------------------------------------------------------------------
     if (window.gsap) {
-        // Safe registration of full GSAP plugin suite from vendor repo
         const plugins = [];
         if (window.ScrollTrigger) plugins.push(window.ScrollTrigger);
         if (window.ScrollToPlugin) plugins.push(window.ScrollToPlugin);
         if (window.Flip) plugins.push(window.Flip);
-        if (window.TextPlugin) plugins.push(window.TextPlugin);
         if (plugins.length > 0) {
             try {
                 gsap.registerPlugin(...plugins);
@@ -1241,18 +1238,21 @@ document.addEventListener('DOMContentLoaded', function () {
     window.runEduRadarEntrance = function() {
         if (!window.gsap) return;
 
-        // 1. Hero & Topbar Entrance
-        const hero = document.querySelector('.welcome-hero, .dashboard-header, .gb-header-card');
+        // 1. Hero & Header: Gentle fade in and settle (no bounce, no jitter)
+        const hero = document.querySelector('.welcome-hero, .dashboard-header, .gb-header-card, .topbar');
         if (hero) {
-            gsap.fromTo(hero, { opacity: 0, y: -24 }, { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' });
+            gsap.fromTo(hero, 
+                { opacity: 0, y: -10 }, 
+                { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' }
+            );
         }
 
-        // 2. Bento cards, Launchpad cards, KPI badges
-        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card, .welcome-step');
+        // 2. Bento cards, Launchpad cards, KPI badges: Gentle upward rise
+        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card, .welcome-step, .eval-sub-card');
         if (cards.length > 0) {
             gsap.fromTo(cards, 
-                { opacity: 0, y: 28, scale: 0.96 }, 
-                { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.045, ease: 'back.out(1.3)' }
+                { opacity: 0, y: 12 }, 
+                { opacity: 1, y: 0, duration: 0.35, stagger: 0.025, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 
@@ -1260,28 +1260,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const filterChips = document.querySelectorAll('.chip, .filter-chip, .btn-grade-pill');
         if (filterChips.length > 0) {
             gsap.fromTo(filterChips,
-                { opacity: 0, scale: 0.88 },
-                { opacity: 1, scale: 1, duration: 0.4, stagger: 0.025, ease: 'back.out(1.5)' }
+                { opacity: 0, scale: 0.96 },
+                { opacity: 1, scale: 1, duration: 0.3, stagger: 0.015, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 
-        // 4. Radar dashboard table rows cascade
+        // 4. Radar table rows cascade (subtle, quick)
         const radarRows = document.querySelectorAll('.radar-table tbody tr.radar-row:not(#radarEmptyRow)');
         if (radarRows.length > 0) {
-            const targetRows = Array.from(radarRows).slice(0, 40);
+            const targetRows = Array.from(radarRows).slice(0, 35);
             gsap.fromTo(targetRows, 
-                { opacity: 0, y: 16 }, 
-                { opacity: 1, y: 0, duration: 0.45, stagger: 0.02, ease: 'power2.out' }
+                { opacity: 0, y: 8 }, 
+                { opacity: 1, y: 0, duration: 0.3, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 
-        // 5. Spreadsheet table rows entrance (nhap_diem.php)
+        // 5. Spreadsheet table rows (nhap_diem.php)
         const gbRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
         if (gbRows.length > 0) {
-            const targetGb = Array.from(gbRows).slice(0, 40);
+            const targetGb = Array.from(gbRows).slice(0, 35);
             gsap.fromTo(targetGb, 
-                { opacity: 0, y: 14 }, 
-                { opacity: 1, y: 0, duration: 0.45, stagger: 0.018, ease: 'power2.out' }
+                { opacity: 0, y: 8 }, 
+                { opacity: 1, y: 0, duration: 0.3, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 
@@ -1289,74 +1289,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const banner = document.getElementById('vneduScheduleBar');
         if (banner) {
             gsap.fromTo(banner, 
-                { opacity: 0, x: -30, scale: 0.97 }, 
-                { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.2)' }
+                { opacity: 0, y: -8 }, 
+                { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 
-        // 7. ScrollTrigger Reveal on Scroll ("Kéo chuột mượt mà")
-        if (window.ScrollTrigger) {
-            const scrollSections = document.querySelectorAll('.dashboard-section, .admin-card, .audit-card, .tech-system-footer, .welcome-step, .settings-panel, .batch-card');
-            scrollSections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top > window.innerHeight * 0.85) {
-                    gsap.fromTo(section,
-                        { opacity: 0, y: 32, scale: 0.98 },
-                        {
-                            opacity: 1,
-                            y: 0,
-                            scale: 1,
-                            duration: 0.6,
-                            ease: 'power2.out',
-                            scrollTrigger: {
-                                trigger: section,
-                                start: 'top 92%',
-                                toggleActions: 'play none none none'
-                            }
-                        }
-                    );
-                }
-            });
-
-            // Smooth parallax on hero when scrolling
-            const heroParallax = document.querySelector('.welcome-hero, .dashboard-header');
-            if (heroParallax) {
-                gsap.to(heroParallax, {
-                    yPercent: 8,
-                    ease: 'none',
-                    scrollTrigger: {
-                        trigger: heroParallax,
-                        start: 'top top',
-                        end: 'bottom top',
-                        scrub: 0.4
-                    }
-                });
-            }
-        }
-
-        // 8. Smooth Anchor Scrolling via ScrollToPlugin
+        // 7. Smooth Anchor Scrolling via ScrollToPlugin (if user clicks hash links)
         document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(link => {
             link.addEventListener('click', function(e) {
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target && window.ScrollToPlugin) {
                     e.preventDefault();
                     gsap.to(window, {
-                        duration: 0.6,
-                        scrollTo: { y: target, offsetY: 70 },
+                        duration: 0.5,
+                        scrollTo: { y: target, offsetY: 60 },
                         ease: 'power2.out'
                     });
                 }
-            });
-        });
-
-        // 9. Tactile Hover Feedback on Cards
-        const hoverTargets = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .kpi-card, .stat-badge, .welcome-step, .stat-card');
-        hoverTargets.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                gsap.to(el, { y: -3, scale: 1.015, duration: 0.22, ease: 'power2.out' });
-            });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(el, { y: 0, scale: 1.0, duration: 0.28, ease: 'power2.out' });
             });
         });
     };

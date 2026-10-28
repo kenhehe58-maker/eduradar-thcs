@@ -316,7 +316,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
             <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title']) ?>">
-                <span>📅 NH <?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
+                <span><?= get_svg_icon('calendar', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?><?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
             </div>
             <div class="glass-status-chip chip-mobile-hide" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
                 <span class="tech-indicator">SPEC</span>
@@ -324,8 +324,8 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             </div>
             <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
             <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
-                <span class="theme-icon" id="themeIcon">☀️</span>
-                <span id="themeLabel">Light Theme</span>
+                <span class="theme-icon" id="themeIcon"><?= get_svg_icon('sun', 14) ?></span>
+                <span id="themeLabel">Giao diện sáng</span>
             </button>
         </div>
     </div>
@@ -343,8 +343,8 @@ function toggleAppTheme() {
 function updateThemeUI(theme) {
     var lbl = document.getElementById('themeLabel');
     var ico = document.getElementById('themeIcon');
-    if (lbl) lbl.textContent = (theme === 'dark') ? 'Dark Theme' : 'Light Theme';
-    if (ico) ico.textContent = (theme === 'dark') ? '🌙' : '☀️';
+    if (lbl) lbl.textContent = (theme === 'dark') ? 'Giao diện tối' : 'Giao diện sáng';
+    if (ico) ico.innerHTML = (theme === 'dark') ? '<?= addslashes(get_svg_icon('moon', 14)) ?>' : '<?= addslashes(get_svg_icon('sun', 14)) ?>';
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
     } else {

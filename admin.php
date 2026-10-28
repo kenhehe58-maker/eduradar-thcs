@@ -965,7 +965,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="top-actions" style="display: flex; align-items: center; gap: 12px;">
             <span class="badge" style="background: #e0e7ff; color: #3730a3; padding: 6px 14px; font-size: 12px; font-weight: 700;">
-                QUẢN TRỊ VIÊN
+                Quản trị viên
             </span>
         </div>
     </header>
@@ -973,34 +973,34 @@ require_once __DIR__ . '/includes/header.php';
     <!-- THÔNG BÁO PHẢN HỒI HỆ THỐNG -->
     <?php if ($msg): ?>
         <div class="alert success mb-3" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 14px 18px; border-radius: 10px; font-weight: 600;">
-            ✓ <?= htmlspecialchars($msg) ?>
+            <?= get_svg_icon('check-circle', 16, '', 'vertical-align: -3px; margin-right: 6px;') ?> <?= htmlspecialchars($msg) ?>
         </div>
     <?php endif; ?>
     <?php if ($err): ?>
         <div class="alert mb-3" style="background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 14px 18px; border-radius: 10px; font-weight: 600;">
-            ✕ <?= htmlspecialchars($err) ?>
+            <?= get_svg_icon('alert-circle', 16, '', 'vertical-align: -3px; margin-right: 6px;') ?> <?= htmlspecialchars($err) ?>
         </div>
     <?php endif; ?>
 
     <!-- 4 THẺ THỐNG KÊ TỔNG QUAN NHÀ TRƯỜNG (BẤM ĐỂ CHUYỂN NHANH TAB TƯƠNG ỨNG) -->
     <div class="stats">
         <div class="card" onclick="switchAdminTab('classes')" title="Bấm để xem Quản lý Lớp học">
-            <span>TỔNG SỐ LỚP HỌC</span>
+            <span>Tổng số lớp học</span>
             <b><?= $statTotalClasses ?></b>
             <div class="muted small">Khối 6, 7, 8, 9</div>
         </div>
         <div class="card" onclick="switchAdminTab('teachers')" title="Bấm để chuyển sang Quản lý Giáo viên">
-            <span>GIÁO VIÊN BỘ MÔN</span>
+            <span>Giáo viên bộ môn</span>
             <b><?= $statTotalTeachers ?></b>
             <div class="muted small">Đang công tác</div>
         </div>
         <div class="card" onclick="switchAdminTab('teachers')" title="Bấm để xem Phân công giảng dạy">
-            <span>PHÂN CÔNG GIẢNG DẠY</span>
+            <span>Phân công giảng dạy</span>
             <b><?= $statTotalAssignments ?></b>
             <div class="muted small">Lượt môn / lớp</div>
         </div>
         <div class="card" onclick="switchAdminTab('classes')" title="Bấm để xem Danh sách học sinh">
-            <span>HỌC SINH TOÀN TRƯỜNG</span>
+            <span>Học sinh toàn trường</span>
             <b><?= $statTotalStudents ?></b>
             <div class="muted small">Đã định danh trong CSDL</div>
         </div>
@@ -1597,11 +1597,11 @@ function addSecondSubjectField() {
     removeBtn.type = 'button';
     removeBtn.className = 'btn outline';
     removeBtn.style.cssText = 'color: #dc2626; border-color: #fca5a5; padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap;';
-    removeBtn.textContent = '✕ Bỏ môn này';
+    removeBtn.textContent = 'Bỏ môn này';
     removeBtn.onclick = function() {
         wrapper.removeChild(div);
         if (wrapper.children.length === 0) {
-            hint.innerHTML = '💡 <i>Có thể chọn 1 môn hoặc bấm "+ Thêm môn thứ 2" nếu giáo viên dạy kiêm nhiệm nhiều môn.</i>';
+            hint.innerHTML = '<i>Có thể chọn 1 môn hoặc bấm "+ Thêm môn thứ 2" nếu giáo viên dạy kiêm nhiệm nhiều môn.</i>';
         }
     };
 
@@ -1609,7 +1609,7 @@ function addSecondSubjectField() {
     div.appendChild(removeBtn);
     wrapper.appendChild(div);
 
-    hint.innerHTML = '<span style="color: #059669; font-weight: 700;">✓ Chế độ kiêm nhiệm nhiều môn: Hệ thống sẽ cấp quyền đồng thời các môn được chọn.</span>';
+    hint.innerHTML = '<span style="color: #059669; font-weight: 700;">Chế độ kiêm nhiệm nhiều môn: Hệ thống sẽ cấp quyền đồng thời các môn được chọn.</span>';
 }
 
 // 7. Đồng bộ thông tin phân công hiện tại khi chọn giáo viên
@@ -1632,7 +1632,7 @@ function onTeacherSelectChange(selectElem) {
     const list = teacherAssignmentsData[teacherId] || [];
     if (list.length === 0) {
         box.style.display = 'block';
-        textEl.innerHTML = 'ℹ️ Giáo viên này hiện <b>chưa có phân công nào</b>.';
+        textEl.innerHTML = 'Giáo viên này hiện <b>chưa có phân công nào</b>.';
         return;
     }
 
@@ -1648,7 +1648,7 @@ function onTeacherSelectChange(selectElem) {
         parts.push(`<b>${sub}</b>: ${classes.length} lớp (${classes.slice(0, 4).join(', ')}${classes.length > 4 ? '...' : ''})`);
     }
 
-    textEl.innerHTML = `📌 Phân công hiện có (${list.length} lớp): ` + parts.join(' | ');
+    textEl.innerHTML = `Phân công hiện có (${list.length} lớp): ` + parts.join(' | ');
     box.style.display = 'block';
 }
 

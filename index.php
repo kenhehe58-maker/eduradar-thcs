@@ -628,32 +628,32 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
         <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
-            Hệ Thống Ra-đa Cảnh Báo Sớm Học Lực THCS
+            Bảng theo dõi &amp; Cảnh báo sớm học lực
         </h1>
         <p style="font-size: 13.5px; color: var(--text-muted, #475569); margin: 0 0 16px 0; line-height: 1.5;">
-            Theo dõi tiến trình học tập, phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và hỗ trợ kế hoạch can thiệp sư phạm cá nhân hóa.
+            Theo dõi tiến trình học tập, phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và hỗ trợ xây dựng kế hoạch can thiệp sư phạm kịp thời.
         </p>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             <a href="nhap_diem.php<?= $navQuery ?>" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
                 <?= get_svg_icon('file-text', 16) ?>
-                <span>Vào Sổ Điểm Bộ Môn</span>
+                <span>Sổ điểm bộ môn</span>
             </a>
         </div>
     </div>
     <div style="display: flex; gap: 14px; flex-wrap: wrap;">
         <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
-            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted, #64748b); text-transform: uppercase;">TỔNG HỌC SINH</span>
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b);">Tổng học sinh</span>
             <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
                 <?= count($students) ?>
             </div>
-            <span style="font-size: 11.5px; color: #10b981; font-weight: 700;">100% Hồ sơ</span>
+            <span style="font-size: 11.5px; color: #10b981; font-weight: 600;">100% Hồ sơ</span>
         </div>
         <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
-            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted, #64748b); text-transform: uppercase;">GIỎI & KHÁ</span>
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b);">Khá &amp; Tốt</span>
             <div style="font-size: 26px; font-weight: 800; color: #3b82f6; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
                 <?= $stats['tier_excellent'] + $stats['tier_good'] ?>
             </div>
-            <span style="font-size: 11.5px; color: #3b82f6; font-weight: 700;">
+            <span style="font-size: 11.5px; color: #3b82f6; font-weight: 600;">
                 <?= round(($stats['tier_excellent'] + $stats['tier_good']) / max(1, count($students)) * 100, 1) ?>%
             </span>
         </div>
@@ -727,7 +727,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php endforeach; ?>
                 </div>
                 <div style="font-size: 11px; color: #64748b;">
-                    💡 <i>Vuốt ngang để chọn nhanh lớp học</i>
+                    <i>Vuốt ngang để chuyển lớp</i>
                 </div>
             </div>
 
@@ -759,14 +759,14 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- 2. HÀNG CHỌN PHÂN MÔN & THAO TÁC LỌC -->
+        <!-- HÀNG CHỌN PHÂN MÔN & THAO TÁC LỌC -->
         <form method="GET" action="index.php" id="matrixFilterForm" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
             <input type="hidden" name="class_id" value="<?= (int)$selectedClassId ?>">
             <div class="matrix-form-row" style="align-items: center; justify-content: flex-start; gap: 14px;">
                 <div class="matrix-field-group" style="min-width: 220px;">
                     <label class="matrix-field-label" for="selectSubject" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('book-open', 14) ?>
-                        <span>Phân Môn Đang Xem:</span>
+                        <span>Môn học:</span>
                     </label>
                     <?php if ($userRole === 'admin'): ?>
                         <select name="subject" id="selectSubject" class="matrix-select" onchange="this.form.submit()">
@@ -800,11 +800,11 @@ require_once __DIR__ . '/includes/header.php';
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 18px;">
                     <button class="btn primary" type="submit" style="padding: 7px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; background: #2563eb; color: #ffffff; border: none; cursor: pointer;">
-                        Áp Dụng
+                        Áp dụng
                     </button>
                     <?php if ($selectedClassId > 0 || $selectedSubject !== 'all'): ?>
                         <a href="index.php" style="font-size: 12.5px; color: var(--primary); text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: #eef2ff;">
-                            ✕ Đặt lại mặc định
+                            Đặt lại bộ lọc
                         </a>
                     <?php endif; ?>
                 </div>
@@ -968,12 +968,12 @@ $tt22Slices = [
 </div>
 
 <div class="desktop-stats-group">
-<!-- NHÓM 1: CÁC THẺ THỐNG KÊ XU HƯỚNG TIẾN BỘ (ĐỨNG TRƯỚC & NỔI BẬT) -->
+<!-- NHÓM 1: CÁC THẺ THỐNG KÊ XU HƯỚNG TIẾN BỘ -->
 <div style="margin-bottom: 24px;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px;">
             <?= get_svg_icon('trend-up', 16, '', 'color: #2563eb;') ?>
-            <span>1. Xu Hướng Tiến Bộ Học Tập (OLS Trend)</span>
+            <span>Xu hướng tiến bộ</span>
         </span>
         <span class="muted small">Tiến bộ · Duy trì · Sa sút · Chờ điểm</span>
     </div>
@@ -982,20 +982,20 @@ $tt22Slices = [
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('trend-up', 16) ?>
-                    <span>Đang Tiến Bộ Rõ Rệt</span>
+                    <span>Đang tiến bộ</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['up_pct'], 'green') ?>
                 <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_up'] ?></b>
-            <span class="card-sub">Điểm số có chiều hướng đi lên hoặc thi định kỳ tiến bộ</span>
+            <span class="card-sub">Điểm số có chiều hướng đi lên qua các bài kiểm tra</span>
         </div>
 
         <div class="card stat-card green">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('activity', 16) ?>
-                    <span>Duy Trì Ổn Định</span>
+                    <span>Duy trì ổn định</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['steady_pct'], 'yellow') ?>
                 <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
@@ -1008,7 +1008,7 @@ $tt22Slices = [
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('trend-down', 16) ?>
-                    <span>Có Dấu Hiệu Sa Sút</span>
+                    <span>Cần chú ý sa sút</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['down_pct'], 'red') ?>
                 <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
@@ -1021,13 +1021,13 @@ $tt22Slices = [
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('clock', 16) ?>
-                    <span>Chờ Cập Nhật Điểm</span>
+                    <span>Chờ bổ sung điểm</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['pending_pct'], 'gray') ?>
                 <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_pending'] ?></b>
-            <span class="card-sub">Chưa có bài kiểm tra ghi nhận trong sổ điểm</span>
+            <span class="card-sub">Chưa có đủ cột điểm trong sổ</span>
         </div>
     </section>
 </div>
@@ -1035,18 +1035,18 @@ $tt22Slices = [
 <!-- NHÓM 2: THỐNG KÊ MỨC ĐỘ TÍCH LŨY HỌC LỰC (THÔNG TƯ 22) -->
 <div style="margin-bottom: 28px;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-        <span style="font-size: 13px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px;">
             <?= get_svg_icon('bar-chart', 16, '', 'color: #059669;') ?>
-            <span>2. Mức Độ Tích Lũy Học Lực (Thông Tư 22)</span>
+            <span>Mức học lực (Thông tư 22)</span>
         </span>
-        <span class="muted small">Tổng số <?= $stats['total'] ?> hồ sơ</span>
+        <span class="muted small">Tổng số <?= $stats['total'] ?> học sinh</span>
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat-card total">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('users', 16) ?>
-                    <span>Tổng Hồ Sơ</span>
+                    <span>Tổng học sinh</span>
                 </span>
                 <?= render_circular_gauge(100.0, 'blue') ?>
                 <span class="card-pct total">100%</span>
@@ -1217,7 +1217,7 @@ $tt22Slices = [
 
         <!-- PHÂN NHÓM 1: XU HƯỚNG TIẾN BỘ (OLS) -->
         <div class="chip-segment-group group-trend" role="group" aria-label="Lọc theo Xu hướng tiến bộ OLS">
-            <span class="segment-label">XU HƯỚNG</span>
+            <span class="segment-label">Xu hướng</span>
             <?php if ($stats['momentum_up'] > 0): ?>
                 <button type="button" class="chip chip-trend-up" data-filter="trend:up" title="Học sinh có xu hướng điểm đi lên (k > 0)">
                     <span class="chip-dot dot-trend-up"></span>
@@ -1252,7 +1252,7 @@ $tt22Slices = [
 
         <!-- PHÂN NHÓM 2: THANG ĐIỂM HỌC LỰC (THÔNG TƯ 22) -->
         <div class="chip-segment-group group-tier" role="group" aria-label="Lọc theo Thang điểm Thông tư 22">
-            <span class="segment-label">BẬC TT22</span>
+            <span class="segment-label">Mức học lực</span>
             <?php if ($stats['tier_excellent'] > 0): ?>
                 <button type="button" class="chip chip-tier-excellent" data-filter="tier:excellent" title="Mức Tốt (ĐTB ≥ 8.0)">
                     <span class="chip-dot dot-tier-excellent"></span>
@@ -1295,7 +1295,7 @@ $tt22Slices = [
             <!-- PHÂN NHÓM 3: CẢNH BÁO ĐẶC BIỆT -->
             <div class="chip-segment-group group-alert" role="group" aria-label="Cảnh báo đặc biệt">
                 <button type="button" class="chip chip-tx-warn" data-filter="tx:warn" title="Có bài kiểm tra thường xuyên < 3.5 điểm">
-                    <span>⚠️ Cảnh báo sớm TX</span>
+                    <span><?= get_svg_icon('alert-triangle', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?>Cảnh báo điểm TX</span>
                     <span class="chip-count">(<?= $stats['tx_warn_count'] ?>)</span>
                 </button>
             </div>
@@ -1491,8 +1491,8 @@ $tt22Slices = [
                 <th scope="col" class="th-code">Mã HS</th>
                 <th scope="col" class="th-student">Học Sinh</th>
                 <th scope="col" class="th-class">Lớp & Môn</th>
-                <th scope="col" class="th-momentum">1. Xu Hướng</th>
-                <th scope="col" class="th-tier">2. Bậc TT22</th>
+                <th scope="col" class="th-momentum">Xu hướng</th>
+                <th scope="col" class="th-tier">Mức học lực</th>
                 <th scope="col" class="th-score-avg">ĐTB</th>
                 <th scope="col" class="col-detail-score th-score-tx">ĐĐGtx (1-4)</th>
                 <th scope="col" class="col-detail-score th-score-sub">GK</th>
@@ -2033,7 +2033,7 @@ $tt22Slices = [
                 <?php endif; ?>
                 <tr id="radarEmptyRow" class="radar-filter-empty-row" style="display: none;">
                     <td colspan="12" style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
-                        <div style="font-size: 26px; margin-bottom: 8px;">🔍</div>
+                        <div style="margin-bottom: 8px;"><?= get_svg_icon('search', 28, '', 'color: #94a3b8;') ?></div>
                         <div style="font-weight: 700; color: var(--text-heading); font-size: 14px; margin-bottom: 4px;">
                             Không tìm thấy học sinh nào phù hợp với bộ lọc
                         </div>
@@ -2150,7 +2150,7 @@ $tt22Slices = [
             </div>
         <?php endforeach; ?>
         <div id="mobileFilterEmpty" class="mobile-filter-empty" style="display: none; text-align: center; padding: 36px 16px; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; margin-top: 10px;">
-            <div style="font-size: 26px; margin-bottom: 8px;">🔍</div>
+            <div style="margin-bottom: 8px;"><?= get_svg_icon('search', 28, '', 'color: #94a3b8;') ?></div>
             <div style="font-weight: 700; color: var(--text-heading); font-size: 14px; margin-bottom: 4px;">
                 Không có học sinh phù hợp
             </div>
@@ -2212,7 +2212,7 @@ $tt22Slices = [
                     </div>
                 </div>
             </div>
-            <button type="button" class="modal-close-btn" id="modalCloseBtn" title="Đóng cửa sổ">✕</button>
+            <button type="button" class="modal-close-btn" id="modalCloseBtn" title="Đóng cửa sổ" aria-label="Đóng"><?= get_svg_icon('close', 18) ?></button>
         </div>
 
         <!-- Body -->
@@ -2220,15 +2220,15 @@ $tt22Slices = [
             <!-- Apple Unified Segmented Stat Bar: Xu Hướng | Bậc TT22 | Trạng Thái -->
             <div class="modal-apple-stat-bar">
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">1. Xu Hướng Tiến Bộ</span>
-                    <div class="modal-apple-stat-val" id="modalMomentumBadge">Đang Tiến Bộ</div>
+                    <span class="modal-apple-stat-label">Xu hướng tiến bộ</span>
+                    <div class="modal-apple-stat-val" id="modalMomentumBadge">Đang tiến bộ</div>
                 </div>
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">2. Bậc Học Lực (TT 22)</span>
+                    <span class="modal-apple-stat-label">Mức học lực (TT 22)</span>
                     <div class="modal-apple-stat-val" id="modalScoreTierBadge">Mức Tốt</div>
                 </div>
                 <div class="modal-apple-stat-item">
-                    <span class="modal-apple-stat-label">3. Trạng Thái Cảnh Báo</span>
+                    <span class="modal-apple-stat-label">Trạng thái cảnh báo</span>
                     <div class="modal-apple-stat-val" id="modalRiskBadge">Ổn định</div>
                 </div>
             </div>
@@ -2280,9 +2280,9 @@ $tt22Slices = [
 
                 <!-- Target CK Projection Cards (Không bịa đặt kế hoạch hành động) -->
                 <div class="math-target-card" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; display: flex; align-items: center; gap: 5px;">
+                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
                         <?= get_svg_icon('radar', 13) ?>
-                        <span>Điểm Cuối Kỳ (CK) tối thiểu cần đạt để hoàn thành mục tiêu học kỳ:</span>
+                        <span>Điểm Cuối kỳ (CK) cần đạt để đạt mục tiêu:</span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;" id="modalTargetCardsGrid">
                         <!-- Populated dynamically via JS -->
@@ -2295,7 +2295,7 @@ $tt22Slices = [
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <?= get_svg_icon('award', 16, '', 'color: #4f46e5;') ?>
-                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Phổ Điểm Môn Học &amp; Sở Trường Năng Lực</span>
+                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Phổ điểm môn học &amp; Năng lực nổi bật</span>
                     </div>
                     <span id="modalAptitudeBadge" style="font-size: 11px; font-weight: 800; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 10px; border-radius: 9999px;">
                         Thiên hướng năng lực
@@ -2312,9 +2312,9 @@ $tt22Slices = [
                     <!-- 1. Môn học sở trường & thế mạnh -->
                     <div class="profile-feedback-box strength-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #166534;">
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #166534;">
                                 <?= get_svg_icon('award', 14, '', 'color: #16a34a;') ?>
-                                <span>Môn Học Sở Trường &amp; Thế Mạnh Nổi Trội:</span>
+                                <span>Môn có kết quả nổi bật:</span>
                             </div>
                             <div id="modalStrengthsPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
                         </div>
@@ -2324,9 +2324,9 @@ $tt22Slices = [
                     <!-- 2. Môn còn yếu & điểm trũng cần lưu ý -->
                     <div class="profile-feedback-box weakness-box" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 14px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #92400e;">
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #92400e;">
                                 <?= get_svg_icon('alert-triangle', 14, '', 'color: #d97706;') ?>
-                                <span>Môn Còn Yếu &amp; Điểm Trũng Cần Lưu Ý:</span>
+                                <span>Môn cần hỗ trợ thêm:</span>
                             </div>
                             <div id="modalWeaknessesPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
                         </div>
@@ -2340,7 +2340,7 @@ $tt22Slices = [
                 <div class="apple-pedagogy-section">
                     <div class="apple-pedagogy-title" style="color: #4338ca; display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('search', 14) ?>
-                        <span>Chẩn Đoán Chi Tiết Từ Hệ Thống Radar:</span>
+                        <span>Chẩn đoán chuyên môn:</span>
                     </div>
                     <div class="apple-pedagogy-content" id="modalDiagnosticText">
                         Đang tải chẩn đoán...
@@ -2390,7 +2390,7 @@ $tt22Slices = [
                 <textarea id="modalTeacherNoteInput" class="teacher-note-textarea" aria-label="Nhập ghi chú sư phạm, đánh giá quá trình học tập hoặc kế hoạch đồng hành cùng học sinh" placeholder="Nhập ghi chú sư phạm, đánh giá quá trình học tập hoặc kế hoạch đồng hành cùng học sinh này..."></textarea>
                 <div class="teacher-note-actions">
                     <span id="teacherNoteStatus" class="teacher-note-status" style="display: none;">
-                        ✓ Đã lưu nhận xét vào CSDL
+                        Đã lưu nhận xét
                     </span>
                     <div style="margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                         <!-- Lucian UX/UI Prompt #001 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#001 -->
@@ -2400,9 +2400,9 @@ $tt22Slices = [
                                 <div class="u001-float">
                                     <button class="u001-btn" type="button" id="btnSaveTeacherNote">
                                         <span class="u001-sheen" aria-hidden="true"></span>
-                                        <span class="u001-txt">Lưu Nhận Xét Sư Phạm</span>
+                                        <span class="u001-txt">Lưu nhận xét</span>
                                         <span class="u001-spin" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="10"/></svg></span>
-                                        <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Đã Lưu</span>
+                                        <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Đã lưu</span>
                                     </button>
                                 </div>
                             </div>
@@ -2410,11 +2410,11 @@ $tt22Slices = [
                         </div>
                         <a href="#" target="_blank" id="btnModalPrintPdf" class="btn-action btn-print" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #4f46e5; color: #ffffff;" title="In phiếu phụ đạo học sinh (PDF khổ A4)">
                             <?= get_svg_icon('printer', 14) ?>
-                            <span>In Phiếu Phụ Đạo (PDF)</span>
+                            <span>In phiếu PDF</span>
                         </a>
                         <a href="#" target="_blank" id="btnModalExportXlsx" class="btn-action btn-excel" style="padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: #10b981; color: #ffffff;" title="Tải file Excel phiếu phụ đạo học sinh">
                             <?= get_svg_icon('download', 14) ?>
-                            <span>Tải Phiếu Excel (.xlsx)</span>
+                            <span>Tải bảng Excel</span>
                         </a>
                     </div>
                 </div>
@@ -2432,7 +2432,7 @@ $tt22Slices = [
             <h3 id="ringHelpSheetTitle" class="ring-sheet-title">Giải Thích Màu Sắc</h3>
             <p id="ringHelpSheetSub" style="margin: 2px 0 0 0; font-size: 11.5px; color: #64748b;"></p>
         </div>
-        <button type="button" class="btn-close-sheet" onclick="closeRingHelp()" aria-label="Đóng popup">✕</button>
+        <button type="button" class="btn-close-sheet" onclick="closeRingHelp()" aria-label="Đóng popup"><?= get_svg_icon('close', 16) ?></button>
     </div>
     <div class="ring-sheet-body" id="ringHelpSheetContent">
         <!-- Nội dung giải thích màu sắc do JavaScript tự động render -->
@@ -2442,12 +2442,12 @@ $tt22Slices = [
 <script id="ringHelpData" type="application/json">
 <?= json_encode([
     'trend' => [
-        'title' => '1. Xu Hướng Tiến Bộ (OLS)',
+        'title' => 'Xu hướng tiến bộ',
         'sub' => 'Đo lường nhịp độ học tập qua các cột điểm theo thuật toán OLS',
         'items' => $trendSlices
     ],
     'tt22' => [
-        'title' => '2. Mức Tích Lũy (Thông Tư 22)',
+        'title' => 'Mức học lực (Thông tư 22)',
         'sub' => 'Phân loại kết quả học tập theo Thông tư 22/2021/TT-BGDĐT',
         'items' => $tt22Slices
     ]

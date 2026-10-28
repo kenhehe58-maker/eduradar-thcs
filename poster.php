@@ -922,7 +922,7 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
                         Hệ thống hóa từ Dự thảo Quy chế Bộ GD&amp;ĐT 2026 &amp; Thông tư 24/2025/TT-BGDĐT (Phụ lục 1 &amp; 2)
                     </div>
                 </div>
-                <button type="button" class="khkt-modal-close" onclick="closeKhktModal()" title="Đóng">✕</button>
+                <button type="button" class="khkt-modal-close" onclick="closeKhktModal()" title="Đóng" aria-label="Đóng"><?= get_svg_icon('close', 18) ?></button>
             </div>
 
             <div class="khkt-tabs">
@@ -1087,8 +1087,9 @@ $pageTitle = "Poster Trưng Bày KHKT - EduRadar THCS (0.8m x 1.2m)";
             </div>
 
             <div style="padding: 14px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" class="btn btn-print" onclick="window.print()" style="padding: 8px 16px; border-radius: 8px; font-size: 13px;">
-                    🖨️ In Hồ Sơ Minh Chứng
+                <button type="button" class="btn btn-print" onclick="window.print()" style="padding: 8px 16px; border-radius: 8px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                    <?= get_svg_icon('printer', 14) ?>
+                    <span>In hồ sơ minh chứng</span>
                 </button>
                 <button type="button" class="btn" onclick="closeKhktModal()" style="background: #e2e8f0; color: #334155; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; border: none; cursor: pointer;">
                     Đóng

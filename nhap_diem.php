@@ -770,7 +770,7 @@ require_once __DIR__ . '/includes/header.php';
                     <strong><?= htmlspecialchars($currentTeacherName) ?></strong>
                 </div>
                 <div class="gb-meta-chip chip-permission">
-                    <span>✓ Quyền hạn: Bạn có quyền nhập điểm</span>
+                    <span>Quyền hạn: Có thể nhập điểm</span>
                 </div>
             </div>
 
@@ -804,25 +804,25 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- ACTION BUTTONS STRIP (MATCHING VNEDU DESKTOP APP: LƯU, NHẬP XUẤT, REFRESH) -->
+        <!-- ACTION BUTTONS STRIP -->
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 10px 24px; border-radius: 10px; font-size: 13.5px; font-weight: 700; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    <span>LƯU BẢNG ĐIỂM</span>
+                    <span>Lưu bảng điểm</span>
                 </button>
                 <a href="sample_gradebook.xlsx" download class="btn gb-btn-action">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span>Xuất Excel Mẫu</span>
+                    <span>Xuất Excel mẫu</span>
                 </a>
                 <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="btn gb-btn-action">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    <span>Làm Mới</span>
+                    <span>Làm mới</span>
                 </a>
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="dirty-badge clean">✓ ĐỒNG BỘ MÁY CHỦ</span>
+                <span class="dirty-badge clean">Đã lưu trên máy chủ</span>
             </div>
         </div>
     </div>
@@ -874,8 +874,9 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
 
     <?php if ($msg): ?>
-        <div class="alert success mb-3" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600;">
-            ✓ <?= htmlspecialchars($msg) ?>
+        <div class="alert success mb-3" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <?= get_svg_icon('check-circle', 16) ?>
+            <span><?= htmlspecialchars($msg) ?></span>
         </div>
     <?php endif; ?>
 
@@ -929,9 +930,9 @@ require_once __DIR__ . '/includes/header.php';
             </span>
         </div>
         <div class="toolbar-actions">
-            <span id="saveStatusBadge" class="dirty-badge clean">✓ ĐỒNG BỘ MÁY CHỦ</span>
+            <span id="saveStatusBadge" class="dirty-badge clean">Đã lưu trên máy chủ</span>
             <button type="submit" form="gradebookForm" id="btnSaveScores" class="btn primary" style="padding: 10px 22px; font-size: 13.5px; font-weight: 700; letter-spacing: 0.02em;">
-                LƯU BẢNG ĐIỂM
+                Lưu bảng điểm
             </button>
         </div>
     </div>
@@ -972,13 +973,13 @@ require_once __DIR__ . '/includes/header.php';
     <!-- MÔ PHỎNG LỊCH NHẬP ĐIỂM VNEDU CHUẨN: GIAI ĐOẠN HIỆN TẠI VỪA THI GIỮA KỲ 1 -->
     <div class="vnedu-schedule-bar" id="vneduScheduleBar">
         <div class="vnedu-schedule-left">
-            <span class="vnedu-badge-icon">🔒</span>
+            <span class="vnedu-badge-icon"><?= get_svg_icon('lock', 16) ?></span>
             <div class="vnedu-schedule-text">
-                <b>Khung Thời Gian Nhập Điểm VnEdu:</b> Hiện tại đang trong đợt Giữa kỳ I (Tháng 10 - 11). Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa an toàn theo quy chế năm học (dự kiến mở chính thức từ 15/12).
+                <b>Khung Thời Gian Nhập Điểm:</b> Hiện tại đang trong đợt Giữa kỳ I. Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa theo kế hoạch (dự kiến mở chính thức từ 15/12).
             </div>
         </div>
         <button type="button" class="btn-vnedu-toggle-lock" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Bấm để mở khóa nhập sớm nếu nhà trường tổ chức thi sớm">
-            <span id="btnLockIcon">🔓</span> <span id="btnLockLabel">Mở khóa nhập sớm</span>
+            <span id="btnLockIcon"><?= get_svg_icon('unlock', 14) ?></span> <span id="btnLockLabel">Mở khóa nhập sớm</span>
         </button>
     </div>
     <?php endif; ?>
@@ -997,7 +998,7 @@ require_once __DIR__ . '/includes/header.php';
                         <th rowspan="2" class="col-sticky-name">Họ và Tên Học Sinh</th>
                         <th rowspan="2" class="col-dob">Ngày Sinh</th>
                         <th colspan="4" class="group-header group-tx">
-                            <span class="group-pill pill-tx">ĐĐG THƯỜNG XUYÊN (HỆ SỐ 1)</span>
+                            <span class="group-pill pill-tx">ĐĐG THƯỜNG XUYÊN (HS 1)</span>
                         </th>
                         <th rowspan="2" class="group-header group-gk">
                             <span class="group-pill pill-gk">GIỮA KỲ</span><br>
@@ -1007,12 +1008,12 @@ require_once __DIR__ . '/includes/header.php';
                             <span class="group-pill pill-ck">CUỐI KỲ</span><br>
                             <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">HS 3</span>
                             <?php if ($isHk1Mid): ?>
-                                <span class="vnedu-lock-indicator" id="vneduLockIndicator" title="Cột Cuối kỳ I khóa theo lịch VnEdu (Mở từ 15/12)">🔒 Mở 15/12</span>
+                                <span class="vnedu-lock-indicator" id="vneduLockIndicator" title="Cột Cuối kỳ I khóa theo lịch VnEdu (Mở từ 15/12)"><?= get_svg_icon('lock', 12) ?> Mở 15/12</span>
                             <?php endif; ?>
                         </th>
                         <th rowspan="2" class="group-header group-avg">
                             <span class="group-pill pill-avg">ĐTBmhk</span><br>
-                            <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">TỰ ĐỘNG</span>
+                            <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">Tự động</span>
                         </th>
                     </tr>
                     <!-- TIER 2 HEADER: TX SUB-COLUMNS -->
@@ -1135,7 +1136,7 @@ require_once __DIR__ . '/includes/header.php';
                                            aria-label="Điểm Cuối kỳ của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="ck"
                                            data-row="<?= $r ?>" data-col="5" 
-                                           placeholder="<?= ($isHk1Mid && $s['ck'] === null) ? '🔒' : '—' ?>" 
+                                           placeholder="—" 
                                            autocomplete="off"
                                            <?= ($isHk1Mid && $s['ck'] === null) ? 'readonly' : '' ?>>
                                 </td>
@@ -1249,7 +1250,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveBadge.textContent = '● Có thay đổi chưa lưu';
             } else {
                 saveBadge.className = 'dirty-badge clean';
-                saveBadge.textContent = '✓ Dữ liệu đã lưu';
+                saveBadge.textContent = 'Đã lưu thay đổi';
             }
         }
     }
