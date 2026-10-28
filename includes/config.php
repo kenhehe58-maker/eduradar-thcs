@@ -8,12 +8,12 @@
 // Đường dẫn gốc ứng dụng trên XAMPP Apache
 define('BASE_URL', '/my-web-project/');
 
-// Cấu hình kết nối MySQL
-define('DB_HOST', '127.0.0.1');
-define('DB_PORT', 3306);
-define('DB_NAME', 'edu_radar');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Cấu hình kết nối MySQL (Tự động nhận diện biến môi trường Cloud như Render / Railway / PlanetScale / Aiven)
+define('DB_HOST', getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: '127.0.0.1'));
+define('DB_PORT', (int)(getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: 3306)));
+define('DB_NAME', getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'edu_radar'));
+define('DB_USER', getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root'));
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : (getenv('MYSQLPASSWORD') !== false ? getenv('MYSQLPASSWORD') : ''));
 define('DB_CHARSET', 'utf8mb4');
 
 // Tên định danh ứng dụng & Tên trường THCS
