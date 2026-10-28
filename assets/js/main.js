@@ -48,10 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
     // 2. RADAR DASHBOARD: REAL-TIME CLIENT MULTI-SELECT FILTER & INSTANT SEARCH
     // -------------------------------------------------------------------------
-    const rows = document.querySelectorAll('tbody tr[data-level]');
+    // 2. RADAR REAL-TIME SEARCH & ADVANCED FACETED FILTER ENGINE
+    // -------------------------------------------------------------------------
+    const rows = document.querySelectorAll('tbody tr.radar-row');
     const chips = document.querySelectorAll('.chip[data-filter]');
     const search = document.getElementById('search');
     const emptyRow = document.getElementById('radarEmptyRow') || document.querySelector('.radar-filter-empty-row');
+    const mobileEmptyRow = document.getElementById('mobileFilterEmpty');
     let currentFilters = ['all'];
 
     function matchRowSingleFilter(r, filterVal) {
@@ -81,7 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (filterVal === 'tier:average') {
             return (tier === 'average');
         } else if (filterVal === 'tier:low') {
-            return (tier === 'low');
+            return (tier === 'low' || tier === 'critical');
+        } else if (filterVal === 'tier:pending') {
+            return (tier === 'pending');
         } else if (filterVal.startsWith('overall:')) {
             const targetOverall = filterVal.replace('overall:', '');
             return ((r.dataset.overall || '') === targetOverall);
@@ -126,9 +131,17 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 r.style.display = 'none';
             }
+
+            // Đồng thời ẩn sub-rows nếu dòng học sinh cha bị ẩn
+            const sid = r.dataset.studentId;
+            if (sid && (!okFilter || !okSearch)) {
+                const subRows = document.querySelectorAll('tr.student-sub-row[data-parent-student="' + sid + '"]');
+                subRows.forEach(function(sr) { sr.style.display = 'none'; });
+            }
         });
 
         // Filter mobile student rows
+        let mobileVisibleCount = 0;
         const mobileRows = document.querySelectorAll('.m-student-row');
         mobileRows.forEach(function (mRow) {
             const searchAttr = (mRow.dataset.search || '').toLowerCase();
@@ -136,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const okSearch = !q || searchAttr.includes(q);
             if (okFilter && okSearch) {
                 mRow.style.display = 'flex';
+                mobileVisibleCount++;
             } else {
                 mRow.style.display = 'none';
             }
@@ -144,7 +158,20 @@ document.addEventListener('DOMContentLoaded', function () {
         if (emptyRow) {
             emptyRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
         }
+        if (mobileEmptyRow) {
+            mobileEmptyRow.style.display = (mobileVisibleCount === 0 && mobileRows.length > 0) ? 'block' : 'none';
+        }
     }
+
+    // Global reset all filters helper
+    window.resetAllFilters = function() {
+        chips.forEach(function (x) { x.classList.remove('active'); });
+        const allChip = document.querySelector('.chip[data-filter="all"]');
+        if (allChip) allChip.classList.add('active');
+        currentFilters = ['all'];
+        if (search) search.value = '';
+        applyFilter();
+    };
 
     // Global helper for opening student detail modal from mobile list row
     window.openStudentModalFromId = function(studentId) {

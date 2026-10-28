@@ -1564,8 +1564,32 @@ body.stitch-layout {
 .chip-segment-group {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     flex-wrap: wrap;
+    background: #f8fafc;
+    padding: 3px 6px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="dark"] .chip-segment-group {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.segment-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: #64748b;
+    padding: 0 4px;
+    text-transform: uppercase;
+    user-select: none;
+    font-family: var(--font-sans);
+}
+
+[data-theme="dark"] .segment-label {
+    color: #94a3b8;
 }
 
 .toolbar-sep {
@@ -1573,14 +1597,14 @@ body.stitch-layout {
     width: 1px;
     height: 18px;
     background: #cbd5e1;
-    margin: 0 4px;
+    margin: 0 2px;
     flex-shrink: 0;
 }
 
 .chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     padding: 4px 10px;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
@@ -1592,6 +1616,7 @@ body.stitch-layout {
     font-family: var(--font-sans);
     line-height: 1.3;
     transition: all 0.15s ease;
+    user-select: none;
 }
 
 .chip:active {
@@ -1603,29 +1628,31 @@ body.stitch-layout {
     border-color: #cbd5e1;
 }
 
-.chip.active {
-    background: #0f172a;
-    color: #ffffff;
-    border-color: #0f172a;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+.chip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
 }
+
+.dot-trend-up { background: #10b981; }
+.dot-trend-steady { background: #3b82f6; }
+.dot-trend-down { background: #ef4444; }
+.dot-pending { background: #94a3b8; }
+
+.dot-tier-excellent { background: #16a34a; }
+.dot-tier-good { background: #d97706; }
+.dot-tier-average { background: #ea580c; }
+.dot-tier-low { background: #dc2626; }
 
 .chip-count {
     font-weight: 600;
     opacity: 0.8;
     font-size: 11px;
 }
-}
 
-.chip:active {
-    transform: scale(0.97) !important;
-}
-
-.chip:hover {
-    background: var(--surface-hover);
-    border-color: #94a3b8;
-}
-
+/* ACTIVE CHIP VARIANTS */
 .chip.active {
     background: #0f172a;
     color: #ffffff;
@@ -1633,39 +1660,57 @@ body.stitch-layout {
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
 }
 
-.chip.chip-red.active {
-    background: var(--danger);
-    border-color: var(--danger);
-    color: #ffffff;
-}
-
-.chip.chip-yellow.active {
-    background: var(--warning);
-    border-color: var(--warning);
-    color: #ffffff;
-}
-
-.chip.chip-green.active {
-    background: var(--success);
-    border-color: var(--success);
+.chip.chip-all.active {
+    background: #0f172a;
+    border-color: #0f172a;
     color: #ffffff;
 }
 
 .chip.chip-trend-up.active {
-    background: var(--success);
-    border-color: var(--success);
+    background: #059669;
+    border-color: #059669;
+    color: #ffffff;
+}
+
+.chip.chip-trend-steady.active {
+    background: #2563eb;
+    border-color: #2563eb;
     color: #ffffff;
 }
 
 .chip.chip-trend-down.active {
-    background: var(--danger);
-    border-color: var(--danger);
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff;
+}
+
+.chip.chip-tier-excellent.active {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #ffffff;
+}
+
+.chip.chip-tier-good.active {
+    background: #d97706;
+    border-color: #d97706;
+    color: #ffffff;
+}
+
+.chip.chip-tier-average.active {
+    background: #ea580c;
+    border-color: #ea580c;
+    color: #ffffff;
+}
+
+.chip.chip-tier-low.active {
+    background: #dc2626;
+    border-color: #dc2626;
     color: #ffffff;
 }
 
 .chip.chip-tx-warn.active {
-    background: var(--warning);
-    border-color: var(--warning);
+    background: #b91c1c;
+    border-color: #b91c1c;
     color: #ffffff;
 }
 
@@ -5679,6 +5724,25 @@ tr.gb-row-focused td {
 }
 [data-theme="dark"] .toolbar-sep {
   background: #23324d !important;
+}
+[data-theme="dark"] .chip {
+  background: #0f172a !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+[data-theme="dark"] .chip:hover {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+}
+[data-theme="dark"] .chip.active {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+[data-theme="dark"] .chip.chip-all.active {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
 }
 [data-theme="dark"] .btn-toggle-score-cols {
   background: #1a253c !important;

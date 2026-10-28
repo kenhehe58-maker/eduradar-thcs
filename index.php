@@ -1211,72 +1211,101 @@ $tt22Slices = [
         </div>
     </div>
 
-    <!-- HÀNG DƯỚI: CÁC CHIP LỌC NHANH ĐA CHIỀU PHÂN NHÓM RÕ RÀNG -->
-    <div class="radar-chips">
-        <div class="chip-segment-group">
-            <button type="button" class="chip active" data-filter="all">
-                <span>Tất cả</span>
-                <span class="chip-count">(<?= $stats['total'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-trend-up" data-filter="trend:up">
-                <span>Tiến bộ</span>
-                <span class="chip-count">(<?= $stats['momentum_up'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-green" data-filter="trend:steady">
-                <span>Duy trì đều</span>
-                <span class="chip-count">(<?= $stats['momentum_steady'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-trend-down" data-filter="trend:down">
-                <span>Sa sút</span>
-                <span class="chip-count">(<?= $stats['momentum_down'] ?>)</span>
-            </button>
-            <button type="button" class="chip" data-filter="trend:pending" style="color: #64748b;">
-                <span>Chờ điểm</span>
-                <span class="chip-count">(<?= $stats['momentum_pending'] ?>)</span>
-            </button>
-        </div>
+    <!-- HÀNG DƯỚI: BỘ LỌC ĐA CHIỀU PHÂN BIỆT RÕ RÀNG XU HƯỚNG VÀ THANG ĐIỂM TT22 -->
+    <div class="radar-chips" id="radarChipsBar">
+        <!-- Nút Tất cả -->
+        <button type="button" class="chip active chip-all" data-filter="all" title="Xem toàn bộ danh sách">
+            <span>Tất cả</span>
+            <span class="chip-count">(<?= $stats['total'] ?>)</span>
+        </button>
 
         <span class="toolbar-sep" aria-hidden="true"></span>
 
-        <!-- LỌC PHÂN LOẠI HỌC LỰC (HỌC SINH GIỎI / KHÁ / TRUNG BÌNH / CẦN PHỤ ĐẠO) -->
-        <div class="chip-segment-group">
-            <button type="button" class="chip chip-green" data-filter="tier:excellent" title="Chỉ xem học sinh Giỏi / Mức Tốt (ĐTB ≥ 8.0)">
-                <span>Học Sinh Giỏi</span>
-                <span class="chip-count">(<?= $stats['tier_excellent'] ?>)</span>
-            </button>
-            <button type="button" class="chip" data-filter="tier:good" style="color: #1d4ed8; border-color: #bfdbfe;" title="Chỉ xem học sinh Khá (6.5 ≤ ĐTB < 8.0)">
-                <span>Học Sinh Khá</span>
-                <span class="chip-count">(<?= $stats['tier_good'] ?>)</span>
-            </button>
-            <button type="button" class="chip" data-filter="tier:average" style="color: #78350f; border-color: #fde68a;" title="Chỉ xem học sinh Mức Đạt / Trung Bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">
-                <span>Trung bình</span>
-                <span class="chip-count">(<?= $stats['tier_average'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-red" data-filter="tier:low" title="Chỉ xem học sinh Chưa Đạt / Yếu (ĐTB < 5.0) · Nguy cấp">
-                <span>Yếu</span>
-                <span class="chip-count">(<?= $stats['tier_low'] ?>)</span>
-            </button>
-        </div>
-
-        <span class="toolbar-sep" aria-hidden="true"></span>
-
-        <!-- LỌC CẢNH BÁO SỚM & RỦI RO -->
-        <div class="chip-segment-group">
-            <button type="button" class="chip chip-red" data-filter="red" title="Học sinh ở mức Yếu / Nguy cấp">
-                <span>Yếu (<?= $stats['red'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-yellow" data-filter="yellow" title="Học sinh ở mức Trung bình / Cần chú ý">
-                <span>Trung bình (<?= $stats['yellow'] ?>)</span>
-            </button>
-            <button type="button" class="chip chip-green" data-filter="green">
-                <span>Ổn định (<?= $stats['green'] ?>)</span>
-            </button>
-            <?php if ($stats['tx_warn_count'] > 0): ?>
-                <button type="button" class="chip chip-tx-warn" data-filter="tx:warn">
-                    <span>Cảnh báo sớm TX (<?= $stats['tx_warn_count'] ?>)</span>
+        <!-- PHÂN NHÓM 1: XU HƯỚNG TIẾN BỘ (OLS) -->
+        <div class="chip-segment-group group-trend" role="group" aria-label="Lọc theo Xu hướng tiến bộ OLS">
+            <span class="segment-label">XU HƯỚNG</span>
+            <?php if ($stats['momentum_up'] > 0): ?>
+                <button type="button" class="chip chip-trend-up" data-filter="trend:up" title="Học sinh có xu hướng điểm đi lên (k > 0)">
+                    <span class="chip-dot dot-trend-up"></span>
+                    <span>Tiến bộ</span>
+                    <span class="chip-count">(<?= $stats['momentum_up'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['momentum_steady'] > 0): ?>
+                <button type="button" class="chip chip-trend-steady" data-filter="trend:steady" title="Học sinh duy trì phong độ đều đặn">
+                    <span class="chip-dot dot-trend-steady"></span>
+                    <span>Duy trì</span>
+                    <span class="chip-count">(<?= $stats['momentum_steady'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['momentum_down'] > 0): ?>
+                <button type="button" class="chip chip-trend-down" data-filter="trend:down" title="Học sinh có chiều hướng sa sút điểm (k < 0)">
+                    <span class="chip-dot dot-trend-down"></span>
+                    <span>Sa sút</span>
+                    <span class="chip-count">(<?= $stats['momentum_down'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['momentum_pending'] > 0): ?>
+                <button type="button" class="chip chip-pending" data-filter="trend:pending" title="Chưa đủ dữ liệu chuỗi điểm để tính xu hướng">
+                    <span class="chip-dot dot-pending"></span>
+                    <span>Chờ điểm</span>
+                    <span class="chip-count">(<?= $stats['momentum_pending'] ?>)</span>
                 </button>
             <?php endif; ?>
         </div>
+
+        <span class="toolbar-sep" aria-hidden="true"></span>
+
+        <!-- PHÂN NHÓM 2: THANG ĐIỂM HỌC LỰC (THÔNG TƯ 22) -->
+        <div class="chip-segment-group group-tier" role="group" aria-label="Lọc theo Thang điểm Thông tư 22">
+            <span class="segment-label">BẬC TT22</span>
+            <?php if ($stats['tier_excellent'] > 0): ?>
+                <button type="button" class="chip chip-tier-excellent" data-filter="tier:excellent" title="Mức Tốt (ĐTB ≥ 8.0)">
+                    <span class="chip-dot dot-tier-excellent"></span>
+                    <span>Tốt</span>
+                    <span class="chip-count">(<?= $stats['tier_excellent'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['tier_good'] > 0): ?>
+                <button type="button" class="chip chip-tier-good" data-filter="tier:good" title="Mức Khá (6.5 ≤ ĐTB < 8.0)">
+                    <span class="chip-dot dot-tier-good"></span>
+                    <span>Khá</span>
+                    <span class="chip-count">(<?= $stats['tier_good'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['tier_average'] > 0): ?>
+                <button type="button" class="chip chip-tier-average" data-filter="tier:average" title="Mức Đạt (5.0 ≤ ĐTB < 6.5)">
+                    <span class="chip-dot dot-tier-average"></span>
+                    <span>Đạt</span>
+                    <span class="chip-count">(<?= $stats['tier_average'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['tier_low'] > 0): ?>
+                <button type="button" class="chip chip-tier-low" data-filter="tier:low" title="Mức Chưa đạt (ĐTB < 5.0)">
+                    <span class="chip-dot dot-tier-low"></span>
+                    <span>Chưa đạt</span>
+                    <span class="chip-count">(<?= $stats['tier_low'] ?>)</span>
+                </button>
+            <?php endif; ?>
+            <?php if ($stats['tier_pending'] > 0): ?>
+                <button type="button" class="chip chip-pending" data-filter="tier:pending" title="Chưa có điểm tổng kết">
+                    <span class="chip-dot dot-pending"></span>
+                    <span>Chờ điểm</span>
+                    <span class="chip-count">(<?= $stats['tier_pending'] ?>)</span>
+                </button>
+            <?php endif; ?>
+        </div>
+
+        <?php if ($stats['tx_warn_count'] > 0): ?>
+            <span class="toolbar-sep" aria-hidden="true"></span>
+            <!-- PHÂN NHÓM 3: CẢNH BÁO ĐẶC BIỆT -->
+            <div class="chip-segment-group group-alert" role="group" aria-label="Cảnh báo đặc biệt">
+                <button type="button" class="chip chip-tx-warn" data-filter="tx:warn" title="Có bài kiểm tra thường xuyên < 3.5 điểm">
+                    <span>⚠️ Cảnh báo sớm TX</span>
+                    <span class="chip-count">(<?= $stats['tx_warn_count'] ?>)</span>
+                </button>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 </div>
@@ -2009,8 +2038,17 @@ $tt22Slices = [
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <tr id="radarEmptyRow" class="radar-filter-empty-row" style="display: none;">
-                    <td colspan="13" style="text-align: center; padding: 36px; color: var(--text-muted);">
-                        Không tìm thấy học sinh nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm.
+                    <td colspan="12" style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+                        <div style="font-size: 26px; margin-bottom: 8px;">🔍</div>
+                        <div style="font-weight: 700; color: var(--text-heading); font-size: 14px; margin-bottom: 4px;">
+                            Không tìm thấy học sinh nào phù hợp với bộ lọc
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                            Không có học sinh nào thỏa mãn đồng thời các điều kiện đã chọn hoặc từ khóa tìm kiếm.
+                        </div>
+                        <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; background: #0f172a; border: 1px solid #0f172a; color: #ffffff; cursor: pointer; transition: all 0.15s ease;">
+                            <span>Đặt lại bộ lọc (Xem tất cả)</span>
+                        </button>
                     </td>
                 </tr>
             <?php endif; ?>
@@ -2117,6 +2155,18 @@ $tt22Slices = [
                 </div>
             </div>
         <?php endforeach; ?>
+        <div id="mobileFilterEmpty" class="mobile-filter-empty" style="display: none; text-align: center; padding: 36px 16px; background: #ffffff; border-radius: 16px; border: 1px dashed #cbd5e1; margin-top: 10px;">
+            <div style="font-size: 26px; margin-bottom: 8px;">🔍</div>
+            <div style="font-weight: 700; color: var(--text-heading); font-size: 14px; margin-bottom: 4px;">
+                Không có học sinh phù hợp
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                Không có học sinh nào thỏa mãn các điều kiện lọc đang chọn.
+            </div>
+            <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 12px; font-weight: 700; border-radius: 20px; background: #0f172a; border: 1px solid #0f172a; color: #ffffff; cursor: pointer;">
+                <span>Đặt lại bộ lọc (Xem tất cả)</span>
+            </button>
+        </div>
     <?php endif; ?>
 </div>
 
