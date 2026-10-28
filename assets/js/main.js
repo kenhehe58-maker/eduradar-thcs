@@ -1561,6 +1561,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         }, 400);
                     }
 
+                    // Kích hoạt trạng thái is-loaded trên body khi toàn bộ tài nguyên đã sẵn sàng
+                    document.body.classList.add('is-loaded');
+
                     // Kích hoạt toàn bộ hiệu ứng GSAP mượt mà
                     if (window.gsap && typeof window.runEduRadarEntrance === 'function') {
                         window.runEduRadarEntrance();
@@ -1569,6 +1572,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }).catch(function() {
             if (curtain) curtain.classList.add('loaded');
+            document.body.classList.add('is-loaded');
             if (window.gsap && typeof window.runEduRadarEntrance === 'function') {
                 window.runEduRadarEntrance();
             }

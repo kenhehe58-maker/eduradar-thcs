@@ -499,7 +499,7 @@ require_once __DIR__ . '/includes/header.php';
 </style>
 
 <!-- 1. HERO SHOWCASE BANNER -->
-<section class="welcome-hero">
+<section class="welcome-hero fade-in-item">
     <div class="welcome-badge">
         <span>Năm học <?= htmlspecialchars($welcomeCalendar['school_year']) ?> &bull; <?= htmlspecialchars($welcomeCalendar['semester_name']) ?></span>
         <span>&bull;</span>
@@ -527,7 +527,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- 2. TOÀN TRƯỜNG KPI SUMMARY CARDS (BENTO PRO) -->
 <div class="welcome-kpi-grid">
-    <div class="kpi-card">
+    <div class="kpi-card fade-in-item">
         <div class="kpi-icon-box" style="background: #eff6ff; color: #2563eb;"><?= get_svg_icon('users', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Tổng học sinh</span>
@@ -537,7 +537,7 @@ require_once __DIR__ . '/includes/header.php';
             <span style="font-size: 12px; color: #10b981; font-weight: 600;">Toàn trường <?= $totalClasses ?> lớp</span>
         </div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card fade-in-item">
         <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;"><?= get_svg_icon('award', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Tỷ lệ Khá &amp; Tốt</span>
@@ -547,7 +547,7 @@ require_once __DIR__ . '/includes/header.php';
             <span style="font-size: 12px; color: var(--text-subtle, #64748b);">Theo chuẩn TT22</span>
         </div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card fade-in-item">
         <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;"><?= get_svg_icon('activity', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Cột điểm đã nhập</span>
@@ -557,7 +557,7 @@ require_once __DIR__ . '/includes/header.php';
             <span style="font-size: 12px; color: #3b82f6; font-weight: 600;">Dữ liệu Học kỳ I</span>
         </div>
     </div>
-    <div class="kpi-card">
+    <div class="kpi-card fade-in-item">
         <div class="kpi-icon-box" style="background: #fef2f2; color: #dc2626;"><?= get_svg_icon('alert-triangle', 20) ?></div>
         <div>
             <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Cần lưu ý hỗ trợ</span>
@@ -582,7 +582,7 @@ require_once __DIR__ . '/includes/header.php';
 
 <div class="launchpad-grid">
     <!-- PHÂN HỆ: CẢNH BÁO SỚM -->
-    <a href="index.php" class="launchpad-card">
+    <a href="index.php" class="launchpad-card fade-in-item">
         <div class="launchpad-card-header">
             <div style="color: #2563eb;"><?= get_svg_icon('activity', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(37, 99, 235, 0.1); color: #2563eb;">Trọng tâm</span>
@@ -598,7 +598,7 @@ require_once __DIR__ . '/includes/header.php';
     </a>
 
     <!-- PHÂN HỆ: SỔ ĐIỂM BỘ MÔN -->
-    <a href="nhap_diem.php" class="launchpad-card">
+    <a href="nhap_diem.php" class="launchpad-card fade-in-item">
         <div class="launchpad-card-header">
             <div style="color: #059669;"><?= get_svg_icon('file-text', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(5, 150, 105, 0.1); color: #059669;">Sổ điểm</span>
@@ -614,7 +614,7 @@ require_once __DIR__ . '/includes/header.php';
     </a>
 
     <!-- PHÂN HỆ: QUÉT NHANH BẢNG ĐIỂM -->
-    <a href="quet_nhanh.php" class="launchpad-card">
+    <a href="quet_nhanh.php" class="launchpad-card fade-in-item">
         <div class="launchpad-card-header">
             <div style="color: #d97706;"><?= get_svg_icon('qr-code', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(217, 119, 6, 0.1); color: #d97706;">Tiện ích</span>
@@ -631,7 +631,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <?php if ($userRole === 'admin'): ?>
     <!-- PHÂN HỆ: QUẢN TRỊ ADMIN -->
-    <a href="admin.php" class="launchpad-card">
+    <a href="admin.php" class="launchpad-card fade-in-item">
         <div class="launchpad-card-header">
             <div style="color: #7e22ce;"><?= get_svg_icon('settings', 24) ?></div>
             <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(126, 34, 206, 0.1); color: #7e22ce;">Quản trị</span>
@@ -649,7 +649,7 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <!-- 4. QUY TRÌNH THEO DÕI HỌC LỰC -->
-<div class="stepper-container">
+<div class="stepper-container fade-in-item">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
         <div>
             <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
@@ -699,7 +699,7 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <!-- 5. TÌM KIẾM NHANH HỌC SINH VỚI INPUT MASK -->
-<div class="quick-search-box">
+<div class="quick-search-box fade-in-item">
     <div>
         <div style="font-size: 15px; font-weight: 800; color: var(--text-heading); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
             <?= get_svg_icon('search', 18, '', 'color: #2563eb;') ?>
@@ -722,7 +722,7 @@ require_once __DIR__ . '/includes/header.php';
 </div>
 
 <!-- 6. CẨM NANG THÔNG TƯ 22 (TT22 QUICK REFERENCE) -->
-<div class="handbook-box">
+<div class="handbook-box fade-in-item">
     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
         <div>
             <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
