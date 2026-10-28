@@ -2,7 +2,7 @@
 set -e
 
 # Khởi động MariaDB daemon
-service mariadb start
+service mariadb restart
 
 # Chờ MariaDB socket sẵn sàng
 until mariadb-admin ping --silent; do
