@@ -243,6 +243,19 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
             $isExamSteady = true;
             $examProgressText = "Thi định kỳ giữ vững phong độ ({$gk} → {$ck})";
         }
+    } elseif ($gk !== null && $ck === null && $avgTx !== null) {
+        // GIAI ĐOẠN VỪA THI GIỮA KỲ XONG (CHƯA THI CUỐI KỲ): So sánh GK với điểm trung bình TX
+        $examDelta = round($gk - $avgTx, 1);
+        if ($examDelta <= -1.5) {
+            $isExamDrop = true;
+            $examProgressText = "Thi Giữa kỳ sút giảm (giảm " . abs($examDelta) . "đ so với TX: {$avgTx} → {$gk})";
+        } elseif ($examDelta >= 1.0) {
+            $isExamSurge = true;
+            $examProgressText = "Thi Giữa kỳ bứt phá (+{$examDelta}đ so với TX: {$avgTx} → {$gk})";
+        } else {
+            $isExamSteady = true;
+            $examProgressText = "Thi Giữa kỳ ổn định phong độ ({$avgTx} → {$gk})";
+        }
     }
 
     // Lệch pha phong độ (TX vs Thi)
@@ -251,8 +264,12 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
     if ($avgTx !== null && $avgTx >= 7.5 && (($gk !== null && $gk < 5.0) || ($ck !== null && $ck < 5.0))) {
         $isDivergentDrop = true;
     }
-    if ($avgTx !== null && $avgTx < 5.0 && $gk !== null && $ck !== null && $gk >= 6.5 && $ck >= 6.5) {
-        $isDivergentSurge = true;
+    if ($avgTx !== null && $avgTx < 5.0) {
+        if ($gk !== null && $ck !== null && $gk >= 6.5 && $ck >= 6.5) {
+            $isDivergentSurge = true;
+        } elseif ($ck === null && $gk !== null && $gk >= 6.5) {
+            $isDivergentSurge = true;
+        }
     }
 
     // TỔNG HỢP KHUNG TIẾN BỘ (MOMENTUM)

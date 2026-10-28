@@ -386,7 +386,7 @@ if ($format === 'xlsx') {
     <div class="header-grid">
         <div class="header-left">
             <div>SỞ GIÁO DỤC VÀ ĐÀO TẠO</div>
-            <div>TRƯỜNG THCS GIẢNG VÕ</div>
+            <div><?= defined('SCHOOL_NAME') ? SCHOOL_NAME : 'TRƯỜNG THCS GIẢNG VÕ' ?></div>
             <div style="font-weight: normal; font-size: 11px; color: #64748b;">Tổ Chuyên Môn THCS</div>
         </div>
         <div class="header-right">

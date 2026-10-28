@@ -545,7 +545,7 @@ if ($format === 'xlsx') {
         <!-- QUỐC HIỆU TIÊU NGỮ & ĐƠN VỊ -->
         <div class="header-grid">
             <div class="header-left">
-                TRƯỜNG THCS GIÁO DỤC TRỌNG ĐIỂM<br>
+                <?= defined('SCHOOL_NAME') ? SCHOOL_NAME : 'TRƯỜNG THCS GIẢNG VÕ' ?><br>
                 TỔ CHUYÊN MÔN: <?= htmlspecialchars($subjectName) ?><br>
                 <span class="sub">Số: ..... /BC-EDURADAR</span>
             </div>

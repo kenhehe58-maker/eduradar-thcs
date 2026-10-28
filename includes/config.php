@@ -16,8 +16,9 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
-// Tên định danh ứng dụng
+// Tên định danh ứng dụng & Tên trường THCS
 define('APP_NAME', 'EduRadar');
+define('SCHOOL_NAME', 'TRƯỜNG THCS GIẢNG VÕ');
 
 // Ngưỡng cảnh báo học tập theo chuẩn THCS
 define('PASS_SCORE', 5.0);
