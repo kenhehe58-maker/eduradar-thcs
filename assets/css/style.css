@@ -104,34 +104,6 @@
     50% { transform: scale(1.05); }
 }
 
-/* =========================================================================
-   STAGGERED FADE-IN ENTRANCE (DEVICE READY TRANSITIONS)
-   ========================================================================= */
-/* Trạng thái tĩnh ban đầu: Ẩn đi để tránh bị lộ khi web đang lag */
-.fade-in-item {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-/* Chỉ kích hoạt khi toàn bộ ảnh và web đã load xong */
-body.is-loaded .fade-in-item {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Stagger delay: Các item nối đuôi nhau mượt mà */
-body.is-loaded .fade-in-item:nth-child(1) { transition-delay: 0.1s; }
-body.is-loaded .fade-in-item:nth-child(2) { transition-delay: 0.2s; }
-body.is-loaded .fade-in-item:nth-child(3) { transition-delay: 0.3s; }
-body.is-loaded .fade-in-item:nth-child(4) { transition-delay: 0.4s; }
-body.is-loaded .fade-in-item:nth-child(5) { transition-delay: 0.5s; }
-body.is-loaded .fade-in-item:nth-child(6) { transition-delay: 0.6s; }
-body.is-loaded .fade-in-item:nth-child(7) { transition-delay: 0.7s; }
-body.is-loaded .fade-in-item:nth-child(8) { transition-delay: 0.8s; }
-
 :root {
     /* =========================================================================
        1. CORE BRAND TOKENS (HIGH-CONTRAST TECH TELEMETRY SYSTEM)
