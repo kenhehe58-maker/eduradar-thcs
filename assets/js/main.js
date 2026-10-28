@@ -161,6 +161,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (mobileEmptyRow) {
             mobileEmptyRow.style.display = (mobileVisibleCount === 0 && mobileRows.length > 0) ? 'block' : 'none';
         }
+
+        if (window.gsap && visibleCount > 0) {
+            const newlyVisible = Array.from(rows).filter(r => r.style.display !== 'none');
+            gsap.fromTo(newlyVisible, 
+                { opacity: 0, y: 3 }, 
+                { opacity: 1, y: 0, duration: 0.22, stagger: 0.012, ease: 'power1.out', clearProps: 'transform,opacity' }
+            );
+        }
     }
 
     // Global reset all filters helper
@@ -823,19 +831,50 @@ document.addEventListener('DOMContentLoaded', function () {
             btnGuestExportXlsx.href = 'in_phieu_phu_dao.php?guest=1&idx=' + encodeURIComponent(guestIdx) + '&format=xlsx';
         }
 
-        // Show modal
+        // Show modal with GSAP Fluid Entrance
         modal.style.display = 'flex';
-        setTimeout(() => {
-            modal.classList.add('active');
-        }, 10);
+        modal.classList.add('active');
+        if (window.gsap) {
+            gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power2.out' });
+            const modalBox = modal.querySelector('.competency-modal-card');
+            if (modalBox) {
+                gsap.fromTo(modalBox, 
+                    { opacity: 0, scale: 0.93, y: 22 }, 
+                    { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'back.out(1.5)', clearProps: 'transform' }
+                );
+            }
+            gsap.from('.score-timeline-ribbon .timeline-step', {
+                opacity: 0, scale: 0.75, stagger: 0.04, duration: 0.25, ease: 'back.out(2)'
+            });
+            gsap.from('.target-card-item', {
+                opacity: 0, y: 10, stagger: 0.06, duration: 0.3, ease: 'power2.out'
+            });
+        }
     }
 
     function closeStudentModal() {
         if (!modal) return;
-        modal.classList.remove('active');
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 200);
+        if (window.gsap) {
+            const modalBox = modal.querySelector('.competency-modal-card');
+            if (modalBox) {
+                gsap.to(modalBox, {
+                    opacity: 0, scale: 0.95, y: 14, duration: 0.18, ease: 'power2.in',
+                    onComplete: function() {
+                        modal.classList.remove('active');
+                        modal.style.display = 'none';
+                        gsap.set(modalBox, { clearProps: 'all' });
+                    }
+                });
+            } else {
+                modal.classList.remove('active');
+                modal.style.display = 'none';
+            }
+        } else {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 200);
+        }
     }
 
     // Attach row click listeners (both main rows and sub-rows)
@@ -1020,6 +1059,12 @@ document.addEventListener('DOMContentLoaded', function () {
             subrows.forEach(function(row) {
                 row.style.display = '';
             });
+            if (window.gsap && subrows.length > 0) {
+                gsap.fromTo(subrows, 
+                    { opacity: 0, y: -4 }, 
+                    { opacity: 1, y: 0, duration: 0.22, stagger: 0.025, ease: 'power1.out', clearProps: 'transform,opacity' }
+                );
+            }
         }
     };
 
@@ -1105,4 +1150,117 @@ document.addEventListener('DOMContentLoaded', function () {
             window.closeRingHelp();
         }
     });
+
+    // -------------------------------------------------------------------------
+    // 7. VNEDU SCHEDULE LOCK & SCORE COLUMN SIMULATION
+    // -------------------------------------------------------------------------
+    window.toggleVnEduCkLock = function() {
+        const lockedInputs = document.querySelectorAll('.cell-ck .score-input');
+        const indicator = document.getElementById('vneduLockIndicator');
+        const btnLabel = document.getElementById('btnLockLabel');
+        const btnIcon = document.getElementById('btnLockIcon');
+        const isCurrentlyLocked = Array.from(lockedInputs).some(inp => inp.hasAttribute('readonly'));
+
+        if (isCurrentlyLocked) {
+            // Mở khóa nhập trước
+            lockedInputs.forEach(inp => {
+                inp.removeAttribute('readonly');
+                inp.classList.remove('is-locked-vnedu');
+                if (inp.placeholder === '🔒') inp.placeholder = '—';
+            });
+            if (indicator) {
+                indicator.textContent = '🔓 Đã mở sớm';
+                indicator.style.background = '#dcfce7';
+                indicator.style.color = '#15803d';
+            }
+            if (btnLabel) btnLabel.textContent = 'Khóa lại theo lịch VnEdu';
+            if (btnIcon) btnIcon.textContent = '🔒';
+
+            if (window.gsap) {
+                gsap.fromTo('.cell-ck .score-input', 
+                    { scale: 0.94, backgroundColor: '#fef3c7' }, 
+                    { scale: 1, backgroundColor: '', duration: 0.4, stagger: 0.012, ease: 'power2.out', clearProps: 'backgroundColor,transform' }
+                );
+            }
+        } else {
+            // Khóa lại theo lịch VnEdu
+            lockedInputs.forEach(inp => {
+                if (!inp.value || inp.value.trim() === '') {
+                    inp.setAttribute('readonly', 'readonly');
+                    inp.classList.add('is-locked-vnedu');
+                    inp.placeholder = '🔒';
+                }
+            });
+            if (indicator) {
+                indicator.textContent = '🔒 Mở 15/12';
+                indicator.style.background = '';
+                indicator.style.color = '';
+            }
+            if (btnLabel) btnLabel.textContent = 'Mở khóa nhập sớm';
+            if (btnIcon) btnIcon.textContent = '🔓';
+
+            if (window.gsap) {
+                gsap.fromTo('.cell-ck .score-input.is-locked-vnedu', 
+                    { opacity: 0.5 }, 
+                    { opacity: 1, duration: 0.3, stagger: 0.01 }
+                );
+            }
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // 8. GSAP MASTER ENTRANCE & CASCADE TELEMETRY ANIMATIONS
+    // -------------------------------------------------------------------------
+    if (window.gsap) {
+        // Bento cards, Launchpad cards, KPI badges
+        const cards = document.querySelectorAll('.launchpad-card, .radar-kpi-card, .stat-badge, .kpi-card, .metric-box, .stat-card');
+        if (cards.length > 0) {
+            gsap.from(cards, {
+                opacity: 0,
+                y: 15,
+                duration: 0.42,
+                stagger: 0.035,
+                ease: 'power2.out',
+                clearProps: 'transform,opacity'
+            });
+        }
+
+        // Radar dashboard table rows cascade
+        const radarRows = document.querySelectorAll('.radar-table tbody tr.radar-row:not(#radarEmptyRow)');
+        if (radarRows.length > 0) {
+            gsap.from(radarRows, {
+                opacity: 0,
+                y: 8,
+                duration: 0.35,
+                stagger: 0.015,
+                ease: 'power1.out',
+                clearProps: 'transform,opacity'
+            });
+        }
+
+        // Spreadsheet table rows entrance (nhap_diem.php)
+        const gbRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]');
+        if (gbRows.length > 0) {
+            gsap.from(gbRows, {
+                opacity: 0,
+                y: 6,
+                duration: 0.35,
+                stagger: 0.012,
+                ease: 'power1.out',
+                clearProps: 'transform,opacity'
+            });
+        }
+
+        // Schedule banner
+        const banner = document.getElementById('vneduScheduleBar');
+        if (banner) {
+            gsap.from(banner, {
+                opacity: 0,
+                x: -16,
+                duration: 0.45,
+                ease: 'power2.out',
+                clearProps: 'transform,opacity'
+            });
+        }
+    }
 });

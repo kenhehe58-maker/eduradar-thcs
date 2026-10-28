@@ -6577,3 +6577,100 @@ tr.gb-row-focused td {
     line-height: 1;
   }
 }
+
+/* =========================================================================
+   VNEDU ACADEMIC SCHEDULE & GSAP SCORE COLUMN SIMULATION
+   ========================================================================= */
+.vnedu-schedule-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-body, #334155);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+[data-theme="dark"] .vnedu-schedule-bar {
+  background: #1e293b;
+  border-color: #334155;
+  border-left-color: #60a5fa;
+  color: #cbd5e1;
+}
+.vnedu-schedule-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.vnedu-badge-icon {
+  font-size: 16px;
+  flex: none;
+}
+.vnedu-schedule-text {
+  line-height: 1.45;
+}
+.btn-vnedu-toggle-lock {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: #ffffff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-vnedu-toggle-lock:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+[data-theme="dark"] .btn-vnedu-toggle-lock {
+  background: #0f172a;
+  color: #93c5fd;
+  border-color: #1e3a8a;
+}
+[data-theme="dark"] .btn-vnedu-toggle-lock:hover {
+  background: #1e293b;
+}
+
+.vnedu-lock-indicator {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(100, 116, 139, 0.15);
+  color: #64748b;
+  margin-top: 3px;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+[data-theme="dark"] .vnedu-lock-indicator {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.score-input.is-locked-vnedu {
+  background-color: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed !important;
+  border-color: #e2e8f0 !important;
+  font-style: italic;
+}
+[data-theme="dark"] .score-input.is-locked-vnedu {
+  background-color: #0f172a !important;
+  color: #64748b !important;
+  border-color: #334155 !important;
+}

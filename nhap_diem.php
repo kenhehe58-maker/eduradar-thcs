@@ -5,8 +5,13 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/xlsx_helper.php';
+require_once __DIR__ . '/includes/algorithms.php';
 
 require_login();
+
+// Nhận diện tiến độ năm học chuẩn VnEdu: thời điểm Giữa kì 1 (Cuối kỳ 1 khóa theo lịch)
+$academicCalendar = get_academic_calendar_phase();
+$isHk1Mid = ($academicCalendar['semester'] === 'HK1' && $academicCalendar['phase_key'] !== 'hk1_finals');
 
 $pdo = db();
 $realUserId = (int)$_SESSION['user_id'];
@@ -963,6 +968,21 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <?php if ($isHk1Mid): ?>
+    <!-- MÔ PHỎNG LỊCH NHẬP ĐIỂM VNEDU CHUẨN: GIAI ĐOẠN HIỆN TẠI VỪA THI GIỮA KỲ 1 -->
+    <div class="vnedu-schedule-bar" id="vneduScheduleBar">
+        <div class="vnedu-schedule-left">
+            <span class="vnedu-badge-icon">🔒</span>
+            <div class="vnedu-schedule-text">
+                <b>Khung Thời Gian Nhập Điểm VnEdu:</b> Hiện tại đang trong đợt Giữa kỳ I (Tháng 10 - 11). Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa an toàn theo quy chế năm học (dự kiến mở chính thức từ 15/12).
+            </div>
+        </div>
+        <button type="button" class="btn-vnedu-toggle-lock" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Bấm để mở khóa nhập sớm nếu nhà trường tổ chức thi sớm">
+            <span id="btnLockIcon">🔓</span> <span id="btnLockLabel">Mở khóa nhập sớm</span>
+        </button>
+    </div>
+    <?php endif; ?>
+
     <!-- SPREADSHEET FORM -->
     <form method="POST" id="gradebookForm">
         <input type="hidden" name="action" value="save_scores">
@@ -983,9 +1003,12 @@ require_once __DIR__ . '/includes/header.php';
                             <span class="group-pill pill-gk">GIỮA KỲ</span><br>
                             <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">HS 2</span>
                         </th>
-                        <th rowspan="2" class="group-header group-ck">
+                        <th rowspan="2" class="group-header group-ck" id="thCkHeader">
                             <span class="group-pill pill-ck">CUỐI KỲ</span><br>
                             <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">HS 3</span>
+                            <?php if ($isHk1Mid): ?>
+                                <span class="vnedu-lock-indicator" id="vneduLockIndicator" title="Cột Cuối kỳ I khóa theo lịch VnEdu (Mở từ 15/12)">🔒 Mở 15/12</span>
+                            <?php endif; ?>
                         </th>
                         <th rowspan="2" class="group-header group-avg">
                             <span class="group-pill pill-avg">ĐTBmhk</span><br>
@@ -1104,13 +1127,17 @@ require_once __DIR__ . '/includes/header.php';
                                 
                                 <!-- CỘT CUỐI KỲ (HỆ SỐ 3) -->
                                 <td class="col-score cell-ck">
-                                    <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-ck"
+                                    <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" 
+                                           class="score-input group-ck <?= ($isHk1Mid && $s['ck'] === null) ? 'is-locked-vnedu' : '' ?>"
                                            name="scores[<?= $sId ?>][ck]"
                                            value="<?= $s['ck'] !== null ? (float)$s['ck'] : '' ?>"
-                                           title="Điểm Cuối kỳ của <?= htmlspecialchars($s['full_name']) ?>"
+                                           title="<?= ($isHk1Mid && $s['ck'] === null) ? 'Cột Cuối kỳ I khóa theo lịch VnEdu (Mở từ 15/12). Bấm Mở khóa nhập sớm nếu cần nhập trước.' : 'Điểm Cuối kỳ của ' . htmlspecialchars($s['full_name']) ?>"
                                            aria-label="Điểm Cuối kỳ của <?= htmlspecialchars($s['full_name']) ?>"
                                            data-student-id="<?= $sId ?>" data-field="ck"
-                                           data-row="<?= $r ?>" data-col="5" placeholder="—" autocomplete="off">
+                                           data-row="<?= $r ?>" data-col="5" 
+                                           placeholder="<?= ($isHk1Mid && $s['ck'] === null) ? '🔒' : '—' ?>" 
+                                           autocomplete="off"
+                                           <?= ($isHk1Mid && $s['ck'] === null) ? 'readonly' : '' ?>>
                                 </td>
                                 
                                 <!-- CỘT ĐTB MÔN HỌC KỲ (TỰ ĐỘNG) -->
@@ -1323,6 +1350,9 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (rounded < 6.5) cls = 'level-warning';
             else if (rounded < 8.0) cls = 'level-good';
             badge.className = 'avg-badge ' + cls;
+            if (window.gsap) {
+                gsap.fromTo(badge, { scale: 1.2 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+            }
         } else {
             badge.textContent = '—';
             badge.className = 'avg-badge level-empty';

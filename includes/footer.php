@@ -24,6 +24,7 @@
         </div>
     </footer>
 </main>
+<script src="assets/js/gsap.min.js"></script>
 <?php if (!empty($extraScripts)) echo $extraScripts; ?>
 </body>
 </html>
