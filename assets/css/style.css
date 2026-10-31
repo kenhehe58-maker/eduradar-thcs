@@ -1356,14 +1356,22 @@ table, .radar-table, .spreadsheet-table {
 th, .radar-table th, .spreadsheet-table th {
     text-align: left;
     padding: 10px 14px !important;
-    background: #0f172a !important;
-    color: #f1f5f9 !important;
+    background: var(--cobalt-paper-2, #f8fafc) !important;
+    color: var(--cobalt-ink, #0f172a) !important;
     font-weight: 700;
     font-size: 12.5px !important;
     text-transform: none;
     letter-spacing: normal;
-    border-bottom: 1px solid #334155 !important;
+    border-bottom: 1px solid var(--cobalt-rule, #cbd5e1) !important;
     white-space: nowrap;
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] .radar-table th,
+[data-theme="dark"] .spreadsheet-table th {
+    background: #0b1329 !important;
+    color: #f8fafc !important;
+    border-bottom: 1px solid #1e293b !important;
 }
 
 td, .radar-table td, .spreadsheet-table td {
@@ -1827,10 +1835,16 @@ body.stitch-layout {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     width: 100%;
-    padding-top: 10px;
-    border-top: 1px solid #f1f5f9;
+    padding: 8px 2px 4px 2px;
+    border-top: 1px solid var(--cobalt-rule, #e2e8f0);
+}
+.radar-chips::-webkit-scrollbar {
+    display: none;
 }
 
 .chip-segment-group {
@@ -2457,7 +2471,8 @@ body.stitch-layout {
 
 thead th.col-sticky-stt {
     z-index: 30;
-    background: #0f172a !important;
+    background: var(--cobalt-paper-2, #f8fafc) !important;
+    color: var(--cobalt-ink, #0f172a) !important;
 }
 
 .col-sticky-name {
@@ -2471,7 +2486,8 @@ thead th.col-sticky-stt {
 
 thead th.col-sticky-name {
     z-index: 30;
-    background: #0f172a !important;
+    background: var(--cobalt-paper-2, #f8fafc) !important;
+    color: var(--cobalt-ink, #0f172a) !important;
 }
 
 .col-code {
@@ -2491,9 +2507,9 @@ thead th.col-sticky-name {
 }
 
 thead th.col-dob {
-    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
-    background: #1e293b !important;
-    color: #e2e8f0 !important;
+    border-right: 1px solid var(--cobalt-rule, #cbd5e1) !important;
+    background: var(--cobalt-paper-2, #f8fafc) !important;
+    color: var(--cobalt-ink, #0f172a) !important;
 }
 
 .spreadsheet-table td {
@@ -2513,35 +2529,56 @@ thead th.col-dob {
 }
 
 /* HARMONIZED APPLE COHESIVE THEAD & SMOOTH TRANSITION TO SCORES */
-.group-header.group-tx {
+.group-header.group-tx, th.group-tx, th.sub-tx {
+    background: #eff6ff !important;
+    color: #1e40af !important;
+    border-color: #bfdbfe !important;
+    border-bottom: 2px solid #3b82f6 !important;
+}
+
+.group-header.group-gk, th.group-gk {
+    background: #fffbeb !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+    border-bottom: 2px solid #f59e0b !important;
+}
+
+.group-header.group-ck, th.group-ck {
+    background: #f5f3ff !important;
+    color: #5b21b6 !important;
+    border-color: #ddd6fe !important;
+    border-bottom: 2px solid #8b5cf6 !important;
+}
+
+.group-header.group-avg, th.group-avg {
+    background: #ecfdf5 !important;
+    color: #065f46 !important;
+    border-color: #a7f3d0 !important;
+    border-bottom: 2px solid #10b981 !important;
+}
+
+[data-theme="dark"] .group-header.group-tx, [data-theme="dark"] th.group-tx, [data-theme="dark"] th.sub-tx {
     background: #1e293b !important;
     color: #93c5fd !important;
     border-color: #334155 !important;
     border-bottom: 2px solid #3b82f6 !important;
 }
 
-th.sub-tx {
-    background: #1e293b !important;
-    color: #bfdbfe !important;
-    border-color: #334155 !important;
-    border-bottom: 2px solid #3b82f6 !important;
-}
-
-.group-header.group-gk {
+[data-theme="dark"] .group-header.group-gk, [data-theme="dark"] th.group-gk {
     background: #1e293b !important;
     color: #fde68a !important;
     border-color: #334155 !important;
     border-bottom: 2px solid #f59e0b !important;
 }
 
-.group-header.group-ck {
+[data-theme="dark"] .group-header.group-ck, [data-theme="dark"] th.group-ck {
     background: #1e293b !important;
     color: #ddd6fe !important;
     border-color: #334155 !important;
     border-bottom: 2px solid #8b5cf6 !important;
 }
 
-.group-header.group-avg {
+[data-theme="dark"] .group-header.group-avg, [data-theme="dark"] th.group-avg {
     background: #1e293b !important;
     color: #a7f3d0 !important;
     border-color: #334155 !important;

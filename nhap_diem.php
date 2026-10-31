@@ -1264,10 +1264,6 @@ require_once __DIR__ . '/includes/header.php';
     <section class="cut-card telemetry-strip" aria-label="Thanh điều khiển chuyên môn và lớp học">
         <div class="telemetry-row">
             <div class="telemetry-pills">
-                <div class="telemetry-pill pill-accent">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    <span data-i18n="gradebook.title">Sổ Điểm Điện Tử 2D</span>
-                </div>
                 <div class="telemetry-pill">
                     <span data-i18n="gradebook.class_label">Lớp:</span>
                     <strong><?= htmlspecialchars($curClassName) ?></strong>
@@ -1281,10 +1277,6 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="telemetry-pill">
                     <span data-i18n="gradebook.teacher_label">Giáo viên:</span>
                     <strong><?= htmlspecialchars($currentTeacherName) ?></strong>
-                </div>
-                <div class="telemetry-pill pill-success">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span data-i18n="gradebook.permission_status">Quyền hạn: Có thể nhập điểm</span>
                 </div>
             </div>
 
@@ -1319,10 +1311,11 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- QUICK LINKS & ACTIONS -->
+        <!-- QUICK LINKS & ACTIONS (PRIMARY CONSOLIDATED ACTION BAR) -->
         <div class="telemetry-row" style="border-top: 1px solid var(--cobalt-rule); padding-top: 12px;">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="key key--primary">
+                <!-- HARD CONTRACT: id="btnSaveScores" and text contains "Lưu bảng điểm" -->
+                <button type="submit" form="gradebookForm" id="btnSaveScores" class="key key--primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     <span data-i18n="gradebook.save_button">Lưu bảng điểm</span>
                 </button>
@@ -1337,7 +1330,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="dirty-badge clean" id="saveStatusBadgeTop" data-i18n="gradebook.server_saved_badge">Đã lưu trên máy chủ</span>
+                <span class="dirty-badge clean" id="saveStatusBadge" data-i18n="gradebook.server_saved_badge">Đã lưu trên máy chủ</span>
             </div>
         </div>
     </section>
@@ -1408,26 +1401,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
     <?php endif; ?>
 
-    <!-- 3. GRADEBOOK TOOLBAR WITH COBALT KEYCAPS & INSTANT SEARCH -->
-    <div class="cut-card gradebook-toolbar">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <div style="font-family: var(--cobalt-display); font-weight: 700; font-size: 16px; color: var(--cobalt-ink);">
-                <span>Sổ Điểm Môn <?= htmlspecialchars($selectedSubject) ?> — Lớp <?= htmlspecialchars($curClassName) ?></span>
-            </div>
-            <span style="font-family: var(--cobalt-mono); font-size: 12px; font-weight: 700; background: rgba(37,99,235,0.1); color: var(--cobalt-accent); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(37,99,235,0.25);">
-                SĨ SỐ: <?= count($studentList) ?> HS
-            </span>
-        </div>
 
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <span id="saveStatusBadge" class="dirty-badge clean" data-i18n="gradebook.server_saved_badge">Đã lưu trên máy chủ</span>
-            <!-- HARD CONTRACT: id="btnSaveScores" and text contains "Lưu bảng điểm" -->
-            <button type="submit" form="gradebookForm" id="btnSaveScores" class="key key--primary" style="font-size: 14px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <span data-i18n="gradebook.save_button">Lưu bảng điểm</span>
-            </button>
-        </div>
-    </div>
 
     <!-- 4. FILTER PILLS & INSTANT SEARCH TRAY -->
     <div class="cut-card" style="padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">

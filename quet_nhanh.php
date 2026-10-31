@@ -1113,7 +1113,8 @@ $breadcrumbs = [
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-    <!-- 1. GUEST MODE & SANDBOX BANNER (COBALT TELEMETRY STYLE) -->
+    <?php if ($hasData): ?>
+    <!-- 1. GUEST MODE & SANDBOX BANNER (COBALT TELEMETRY STYLE - ONLY SHOWN WHEN DATA LOADED) -->
     <section class="cut-card guest-telemetry-banner" aria-label="Thông báo chế độ quét nhanh độc lập">
         <div>
             <div class="guest-banner-title">
@@ -1165,6 +1166,7 @@ require_once __DIR__ . '/includes/header.php';
             <?php endif; ?>
         </div>
     </section>
+    <?php endif; ?>
 
     <?php if (!empty($uploadError)): ?>
         <div style="background: rgba(239,68,68,0.12); border: 1px solid #fecaca; color: #991b1b; padding: 14px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px;">

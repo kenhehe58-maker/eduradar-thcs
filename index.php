@@ -941,40 +941,11 @@ require_once __DIR__ . '/includes/header.php';
 })();
 </script>
 
-<!-- KHỐI TIÊU ĐỀ DASHBOARD -->
-<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 16px; flex-wrap: wrap;">
-    <div>
-        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading); letter-spacing: -0.4px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-            <?= get_svg_icon('radar', 22, '', 'color: #2563eb;') ?>
-            <span>Ra-đa Giám Sát: Xu Hướng Tiến Bộ & Mức Độ Tích Lũy</span>
-        </h2>
-        <p class="muted small" style="margin: 0;">
-            <b>Xu hướng tiến bộ</b> (Tiến bộ &bull; Duy trì &bull; Sa sút) kết hợp <b>Mức độ tích lũy</b> theo chuẩn Thông tư 22/2021/TT-BGDĐT
-        </p>
-    </div>
-</div>
+
 
 <!-- KHỐI ĐIỀU KHIỂN MA TRẬN LỚP HỌC & PHÂN MÔN (CLASS & SUBJECT MATRIX CONTROL BAR ĐƯỢC CHUYỂN LÊN ĐẦU) -->
 <div class="class-subject-matrix-bar">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <?php if ($userRole === 'admin'): ?>
-            <div class="matrix-role-pill admin" style="display: inline-flex; align-items: center; gap: 6px;">
-                <?= get_svg_icon('settings', 15) ?>
-                <span>Quản Trị Viên Trường &bull; Toàn Quyền Lớp & Phân Môn Toàn Trường (<?= count($filterClasses) ?> Lớp &bull; <?= count($filterSubjects) ?> Môn)</span>
-            </div>
-        <?php else: ?>
-            <div class="matrix-role-pill teacher" style="display: inline-flex; align-items: center; gap: 6px;">
-                <?= get_svg_icon('user', 15) ?>
-                <span>Phân Công Giáo Viên: <?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username']) ?> &bull; Giới Hạn Theo Lớp & Môn Phụ Trách (<?= count($filterClasses) ?> Lớp &bull; <?= count($filterSubjects) ?> Môn)</span>
-            </div>
-        <?php endif; ?>
 
-        <div class="muted small">
-            Đang hiển thị: <b><?= count($students) ?></b> hồ sơ học sinh
-            <?= $selectedClassId > 0 ? " &bull; Lớp <b>" . htmlspecialchars($filterClasses[$selectedClassId] ?? '') . "</b>" : "" ?>
-            <?= $selectedSubject !== 'all' ? " &bull; Môn <b>" . htmlspecialchars($selectedSubject) . "</b>" : "" ?>
-        </div>
-    </div>
 
         <!-- 1. DẢI PHÍM CHỌN NHANH LỚP (ĐÃ CHUYỂN LÊN ĐẦU, BỎ BỚT CHỌN LỚP THỪA) -->
         <?php
@@ -1013,9 +984,7 @@ require_once __DIR__ . '/includes/header.php';
                         </button>
                     <?php endforeach; ?>
                 </div>
-                <div style="font-size: 11px; color: #64748b;">
-                    <i>Vuốt ngang để chuyển lớp</i>
-                </div>
+
             </div>
 
             <div class="matrix-class-chips" id="matrixClassChipsScroll">
@@ -1144,111 +1113,39 @@ require_once __DIR__ . '/includes/header.php';
 <?php if ($selectedClassId > 0 && isset($filterClasses[$selectedClassId])): ?>
     <!-- BẢNG ĐÁNH GIÁ HỌC LỰC THEO MÔN & HỌC LỰC CHUNG LỚP (CHUẨN THÔNG TƯ 22) - TECH TELEMETRY HUD -->
     <div class="card class-evaluation-panel" style="margin-bottom: 22px; padding: 18px 22px; border-radius: var(--radius-md);">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
             <div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span class="tech-indicator" style="font-size: 11px;">TELEMETRY</span>
-                    <div>
-                        <h2 style="font-size: 17px; font-weight: 800; color: var(--text-heading); margin: 0; letter-spacing: -0.02em;">
-                            Đánh Giá Học Lực Lớp <?= htmlspecialchars($filterClasses[$selectedClassId]) ?>
-                        </h2>
-                        <span class="muted small" style="font-size: 12px;">
-                            Sĩ số: <b><?= $classCounts[$selectedClassId] ?? count($students) ?></b> học sinh &bull; Niên khóa 2025–2026 &bull; Chuẩn Thông tư 22/2021/TT-BGDĐT
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BỘ CHỌN CÁC PHÂN MÔN CỦA LỚP NÀY ĐỂ XEM HỌC LỰC TỪNG MÔN -->
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                <span style="font-size: 11.5px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Môn xem:</span>
-                <?php
-                    $availableClassSubs = ($userRole === 'teacher' && isset($teacherClassSubjectMap[$selectedClassId]))
-                        ? $teacherClassSubjectMap[$selectedClassId]['subjects']
-                        : $filterSubjects;
-                ?>
-                <?php if ($userRole === 'admin'): ?>
-                    <a href="index.php?class_id=<?= $selectedClassId ?>&subject=all" 
-                       class="btn-subject-pill <?= $selectedSubject === 'all' ? 'active' : '' ?>">
-                        Tất cả môn
-                    </a>
-                <?php endif; ?>
-                <?php foreach ($availableClassSubs as $subItem): ?>
-                    <a href="index.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($subItem) ?>" 
-                       class="btn-subject-pill <?= $selectedSubject === $subItem ? 'active' : '' ?>">
-                        Môn <?= htmlspecialchars($subItem) ?>
-                    </a>
-                <?php endforeach; ?>
+                <h2 style="font-size: 17px; font-weight: 800; color: var(--text-heading); margin: 0; letter-spacing: -0.02em;">
+                    Đánh Giá Học Lực Lớp <?= htmlspecialchars($filterClasses[$selectedClassId]) ?>
+                </h2>
+                <span class="muted small" style="font-size: 12px;">
+                    Sĩ số: <b><?= $classCounts[$selectedClassId] ?? count($students) ?></b> học sinh
+                </span>
             </div>
         </div>
 
-        <!-- 2 KHỐI SO SÁNH: HỌC LỰC MÔN VÀ HỌC LỰC CHUNG (TT22) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
-            <!-- KHỐI 1: HỌC LỰC MÔN HIỆN TẠI -->
-            <div class="eval-sub-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <b style="font-size: 13px; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.04em;">
-                        Học Lực Môn: <span style="color: var(--primary);"><?= htmlspecialchars($selectedSubject === 'all' ? 'Tổng Hợp Môn' : $selectedSubject) ?></span>
-                    </b>
-                    <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 700; border: 1px solid var(--primary-border);">
-                        <?= $stats['total'] ?> bài đánh giá
-                    </span>
+        <!-- PHÂN BỐ 4 MỨC HỌC LỰC TINH GỌN (CHÍNH XÁC TT22) -->
+        <div class="eval-sub-card" style="width: 100%; box-sizing: border-box;">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center;">
+                <div onclick="filterByTier('tier:excellent')" title="Bấm để lọc xem danh sách học sinh Mức Tốt" class="eval-tier-box tier-tot">
+                    <span class="eval-tier-label">MỨC TỐT</span>
+                    <b class="eval-tier-val"><?= $stats['tier_excellent'] ?></b>
+                    <small class="eval-tier-pct"><?= round($stats['tier_excellent'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
-                    <div onclick="filterByTier('tier:excellent')" title="Bấm để lọc xem danh sách học sinh Mức Tốt" class="eval-tier-box tier-tot">
-                        <span class="eval-tier-label">MỨC TỐT</span>
-                        <b class="eval-tier-val"><?= $stats['tier_excellent'] ?></b>
-                        <small class="eval-tier-pct"><?= round($stats['tier_excellent'] / max(1, $stats['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('tier:good')" title="Bấm để lọc xem danh sách học sinh Mức Khá" class="eval-tier-box tier-kha">
-                        <span class="eval-tier-label">MỨC KHÁ</span>
-                        <b class="eval-tier-val"><?= $stats['tier_good'] ?></b>
-                        <small class="eval-tier-pct"><?= round($stats['tier_good'] / max(1, $stats['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('tier:average')" title="Bấm để lọc xem danh sách học sinh Mức Đạt" class="eval-tier-box tier-dat">
-                        <span class="eval-tier-label">MỨC ĐẠT</span>
-                        <b class="eval-tier-val"><?= $stats['tier_average'] ?></b>
-                        <small class="eval-tier-pct"><?= round($stats['tier_average'] / max(1, $stats['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('tier:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt" class="eval-tier-box tier-chuadat">
-                        <span class="eval-tier-label">CHƯA ĐẠT</span>
-                        <b class="eval-tier-val"><?= $stats['tier_low'] ?></b>
-                        <small class="eval-tier-pct"><?= round($stats['tier_low'] / max(1, $stats['total']) * 100, 1) ?>%</small>
-                    </div>
+                <div onclick="filterByTier('tier:good')" title="Bấm để lọc xem danh sách học sinh Mức Khá" class="eval-tier-box tier-kha">
+                    <span class="eval-tier-label">MỨC KHÁ</span>
+                    <b class="eval-tier-val"><?= $stats['tier_good'] ?></b>
+                    <small class="eval-tier-pct"><?= round($stats['tier_good'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                 </div>
-            </div>
-
-            <!-- KHỐI 2: HỌC LỰC CHUNG TOÀN LỚP (CHUẨN THÔNG TƯ 22) -->
-            <div class="eval-sub-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <b style="font-size: 13px; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.04em;">
-                        HỌC LỰC CHUNG TOÀN LỚP (TT22)
-                    </b>
-                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.35);">
-                        TỔNG HỢP ĐA MÔN
-                    </span>
+                <div onclick="filterByTier('tier:average')" title="Bấm để lọc xem danh sách học sinh Mức Đạt" class="eval-tier-box tier-dat">
+                    <span class="eval-tier-label">MỨC ĐẠT</span>
+                    <b class="eval-tier-val"><?= $stats['tier_average'] ?></b>
+                    <small class="eval-tier-pct"><?= round($stats['tier_average'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center;">
-                    <div onclick="filterByTier('overall:excellent')" title="Bấm để lọc xem danh sách học sinh đạt Mức Tốt chung toàn lớp" class="eval-tier-box tier-tot">
-                        <span class="eval-tier-label">TỐT (CHUNG)</span>
-                        <b class="eval-tier-val"><?= $classOverallSummary['excellent'] ?></b>
-                        <small class="eval-tier-pct"><?= round($classOverallSummary['excellent'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('overall:good')" title="Bấm để lọc xem danh sách học sinh đạt Mức Khá chung toàn lớp" class="eval-tier-box tier-kha">
-                        <span class="eval-tier-label">KHÁ (CHUNG)</span>
-                        <b class="eval-tier-val"><?= $classOverallSummary['good'] ?></b>
-                        <small class="eval-tier-pct"><?= round($classOverallSummary['good'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('overall:average')" title="Bấm để lọc xem danh sách học sinh đạt Mức Đạt chung toàn lớp" class="eval-tier-box tier-dat">
-                        <span class="eval-tier-label">ĐẠT (CHUNG)</span>
-                        <b class="eval-tier-val"><?= $classOverallSummary['average'] ?></b>
-                        <small class="eval-tier-pct"><?= round($classOverallSummary['average'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
-                    </div>
-                    <div onclick="filterByTier('overall:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt chung toàn lớp" class="eval-tier-box tier-chuadat">
-                        <span class="eval-tier-label">CHƯA ĐẠT</span>
-                        <b class="eval-tier-val"><?= $classOverallSummary['low'] ?></b>
-                        <small class="eval-tier-pct"><?= round($classOverallSummary['low'] / max(1, $classOverallSummary['total']) * 100, 1) ?>%</small>
-                    </div>
+                <div onclick="filterByTier('tier:low')" title="Bấm để lọc xem danh sách học sinh Chưa Đạt" class="eval-tier-box tier-chuadat">
+                    <span class="eval-tier-label">CHƯA ĐẠT</span>
+                    <b class="eval-tier-val"><?= $stats['tier_low'] ?></b>
+                    <small class="eval-tier-pct"><?= round($stats['tier_low'] / max(1, $stats['total']) * 100, 1) ?>%</small>
                 </div>
             </div>
         </div>
@@ -1304,7 +1201,7 @@ $tt22Slices = [
             <?= get_svg_icon('trend-up', 16, '', 'color: #2563eb;') ?>
             <span>Xu hướng tiến bộ</span>
         </span>
-        <span class="muted small">Tiến bộ · Duy trì · Sa sút · Chờ điểm</span>
+
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 16px;">
         <div class="card stat-card trend-up">
@@ -1366,9 +1263,8 @@ $tt22Slices = [
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
         <span style="font-size: 13px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 6px;">
             <?= get_svg_icon('bar-chart', 16, '', 'color: #059669;') ?>
-            <span>Mức học lực (Thông tư 22)</span>
+            <span>Mức học lực</span>
         </span>
-        <span class="muted small">Tổng số <?= $stats['total'] ?> học sinh</span>
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
         <div class="card stat-card total">

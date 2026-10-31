@@ -40,15 +40,13 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time() ?>">
-    <?php $fxPage = in_array(basename($_SERVER['SCRIPT_NAME'] ?? ''), ['welcome.php', 'quet_nhanh.php'], true); ?>
-    <?php if ($fxPage): /* GSAP chỉ nạp cho Trang chủ & Quét nhanh */ ?>
+    <?php $fxPage = true; /* Toàn bộ trang web được bật GSAP và hiệu ứng chuyển động mượt mà */ ?>
     <script src="assets/js/gsap.min.js"></script>
     <script src="assets/js/ScrollTrigger.min.js"></script>
     <script src="assets/js/ScrollToPlugin.min.js"></script>
     <script src="assets/js/Flip.min.js"></script>
     <script src="assets/js/CustomEase.min.js"></script>
     <script src="assets/js/TextPlugin.min.js"></script>
-    <?php endif; ?>
     <script>
         // Khởi tạo Theme ngay lập tức trước khi render DOM để chống giật nháy màn hình (Anti-Flicker)
         (function() {
@@ -342,10 +340,89 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
         .edexa-app-badge-m, .edexa-sub-m {
             display: none;
         }
+
+        /* HALLMARK COBALT PAGE PRELOADER & SEAMLESS REVEAL */
+        .edu-page-preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: var(--bg-main, #f8fafc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+            pointer-events: all;
+        }
+        [data-theme="dark"] .edu-page-preloader {
+            background: #0f172a !important;
+        }
+        .edu-page-preloader.is-ready {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        .preloader-spin-wrap {
+            position: relative;
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+        }
+        .preloader-pulse-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            border: 2.5px solid #2563eb;
+            animation: preloaderPulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes preloaderPulse {
+            0% { transform: scale(0.92); opacity: 0.9; }
+            50% { transform: scale(1.08); opacity: 0.25; }
+            100% { transform: scale(0.92); opacity: 0.9; }
+        }
+        .preloader-symbol {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 16px;
+            color: #2563eb;
+            letter-spacing: -0.05em;
+        }
+        [data-theme="dark"] .preloader-symbol {
+            color: #60a5fa;
+        }
+        [data-theme="dark"] .preloader-pulse-ring {
+            border-color: #60a5fa;
+        }
     </style>
     <?php if (!empty($extraHead)) echo $extraHead; ?>
 </head>
-<body class="liquid-glass-layout<?= $fxPage ? '' : ' fx-off' ?>">
+<body class="liquid-glass-layout">
+
+<!-- 0. HALLMARK COBALT PRELOADER CURTAIN -->
+<div id="eduPagePreloader" class="edu-page-preloader" aria-hidden="true">
+    <div class="preloader-spin-wrap">
+        <div class="preloader-pulse-ring"></div>
+        <div class="preloader-symbol">ER</div>
+    </div>
+</div>
+<script>
+(function() {
+    function hidePreloader() {
+        var p = document.getElementById('eduPagePreloader');
+        if (p && !p.classList.contains('is-ready')) {
+            p.classList.add('is-ready');
+            if (window.__triggerPageEntrance) {
+                window.__triggerPageEntrance();
+            }
+        }
+    }
+    window.addEventListener('load', hidePreloader);
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(hidePreloader, 180);
+    });
+    setTimeout(hidePreloader, 400); // Failsafe
+})();
+</script>
 
 <!-- TOP EDEXA GREETING & STATUS BAR -->
 <header class="glass-topbar">

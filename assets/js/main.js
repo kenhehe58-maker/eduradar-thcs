@@ -1864,3 +1864,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// -----------------------------------------------------------------------------
+// HALLMARK V2 COBALT COORDINATED PAGE ENTRANCE (GSAP)
+// Triggered when #eduPagePreloader veil dissolves, preventing FOUC
+// -----------------------------------------------------------------------------
+window.__triggerPageEntrance = function() {
+    if (!window.gsap) return;
+    try {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    } catch (e) {}
+
+    const targets = [];
+    const hero = document.querySelector('.hero-banner, .welcome-hero, .cut-card.telemetry-strip, .matrix-class-chips-container');
+    if (hero) targets.push(hero);
+
+    const stats = document.querySelectorAll('.radar-stats-grid .card, .class-evaluation-panel, .eval-sub-card, .mobile-rings-overview');
+    if (stats.length > 0) targets.push(...Array.from(stats));
+
+    const toolbar = document.querySelector('.radar-chips, .gradebook-filter-tray');
+    if (toolbar) targets.push(toolbar);
+
+    const tables = document.querySelectorAll('.radar-table-container, .spreadsheet-matrix-wrap, .drop-zone-card');
+    if (tables.length > 0) targets.push(...Array.from(tables));
+
+    if (targets.length > 0) {
+        gsap.fromTo(targets, 
+            { opacity: 0, y: 14 }, 
+            { 
+                opacity: 1, 
+                y: 0, 
+                duration: 0.42, 
+                stagger: 0.045, 
+                ease: 'power2.out',
+                clearProps: 'transform,opacity'
+            }
+        );
+    }
+};
