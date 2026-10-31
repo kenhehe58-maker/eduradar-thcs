@@ -7885,3 +7885,175 @@ html, body {
         transition: none !important;
     }
 }
+
+
+/* =========================================================================
+   DARK MODE: TỰ ĐỘNG ĐẢO MÀU CÁC THẺ CÒN HARDCODE INLINE (nền sáng / chữ tối)
+   Phủ toàn bộ trang dùng style.css; trang in (PDF) không nạp file này.
+   ========================================================================= */
+[data-theme="dark"] [style*="background: #fff"],
+[data-theme="dark"] [style*="background:#fff"],
+[data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background:#ffffff"],
+[data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background:#f8fafc"],
+[data-theme="dark"] [style*="background: #f1f5f9"],
+[data-theme="dark"] [style*="background:#f1f5f9"],
+[data-theme="dark"] [style*="background: #fafafa"],
+[data-theme="dark"] [style*="background:#fafafa"],
+[data-theme="dark"] [style*="background-color: #fff"],
+[data-theme="dark"] [style*="background-color:#fff"],
+[data-theme="dark"] [style*="background-color: #ffffff"],
+[data-theme="dark"] [style*="background-color:#ffffff"],
+[data-theme="dark"] [style*="background-color: #f8fafc"],
+[data-theme="dark"] [style*="background-color:#f8fafc"],
+[data-theme="dark"] [style*="background-color: #f1f5f9"],
+[data-theme="dark"] [style*="background-color:#f1f5f9"],
+[data-theme="dark"] [style*="background-color: #fafafa"],
+[data-theme="dark"] [style*="background-color:#fafafa"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+[data-theme="dark"] [style*="background: #eef2ff"],
+[data-theme="dark"] [style*="background:#eef2ff"],
+[data-theme="dark"] [style*="background: #e0e7ff"],
+[data-theme="dark"] [style*="background:#e0e7ff"],
+[data-theme="dark"] [style*="background: #eff6ff"],
+[data-theme="dark"] [style*="background:#eff6ff"],
+[data-theme="dark"] [style*="background: #f5f3ff"],
+[data-theme="dark"] [style*="background:#f5f3ff"],
+[data-theme="dark"] [style*="background-color: #eef2ff"],
+[data-theme="dark"] [style*="background-color:#eef2ff"],
+[data-theme="dark"] [style*="background-color: #e0e7ff"],
+[data-theme="dark"] [style*="background-color:#e0e7ff"],
+[data-theme="dark"] [style*="background-color: #eff6ff"],
+[data-theme="dark"] [style*="background-color:#eff6ff"],
+[data-theme="dark"] [style*="background-color: #f5f3ff"],
+[data-theme="dark"] [style*="background-color:#f5f3ff"] {
+  background: rgba(99, 102, 241, 0.16) !important;
+  border-color: rgba(129, 140, 248, 0.4) !important;
+}
+[data-theme="dark"] [style*="background: #f0fdf4"],
+[data-theme="dark"] [style*="background:#f0fdf4"],
+[data-theme="dark"] [style*="background: #ecfdf5"],
+[data-theme="dark"] [style*="background:#ecfdf5"],
+[data-theme="dark"] [style*="background: #dcfce7"],
+[data-theme="dark"] [style*="background:#dcfce7"],
+[data-theme="dark"] [style*="background-color: #f0fdf4"],
+[data-theme="dark"] [style*="background-color:#f0fdf4"],
+[data-theme="dark"] [style*="background-color: #ecfdf5"],
+[data-theme="dark"] [style*="background-color:#ecfdf5"],
+[data-theme="dark"] [style*="background-color: #dcfce7"],
+[data-theme="dark"] [style*="background-color:#dcfce7"] {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+[data-theme="dark"] [style*="background: #fefce8"],
+[data-theme="dark"] [style*="background:#fefce8"],
+[data-theme="dark"] [style*="background: #fffbeb"],
+[data-theme="dark"] [style*="background:#fffbeb"],
+[data-theme="dark"] [style*="background-color: #fefce8"],
+[data-theme="dark"] [style*="background-color:#fefce8"],
+[data-theme="dark"] [style*="background-color: #fffbeb"],
+[data-theme="dark"] [style*="background-color:#fffbeb"] {
+  background: rgba(245, 158, 11, 0.14) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+[data-theme="dark"] [style*="background: #fef2f2"],
+[data-theme="dark"] [style*="background:#fef2f2"],
+[data-theme="dark"] [style*="background: #fee2e2"],
+[data-theme="dark"] [style*="background:#fee2e2"],
+[data-theme="dark"] [style*="background-color: #fef2f2"],
+[data-theme="dark"] [style*="background-color:#fef2f2"],
+[data-theme="dark"] [style*="background-color: #fee2e2"],
+[data-theme="dark"] [style*="background-color:#fee2e2"] {
+  background: rgba(239, 68, 68, 0.14) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+[data-theme="dark"] [style*="color: #0f172a"],
+[data-theme="dark"] [style*="color:#0f172a"],
+[data-theme="dark"] [style*="color: #1e293b"],
+[data-theme="dark"] [style*="color:#1e293b"],
+[data-theme="dark"] [style*="color: #334155"],
+[data-theme="dark"] [style*="color:#334155"],
+[data-theme="dark"] [style*="color: #475569"],
+[data-theme="dark"] [style*="color:#475569"] {
+  color: #e2e8f0 !important;
+}
+[data-theme="dark"] [style*="color: #64748b"],
+[data-theme="dark"] [style*="color:#64748b"] {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] [style*="color: #4338ca"],
+[data-theme="dark"] [style*="color:#4338ca"],
+[data-theme="dark"] [style*="color: #3730a3"],
+[data-theme="dark"] [style*="color:#3730a3"],
+[data-theme="dark"] [style*="color: #1d4ed8"],
+[data-theme="dark"] [style*="color:#1d4ed8"],
+[data-theme="dark"] [style*="color: #1e40af"],
+[data-theme="dark"] [style*="color:#1e40af"],
+[data-theme="dark"] [style*="color: #1e3a8a"],
+[data-theme="dark"] [style*="color:#1e3a8a"],
+[data-theme="dark"] [style*="color: #1e1b4b"],
+[data-theme="dark"] [style*="color:#1e1b4b"] {
+  color: #a5b4fc !important;
+}
+[data-theme="dark"] [style*="color: #166534"],
+[data-theme="dark"] [style*="color:#166534"],
+[data-theme="dark"] [style*="color: #15803d"],
+[data-theme="dark"] [style*="color:#15803d"],
+[data-theme="dark"] [style*="color: #065f46"],
+[data-theme="dark"] [style*="color:#065f46"],
+[data-theme="dark"] [style*="color: #14532d"],
+[data-theme="dark"] [style*="color:#14532d"] {
+  color: #6ee7b7 !important;
+}
+[data-theme="dark"] [style*="color: #92400e"],
+[data-theme="dark"] [style*="color:#92400e"],
+[data-theme="dark"] [style*="color: #78350f"],
+[data-theme="dark"] [style*="color:#78350f"],
+[data-theme="dark"] [style*="color: #b45309"],
+[data-theme="dark"] [style*="color:#b45309"],
+[data-theme="dark"] [style*="color: #d97706"],
+[data-theme="dark"] [style*="color:#d97706"] {
+  color: #fcd34d !important;
+}
+[data-theme="dark"] [style*="color: #991b1b"],
+[data-theme="dark"] [style*="color:#991b1b"],
+[data-theme="dark"] [style*="color: #b91c1c"],
+[data-theme="dark"] [style*="color:#b91c1c"],
+[data-theme="dark"] [style*="color: #dc2626"],
+[data-theme="dark"] [style*="color:#dc2626"] {
+  color: #fca5a5 !important;
+}
+
+/* Dark mode: các thẻ class-based còn nền sáng cố định (phát hiện bằng quét computed style) */
+[data-theme="dark"] .edexa-role-pill,
+[data-theme="dark"] .academic-milestone-banner,
+[data-theme="dark"] .milestone-phase-badge,
+[data-theme="dark"] .milestone-focus-tag,
+[data-theme="dark"] .matrix-role-pill.teacher {
+  background: rgba(59, 130, 246, 0.16) !important;
+  border-color: rgba(96, 165, 250, 0.4) !important;
+  color: #bfdbfe !important;
+}
+[data-theme="dark"] .milestone-divider { color: #60a5fa !important; }
+[data-theme="dark"] .radar-table-wrap { background: transparent !important; }
+[data-theme="dark"] .avg-score-badge.avg-empty { color: #94a3b8 !important; }
+
+/* Dark mode: chữ xanh đậm inline/class quá tối trên nền tối */
+[data-theme="dark"] [style*="color: #2563eb"], [data-theme="dark"] [style*="color:#2563eb"],
+[data-theme="dark"] [style*="color: #3b82f6"], [data-theme="dark"] [style*="color:#3b82f6"] { color: #60a5fa !important; }
+[data-theme="dark"] [style*="color: #059669"], [data-theme="dark"] [style*="color:#059669"] { color: #34d399 !important; }
+[data-theme="dark"] .tech-chip { color: #94a3b8 !important; }
+[data-theme="dark"] [style*="color: #4f46e5"], [data-theme="dark"] [style*="color:#4f46e5"] { color: #818cf8 !important; }
+[data-theme="dark"] .spreadsheet-container { background: #0f172a !important; }
+[data-theme="dark"] .avg-badge.level-empty { color: #94a3b8 !important; }
+[data-theme="dark"] .milestone-txt-year, [data-theme="dark"] .milestone-txt-sem { color: #bfdbfe !important; }
+[data-theme="dark"] .score-timeline-node .node-score { filter: brightness(1.7) saturate(1.1); }
+[style*="background: #10b981"], [style*="background:#10b981"] { background: #047857 !important; }
+
+/* Light mode: tăng tương phản chữ xanh nhạt trên nền sáng */
+:root:not([data-theme="dark"]) [style*="color: #10b981"], :root:not([data-theme="dark"]) [style*="color:#10b981"] { color: #047857 !important; }
+:root:not([data-theme="dark"]) .avg-score-badge.avg-empty { color: #64748b; }
+:root:not([data-theme="dark"]) .badge-tier.tier-excellent { color: #15803d; }
