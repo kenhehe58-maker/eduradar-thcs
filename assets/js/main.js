@@ -813,7 +813,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 card.innerHTML = `
                     <div style="font-size: 11px; font-weight: 800; color: ${t.color}; text-transform: uppercase;">${t.label}</div>
                     <div style="font-size: 17px; font-weight: 900; color: ${t.color}; margin: 3px 0;">${scoreText}</div>
-                    <div style="font-size: 10px; color: #64748b; font-weight: 600;">${subText}</div>
+                    <div class="target-card-sub" style="font-size: 10px; font-weight: 600;">${subText}</div>
                 `;
                 modalTargetCardsGrid.appendChild(card);
             });
@@ -837,14 +837,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     if (strengthsPills) {
                         strengthsPills.innerHTML = (prof.strengths_list || []).map(function(s) {
-                            return '<span style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 9999px;">' + s + '</span>';
+                            return '<span class="strength-pill">' + s + '</span>';
                         }).join('');
                     }
                     if (strengthsText) strengthsText.textContent = prof.strengths_text || prof.profile_summary || '';
 
                     if (weaknessesPills) {
                         weaknessesPills.innerHTML = (prof.weaknesses_list || []).map(function(w) {
-                            return '<span style="background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 9999px;">' + w + '</span>';
+                            return '<span class="weakness-pill">' + w + '</span>';
                         }).join('');
                     }
                     if (weaknessesText) weaknessesText.textContent = prof.weaknesses_text || '';

@@ -1761,13 +1761,13 @@ $tt22Slices = [
 ?>
 <?php if ($reportClassId > 0): ?>
     <!-- KHU VỰC XUẤT BÁO CÁO NỘP BAN GIÁM HIỆU (ĐƯỢC CHUYỂN XUỐNG ĐÁY TRANG HỢP LÝ) -->
-    <div class="bottom-report-export-bar" style="margin-top: 24px; margin-bottom: 24px; padding: 16px 20px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+    <div class="bottom-report-export-bar" style="margin-top: 24px; margin-bottom: 24px; padding: 16px 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
         <div>
-            <div style="font-weight: 800; font-size: 14px; color: #1e293b; display: flex; align-items: center; gap: 6px;">
+            <div class="export-bar-title" style="font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px;">
                 <?= get_svg_icon('printer', 16, '', 'color: #4f46e5;') ?>
                 <span>Xuất Báo Cáo &amp; Dữ Liệu Nộp Ban Giám Hiệu</span>
             </div>
-            <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">
+            <p class="export-bar-sub" style="font-size: 12px; margin: 4px 0 0 0;">
                 Tải bản in A4 hoặc bảng tính Excel tổng hợp lớp <b><?= htmlspecialchars($filterClasses[$selectedClassId] ?? 'Toàn trường') ?></b>
             </p>
         </div>
@@ -1901,27 +1901,27 @@ $tt22Slices = [
                 <!-- Hộp nhận định thế mạnh & điểm trũng (Chỉ ghi nhận tình trạng thực tế) -->
                 <div class="modal-profile-sections-wrapper" style="display: flex; flex-direction: column; gap: 10px;">
                     <!-- 1. Môn học sở trường & thế mạnh -->
-                    <div class="profile-feedback-box strength-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px;">
+                    <div class="profile-feedback-box strength-box" style="border-radius: 12px; padding: 12px 14px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #166534;">
+                            <div class="strength-heading" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700;">
                                 <?= get_svg_icon('award', 14, '', 'color: #16a34a;') ?>
                                 <span>Môn có kết quả nổi bật:</span>
                             </div>
                             <div id="modalStrengthsPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
                         </div>
-                        <p id="modalStrengthsText" style="font-size: 12px; color: #14532d; line-height: 1.5; margin: 0;"></p>
+                        <p id="modalStrengthsText" class="strength-text" style="font-size: 12px; line-height: 1.5; margin: 0;"></p>
                     </div>
 
                     <!-- 2. Môn còn yếu & điểm trũng cần lưu ý -->
-                    <div class="profile-feedback-box weakness-box" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 14px;">
+                    <div class="profile-feedback-box weakness-box" style="border-radius: 12px; padding: 12px 14px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-                            <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #92400e;">
+                            <div class="weakness-heading" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700;">
                                 <?= get_svg_icon('alert-triangle', 14, '', 'color: #d97706;') ?>
                                 <span>Môn cần hỗ trợ thêm:</span>
                             </div>
                             <div id="modalWeaknessesPills" style="display: flex; gap: 4px; flex-wrap: wrap;"></div>
                         </div>
-                        <p id="modalWeaknessesText" style="font-size: 12px; color: #78350f; line-height: 1.5; margin: 0;"></p>
+                        <p id="modalWeaknessesText" class="weakness-text" style="font-size: 12px; line-height: 1.5; margin: 0;"></p>
                     </div>
                 </div>
             </div>
@@ -1929,7 +1929,7 @@ $tt22Slices = [
             <!-- Apple Unified Pedagogical Card (Chỉ ghi tình trạng thực tế) -->
             <div class="apple-pedagogical-card">
                 <div class="apple-pedagogy-section">
-                    <div class="apple-pedagogy-title" style="color: #4338ca; display: flex; align-items: center; gap: 6px;">
+                    <div class="apple-pedagogy-title" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('search', 14) ?>
                         <span>Chẩn đoán chuyên môn:</span>
                     </div>
@@ -1939,12 +1939,12 @@ $tt22Slices = [
                 </div>
                 <div style="border-top: 1px dashed #e2e8f0;"></div>
                 <div class="apple-pedagogy-section">
-                    <div class="apple-pedagogy-title" style="color: #1d4ed8; display: flex; align-items: center; gap: 6px;">
+                    <div class="apple-pedagogy-title" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('award', 14) ?>
                         <span>Tình Trạng Năng Lực Học Tập Hiện Tại:</span>
                     </div>
                     <div class="apple-pedagogy-content">
-                        <b id="modalCompetencyTitle" style="color: #1e3a8a; display: block; margin-bottom: 4px;">Tiêu đề năng lực</b>
+                        <b id="modalCompetencyTitle" style="display: block; margin-bottom: 4px;">Tiêu đề năng lực</b>
                         <div id="modalPedagogicalAdvice">Tình trạng học tập...</div>
                     </div>
                 </div>
@@ -1953,13 +1953,13 @@ $tt22Slices = [
             <!-- Sổ Can Thiệp Sư Phạm & Lịch Sử Sửa Điểm (Audit Trail) -->
             <div class="apple-pedagogical-card" style="border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <div style="display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800; color: #1e293b;">
+                    <div class="audit-trail-heading" style="display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800;">
                         <?= get_svg_icon('clock', 14, '', 'color: #4f46e5;') ?>
                         <span>Lịch Sử Chỉnh Sửa Điểm (Audit Trail)</span>
                     </div>
                     <span style="font-size: 11px; background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Nhật ký</span>
                 </div>
-                <div id="modalAuditHistoryContainer" style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                <div id="modalAuditHistoryContainer" style="font-size: 12px; line-height: 1.5;">
                     Đang tải lịch sử chỉnh sửa điểm...
                 </div>
             </div>
