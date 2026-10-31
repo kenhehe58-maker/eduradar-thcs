@@ -229,10 +229,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Global helper for opening student detail modal from mobile list row
     window.openStudentModalFromId = function(studentId) {
-        const row = document.querySelector('tr.radar-row[data-student-id="' + studentId + '"]');
+        const row = document.querySelector('tr.radar-row[data-student-id="' + studentId + '"], tr.radar-row[data-sid="' + studentId + '"]');
         if (row) {
             const btn = row.querySelector('.btn-open-detail');
-            if (btn) btn.click();
+            if (btn) {
+                btn.click();
+            } else {
+                openStudentModal(row);
+            }
         }
     };
 
@@ -385,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!modal) return;
         activeRowElement = row;
 
-        currentStudentId = parseInt(row.dataset.studentId || '0', 10);
+        currentStudentId = parseInt(row.dataset.studentId || row.dataset.sid || '0', 10);
         currentSubject = row.dataset.subject || '';
         const fullName = row.dataset.fullName || '';
         const studentCode = row.dataset.studentCode || '';
@@ -706,14 +710,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const modalSlopeCard = document.getElementById('modalSlopeCard');
         if (modalSlopeCard) {
-            const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-            if (isDarkNow) {
-                modalSlopeCard.style.background = 'rgba(255, 255, 255, 0.05)';
-                modalSlopeCard.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-            } else {
-                modalSlopeCard.style.background = slopeBg;
-                modalSlopeCard.style.borderColor = slopeBorder;
-            }
+            modalSlopeCard.style.background = '';
+            modalSlopeCard.style.borderColor = '';
         }
 
         // 2. Phân tích Tâm Lý & Phong Độ Phòng Thi (chuyển hóa từ Độ lệch chuẩn σ)
@@ -760,14 +758,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const modalStabilityCard = document.getElementById('modalStabilityCard');
         if (modalStabilityCard) {
-            const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-            if (isDarkNow) {
-                modalStabilityCard.style.background = 'rgba(255, 255, 255, 0.05)';
-                modalStabilityCard.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-            } else {
-                modalStabilityCard.style.background = stabBg;
-                modalStabilityCard.style.borderColor = stabBorder;
-            }
+            modalStabilityCard.style.background = '';
+            modalStabilityCard.style.borderColor = '';
         }
 
         // 3. Dự Báo Điểm Cuối Kỳ Cần Đạt (Thẻ Mục Tiêu chuẩn màu: CAM Đạt, VÀNG Khá, XANH Tốt)
@@ -781,17 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             targets.forEach(function(t) {
                 const card = document.createElement('div');
-                card.className = 'target-card-item';
-                card.style.padding = '10px 12px';
-                card.style.borderRadius = '10px';
-                card.style.border = `1.5px solid ${t.border}`;
-                const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-                if (isDarkNow) {
-                    card.style.background = 'rgba(255, 255, 255, 0.04)';
-                    card.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                } else {
-                    card.style.background = t.bg;
-                }
+                card.className = 'target-card-item target-card-' + t.key;
                 card.style.textAlign = 'center';
 
                 let scoreText = '-';
@@ -1056,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Attach row click listeners (both main rows and sub-rows)
-    document.querySelectorAll('tbody tr[data-level]').forEach(function (r) {
+    document.querySelectorAll('tbody tr[data-level], tbody tr.radar-row, tbody tr[data-sid]').forEach(function (r) {
         if (!r || typeof r.addEventListener !== 'function') return;
         r.addEventListener('click', function (e) {
             // Không mở modal nếu nhấn trực tiếp vào link sổ điểm hoặc nút toggle subrows

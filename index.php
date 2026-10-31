@@ -582,7 +582,7 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="focus-desc"><?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
             </div>
         </div>
-        <h1 style="font-size: 26px; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
             Bảng theo dõi &amp; Cảnh báo sớm học lực
         </h1>
         <p style="font-size: 13.5px; color: var(--text-muted, #475569); margin: 0 0 16px 0; line-height: 1.5;">
@@ -1493,7 +1493,7 @@ $tt22Slices = [
                             }
                         ?>
                         <tr class="radar-row" 
-                            id="student-row-<?= $s['student_id'] ?>-<?= md5($s['subject']) ?>" data-sid="<?= $s['student_id'] ?>"
+                            id="student-row-<?= $s['student_id'] ?>-<?= md5($s['subject']) ?>" data-sid="<?= $s['student_id'] ?>" data-student-id="<?= $s['student_id'] ?>"
                             data-student-code="<?= htmlspecialchars(!empty($s['student_code']) ? $s['student_code'] : 'HS' . $s['student_id']) ?>"
                             data-full-name="<?= htmlspecialchars($s['full_name']) ?>"
                             data-class-name="<?= htmlspecialchars($s['class_name']) ?>"
@@ -1668,7 +1668,7 @@ $tt22Slices = [
                         <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
                             Không có học sinh nào thỏa mãn đồng thời các điều kiện đã chọn hoặc từ khóa tìm kiếm.
                         </div>
-                        <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; background: #0f172a; border: 1px solid #0f172a; color: #ffffff; cursor: pointer; transition: all 0.15s ease;">
+                        <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()">
                             <span>Đặt lại bộ lọc (Xem tất cả)</span>
                         </button>
                     </td>
@@ -1721,7 +1721,7 @@ $tt22Slices = [
                 <div class="m-row-info">
                     <div class="m-row-name"><?= htmlspecialchars($mItem['full_name']) ?></div>
                     <div class="m-row-sub">
-                        <span style="font-family: var(--font-mono); font-weight: 700; color: #4338ca;"><?= htmlspecialchars($mCode) ?></span>
+                        <span class="m-row-code"><?= htmlspecialchars($mCode) ?></span>
                         <span>•</span>
                         <span>Lớp <?= htmlspecialchars($mItem['class_name']) ?></span>
                         <span>•</span>
@@ -1748,7 +1748,7 @@ $tt22Slices = [
             <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
                 Không có học sinh nào thỏa mãn các điều kiện lọc đang chọn.
             </div>
-            <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 12px; font-weight: 700; border-radius: 20px; background: #0f172a; border: 1px solid #0f172a; color: #ffffff; cursor: pointer;">
+            <button type="button" class="btn-reset-filters" onclick="window.resetAllFilters()">
                 <span>Đặt lại bộ lọc (Xem tất cả)</span>
             </button>
         </div>
@@ -1794,7 +1794,7 @@ $tt22Slices = [
                 <div class="modal-name-group">
                     <h2 class="modal-student-name" id="modalStudentName">Họ và Tên Học Sinh</h2>
                     <div class="modal-meta-badges">
-                        <span class="mono-code" id="modalStudentCode" style="font-weight: 700; color: #4338ca;">HS0001</span>
+                        <span class="mono-code modal-student-code" id="modalStudentCode">HS0001</span>
                         <span style="color: #cbd5e1;">•</span>
                         <span class="badge-class" id="modalStudentClass">Lớp Học</span>
                         <span class="badge-subject" id="modalStudentSubject">Môn Học</span>
@@ -1844,9 +1844,9 @@ $tt22Slices = [
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <?= get_svg_icon('radar', 16, '', 'color: #2563eb;') ?>
                         <span class="card-heading-title" style="font-weight: 800; font-size: 13.5px;">Dự Báo Tiến Bộ &amp; Mục Tiêu Điểm Thi</span>
-                        <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #fefce8; color: #b45309; border: 1px solid #fde047; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
+                        <span id="modalMathAcademicBadge" class="modal-academic-pill">Học kỳ I</span>
                     </div>
-                    <span style="font-size: 11px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family: inherit;">Dự báo Sư phạm TT22</span>
+                    <span class="modal-pred-badge">Dự báo Sư phạm TT22</span>
                 </div>
 
                 <!-- 2 Hộp Phân Tích Thực Tế Dành Riêng Cho Giáo Viên: Xu Hướng & Phong Độ -->
@@ -1888,7 +1888,7 @@ $tt22Slices = [
                         <?= get_svg_icon('award', 16, '', 'color: #4f46e5;') ?>
                         <span class="card-heading-title" style="font-weight: 800; font-size: 13.5px;">Phổ điểm môn học &amp; Năng lực nổi bật</span>
                     </div>
-                    <span id="modalAptitudeBadge" style="font-size: 11px; font-weight: 800; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 10px; border-radius: 9999px;">
+                    <span id="modalAptitudeBadge" class="modal-aptitude-badge">
                         Thiên hướng năng lực
                     </span>
                 </div>
@@ -1937,7 +1937,7 @@ $tt22Slices = [
                         Đang tải chẩn đoán...
                     </div>
                 </div>
-                <div style="border-top: 1px dashed #e2e8f0;"></div>
+                <div class="modal-section-divider"></div>
                 <div class="apple-pedagogy-section">
                     <div class="apple-pedagogy-title" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('award', 14) ?>
@@ -1957,7 +1957,7 @@ $tt22Slices = [
                         <?= get_svg_icon('clock', 14, '', 'color: #4f46e5;') ?>
                         <span>Lịch Sử Chỉnh Sửa Điểm (Audit Trail)</span>
                     </div>
-                    <span style="font-size: 11px; background: #eef2ff; color: #4338ca; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Nhật ký</span>
+                    <span class="modal-audit-badge">Nhật ký</span>
                 </div>
                 <div id="modalAuditHistoryContainer" style="font-size: 12px; line-height: 1.5;">
                     Đang tải lịch sử chỉnh sửa điểm...
