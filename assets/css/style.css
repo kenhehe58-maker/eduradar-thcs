@@ -7862,32 +7862,6 @@ html, body {
 
 
 /* =========================================================================
-   SCROLL REVEAL / LỘ DẦN CHUYỂN ĐỘNG CHO CÁC HỘP (WELCOME & QUET_NHANH)
-   Hiệu ứng mượt mà: opacity 0 -> 1, translate-y 20px -> 0, scale 0.98 -> 1
-   ========================================================================= */
-.edu-scroll-reveal {
-    opacity: 0;
-    transform: translateY(22px) scale(0.985);
-    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
-}
-
-.edu-scroll-reveal.is-revealed {
-    opacity: 1 !important;
-    transform: translateY(0) scale(1) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .edu-scroll-reveal {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-    }
-}
-
-
-/* =========================================================================
    DARK MODE: TỰ ĐỘNG ĐẢO MÀU CÁC THẺ CÒN HARDCODE INLINE (nền sáng / chữ tối)
    Phủ toàn bộ trang dùng style.css; trang in (PDF) không nạp file này.
    ========================================================================= */
@@ -8057,3 +8031,19 @@ html, body {
 :root:not([data-theme="dark"]) [style*="color: #10b981"], :root:not([data-theme="dark"]) [style*="color:#10b981"] { color: #047857 !important; }
 :root:not([data-theme="dark"]) .avg-score-badge.avg-empty { color: #64748b; }
 :root:not([data-theme="dark"]) .badge-tier.tier-excellent { color: #15803d; }
+
+/* =========================================================================
+   FX: tắt toàn bộ hiệu ứng ở các trang không phải Trang chủ / Quét nhanh
+   ========================================================================= */
+body.fx-off *, body.fx-off *::before, body.fx-off *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+/* Spotlight theo con trỏ trên thẻ (fx.js) */
+.fx-spot::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  opacity: 0; transition: opacity .35s ease;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(59, 130, 246, 0.16), transparent 62%);
+}
+.fx-spot:hover::after { opacity: 1; }

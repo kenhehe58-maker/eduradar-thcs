@@ -218,6 +218,7 @@ if (empty($extraScripts) || strpos($extraScripts, 'assets/js/main.js') === false
     echo '<script src="assets/js/main.js?v=' . (file_exists(__DIR__ . '/../assets/js/main.js') ? filemtime(__DIR__ . '/../assets/js/main.js') : time()) . '"></script>' . "\n";
 }
 if (!empty($extraScripts)) echo $extraScripts; 
+if (!empty($fxPage)) echo '<script src="assets/js/fx.js?v=' . filemtime(__DIR__ . '/../assets/js/fx.js') . '"></script>' . "\n";
 ?>
 </body>
 </html>

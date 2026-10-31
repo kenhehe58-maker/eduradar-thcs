@@ -40,12 +40,15 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time() ?>">
+    <?php $fxPage = in_array(basename($_SERVER['SCRIPT_NAME'] ?? ''), ['welcome.php', 'quet_nhanh.php'], true); ?>
+    <?php if ($fxPage): /* GSAP chỉ nạp cho Trang chủ & Quét nhanh */ ?>
     <script src="assets/js/gsap.min.js"></script>
     <script src="assets/js/ScrollTrigger.min.js"></script>
     <script src="assets/js/ScrollToPlugin.min.js"></script>
     <script src="assets/js/Flip.min.js"></script>
     <script src="assets/js/CustomEase.min.js"></script>
     <script src="assets/js/TextPlugin.min.js"></script>
+    <?php endif; ?>
     <script>
         // Khởi tạo Theme ngay lập tức trước khi render DOM để chống giật nháy màn hình (Anti-Flicker)
         (function() {
@@ -342,7 +345,7 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
     </style>
     <?php if (!empty($extraHead)) echo $extraHead; ?>
 </head>
-<body class="liquid-glass-layout">
+<body class="liquid-glass-layout<?= $fxPage ? '' : ' fx-off' ?>">
 
 <!-- TOP EDEXA GREETING & STATUS BAR -->
 <header class="glass-topbar">
