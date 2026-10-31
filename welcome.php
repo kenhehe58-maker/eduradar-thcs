@@ -208,6 +208,25 @@ require_once __DIR__ . '/includes/header.php';
         padding: 18px 16px !important;
         border-radius: 16px !important;
     }
+    .quick-search-box form {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    .search-input-mask-wrap {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .quick-search-box button[type="submit"] {
+        width: 100% !important;
+        padding: 12px 16px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
     .handbook-box {
         padding: 18px 16px !important;
         border-radius: 16px !important;

@@ -6936,6 +6936,17 @@ tr.gb-row-focused td {
     bottom: 24px;
     z-index: 1040;
 }
+@media (max-width: 768px) {
+    .floating-help-widget {
+        right: 18px !important;
+        bottom: 74px !important; /* Đẩy cao hơn thanh Navigation Bar đáy màn hình (50px) để không bị đè */
+        z-index: 1060 !important;
+    }
+    .floating-help-btn {
+        width: 44px !important;
+        height: 44px !important;
+    }
+}
 .floating-help-btn {
     width: 48px;
     height: 48px;

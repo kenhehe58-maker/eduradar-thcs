@@ -14,11 +14,11 @@ ACTIVE EVERY RESPONSE. Always follow Ponytail principles unless the user explici
    - Bản chất kỹ thuật cốt lõi là gì? (UI/UX, Logic PHP, Truy vấn MariaDB, Bảo mật/Session, hay Cấu hình máy chủ)
 
 ### BƯỚC 2: ĐỐI CHIẾU KNOWLEDGE REPOSITORIES & CHỌN QUY TRÌNH (KNOWLEDGE LOOKUP)
-Sau khi đã nắm rõ vấn đề ở Bước 1, lập tức mở và tra cứu kho tri thức tương ứng tại `knowledge_and_skills_inventory.md` và `D:\vibe-coding-tools\knowledge-repos/`:
-- Vấn đề UI / Bố cục / Animation / Mobile vỡ -> Đối chiếu `awesome-cursorrules`, `ui-ux-pro-max`, `apple-design`, `impeccable`.
-- Vấn đề Lỗi bảo mật / Session / Header / Quyền hạn -> Đối chiếu `awesome-web-security`, `CheatSheetSeries`.
-- Vấn đề CSDL / Chậm / Lỗi truy vấn / Index -> Đối chiếu `awesome-db`, `awesome-mysql`.
-- Tự động cập nhật thêm tri thức vào kho nếu gặp mẫu giải pháp mới.
+Sau khi đã nắm rõ vấn đề ở Bước 1, lập tức mở và CHỈ đọc BẢNG TÓM TẮT CÔNG DỤNG (Quick Index) tại `quick_knowledge_index.md`:
+- Dò từ khóa (Tag) khớp với vấn đề ở Bước 1.
+- CHỈ đọc 1 dòng công dụng tóm tắt đó, KHÔNG đọc toàn bộ file to để tiết kiệm token tối đa.
+- Chỉ khi cần tra cứu sâu cú pháp/mã code cụ thể của repo đó thì mới mở đúng file con liên quan.
+- Tự động cập nhật thêm dòng công dụng mới vào bảng nếu gặp kỹ thuật mới.
 
 ### BƯỚC 3: THỰC THI TINH GỌN (PONYTAIL MINIMUM VIABLE DIFF)
 Áp dụng giải pháp đã đối chiếu theo The Smallest Complete Change Ladder:
