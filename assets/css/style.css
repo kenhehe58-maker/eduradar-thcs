@@ -2558,11 +2558,36 @@ th.sub-tx {
 
 /* Modal Body */
 .competency-modal-body {
-    padding: 26px 28px;
+    padding: 24px 28px 44px 28px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.competency-modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.competency-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+}
+.competency-modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+.competency-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+[data-theme="dark"] .competency-modal-body {
+    scrollbar-color: #334155 transparent;
+}
+[data-theme="dark"] .competency-modal-body::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+[data-theme="dark"] .competency-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #475569;
 }
 
 /* Dual Framework Badges in Modal */
@@ -6953,8 +6978,8 @@ tr.gb-row-focused td {
     bottom: 24px;
     z-index: 1040;
 }
-@media (max-width: 768px) {
-    /* Ẩn FAB nổi trên mobile để tuyệt đối không che thanh Dock Bottom Navigation */
+@media (max-width: 1024px) {
+    /* Ẩn FAB nổi trên mobile & tablet để tuyệt đối không che thanh Dock Bottom Navigation */
     .floating-help-widget {
         display: none !important;
     }

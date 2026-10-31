@@ -590,50 +590,112 @@ document.addEventListener('DOMContentLoaded', function () {
             modalMathTargetPrompt.textContent = 'Điểm Cuối kỳ (CK) cần đạt để đạt mục tiêu:';
         }
 
-        // 1. Phân tích Xu Hướng Học Tập cho Giáo Viên (chuyển hóa từ OLS Slope k)
+        // 1. Phân tích Xu Hướng Học Tập cho Giáo Viên (chuyển hóa từ OLS Slope k và đối chiếu điểm thi thực tế)
         const slope = parseFloat(row.dataset.mathSlope || '0');
+        const gkVal = (row.dataset.gk !== undefined && row.dataset.gk !== null && row.dataset.gk !== '') ? parseFloat(row.dataset.gk) : null;
+        const ckVal = (row.dataset.ck !== undefined && row.dataset.ck !== null && row.dataset.ck !== '') ? parseFloat(row.dataset.ck) : null;
+        const currentAvgVal = (row.dataset.avg !== undefined && row.dataset.avg !== null && row.dataset.avg !== '') ? parseFloat(row.dataset.avg) : null;
+        const currentRisk = row.dataset.level || 'green';
+        const currentMom = row.dataset.momentum || 'steady';
+        const currentTier = row.dataset.tier || '';
+
         let slopeStatusText = '';
         let slopeDescText = '';
         let slopeColor = '#16a34a';
         let slopeBg = '#f0fdf4';
         let slopeBorder = '#86efac';
 
-        if (isNaN(slope) || row.dataset.mathSlope === undefined || row.dataset.mathSlope === '') {
-            slopeStatusText = 'Đang theo dõi chuỗi điểm';
-            slopeDescText = 'Cần tối thiểu 2 bài kiểm tra thường xuyên để phân tích xu hướng.';
-            slopeColor = '#64748b';
-            slopeBg = '#f8fafc';
-            slopeBorder = '#e2e8f0';
-        } else if (slope <= -0.5) {
-            slopeStatusText = 'Điểm số có chiều hướng giảm';
-            slopeColor = '#dc2626';
-            slopeBg = '#fef2f2';
-            slopeBorder = '#fca5a5';
-            slopeDescText = 'Điểm các bài kiểm tra gần đây có chiều hướng giảm. Thầy cô nên lưu ý củng cố lại kiến thức trọng tâm cho học sinh.';
-        } else if (slope < -0.2) {
-            slopeStatusText = 'Cần lưu ý bài kiểm tra gần đây';
-            slopeColor = '#ea580c';
-            slopeBg = '#fff7ed';
-            slopeBorder = '#fed7aa';
-            slopeDescText = 'Điểm kiểm tra bài sau có chiều hướng giảm nhẹ so với bài trước. Cần nhắc nhở tinh thần học tập và kiểm tra bài tập về nhà.';
-        } else if (slope <= 0.2) {
-            slopeStatusText = 'Điểm số duy trì ổn định';
-            slopeColor = '#b45309';
-            slopeBg = '#fefce8';
-            slopeBorder = '#fde047';
-            slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Thầy cô có thể động viên học sinh thử sức thêm các bài nâng cao.';
-        } else if (slope < 0.6) {
-            slopeStatusText = 'Đang có chiều hướng tiến bộ';
-            slopeColor = '#16a34a';
-            slopeBg = '#f0fdf4';
-            slopeBorder = '#86efac';
-            slopeDescText = 'Điểm số có sự vươn lên qua từng bài kiểm tra. Học sinh có thái độ học tập tích cực, nên kịp thời biểu dương.';
+        const isPeriodicExamFailing = (gkVal !== null && gkVal < 5.0) || (ckVal !== null && ckVal < 5.0);
+
+        if (isPeriodicExamFailing) {
+            // Trường hợp học sinh có bài thi định kỳ (GK hoặc CK) dưới mức đạt (< 5.0)
+            if (currentMom === 'drop' || currentMom === 'down' || slope < -0.2) {
+                slopeStatusText = 'Bài thi định kỳ sút giảm';
+                slopeColor = '#dc2626';
+                slopeBg = '#fef2f2';
+                slopeBorder = '#fca5a5';
+                slopeDescText = 'Điểm bài thi định kỳ (' + (gkVal !== null && gkVal < 5.0 ? 'Giữa kỳ: ' + gkVal : 'Cuối kỳ: ' + ckVal) + ') dưới mức đạt chuẩn. Thầy/cô cần khoanh vùng lỗ hổng kiến thức để kèm cặp và phụ đạo trọng tâm.';
+            } else {
+                slopeStatusText = 'Lệch pha: Điểm thi chưa đạt';
+                slopeColor = '#ea580c';
+                slopeBg = '#fff7ed';
+                slopeBorder = '#fed7aa';
+                slopeDescText = 'Điểm thường xuyên giữ nhịp nhưng bài thi định kỳ (' + (gkVal !== null && gkVal < 5.0 ? 'Giữa kỳ: ' + gkVal : 'Cuối kỳ: ' + ckVal) + ') chưa đạt yêu cầu. Thầy/cô cần rèn luyện thêm kỹ năng làm bài tổng hợp và tâm lý thi cử.';
+            }
+        } else if (currentRisk === 'yellow' || currentRisk === 'red') {
+            // Học sinh ở diện cảnh báo
+            if (slope <= -0.5) {
+                slopeStatusText = 'Điểm số có chiều hướng giảm';
+                slopeColor = '#dc2626';
+                slopeBg = '#fef2f2';
+                slopeBorder = '#fca5a5';
+                slopeDescText = 'Điểm các bài kiểm tra gần đây có chiều hướng giảm. Thầy cô nên lưu ý củng cố lại kiến thức trọng tâm cho học sinh.';
+            } else if (slope < -0.2) {
+                slopeStatusText = 'Cần lưu ý bài kiểm tra gần đây';
+                slopeColor = '#ea580c';
+                slopeBg = '#fff7ed';
+                slopeBorder = '#fed7aa';
+                slopeDescText = 'Điểm kiểm tra bài sau có chiều hướng giảm nhẹ so với bài trước. Cần nhắc nhở tinh thần học tập và kiểm tra bài tập về nhà.';
+            } else if (slope <= 0.2) {
+                slopeStatusText = 'Cần gia cố nhịp học tập';
+                slopeColor = '#b45309';
+                slopeBg = '#fefce8';
+                slopeBorder = '#fde047';
+                slopeDescText = 'Điểm số đang đi ngang ở ngưỡng cần lưu ý. Thầy/cô nên đôn đốc việc làm bài tập và kiểm tra định kỳ để giúp học sinh bứt phá.';
+            } else {
+                slopeStatusText = 'Đang nỗ lực cải thiện';
+                slopeColor = '#16a34a';
+                slopeBg = '#f0fdf4';
+                slopeBorder = '#86efac';
+                slopeDescText = 'Điểm số có dấu hiệu khởi sắc vươn lên. Cần tiếp tục duy trì đà tiến bộ này trong các đợt kiểm tra tiếp theo.';
+            }
         } else {
-            slopeStatusText = 'Tiến bộ rõ rệt';
-            slopeColor = '#16a34a';
-            slopeBg = '#f0fdf4';
-            slopeBorder = '#86efac';
-            slopeDescText = 'Điểm số tăng rõ rệt, học sinh nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra.';
+            // Học sinh ở trạng thái ổn định / tốt
+            if (isNaN(slope) || row.dataset.mathSlope === undefined || row.dataset.mathSlope === '') {
+                slopeStatusText = 'Đang theo dõi chuỗi điểm';
+                slopeDescText = 'Cần tối thiểu 2 bài kiểm tra thường xuyên để phân tích xu hướng.';
+                slopeColor = '#64748b';
+                slopeBg = '#f8fafc';
+                slopeBorder = '#e2e8f0';
+            } else if (slope <= -0.5) {
+                slopeStatusText = 'Điểm số có chiều hướng giảm';
+                slopeColor = '#ea580c';
+                slopeBg = '#fff7ed';
+                slopeBorder = '#fed7aa';
+                slopeDescText = 'Điểm các bài kiểm tra gần đây có chiều hướng giảm nhẹ. Thầy cô nên nhắc nhở học sinh ôn lại kiến thức.';
+            } else if (slope < -0.2) {
+                slopeStatusText = 'Giảm nhẹ bài kiểm tra gần đây';
+                slopeColor = '#b45309';
+                slopeBg = '#fefce8';
+                slopeBorder = '#fde047';
+                slopeDescText = 'Điểm kiểm tra có dấu hiệu chững lại nhẹ. Cần duy trì phong độ làm bài đều tay.';
+            } else if (slope <= 0.2) {
+                if (currentTier === 'excellent' || (currentAvgVal !== null && currentAvgVal >= 8.0)) {
+                    slopeStatusText = 'Phong độ xuất sắc & ổn định';
+                    slopeColor = '#16a34a';
+                    slopeBg = '#f0fdf4';
+                    slopeBorder = '#86efac';
+                    slopeDescText = 'Điểm số duy trì ổn định ở mức cao qua các đợt kiểm tra. Thầy cô có thể động viên học sinh thử sức thêm các bài nâng cao.';
+                } else {
+                    slopeStatusText = 'Điểm số duy trì ổn định';
+                    slopeColor = '#16a34a';
+                    slopeBg = '#f0fdf4';
+                    slopeBorder = '#86efac';
+                    slopeDescText = 'Điểm số giữ nhịp đồng đều qua các đợt kiểm tra. Học sinh có nền tảng vững, cần tiếp tục phát huy trong các kỳ thi tới.';
+                }
+            } else if (slope < 0.6) {
+                slopeStatusText = 'Đang có chiều hướng tiến bộ';
+                slopeColor = '#16a34a';
+                slopeBg = '#f0fdf4';
+                slopeBorder = '#86efac';
+                slopeDescText = 'Điểm số có sự vươn lên qua từng bài kiểm tra. Học sinh có thái độ học tập tích cực, nên kịp thời biểu dương.';
+            } else {
+                slopeStatusText = 'Tiến bộ rõ rệt';
+                slopeColor = '#16a34a';
+                slopeBg = '#f0fdf4';
+                slopeBorder = '#86efac';
+                slopeDescText = 'Điểm số tăng rõ rệt, học sinh nắm chắc kiến thức và tự tin giải quyết tốt các bài kiểm tra.';
+            }
         }
 
         if (modalMathSlope) {
@@ -662,14 +724,16 @@ document.addEventListener('DOMContentLoaded', function () {
             stabColor = '#64748b';
             stabBg = '#f8fafc';
             stabBorder = '#e2e8f0';
-        } else if (stdDev >= 1.5) {
-            stabStatusText = 'Biên độ điểm dao động lớn';
+        } else if (stdDev >= 1.5 || (isPeriodicExamFailing && stdDev >= 1.0)) {
+            stabStatusText = 'Biên độ dao động lớn & Chưa vững';
             stabColor = '#dc2626';
             stabBg = '#fef2f2';
             stabBorder = '#fca5a5';
-            stabDescText = 'Khoảng cách giữa bài cao nhất và bài thấp nhất chênh lệch nhiều. Cần rèn luyện thêm kỹ năng làm bài thi bình tĩnh, cẩn trọng.';
+            stabDescText = isPeriodicExamFailing 
+                ? 'Có khoảng cách lớn giữa điểm thường xuyên và bài thi định kỳ (' + (gkVal !== null && gkVal < 5.0 ? 'Giữa kỳ: ' + gkVal : 'Cuối kỳ: ' + ckVal) + '). Cần rèn luyện tâm lý làm bài thi độc lập và tính cẩn trọng.'
+                : 'Khoảng cách giữa bài cao nhất và bài thấp nhất chênh lệch nhiều. Cần rèn luyện thêm kỹ năng làm bài thi bình tĩnh, cẩn trọng.';
         } else if (stdDev >= 0.8) {
-            stabStatusText = 'Điểm số có dao động nhẹ';
+            stabStatusText = 'Điểm số có dao động';
             stabColor = '#ea580c';
             stabBg = '#fff7ed';
             stabBorder = '#fed7aa';

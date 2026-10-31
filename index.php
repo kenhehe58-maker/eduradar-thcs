@@ -306,7 +306,7 @@ foreach ($rows as $r) {
         }
     }
 
-    $evaluation = ($userRole === 'teacher') ? evaluateRiskZone($avg, $gk, $ck) : evaluateRiskZone($avg, $gk, $ck, $txList);
+    $evaluation = evaluateRiskZone($avg, $gk, $ck, $txList);
     $mathProfile = diagnose_student_mathematical_profile($txList, $gk, $ck);
     $students[] = array_merge($r, $evaluation, ['tx_list' => $txList, 'math_profile' => $mathProfile]);
 }
