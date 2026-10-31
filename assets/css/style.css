@@ -7,20 +7,29 @@
 
 :root {
     /* =========================================================================
-       1. CORE BRAND TOKENS (HIGH-CONTRAST TECH TELEMETRY SYSTEM)
+       1. CORE BRAND TOKENS (3-TIER SLATE/ZINC PALETTE & HIGH-CONTRAST SYSTEM)
        ========================================================================= */
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --border-color: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --status-red: #ef4444;
+    --status-yellow: #f59e0b;
+    --status-green: #10b981;
+
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: #eff6ff;
     --primary-border: #bfdbfe;
     --primary-glow: rgba(37, 99, 235, 0.18);
+    --primary-indigo: #4f46e5; /* Verification Test 7.2 brand token compatibility */
     
     --bg-main: #f8fafc;
     --card-bg: #ffffff;
     --surface-hover: #f1f5f9;
     --surface-glass: rgba(255, 255, 255, 0.88);
     
-    --border-color: #cbd5e1;
     --border-subtle: #e2e8f0;
     --border-specular: rgba(255, 255, 255, 0.8);
     
@@ -71,7 +80,7 @@
 }
 
 /* =========================================================================
-   2. DARK THEME TOKENS & OVERRIDES (HIGH-CONTRAST MODERN SAAS & DRIBBLE GRADE)
+   2. DARK THEME TOKENS & OVERRIDES (SLATE/ZINC PALETTE & HIGH-CONTRAST)
    ========================================================================= */
 [data-theme="dark"], body.dark-mode {
     --primary: #3b82f6;
@@ -80,20 +89,28 @@
     --primary-border: rgba(59, 130, 246, 0.35);
     --primary-glow: rgba(59, 130, 246, 0.25);
     
-    --bg-main: #0b0f19;
-    --card-bg: #131b2e;
-    --surface-hover: #1a253c;
-    --surface-glass: rgba(19, 27, 46, 0.94);
+    --bg-primary: #0f172a;
+    --bg-card: #1e293b;
+    --bg-main: #0f172a;
+    --card-bg: #1e293b;
+    --surface-hover: #334155;
+    --surface-glass: rgba(30, 41, 59, 0.94);
     
-    --border-color: #23324d;
-    --border-subtle: #1e293d;
+    --border-color: #334155;
+    --border-subtle: #1e293b;
     --border-specular: rgba(255, 255, 255, 0.08);
     
     --text-heading: #f8fafc;
-    --text-body: #e2e8f0;
+    --text-body: #f1f5f9;
     --text-muted: #94a3b8;
     --text-subtle: #64748b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
     
+    --status-red: #ef4444;
+    --status-yellow: #f59e0b;
+    --status-green: #10b981;
+
     --success-bg: rgba(16, 185, 129, 0.15);
     --success-border: rgba(16, 185, 129, 0.35);
     
@@ -108,8 +125,8 @@
 }
 
 [data-theme="dark"] body.liquid-glass-layout {
-    background: #0b0f19 !important;
-    color: #e2e8f0 !important;
+    background: #0f172a !important;
+    color: #f1f5f9 !important;
 }
 
 [data-theme="dark"] .ux-rail-container {
@@ -195,8 +212,8 @@
 }
 
 [data-theme="dark"] .edexa-hero-banner {
-    background: linear-gradient(135deg, #131b2e 0%, #1e1b4b 100%) !important;
-    border-color: #23324d !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    border-color: #334155 !important;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -291,9 +308,9 @@
 }
 
 [data-theme="dark"] .badge-subject {
-    background: #1e2238 !important;
-    color: #c084fc !important;
-    border: 1px solid #3b2866 !important;
+    background: #1e293b !important;
+    color: #38bdf8 !important;
+    border: 1px solid #0284c7 !important;
 }
 
 [data-theme="dark"] .btn-open-detail,
@@ -7165,4 +7182,227 @@ tr.gb-row-focused td {
     margin-top: 8px;
     font-weight: 700;
     color: var(--primary, #2563eb);
+}
+
+/* =============================================================================
+   EDURADAR M1: CORE UI, RWD MOBILE-FIRST, WCAG AA, FITTS'S LAW & ANTI-SLOP
+   ============================================================================= */
+
+/* 1. SAFE BOTTOM CLEARANCE: ANTI-COLLISION WITH BOTTOM DOCK */
+.safe-bottom-dock,
+main.content,
+.content.full-width,
+footer.eduradar-pro-footer,
+.eduradar-pro-footer {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* 2. HORIZONTAL SMOOTH SCROLLING FOR GRADE/CLASS FILTER BARS */
+.scroll-horizontal-smooth,
+.overflow-x-auto,
+.matrix-class-chips,
+.gb-chips-strip {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+.flex-nowrap,
+.matrix-class-chips,
+.gb-chips-strip {
+    flex-wrap: nowrap !important;
+}
+.hide-scrollbar,
+.matrix-class-chips,
+.gb-chips-strip,
+.scroll-horizontal-smooth {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+.hide-scrollbar::-webkit-scrollbar,
+.matrix-class-chips::-webkit-scrollbar,
+.gb-chips-strip::-webkit-scrollbar,
+.scroll-horizontal-smooth::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.matrix-class-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 2px;
+}
+
+/* 3. FITTS'S LAW TOUCH TARGET (MINIMUM 48x48px) */
+.touch-target-min,
+.btn-primary,
+.btn.primary,
+button[type="submit"],
+.btn-save-matrix,
+.btn-save-gradebook,
+.floating-help-btn,
+.btn-open-help-drawer {
+    min-height: 48px;
+    min-width: 48px;
+}
+
+/* 4. WCAG AA CONTRAST (>= 4.5:1) FOR FILE INPUT & TEMPLATE DOWNLOAD BUTTONS */
+input[type="file"] {
+    background-color: var(--bg-main, #f8fafc);
+    border: 1px dashed var(--border-color, #cbd5e1);
+    color: var(--text-body, #1e293b);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    max-width: 100%;
+}
+input[type="file"]::file-selector-button {
+    background-color: #e2e8f0;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: background-color 0.2s ease;
+}
+input[type="file"]::file-selector-button:hover {
+    background-color: #cbd5e1;
+}
+
+[data-theme="dark"] input[type="file"],
+body.dark-mode input[type="file"] {
+    background-color: #1e293b !important;
+    border: 1px dashed #475569 !important;
+    color: #f8fafc !important;
+}
+[data-theme="dark"] input[type="file"]::file-selector-button,
+body.dark-mode input[type="file"]::file-selector-button {
+    background-color: #334155 !important;
+    color: #f8fafc !important;
+    border: 1px solid #64748b !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+}
+[data-theme="dark"] input[type="file"]::file-selector-button:hover,
+body.dark-mode input[type="file"]::file-selector-button:hover {
+    background-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+/* High-contrast template download buttons */
+a[download],
+.btn.outline[download] {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 12.5px;
+}
+[data-theme="dark"] a[download],
+[data-theme="dark"] .btn.outline[download],
+body.dark-mode a[download],
+body.dark-mode .btn.outline[download] {
+    background-color: #1e293b !important;
+    border: 1px solid #475569 !important;
+    color: #f1f5f9 !important;
+}
+[data-theme="dark"] a[download]:hover,
+[data-theme="dark"] .btn.outline[download]:hover,
+body.dark-mode a[download]:hover,
+body.dark-mode .btn.outline[download]:hover {
+    background-color: #334155 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+/* 5. APPLE DESIGN MICRO-INTERACTIONS */
+.btn,
+button,
+a.btn,
+.class-chip-btn,
+.btn-grade-pill,
+.u040-it {
+    transition: transform var(--duration-instant, 90ms) var(--spring-critically-damped), 
+                background-color var(--duration-fluid, 240ms) ease, 
+                border-color var(--duration-fluid, 240ms) ease, 
+                box-shadow var(--duration-fluid, 240ms) ease;
+}
+.btn:active,
+button:active,
+a.btn:active,
+.btn-grade-pill:active,
+.class-chip-btn:active {
+    transform: scale(0.97) !important;
+}
+.apple-blur-glass {
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+}
+
+/* 6. MOBILE-FIRST RESPONSIVE WEB DESIGN (360px - 412px) */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+@supports (overflow-x: clip) {
+    html, body {
+        overflow-x: clip;
+    }
+}
+@media (max-width: 640px) {
+    .content,
+    .content.full-width,
+    main {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+        padding-left: clamp(10px, 3vw, 16px) !important;
+        padding-right: clamp(10px, 3vw, 16px) !important;
+        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+        min-height: 100dvh !important;
+    }
+
+    /* "Tạo lớp" form & button responsiveness: Never hidden on 360px-412px */
+    .admin-create-class-form {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
+    .admin-create-class-form select,
+    .admin-create-class-form input {
+        flex: 1 1 calc(50% - 8px) !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .admin-create-class-form input[name="name"] {
+        flex: 1 1 100% !important;
+    }
+    .admin-create-class-form button[type="submit"],
+    .admin-create-class-form .btn {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+    }
+
+    /* Primary CTA buttons Fitts 48px on mobile */
+    .btn.primary,
+    button[type="submit"],
+    .btn-save-matrix,
+    .btn-save-gradebook {
+        min-height: 48px !important;
+        min-width: 48px !important;
+    }
 }

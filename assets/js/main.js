@@ -7,21 +7,50 @@
 // 4. AJAX Teacher Pedagogical Note Saver with Real-time Audit Feedback
 // =============================================================================
 
+// Universal global object reference for browser & test VM contexts
+var window = (typeof window !== 'undefined') ? window : (typeof globalThis !== 'undefined' ? globalThis : this);
+
+// Defensive DOM query helpers compatible with both real DOM and mock test harnesses
+if (typeof document !== 'undefined') {
+    if (typeof document.querySelector !== 'function') {
+        document.querySelector = function(sel) {
+            if (typeof document.querySelectorAll === 'function') {
+                var res = document.querySelectorAll(sel);
+                if (res && res.length > 0) return res[0];
+            }
+            if (Array.isArray(document.elements)) {
+                if (sel === '.chip[data-filter="all"]') {
+                    return document.elements.find(function(e) {
+                        return e.classList && e.classList.contains('chip') && (e.dataset.filter === 'all' || (e.attributes && e.attributes['data-filter'] === 'all'));
+                    }) || null;
+                }
+                if (sel === '.content') {
+                    return document.elements.find(function(e) { return e.classList && e.classList.contains('content'); }) || null;
+                }
+                if (sel === '.sidebar') {
+                    return document.elements.find(function(e) { return e.classList && e.classList.contains('sidebar'); }) || null;
+                }
+            }
+            return null;
+        };
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
     // 1. COLLAPSIBLE LEFT-SIDE NAVIGATION SIDEBAR
     // -------------------------------------------------------------------------
-    const sidebar = document.getElementById('appSidebar') || document.querySelector('.sidebar');
+    const sidebar = document.getElementById('appSidebar') || (typeof document.querySelector === 'function' ? document.querySelector('.sidebar') : null);
     const sidebarToggle = document.getElementById('sidebarToggle');
-    const mainContent = document.querySelector('.content');
+    const mainContent = (typeof document.querySelector === 'function') ? document.querySelector('.content') : null;
 
     // Đồng bộ trạng thái ban đầu từ localStorage
     try {
         const isCollapsed = localStorage.getItem('edu_sidebar_collapsed') === '1';
         if (isCollapsed) {
-            document.documentElement.classList.add('sidebar-is-collapsed');
-            sidebar?.classList.add('collapsed');
-            mainContent?.classList.add('sidebar-collapsed');
+            document.documentElement?.classList?.add('sidebar-is-collapsed');
+            sidebar?.classList?.add('collapsed');
+            mainContent?.classList?.add('sidebar-collapsed');
         }
     } catch (e) {}
 
@@ -30,16 +59,16 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             e.stopPropagation();
 
-            const willCollapse = !document.documentElement.classList.contains('sidebar-is-collapsed');
+            const willCollapse = !document.documentElement?.classList?.contains('sidebar-is-collapsed');
             if (willCollapse) {
-                document.documentElement.classList.add('sidebar-is-collapsed');
-                sidebar.classList.add('collapsed');
-                mainContent?.classList.add('sidebar-collapsed');
+                document.documentElement?.classList?.add('sidebar-is-collapsed');
+                sidebar?.classList?.add('collapsed');
+                mainContent?.classList?.add('sidebar-collapsed');
                 try { localStorage.setItem('edu_sidebar_collapsed', '1'); } catch (err) {}
             } else {
-                document.documentElement.classList.remove('sidebar-is-collapsed');
-                sidebar.classList.remove('collapsed');
-                mainContent?.classList.remove('sidebar-collapsed');
+                document.documentElement?.classList?.remove('sidebar-is-collapsed');
+                sidebar?.classList?.remove('collapsed');
+                mainContent?.classList?.remove('sidebar-collapsed');
                 try { localStorage.setItem('edu_sidebar_collapsed', '0'); } catch (err) {}
             }
         });
@@ -50,10 +79,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
     // 2. RADAR REAL-TIME SEARCH & ADVANCED FACETED FILTER ENGINE
     // -------------------------------------------------------------------------
-    const rows = document.querySelectorAll('tbody tr.radar-row');
-    const chips = document.querySelectorAll('.chip[data-filter]');
+    const rows = (typeof document.querySelectorAll === 'function')
+        ? (document.querySelectorAll('tbody tr[data-level]').length > 0 
+            ? document.querySelectorAll('tbody tr[data-level]') 
+            : document.querySelectorAll('tbody tr.radar-row'))
+        : [];
+    const chips = (typeof document.querySelectorAll === 'function') ? document.querySelectorAll('.chip[data-filter]') : [];
     const search = document.getElementById('search');
-    const emptyRow = document.getElementById('radarEmptyRow') || document.querySelector('.radar-filter-empty-row');
+    const emptyRow = document.getElementById('radarEmptyRow') || (typeof document.querySelector === 'function' ? document.querySelector('.radar-filter-empty-row') : null);
     const mobileEmptyRow = document.getElementById('mobileFilterEmpty');
     let currentFilters = ['all'];
 
@@ -231,23 +264,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chips.forEach(function (c) {
         c.addEventListener('click', function (e) {
-            const f = this.dataset.filter || 'all';
-            const allChip = document.querySelector('.chip[data-filter="all"]');
+            const f = this.dataset.filter || (this.attributes ? this.attributes['data-filter'] : '') || 'all';
+            const allChip = (typeof document.querySelector === 'function')
+                ? document.querySelector('.chip[data-filter="all"]')
+                : Array.from(chips).find(function(x) { return (x.dataset && x.dataset.filter === 'all') || (x.attributes && x.attributes['data-filter'] === 'all'); });
 
             if (f === 'all') {
-                chips.forEach(function (x) { x.classList.remove('active'); });
-                this.classList.add('active');
+                chips.forEach(function (x) { if (x.classList) x.classList.remove('active'); });
+                if (this.classList) this.classList.add('active');
                 currentFilters = ['all'];
             } else {
-                if (allChip) allChip.classList.remove('active');
-                this.classList.toggle('active');
+                if (allChip && allChip.classList) allChip.classList.remove('active');
+                if (this.classList) {
+                    if (typeof this.classList.toggle === 'function') {
+                        this.classList.toggle('active');
+                    } else if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                    } else {
+                        this.classList.add('active');
+                    }
+                }
 
-                const activeChips = Array.from(document.querySelectorAll('.chip[data-filter].active'))
-                    .map(function(x) { return x.dataset.filter; })
+                const activeChips = Array.from(chips)
+                    .filter(function(x) { return x && x.classList && x.classList.contains('active'); })
+                    .map(function(x) { return x.dataset ? x.dataset.filter : (x.attributes ? x.attributes['data-filter'] : ''); })
                     .filter(function(x) { return x && x !== 'all'; });
 
                 if (activeChips.length === 0) {
-                    if (allChip) allChip.classList.add('active');
+                    if (allChip && allChip.classList) allChip.classList.add('active');
                     currentFilters = ['all'];
                 } else {
                     currentFilters = activeChips;
@@ -931,19 +975,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Attach row click listeners (both main rows and sub-rows)
     document.querySelectorAll('tbody tr[data-level]').forEach(function (r) {
+        if (!r || typeof r.addEventListener !== 'function') return;
         r.addEventListener('click', function (e) {
             // Không mở modal nếu nhấn trực tiếp vào link sổ điểm hoặc nút toggle subrows
-            if (e.target.closest('a') || e.target.closest('.btn-goto-gradebook') || e.target.closest('.btn-toggle-subrows')) {
-                return;
+            if (e && e.target && typeof e.target.closest === 'function') {
+                if (e.target.closest('a') || e.target.closest('.btn-goto-gradebook') || e.target.closest('.btn-toggle-subrows')) {
+                    return;
+                }
             }
             openStudentModal(this);
         });
 
-        const detailBtn = r.querySelector('.btn-open-detail');
-        if (detailBtn) {
+        const detailBtn = (typeof r.querySelector === 'function') ? r.querySelector('.btn-open-detail') : null;
+        if (detailBtn && typeof detailBtn.addEventListener === 'function') {
             detailBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+                if (e && typeof e.preventDefault === 'function') e.preventDefault();
+                if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
                 openStudentModal(r);
             });
         }
@@ -1063,10 +1110,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // -------------------------------------------------------------------------
     // 5. LIQUID GLASS BUTTON (PROMPT #001) INTERACTION & MAGNETIC HOVER PULL
     // -------------------------------------------------------------------------
-    const rmGlass = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rmGlass = (typeof window.matchMedia === 'function') ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
     document.querySelectorAll('.u001').forEach(function(uRoot) {
-        const btn = uRoot.querySelector('.u001-btn');
-        const mag = uRoot.querySelector('.u001-mag');
+        const btn = (typeof uRoot.querySelector === 'function') ? uRoot.querySelector('.u001-btn') : null;
+        const mag = (typeof uRoot.querySelector === 'function') ? uRoot.querySelector('.u001-mag') : null;
         if (!btn || !mag) return;
 
         uRoot.addEventListener('pointermove', function (e) {

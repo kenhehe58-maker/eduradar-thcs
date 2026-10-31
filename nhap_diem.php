@@ -743,6 +743,164 @@ $extraHead = '
     <style>
         .vnedu-col { text-align: center !important; min-width: 65px; }
         .vnedu-header { background: #1e293b !important; color: #f8fafc !important; }
+        
+        /* Proximity and visual grouping for 2D Gradebook Matrix */
+        .group-tx, .cell-tx {
+            background-color: rgba(59, 130, 246, 0.03);
+        }
+        .group-gk, .cell-gk {
+            background-color: rgba(245, 158, 11, 0.04);
+            border-left: 1.5px solid var(--border-color, #cbd5e1);
+        }
+        .group-ck, .cell-ck {
+            background-color: rgba(239, 68, 68, 0.04);
+            border-left: 1px dashed var(--border-color, #cbd5e1);
+        }
+        .group-avg, .cell-avg {
+            border-left: 2px solid var(--border-color, #94a3b8);
+            background-color: rgba(16, 185, 129, 0.04);
+        }
+        
+        /* Fitts Law >= 48x48px CTA touch targets */
+        .btn-cta-fitts {
+            min-height: 48px;
+            min-width: 48px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-cta-fitts:active {
+            transform: scale(0.97);
+        }
+
+        /* WCAG AA Dark Mode contrast (>= 4.5:1) in Slate/Zinc palette */
+        [data-theme="dark"] .vnedu-control-card {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+        }
+        [data-theme="dark"] .vnedu-control-card > div:first-child {
+            border-bottom-color: #334155 !important;
+        }
+        [data-theme="dark"] .gb-meta-chip {
+            background: #0f172a !important;
+            border-color: #334155 !important;
+            color: #cbd5e1 !important;
+        }
+        [data-theme="dark"] .gb-meta-chip strong {
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .gb-meta-chip.chip-main {
+            background: rgba(37, 99, 235, 0.2) !important;
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            color: #93c5fd !important;
+        }
+        [data-theme="dark"] .gb-meta-chip.chip-permission {
+            background: rgba(16, 185, 129, 0.15) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+            color: #6ee7b7 !important;
+        }
+        [data-theme="dark"] .gb-select-box {
+            background: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #475569 !important;
+        }
+        [data-theme="dark"] .gb-btn-action {
+            background: #0f172a !important;
+            border-color: #475569 !important;
+            color: #e2e8f0 !important;
+            min-height: 48px;
+        }
+        [data-theme="dark"] .gb-btn-action:hover {
+            background: #334155 !important;
+            color: #ffffff !important;
+            border-color: #64748b !important;
+        }
+        [data-theme="dark"] .spreadsheet-toolbar {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        [data-theme="dark"] .toolbar-title {
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .gradebook-filter-bar {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        [data-theme="dark"] .btn-gb-filter {
+            background: #0f172a !important;
+            border-color: #334155 !important;
+            color: #94a3b8 !important;
+        }
+        [data-theme="dark"] .btn-gb-filter:hover {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .btn-gb-filter.active {
+            background: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #3b82f6 !important;
+        }
+        [data-theme="dark"] #gbSearchInput {
+            background: #0f172a !important;
+            border-color: #475569 !important;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .spreadsheet-table th {
+            background: #0f172a !important;
+            border-color: #334155 !important;
+            color: #cbd5e1 !important;
+        }
+        [data-theme="dark"] .spreadsheet-table td {
+            border-color: #334155 !important;
+            background: #1e293b !important;
+        }
+        [data-theme="dark"] .score-input {
+            background: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+        [data-theme="dark"] .score-input:focus {
+            background: #1e293b !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important;
+        }
+        [data-theme="dark"] .panel-box {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+        }
+        [data-theme="dark"] input[type="file"] {
+            background: #0f172a !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+            min-height: 48px;
+        }
+        [data-theme="dark"] input[type="file"]::file-selector-button {
+            background: #334155 !important;
+            color: #f8fafc !important;
+            border: 1px solid #64748b !important;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        [data-theme="dark"] .btn.outline {
+            background: #1e293b !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+        [data-theme="dark"] .btn.outline:hover {
+            background: #334155 !important;
+            color: #ffffff !important;
+            border-color: #64748b !important;
+        }
     </style>
 ';
 $breadcrumbs = [
@@ -752,13 +910,13 @@ $breadcrumbs = [
 ];
 require_once __DIR__ . '/includes/header.php';
 ?>
-    <!-- EDEXA & VNEDU SỔ ĐIỂM CHI TIẾT HEADER CARD (DỰA TRÊN ẢNH 4 VNEDU DESKTOP) -->
+    <!-- EDEXA & VNEDU SỔ ĐIỂM CHI TIẾT HEADER CARD -->
     <div class="vnedu-control-card" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15,23,42,0.03);">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px;">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 <div class="gb-meta-chip chip-main">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    <span>SỔ ĐIỂM CHI TIẾT</span>
+                    <span>Sổ điểm chi tiết</span>
                 </div>
                 <div class="gb-meta-chip">
                     <span class="meta-label">Lớp:</span>
@@ -812,15 +970,15 @@ require_once __DIR__ . '/includes/header.php';
         <!-- ACTION BUTTONS STRIP -->
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 10px 24px; border-radius: 10px; font-size: 13.5px; font-weight: 700; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.3); display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s ease;">
+                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="btn primary btn-cta-fitts" style="background: #2563eb; color: #ffffff; border: none; cursor: pointer;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     <span>Lưu bảng điểm</span>
                 </button>
-                <a href="sample_gradebook.xlsx" download class="btn gb-btn-action">
+                <a href="sample_gradebook.xlsx" download class="btn gb-btn-action" style="min-height: 48px; display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span>Xuất Excel mẫu</span>
                 </a>
-                <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="btn gb-btn-action">
+                <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="btn gb-btn-action" style="min-height: 48px; display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                     <span>Làm mới</span>
                 </a>
@@ -936,8 +1094,9 @@ require_once __DIR__ . '/includes/header.php';
         </div>
         <div class="toolbar-actions">
             <span id="saveStatusBadge" class="dirty-badge clean">Đã lưu trên máy chủ</span>
-            <button type="submit" form="gradebookForm" id="btnSaveScores" class="btn primary" style="padding: 10px 22px; font-size: 13.5px; font-weight: 700; letter-spacing: 0.02em;">
-                Lưu bảng điểm
+            <button type="submit" form="gradebookForm" id="btnSaveScores" class="btn primary btn-cta-fitts" style="border: none; cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Lưu bảng điểm</span>
             </button>
         </div>
     </div>
@@ -1167,12 +1326,13 @@ require_once __DIR__ . '/includes/header.php';
             </table>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <p class="muted small">
-                <b>Phím tắt điều hướng:</b> Nhấn <code>Enter</code> hoặc <code>↓</code> để xuống dòng trong cùng cột; <code>↑</code> để lên trên; <code>Tab</code> sang ngang; tự động chọn số khi focus; nhập dấu phẩy <code>,</code> tự chuyển thành <code>.</code>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+            <p class="muted small" style="margin: 0; line-height: 1.6;">
+                <b>Phím tắt điều hướng:</b> Nhấn <code>Enter</code> hoặc <code>↓</code> để xuống dòng trong cùng cột; <code>↑</code> để lên trên; <code>←</code> <code>→</code> hoặc <code>Tab</code> sang ngang; tự động chọn số khi focus; nhập dấu phẩy <code>,</code> tự chuyển thành <code>.</code>
             </p>
-            <button type="submit" class="btn primary" style="padding: 12px 28px; font-size: 14px; font-weight: 700; letter-spacing: 0.02em;">
-                LƯU BẢNG ĐIỂM MÔN <?= htmlspecialchars($selectedSubject) ?>
+            <button type="submit" class="btn primary btn-cta-fitts" style="border: none; cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Lưu bảng điểm môn <?= htmlspecialchars($selectedSubject) ?></span>
             </button>
         </div>
     </form>
@@ -1181,13 +1341,15 @@ require_once __DIR__ . '/includes/header.php';
     <div id="scoreTooltip" class="score-tooltip" style="display: none;"></div>
 
     <!-- BOTTOM PANEL: IMPORT & EXPORT GRADEBOOK -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 32px;">
         <!-- Khối 1: Nạp điểm bằng File -->
-        <section class="panel-box" style="margin-bottom: 0; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
+        <section class="panel-box" style="margin-bottom: 0; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">IN</div>
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
                 <div>
-                    <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Nạp Điểm Bằng File (.xlsx / .csv)</h3>
+                    <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Nạp điểm bằng file (.xlsx, .csv)</h3>
                     <p class="muted small" style="margin: 0;">Nạp tự động điểm số chuẩn VnEdu vào lớp đang chọn</p>
                 </div>
             </div>
@@ -1195,28 +1357,33 @@ require_once __DIR__ . '/includes/header.php';
                 <input type="hidden" name="action" value="import_file">
                 <input type="file" name="gradebook_file" accept=".xlsx, .xls, .csv, .txt" required 
                        title="Chọn tệp bảng điểm Excel hoặc CSV" aria-label="Chọn tệp bảng điểm Excel hoặc CSV"
-                       style="padding: 10px; border: 1px dashed var(--border-color); border-radius: 8px; background: #f8fafc; font-size: 13px;">
+                       style="padding: 10px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 13px; min-height: 48px;">
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                    <button type="submit" class="btn primary" style="padding: 10px 18px; font-size: 13px; font-weight: 700;">
-                        Tải Lên & Nhập Sổ Điểm
+                    <button type="submit" class="btn primary" style="min-height: 48px; padding: 10px 20px; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; cursor: pointer;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span>Tải lên & nhập sổ điểm</span>
                     </button>
-                    <a href="sample_gradebook.xlsx" download class="btn outline" style="padding: 9px 14px; font-size: 12px; font-weight: 600;">
-                        File Mẫu Excel (.xlsx)
+                    <a href="sample_gradebook.xlsx" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border-radius: 10px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>File mẫu Excel (.xlsx)</span>
                     </a>
-                    <a href="sample_vnedu.csv" download class="btn outline" style="padding: 9px 14px; font-size: 12px; font-weight: 600;">
-                        File Mẫu CSV
+                    <a href="sample_vnedu.csv" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border-radius: 10px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>File mẫu CSV</span>
                     </a>
                 </div>
             </form>
         </section>
 
         <!-- Khối 2: Xuất sổ điểm ra Excel -->
-        <section class="panel-box" style="margin-bottom: 0; background: #fff; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between;">
+        <section class="panel-box" style="margin-bottom: 0; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between;">
             <div>
                 <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">EX</div>
+                    <div style="width: 36px; height: 36px; border-radius: 8px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </div>
                     <div>
-                        <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Xuất Sổ Điểm Điện Tử (.xlsx)</h3>
+                        <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Xuất sổ điểm điện tử (.xlsx)</h3>
                         <p class="muted small" style="margin: 0;">Tải sổ điểm lớp <?= htmlspecialchars($curClassName) ?> môn <?= htmlspecialchars($selectedSubject) ?> chuẩn ECMA-376</p>
                     </div>
                 </div>
@@ -1226,8 +1393,9 @@ require_once __DIR__ . '/includes/header.php';
             </div>
             <div style="margin-top: 16px;">
                 <a href="nhap_diem.php?export=xlsx&class_id=<?= (int)$selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" 
-                   class="btn outline" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; font-weight: 700; background: #f0fdf4; border-color: #86efac; color: #166534; text-decoration: none; border-radius: 8px;">
-                    Xuất Excel Sổ Điểm Môn <?= htmlspecialchars($selectedSubject) ?>
+                   class="btn outline" style="display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 12px 20px; font-weight: 700; background: #f0fdf4; border-color: #86efac; color: #166534; text-decoration: none; border-radius: 10px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Xuất Excel sổ điểm môn <?= htmlspecialchars($selectedSubject) ?></span>
                 </a>
             </div>
         </section>
@@ -1430,6 +1598,20 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 if (row > 0) focusCell(row - 1, col);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (col > 0) {
+                    focusCell(row, col - 1);
+                } else if (row > 0) {
+                    focusCell(row - 1, 5);
+                }
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (col < 5) {
+                    focusCell(row, col + 1);
+                } else if (row < totalRows - 1) {
+                    focusCell(row + 1, 0);
+                }
             } else if (e.key === 'Tab') {
                 if (e.shiftKey) {
                     if (col > 0) {

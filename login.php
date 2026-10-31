@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_SESSION['user_id'])) {
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
         header('Location: admin.php');
     } else {
-        header('Location: welcome.php');
+        header('Location: index.php');
     }
     exit;
 }
@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập thành công vào hệ thống."
             );
 
-            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên & Người dùng vào trang chủ welcome.php
+            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên & Người dùng vào index.php
             if ($user['role'] === 'admin') {
                 header('Location: admin.php');
             } else {
-                header('Location: welcome.php');
+                header('Location: index.php');
             }
             exit;
         } else {
@@ -78,7 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#0f172a">
     <title>Đăng nhập – Hệ Thống Quản Lý Điểm</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -160,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #ffffff;
             color: #2563eb;
             border: 1px solid #bfdbfe;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 11px;
@@ -196,6 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 6px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             transition: all 0.2s ease;
+            min-height: 40px;
         }
         .theme-toggle-floating:hover {
             background: #f1f5f9;
@@ -210,8 +213,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #1a253c !important;
             color: #f8fafc !important;
         }
+        .login-divider {
+            border-top: 1px solid #e2e8f0;
+        }
         [data-theme="dark"] .login-divider {
             border-top-color: #23324d !important;
+        }
+        .btn-guest-login {
+            min-height: 48px;
         }
         [data-theme="dark"] .btn-guest-login {
             background: rgba(16, 185, 129, 0.12) !important;
@@ -225,7 +234,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <button type="button" class="theme-toggle-floating" id="themeToggleBtn" onclick="toggleLoginTheme()">
-        <span id="themeToggleIcon">🌙</span> <span id="themeToggleLabel">Dark Theme</span>
+        <span id="themeToggleIcon" style="display: inline-flex; align-items: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </span>
+        <span id="themeToggleLabel">Giao diện tối</span>
     </button>
     <div class="login-card">
         <div class="login-header">
@@ -235,15 +247,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
                 </svg>
             </div>
-            <h2>Đăng Nhập EduRadar THCS</h2>
-            <p>Hệ thống Đánh giá &amp; Cảnh báo sớm THCS (Chuẩn VnEdu / TT22)</p>
+            <h2>Đăng nhập EduRadar THCS</h2>
+            <p>Hệ thống đánh giá và cảnh báo sớm học lực THCS (Chuẩn VnEdu / TT22)</p>
         </div>
 
         <div class="demo-box">
-            <span style="font-weight: 800; display: block; margin-bottom: 2px;">TÀI KHOẢN KHẢO SÁT HỆ THỐNG (Mật khẩu: <code>123456</code>):</span>
+            <span style="font-weight: 800; display: block; margin-bottom: 4px;">Tài khoản khảo sát hệ thống (Mật khẩu: <code>123456</code>):</span>
             &bull; Quản trị viên: <code>admin</code> <button type="button" class="demo-fill-btn" onclick="fillForm('admin')">Điền Admin</button><br>
-            &bull; GV Toán: <code>gv_toan</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_toan')">Điền GV Toán</button><br>
-            &bull; GV Ngữ Văn: <code>gv_van</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_van')">Điền GV Văn</button>
+            &bull; Giáo viên Toán: <code>gv_toan</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_toan')">Điền GV Toán</button><br>
+            &bull; Giáo viên Ngữ văn: <code>gv_van</code> <button type="button" class="demo-fill-btn" onclick="fillForm('gv_van')">Điền GV Văn</button>
         </div>
 
         <?php if ($error): ?>
@@ -251,23 +263,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="">
-            <div class="form-group" style="margin-bottom: 22px;">
-                <label style="display: block; margin-bottom: 8px; font-size: 11.5px; font-weight: 700; color: #475569; letter-spacing: 0.04em;">TÀI KHOẢN (USERNAME / VNEDU)</label>
-                <input id="uInput" type="text" name="username" placeholder="Nhập admin, gv_toan hoặc gv_van" required autofocus style="padding: 11px 14px; border-radius: 10px;">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="uInput" style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #475569;">Tài khoản (Tên đăng nhập / VnEdu)</label>
+                <input id="uInput" type="text" name="username" placeholder="Nhập tài khoản (admin, gv_toan, gv_van)" required autofocus style="padding: 12px 14px; border-radius: 10px; width: 100%; box-sizing: border-box;">
             </div>
-            <div class="form-group" style="margin-bottom: 30px;">
-                <label style="display: block; margin-bottom: 8px; font-size: 11.5px; font-weight: 700; color: #475569; letter-spacing: 0.04em;">MẬT KHẨU</label>
-                <input id="pInput" type="password" name="password" placeholder="Nhập mật khẩu" required style="padding: 11px 14px; border-radius: 10px;">
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="pInput" style="display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #475569;">Mật khẩu</label>
+                <input id="pInput" type="password" name="password" placeholder="Nhập mật khẩu" required style="padding: 12px 14px; border-radius: 10px; width: 100%; box-sizing: border-box;">
             </div>
-            <button type="submit" class="btn primary full-width" style="padding: 13px; font-size: 15px; font-weight: 700; justify-content: center; border-radius: 12px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">
-                Đăng Nhập
+            <button type="submit" class="btn primary full-width" style="min-height: 48px; padding: 12px; font-size: 15px; font-weight: 700; justify-content: center; border-radius: 12px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); width: 100%; cursor: pointer;">
+                Đăng nhập
             </button>
         </form>
 
-        <div class="login-divider" style="margin-top: 22px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 18px;">
-            <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">Chưa có tài khoản trường học hoặc muốn phân tích nhanh?</p>
-            <a href="quet_nhanh.php" class="btn-guest-login" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px 14px; border-radius: var(--radius-md); background: #f0fdf4; color: #166534; border: 1.5px solid #86efac; text-decoration: none; font-size: 13.5px; font-weight: 700; transition: all 0.2s;">
-                ⚡ Trải Nghiệm Chế Độ Khách (Quét 1 Chạm VnEdu)
+        <div class="login-divider" style="margin-top: 22px; text-align: center; padding-top: 18px;">
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Chưa có tài khoản trường học hoặc muốn phân tích nhanh?</p>
+            <a href="quet_nhanh.php" class="btn-guest-login" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; box-sizing: border-box; padding: 11px 14px; border-radius: 10px; background: #f0fdf4; color: #166534; border: 1.5px solid #86efac; text-decoration: none; font-size: 13.5px; font-weight: 700; transition: all 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Trải nghiệm chế độ khách (Quét nhanh VnEdu)</span>
             </a>
         </div>
     </div>
@@ -283,11 +296,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const icon = document.getElementById('themeToggleIcon');
         const label = document.getElementById('themeToggleLabel');
         if (current === 'dark') {
-            if (icon) icon.textContent = '☀️';
-            if (label) label.textContent = 'Light Theme';
+            if (icon) icon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+            if (label) label.textContent = 'Giao diện sáng';
         } else {
-            if (icon) icon.textContent = '🌙';
-            if (label) label.textContent = 'Dark Theme';
+            if (icon) icon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+            if (label) label.textContent = 'Giao diện tối';
         }
     }
 

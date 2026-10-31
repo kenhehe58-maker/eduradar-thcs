@@ -58,7 +58,7 @@ require_once __DIR__ . '/includes/header.php';
     box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
 }
 [data-theme="dark"] .welcome-hero {
-    background: linear-gradient(135deg, #111827 0%, #1e1b4b 60%, #0f172a 100%) !important;
+    background: linear-gradient(135deg, #111827 0%, #1e293b 60%, #0f172a 100%) !important;
     border-color: #23324d !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
 }
@@ -742,8 +742,8 @@ require_once __DIR__ . '/includes/header.php';
     <!-- PHÂN HỆ: QUẢN TRỊ ADMIN -->
     <a href="admin.php" class="launchpad-card">
         <div class="launchpad-card-header">
-            <div style="color: #7e22ce;"><?= get_svg_icon('settings', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(126, 34, 206, 0.1); color: #7e22ce;">Quản trị</span>
+            <div style="color: #475569;"><?= get_svg_icon('settings', 24) ?></div>
+            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(71, 85, 105, 0.1); color: #475569;">Quản trị</span>
         </div>
         <div class="launchpad-card-title">Quản trị nhà trường</div>
         <div class="launchpad-card-desc">

@@ -1,88 +1,89 @@
 <?php
 // includes/footer.php - Stitch UI & EdTech Pro Unified Footer Shell
+require_once __DIR__ . '/icons.php';
 ?>
     <!-- BOTTOM CLEARANCE SPACER -->
-    <div style="height: 48px; width: 100%; pointer-events: none;" aria-hidden="true"></div>
-
-    <!-- EDEXA & EDURADAR PRO 3-COLUMN FOOTER ARCHITECTURE -->
-    <footer class="eduradar-pro-footer" role="contentinfo">
-        <div class="eduradar-footer-grid">
-            <!-- Cột 1: Thông tin hệ thống & Căn cứ Pháp lý -->
-            <div class="footer-col-main">
-                <div class="footer-brand-title">
-                    <span class="footer-brand-badge">ER</span>
-                    <div>
-                        <span class="footer-brand-name">EDURADAR THCS</span>
-                        <span class="footer-brand-sub">Hệ Thống Giám Sát Học Lực &amp; Cảnh Báo Sớm</span>
-                    </div>
-                </div>
-                <p class="footer-legal-desc">
-                    Hệ thống phân tích biến thiên điểm số thường xuyên và định kỳ theo chuẩn <b>Thông tư 22/2021/TT-BGDĐT</b> của Bộ Giáo dục và Đào tạo, hỗ trợ cá nhân hóa kế hoạch phụ đạo học sinh.
-                </p>
-                <div class="footer-security-tags">
-                    <span class="footer-tag-chip">🔒 MariaDB ACID</span>
-                    <span class="footer-tag-chip">🛡️ OWASP Compliant</span>
-                    <span class="footer-tag-chip">⚡ Fast Telemetry</span>
-                </div>
-            </div>
-
-            <!-- Cột 2: Điều hướng nhanh các phân hệ chuyên môn -->
-            <div class="footer-col-nav">
-                <div class="footer-col-heading">Phân Hệ Làm Việc</div>
-                <ul class="footer-links-list">
-                    <li><a href="welcome.php">Trang Chủ &amp; Tổng Quan</a></li>
-                    <li><a href="index.php">Bảng Cảnh Báo Sớm (Early Warning)</a></li>
-                    <li><a href="nhap_diem.php">Sổ Điểm Điện Tử Bộ Môn</a></li>
-                    <li><a href="quet_nhanh.php">Quét Nhanh Bảng Điểm 1 Chạm</a></li>
-                    <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
-                        <li><a href="admin.php">Cổng Quản Trị Phân Công</a></li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-
-            <!-- Cột 3: Hỗ trợ Kỹ thuật & Đường dây nóng nhà trường -->
-            <div class="footer-col-support">
-                <div class="footer-col-heading">Hỗ Trợ &amp; Đường Dây Nóng</div>
-                <ul class="footer-contact-list">
-                    <li>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                        <span>Hotline: <b>0988.XXX.XXX</b> (Tổ CNTT)</span>
-                    </li>
-                    <li>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                        <span>Email: <a href="mailto:hotro@eduradar-thcs.edu.vn">hotro@eduradar-thcs.edu.vn</a></span>
-                    </li>
-                    <li>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>Thời gian hỗ trợ: 7:00 – 17:30 (T2 – T7)</span>
-                    </li>
-                </ul>
-                <div style="margin-top: 14px;">
-                    <button type="button" class="btn-open-help-drawer" onclick="toggleHelpDrawer(true)">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        <span>Xem Bảng Phím Tắt &amp; Quy Chuẩn</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom-bar">
-            <div>
-                &copy; <?= date('Y') ?> <b>EduRadar THCS</b> &mdash; Bản quyền thuộc về Đội ngũ Kỹ thuật &amp; Nghiên cứu Giáo dục THCS.
-            </div>
-            <div class="footer-metrics">
-                <span class="tech-chip">PHP 8.0</span>
-                <span class="tech-chip">MariaDB 10.4</span>
-                <span class="tech-chip">TT22 BGD&amp;ĐT</span>
-            </div>
-        </div>
-    </footer>
+    <div style="height: 32px; width: 100%; pointer-events: none;" aria-hidden="true"></div>
 </main>
+
+<!-- EDEXA & EDURADAR PRO 3-COLUMN FOOTER ARCHITECTURE -->
+<footer class="eduradar-pro-footer safe-bottom-dock" role="contentinfo" style="padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));">
+    <div class="eduradar-footer-grid">
+        <!-- Cột 1: Thông tin hệ thống & Căn cứ Pháp lý -->
+        <div class="footer-col-main">
+            <div class="footer-brand-title">
+                <span class="footer-brand-badge">ER</span>
+                <div>
+                    <span class="footer-brand-name">EDURADAR THCS</span>
+                    <span class="footer-brand-sub">Hệ Thống Giám Sát Học Lực &amp; Cảnh Báo Sớm</span>
+                </div>
+            </div>
+            <p class="footer-legal-desc">
+                Hệ thống phân tích biến thiên điểm số thường xuyên và định kỳ theo chuẩn <b>Thông tư 22/2021/TT-BGDĐT</b> của Bộ Giáo dục và Đào tạo, hỗ trợ cá nhân hóa kế hoạch phụ đạo học sinh.
+            </p>
+            <div class="footer-security-tags">
+                <span class="footer-tag-chip"><?= get_svg_icon('lock', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?>MariaDB ACID</span>
+                <span class="footer-tag-chip"><?= get_svg_icon('shield-check', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?>OWASP Compliant</span>
+                <span class="footer-tag-chip"><?= get_svg_icon('activity', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?>Fast Telemetry</span>
+            </div>
+        </div>
+
+        <!-- Cột 2: Điều hướng nhanh các phân hệ chuyên môn -->
+        <div class="footer-col-nav">
+            <div class="footer-col-heading">Phân Hệ Làm Việc</div>
+            <ul class="footer-links-list">
+                <li><a href="welcome.php">Trang Chủ &amp; Tổng Quan</a></li>
+                <li><a href="index.php">Bảng Cảnh Báo Sớm (Early Warning)</a></li>
+                <li><a href="nhap_diem.php">Sổ Điểm Điện Tử Bộ Môn</a></li>
+                <li><a href="quet_nhanh.php">Quét Nhanh Bảng Điểm 1 Chạm</a></li>
+                <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+                    <li><a href="admin.php">Cổng Quản Trị Phân Công</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
+
+        <!-- Cột 3: Hỗ trợ Kỹ thuật & Đường dây nóng nhà trường -->
+        <div class="footer-col-support">
+            <div class="footer-col-heading">Hỗ Trợ &amp; Đường Dây Nóng</div>
+            <ul class="footer-contact-list">
+                <li>
+                    <?= get_svg_icon('phone', 15, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                    <span>Hotline: <b>0988.XXX.XXX</b> (Tổ CNTT)</span>
+                </li>
+                <li>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span>Email: <a href="mailto:hotro@eduradar-thcs.edu.vn">hotro@eduradar-thcs.edu.vn</a></span>
+                </li>
+                <li>
+                    <?= get_svg_icon('clock', 15, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                    <span>Thời gian hỗ trợ: 7:00 – 17:30 (T2 – T7)</span>
+                </li>
+            </ul>
+            <div style="margin-top: 14px;">
+                <button type="button" class="btn-open-help-drawer" onclick="toggleHelpDrawer(true)">
+                    <?= get_svg_icon('bulb', 15, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                    <span>Xem Bảng Phím Tắt &amp; Quy Chuẩn</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+        <div>
+            &copy; <?= date('Y') ?> <b>EduRadar THCS</b> &mdash; Bản quyền thuộc về Đội ngũ Kỹ thuật &amp; Nghiên cứu Giáo dục THCS.
+        </div>
+        <div class="footer-metrics">
+            <span class="tech-chip">PHP 8.0</span>
+            <span class="tech-chip">MariaDB 10.4</span>
+            <span class="tech-chip">TT22 BGD&amp;ĐT</span>
+        </div>
+    </div>
+</footer>
 
 <!-- FLOATING QUICK SUPPORT BUTTON (BOTTOM RIGHT) -->
 <div class="floating-help-widget" id="floatingHelpWidget">
     <button type="button" class="floating-help-btn" onclick="toggleHelpDrawer()" aria-label="Mở bảng trợ giúp và phím tắt" title="Trợ giúp & Phím tắt nhanh (?)">
-        <svg class="help-btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="help-btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -103,7 +104,7 @@
             </div>
         </div>
         <button type="button" class="help-drawer-close" onclick="toggleHelpDrawer(false)" aria-label="Đóng bảng trợ giúp">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
     </div>
 
@@ -111,7 +112,7 @@
         <!-- 1. BẢNG PHÍM TẮT NHANH -->
         <div class="help-section">
             <div class="help-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
                 <span>Phím tắt thao tác nhanh (Sổ điểm &amp; Radar)</span>
             </div>
             <div class="shortcut-list">
@@ -141,7 +142,7 @@
         <!-- 2. TÓM TẮT XẾP LOẠI HỌC LỰC THÔNG TƯ 22 -->
         <div class="help-section">
             <div class="help-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                 <span>Quy chuẩn phân tầng Thông tư 22/2021/TT-BGDĐT</span>
             </div>
             <div class="tt22-summary-grid">
@@ -167,12 +168,12 @@
         <!-- 3. ĐẦU MỐI HỖ TRỢ TRỰC TIẾP -->
         <div class="help-section">
             <div class="help-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <?= get_svg_icon('phone', 18, '', 'vertical-align: -2px; margin-right: 4px;') ?>
                 <span>Hỗ trợ kỹ thuật &amp; Góp ý</span>
             </div>
             <div class="help-contact-box">
                 <p>Thầy/Cô gặp khó khăn khi đồng bộ điểm hoặc cần xuất phiếu học tập gửi phụ huynh, vui lòng liên hệ:</p>
-                <div class="help-contact-badge">📞 Hotline: <b>0988.XXX.XXX</b> (Thầy Admin Tin Học)</div>
+                <div class="help-contact-badge"><?= get_svg_icon('phone', 14, '', 'vertical-align: -2px; margin-right: 4px;') ?> Hotline: <b>0988.XXX.XXX</b> (Thầy Admin Tin Học)</div>
             </div>
         </div>
     </div>

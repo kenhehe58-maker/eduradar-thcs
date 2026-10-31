@@ -4,6 +4,7 @@
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
+require_once __DIR__ . '/icons.php';
 $userRole = $_SESSION['role'] ?? 'guest';
 $userName = $_SESSION['full_name'] ?? ($_SESSION['username'] ?? 'Khách Trải Nghiệm');
 $userRoleTitle = ($userRole === 'admin') ? 'Quản Trị Viên Trường' : (($userRole === 'teacher') ? 'Giáo Viên Bộ Môn' : 'Khách Dùng Thử');
@@ -262,7 +263,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   justify-content: center !important;
   gap: 8px !important;
   width: 100% !important;
-  height: 42px !important;
+  height: 44px !important;
   border-radius: 12px !important;
   background: #2563eb !important;
   color: #ffffff !important;
@@ -302,8 +303,8 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   .u040-it {
     padding: 0;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     overflow: hidden;
   }
   .u040-me {
@@ -313,13 +314,13 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     justify-content: center;
   }
   .u040-logout-it {
-    width: 44px !important;
-    height: 44px !important;
+    width: 48px !important;
+    height: 48px !important;
     padding: 0 !important;
   }
 }
 
-/* Mobile Bottom Navigation Bar (Ultra-sleek, compact Apple Dock / Dribbble SaaS) */
+/* Mobile Bottom Navigation Bar (Apple Dock / Dribbble SaaS - Fitts Law >= 48px) */
 @media (max-width: 768px) {
   .ux-rail-container {
     position: fixed !important;
@@ -328,7 +329,8 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     bottom: 0 !important;
     top: auto !important;
     width: 100% !important;
-    height: 50px !important;
+    height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 1050 !important;
     border-right: none !important;
     border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
@@ -337,10 +339,11 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.04) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    box-sizing: border-box !important;
   }
   [data-theme="dark"] .ux-rail-container {
     background: rgba(15, 23, 42, 0.94) !important;
-    border-top-color: rgba(35, 50, 77, 0.85) !important;
+    border-top-color: #334155 !important;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4) !important;
   }
   .u040-fixed {
@@ -379,7 +382,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
-    gap: 1px !important;
+    gap: 2px !important;
   }
   .u040-nav li {
     display: flex !important;
@@ -400,17 +403,17 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     padding: 0 !important;
     border-top: none !important;
   }
-  /* Nav item styled: ultra-compact, 17px icon, 8.5px crisp label */
+  /* Nav item styled: Fitts's Law touch target >= 48x48px */
   .u040-it {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 0 !important;
-    max-width: 48px !important;
-    height: 42px !important;
-    padding: 2px 1px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    padding: 2px 2px !important;
     margin: 0 !important;
     border-radius: 8px !important;
     flex-shrink: 0 !important;
@@ -419,11 +422,14 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    transition: all 0.15s ease !important;
+    transition: transform 0.12s ease, background-color 0.15s ease !important;
+  }
+  .u040-it:active {
+    transform: scale(0.95) !important;
   }
   .u040-it svg {
-    width: 17px !important;
-    height: 17px !important;
+    width: 18px !important;
+    height: 18px !important;
     stroke: #64748b !important;
     stroke-width: 2px !important;
     fill: none !important;
@@ -431,7 +437,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   .u040-it-label {
     display: block !important;
-    font-size: 8.5px !important;
+    font-size: 9px !important;
     font-weight: 600 !important;
     color: #64748b !important;
     line-height: 1 !important;
@@ -443,11 +449,11 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   /* Active Tab: subtle rounded tint pill */
   .u040-it[aria-current="page"],
   .u040-it.active {
-    background: #eef2ff !important;
+    background: #eff6ff !important;
   }
   [data-theme="dark"] .u040-it[aria-current="page"],
   [data-theme="dark"] .u040-it.active {
-    background: rgba(99, 102, 241, 0.18) !important;
+    background: rgba(59, 130, 246, 0.18) !important;
   }
   .u040-it[aria-current="page"] svg,
   .u040-it.active svg {
@@ -456,7 +462,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   [data-theme="dark"] .u040-it[aria-current="page"] svg,
   [data-theme="dark"] .u040-it.active svg {
-    stroke: #818cf8 !important;
+    stroke: #60a5fa !important;
   }
   .u040-it[aria-current="page"] .u040-it-label,
   .u040-it.active .u040-it-label {
@@ -465,39 +471,41 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   }
   [data-theme="dark"] .u040-it[aria-current="page"] .u040-it-label,
   [data-theme="dark"] .u040-it.active .u040-it-label {
-    color: #818cf8 !important;
+    color: #93c5fd !important;
   }
 
-  /* Single Logout Button on Mobile: Compact & Elegant */
+  /* Single Logout Button on Mobile: Fitts's Law touch target >= 48x48px */
   .u040-logout-it {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    min-width: 0 !important;
-    max-width: 48px !important;
-    height: 42px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    height: 48px !important;
     margin: 0 !important;
-    padding: 2px 1px !important;
+    padding: 2px 2px !important;
     border-radius: 8px !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     gap: 2px !important;
     flex-shrink: 0 !important;
+    transition: transform 0.12s ease !important;
   }
   .u040-logout-it:active {
     background: rgba(239, 68, 68, 0.1) !important;
+    transform: scale(0.95) !important;
   }
   .u040-logout-it svg {
     stroke: #ef4444 !important;
-    width: 17px !important;
-    height: 17px !important;
+    width: 18px !important;
+    height: 18px !important;
   }
   .u040-logout-text {
     display: block !important;
-    font-size: 8.5px !important;
+    font-size: 9px !important;
     font-weight: 700 !important;
     color: #ef4444 !important;
     line-height: 1 !important;
@@ -538,7 +546,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
     <nav class="u040-rail u208-dk" role="toolbar" aria-label="Main menu">
       <div class="u040-top">
         <a href="welcome.php" class="u040-logo" title="Trang Chào Mừng & Khởi Động EduRadar" aria-label="Trang Chào Mừng EduRadar">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
             <path d="M6 12v5c3 3 9 3 12 0v-5"/>
           </svg>
@@ -599,12 +607,12 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
         <div class="u040-me" tabindex="0" role="button" aria-label="Hồ sơ người dùng">
           <i aria-hidden="true"><?= mb_strtoupper(mb_substr($userName, 0, 1, 'UTF-8'), 'UTF-8') ?></i>
           <div class="u040-me-text">
-            <span class="u040-me-name"><?= htmlspecialchars($userName) ?></span>
-            <span class="u040-me-role"><?= htmlspecialchars($userRoleTitle) ?></span>
+            <span class="u040-me-name"><?= htmlspecialchars($userName, ENT_QUOTES, 'UTF-8') ?></span>
+            <span class="u040-me-role"><?= htmlspecialchars($userRoleTitle, ENT_QUOTES, 'UTF-8') ?></span>
           </div>
           <span class="u040-dock-tip">
-            <strong><?= htmlspecialchars($userName) ?></strong><br>
-            <small style="opacity: 0.8; font-weight: 500;"><?= htmlspecialchars($userRoleTitle) ?></small>
+            <strong><?= htmlspecialchars($userName, ENT_QUOTES, 'UTF-8') ?></strong><br>
+            <small style="opacity: 0.8; font-weight: 500;"><?= htmlspecialchars($userRoleTitle, ENT_QUOTES, 'UTF-8') ?></small>
           </span>
         </div>
 

@@ -9,20 +9,33 @@ if (!headers_sent()) {
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
+require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/algorithms.php';
+require_once __DIR__ . '/icons.php';
 $headerCalendar = get_academic_calendar_phase();
 $currentUserRole = $_SESSION['role'] ?? 'teacher';
 $currentUsername = $_SESSION['username'] ?? '';
 $currentUserFullName = $_SESSION['full_name'] ?? $currentUsername;
 $activeNav = $activeNav ?? 'dashboard'; // 'welcome' | 'dashboard' | 'gradebook' | 'admin' | 'slides'
 $pageTitle = $pageTitle ?? 'EduRadar THCS';
+$metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm học lực THCS theo chuẩn Thông tư 22/2021/TT-BGDĐT. Giám sát nguy cơ, phân tích biến thiên điểm số và sổ điểm điện tử bộ môn.';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?> – <?= APP_NAME ?? 'EduRadar' ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="<?= htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8') ?>">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph Protocol for Technical SEO (vi_VN) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> – <?= htmlspecialchars(APP_NAME ?? 'EduRadar THCS', ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8') ?>">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:site_name" content="<?= htmlspecialchars(APP_NAME ?? 'EduRadar THCS', ENT_QUOTES, 'UTF-8') ?>">
+    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> – <?= htmlspecialchars(APP_NAME ?? 'EduRadar THCS', ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -46,6 +59,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             display: flex !important;
             flex-direction: column !important;
             min-height: 100vh;
+            min-height: 100dvh;
             width: 100%;
             margin: 0;
             padding: 0;
@@ -169,8 +183,8 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: var(--card-bg, #ffffff);
             border: 1.5px solid var(--border-color, #cbd5e1);
@@ -203,12 +217,12 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             font-size: 13px;
         }
 
-        /* MAIN CONTENT AREA OFFSET FOR 230px SIDEBAR */
+        /* MAIN CONTENT AREA OFFSET FOR 230px SIDEBAR & SAFE BOTTOM DOCK PADDING */
         .content.full-width {
             margin-left: 230px !important;
             width: calc(100% - 230px) !important;
             max-width: none !important;
-            padding: 24px 32px 80px 32px !important;
+            padding: 24px 32px calc(5rem + env(safe-area-inset-bottom, 0px)) 32px !important;
             flex: 1 0 auto;
             box-sizing: border-box;
         }
@@ -227,11 +241,11 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             .content.full-width {
                 margin-left: 68px !important;
                 width: calc(100% - 68px) !important;
-                padding: 16px 16px 70px 16px !important;
+                padding: 16px 16px calc(5rem + env(safe-area-inset-bottom, 0px)) 16px !important;
             }
         }
 
-        /* Full Responsive Layout for Mobile Devices (<= 768px) */
+        /* Full Responsive Layout for Mobile Devices (<= 768px, optimized for 360px-412px) */
         @media (max-width: 768px) {
             .glass-topbar {
                 position: relative !important;
@@ -306,8 +320,8 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             }
             .edexa-theme-toggle {
                 padding: 6px !important;
-                width: 32px !important;
-                height: 32px !important;
+                width: 34px !important;
+                height: 34px !important;
                 border-radius: 50% !important;
                 justify-content: center !important;
             }
@@ -318,7 +332,7 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 margin-left: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                padding: 12px 14px 84px 14px !important;
+                padding: 12px 14px calc(5.5rem + env(safe-area-inset-bottom, 0px)) 14px !important;
                 box-sizing: border-box !important;
             }
         }
@@ -338,26 +352,26 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             <div class="edexa-user-m-wrap">
                 <a href="welcome.php" style="text-decoration: none; color: inherit;" title="Về Trang Chào Mừng & Khởi Động EduRadar">
                     <span class="edexa-welcome-text">
-                        Chào <?= htmlspecialchars($currentUserFullName) ?>
+                        Chào <?= htmlspecialchars($currentUserFullName, ENT_QUOTES, 'UTF-8') ?>
                     </span>
                 </a>
-                <span class="edexa-sub-m">HK I &bull; NH <?= htmlspecialchars($headerCalendar['school_year']) ?></span>
+                <span class="edexa-sub-m">HK I &bull; NH <?= htmlspecialchars($headerCalendar['school_year'] ?? '2024-2025', ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <span class="edexa-role-pill">
-                <?= htmlspecialchars(($currentUserRole === 'admin') ? 'Quản Trị Viên' : 'Giáo Viên Bộ Môn') ?>
+                <?= htmlspecialchars(($currentUserRole === 'admin') ? 'Quản Trị Viên' : 'Giáo Viên Bộ Môn', ENT_QUOTES, 'UTF-8') ?>
             </span>
         </div>
 
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
-            <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title']) ?>">
-                <span><?= get_svg_icon('calendar', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?><?= htmlspecialchars($headerCalendar['school_year']) ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name']) ?></span>
+            <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                <span><?= get_svg_icon('calendar', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?><?= htmlspecialchars($headerCalendar['school_year'] ?? '2024-2025', ENT_QUOTES, 'UTF-8') ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ 1', ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <div class="glass-status-chip chip-mobile-hide" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
                 <span class="tech-indicator">SPEC</span>
                 <span>Thông tư 22</span>
             </div>
-                        <!-- HELP / SHORTCUT MODAL TRIGGER -->
+            <!-- HELP / SHORTCUT MODAL TRIGGER -->
             <button type="button" class="edexa-help-toggle" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
                 <span>?</span>
             </button>
@@ -412,15 +426,15 @@ $breadcrumbs = $breadcrumbs ?? [
             <?php $isLast = ($idx === count($breadcrumbs) - 1); ?>
             <li class="breadcrumb-item <?= $isLast ? 'active' : '' ?>" <?= $isLast ? 'aria-current="page"' : '' ?>>
                 <?php if (!$isLast && !empty($bc['url'])): ?>
-                    <a href="<?= htmlspecialchars($bc['url']) ?>" class="breadcrumb-link">
+                    <a href="<?= htmlspecialchars($bc['url'], ENT_QUOTES, 'UTF-8') ?>" class="breadcrumb-link">
                         <?php if ($idx === 0): ?>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                         <?php endif; ?>
-                        <span><?= htmlspecialchars($bc['title']) ?></span>
+                        <span><?= htmlspecialchars($bc['title'], ENT_QUOTES, 'UTF-8') ?></span>
                     </a>
-                    <span class="breadcrumb-separator" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+                    <span class="breadcrumb-separator" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></span>
                 <?php else: ?>
-                    <span class="breadcrumb-current"><?= htmlspecialchars($bc['title']) ?></span>
+                    <span class="breadcrumb-current"><?= htmlspecialchars($bc['title'], ENT_QUOTES, 'UTF-8') ?></span>
                 <?php endif; ?>
             </li>
         <?php endforeach; ?>

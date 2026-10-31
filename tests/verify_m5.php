@@ -530,7 +530,7 @@ assertTest("4.6 Action column links directly to nhap_diem.php with parameters", 
 
 assertTest("4.7 Table declares unique DOM identifiers without duplicate ID attributes in HTML", function () use ($client) {
     $res = $client->get('index.php');
-    preg_match_all('/\bid=["\']([^"\']+)["\']/i', $res['body'], $matches);
+    preg_match_all('/(?<=\s)id=["\']([^"\']+)["\']/i', $res['body'], $matches);
     $ids = $matches[1] ?? [];
     $idCounts = array_count_values($ids);
     $duplicates = [];

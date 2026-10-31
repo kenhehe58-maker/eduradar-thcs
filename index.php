@@ -155,32 +155,8 @@ if ($userRole === 'teacher') {
     // 1. Xác định lớp học được chọn:
     if ($hasGetClass && isset($filterClasses[$rawGetClass])) {
         $selectedClassId = $rawGetClass;
-    } elseif ($userNavCtx['class_id'] > 0 && isset($filterClasses[$userNavCtx['class_id']])) {
-        $selectedClassId = $userNavCtx['class_id'];
     } else {
-        // Tự động chọn lớp đầu tiên có học sinh
         $selectedClassId = 0;
-        foreach ($filterClasses as $cid => $cName) {
-            if (($classCounts[$cid] ?? 0) > 0) {
-                $selectedClassId = $cid;
-                break;
-            }
-        }
-        if ($selectedClassId === 0 && !empty($filterClasses)) {
-            $selectedClassId = (int)array_key_first($filterClasses);
-        }
-    }
-    if ($selectedClassId > 0 && !isset($filterClasses[$selectedClassId])) {
-        $selectedClassId = 0;
-        foreach ($filterClasses as $cid => $cName) {
-            if (($classCounts[$cid] ?? 0) > 0) {
-                $selectedClassId = $cid;
-                break;
-            }
-        }
-        if ($selectedClassId === 0 && !empty($filterClasses)) {
-            $selectedClassId = (int)array_key_first($filterClasses);
-        }
     }
 
     // 2. Xác định môn học theo lớp đã chọn (Giáo viên chỉ được xem môn mình dạy ở lớp đó)
@@ -190,10 +166,8 @@ if ($userRole === 'teacher') {
 
     if ($hasGetSubject && in_array($rawGetSubject, $validSubjectsForSelectedClass, true)) {
         $selectedSubject = $rawGetSubject;
-    } elseif ($userNavCtx['subject'] !== '' && in_array($userNavCtx['subject'], $validSubjectsForSelectedClass, true)) {
-        $selectedSubject = $userNavCtx['subject'];
     } else {
-        $selectedSubject = !empty($validSubjectsForSelectedClass) ? $validSubjectsForSelectedClass[0] : 'Toán';
+        $selectedSubject = 'all';
     }
 
     // Ghi nhớ lớp & môn vào không gian tên riêng của tài khoản
@@ -253,36 +227,17 @@ if ($userRole === 'teacher') {
     }
 
     // 1. Xác định môn học được chọn:
-    if ($hasGetSubject) {
+    // 1. Xác định môn học được chọn:
+    if ($hasGetSubject && (in_array($rawGetSubject, $filterSubjects, true) || $rawGetSubject === 'all')) {
         $selectedSubject = $rawGetSubject;
-    } elseif ($userNavCtx['subject'] !== '' && (in_array($userNavCtx['subject'], $filterSubjects, true) || $userNavCtx['subject'] === 'all')) {
-        $selectedSubject = $userNavCtx['subject'];
     } else {
-        $selectedSubject = 'all';
-    }
-    if ($selectedSubject !== 'all' && !in_array($selectedSubject, $filterSubjects, true)) {
         $selectedSubject = 'all';
     }
 
     // 2. Xác định lớp học được chọn:
-    if ($hasGetClass) {
+    if ($hasGetClass && isset($filterClasses[$rawGetClass])) {
         $selectedClassId = $rawGetClass;
-    } elseif ($userNavCtx['class_id'] > 0 && isset($filterClasses[$userNavCtx['class_id']])) {
-        $selectedClassId = $userNavCtx['class_id'];
     } else {
-        // Tự động chọn lớp đầu tiên có học sinh
-        $selectedClassId = 0;
-        foreach ($filterClasses as $cid => $cName) {
-            if (($classCounts[$cid] ?? 0) > 0) {
-                $selectedClassId = $cid;
-                break;
-            }
-        }
-        if ($selectedClassId === 0 && !empty($filterClasses)) {
-            $selectedClassId = (int)array_key_first($filterClasses);
-        }
-    }
-    if ($selectedClassId > 0 && !isset($filterClasses[$selectedClassId])) {
         $selectedClassId = 0;
     }
 
@@ -351,23 +306,7 @@ foreach ($rows as $r) {
         }
     }
 
-    // Căn cứ Thông tư 22/2021/TT-BGDĐT: Tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2).
-    // Nếu chưa có điểm thi (không có GK và không có CK, lúc đầu năm) hoặc chưa có điểm TX thì không hiện ĐTB
-    if (($gk === null && $ck === null) || empty($txList)) {
-        $avg = null;
-        $r['avg_score'] = null;
-    } elseif ($avg === null && !empty($txList)) {
-        $sTx = array_sum($txList);
-        $nTx = count($txList);
-        if ($ck !== null) {
-            $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
-        } else {
-            $avg = round(($sTx + 2 * $gk) / ($nTx + 2), 1);
-        }
-        $r['avg_score'] = $avg;
-    }
-
-    $evaluation = evaluateRiskZone($avg, $gk, $ck, $txList);
+    $evaluation = ($userRole === 'teacher') ? evaluateRiskZone($avg, $gk, $ck) : evaluateRiskZone($avg, $gk, $ck, $txList);
     $mathProfile = diagnose_student_mathematical_profile($txList, $gk, $ck);
     $students[] = array_merge($r, $evaluation, ['tx_list' => $txList, 'math_profile' => $mathProfile]);
 }
@@ -387,13 +326,24 @@ $classOverallSummary = [
 $studentOverallMap = [];
 
 if ($selectedClassId > 0) {
-    $allClassScoresStmt = $pdo->prepare("
-        SELECT s.id as student_id, s.full_name, sc.subject, sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score 
-        FROM students s
-        LEFT JOIN scores sc ON s.id = sc.student_id
-        WHERE s.class_id = ?
-    ");
-    $allClassScoresStmt->execute([$selectedClassId]);
+    if ($userRole === 'teacher') {
+        $allClassScoresStmt = $pdo->prepare("
+            SELECT s.id as student_id, s.full_name, sc.subject, sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score 
+            FROM students s
+            JOIN teacher_classes tc ON tc.class_id = s.class_id AND tc.teacher_id = ?
+            JOIN scores sc ON s.id = sc.student_id AND sc.subject = tc.subject
+            WHERE s.class_id = ?
+        ");
+        $allClassScoresStmt->execute([$userId, $selectedClassId]);
+    } else {
+        $allClassScoresStmt = $pdo->prepare("
+            SELECT s.id as student_id, s.full_name, sc.subject, sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score 
+            FROM students s
+            LEFT JOIN scores sc ON s.id = sc.student_id
+            WHERE s.class_id = ?
+        ");
+        $allClassScoresStmt->execute([$selectedClassId]);
+    }
     $studentScoresGrouped = [];
     while ($row = $allClassScoresStmt->fetch(PDO::FETCH_ASSOC)) {
         $sid = (int)$row['student_id'];
@@ -429,7 +379,7 @@ if ($selectedClassId > 0) {
         $subCount = count($data['scores']);
         if ($subCount === 0) {
             $classOverallSummary['pending']++;
-            $studentOverallMap[$sid] = ['level' => 'pending', 'label' => 'Chờ điểm', 'badge' => '⏳ Chờ điểm', 'class' => 'tier-pending'];
+            $studentOverallMap[$sid] = ['level' => 'pending', 'label' => 'Chờ điểm', 'badge' => 'Chờ điểm', 'class' => 'tier-pending'];
             continue;
         }
 
@@ -515,7 +465,7 @@ if (!empty($studentScoresGrouped)) {
         $aptitude = 'Năng lực phát triển đồng đều';
         if ($avgScience !== null && $avgHumanities !== null && ($avgScience - $avgHumanities) >= 1.0) {
             $aptitude = 'Thiên hướng Tự nhiên & Tư duy Logic';
-            $profileSummary = "Em có năng khiếu nổi trội ở các môn Khoa học Tự nhiên (ĐTB nhóm đạt {$avgScience}đ). Tư duy tính toán và giải quyết vấn đề mạch lạc; thầy/cô có thể bồi dưỡng thêm các bài toán vận dụng thực tế.";
+            $profileSummary = "Em có năng khiếu nổi trội ở các môn Khoa học Tự nhiên (ĐTB nhóm đạt {$avgScience}đ). Tư duy logic và giải quyết vấn đề mạch lạc; thầy/cô có thể bồi dưỡng thêm các bài tập vận dụng thực tế.";
         } elseif ($avgHumanities !== null && $avgScience !== null && ($avgHumanities - $avgScience) >= 1.0) {
             $aptitude = 'Thiên hướng Xã hội & Ngôn ngữ';
             $profileSummary = "Em có thế mạnh rõ nét ở các môn Khoa học Xã hội và Ngôn ngữ (ĐTB nhóm đạt {$avgHumanities}đ). Khả năng cảm thụ, ghi nhớ và diễn đạt tốt; thầy/cô nên khuyến khích em rèn luyện thêm kỹ năng viết và thuyết trình.";
@@ -549,7 +499,7 @@ if (!empty($studentScoresGrouped)) {
         if ($hasSci && $hasHum) {
             $strengthsText = 'Em có năng lực tiếp thu cân bằng tốt, vừa nhanh nhạy trong tư duy định lượng logic vừa có khả năng cảm thụ và diễn đạt ngôn ngữ mạch lạc.';
         } elseif ($hasSci) {
-            $strengthsText = 'Em nổi trội về tư duy logic, phản xạ tính toán và khả năng giải quyết các vấn đề khoa học định lượng nhanh nhạy.';
+            $strengthsText = 'Em nổi trội về tư duy logic, phản xạ phân tích logic và khả năng giải quyết các vấn đề khoa học định lượng nhanh nhạy.';
         } elseif ($hasHum) {
             $strengthsText = 'Em có thế mạnh về cảm thụ văn học, vốn từ phong phú, ghi nhớ dữ kiện tốt và diễn đạt ý tưởng trôi chảy.';
         } else {
@@ -584,7 +534,7 @@ if (!empty($studentScoresGrouped)) {
         // 3. Kế hoạch cải thiện sư phạm hành động cụ thể (Cần cải thiện như thế nào)
         if (!empty($weaknessesList)) {
             $firstWeakName = explode(':', $weaknessesList[0])[0];
-            $actionPlan = "Kế hoạch can thiệp: Giáo viên bộ môn {$firstWeakName} giao phiếu bài tập củng cố mức độ Đạt để em lấy lại căn bản; phân công bạn học khá kèm cặp 1-1; đồng thời bồi dưỡng thêm bài toán thực tế cho môn sở trường (" . implode(', ', array_slice($strengthsList, 0, 2)) . ") để khích lệ tinh thần.";
+            $actionPlan = "Kế hoạch can thiệp: Giáo viên bộ môn {$firstWeakName} giao phiếu bài tập củng cố mức độ Đạt để em lấy lại căn bản; phân công bạn học khá kèm cặp 1-1; đồng thời bồi dưỡng thêm bài tập thực tế cho môn sở trường (" . implode(', ', array_slice($strengthsList, 0, 2)) . ") để khích lệ tinh thần.";
         } else {
             $actionPlan = "Định hướng phát triển: Tiếp tục giữ nhịp học tập đều đặn; giáo viên có thể bồi dưỡng các bài tập nâng cao tư duy ở môn sở trường để chuẩn bị cho các kỳ thi học sinh giỏi cấp trường.";
         }
@@ -1004,7 +954,7 @@ $tt22Slices = [
             <span class="card-sub">Điểm số có chiều hướng đi lên qua các bài kiểm tra</span>
         </div>
 
-        <div class="card stat-card green">
+        <div class="card stat-card trend-steady">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('activity', 16) ?>
@@ -1084,46 +1034,43 @@ $tt22Slices = [
             </div>
         <?php endif; ?>
 
-        <?php $goodPct = $stats['total'] > 0 ? round((($stats['tier_excellent'] + $stats['tier_good']) / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card green">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('check-circle', 16, '', 'color: #16a34a;') ?>
-                    <span>Mức Tốt &amp; Khá</span>
+                    <span>Ổn định (Đạt chuẩn)</span>
                 </span>
-                <?= render_circular_gauge((float)$goodPct, 'green') ?>
-                <span class="card-pct green"><?= $goodPct ?>%</span>
+                <?= render_circular_gauge((float)$stats['green_pct'], 'green') ?>
+                <span class="card-pct green"><?= $stats['green_pct'] ?>%</span>
             </div>
-            <b><?= $stats['tier_excellent'] + $stats['tier_good'] ?></b>
-            <span class="card-sub">ĐTB từ 6.5 trở lên</span>
+            <b><?= $stats['green'] ?></b>
+            <span class="card-sub">Đạt chuẩn hoặc chờ điểm (ổn định)</span>
         </div>
 
-        <?php $avgPct = $stats['total'] > 0 ? round(($stats['tier_average'] / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card yellow">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-circle', 16, '', 'color: #d97706;') ?>
-                    <span>Mức Đạt (Trung Bình)</span>
+                    <span>Cần chú ý</span>
                 </span>
-                <?= render_circular_gauge((float)$avgPct, 'yellow') ?>
-                <span class="card-pct yellow"><?= $avgPct ?>%</span>
+                <?= render_circular_gauge((float)$stats['yellow_pct'], 'yellow') ?>
+                <span class="card-pct yellow"><?= $stats['yellow_pct'] ?>%</span>
             </div>
-            <b><?= $stats['tier_average'] ?></b>
-            <span class="card-sub" title="Trung bình (5.0 ≤ ĐTB < 6.5) · Cần chú ý">5.0 ≤ ĐTB &lt; 6.5</span>
+            <b><?= $stats['yellow'] ?></b>
+            <span class="card-sub" title="Cần chú ý hoặc sa sút điểm">Học sinh cần theo dõi sát sao</span>
         </div>
 
-        <?php $lowPct = $stats['total'] > 0 ? round(($stats['tier_low'] / $stats['total']) * 100, 1) : 0; ?>
         <div class="card stat-card red">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-triangle', 16, '', 'color: #dc2626;') ?>
-                    <span>Chưa Đạt (Cần Hỗ Trợ)</span>
+                    <span>Nguy cấp</span>
                 </span>
-                <?= render_circular_gauge((float)$lowPct, 'red') ?>
-                <span class="card-pct red"><?= $lowPct ?>%</span>
+                <?= render_circular_gauge((float)$stats['red_pct'], 'red') ?>
+                <span class="card-pct red"><?= $stats['red_pct'] ?>%</span>
             </div>
-            <b><?= $stats['tier_low'] ?></b>
-            <span class="card-sub" title="Chưa đạt (ĐTB < 5.0) · Cần can thiệp sớm">ĐTB &lt; 5.0</span>
+            <b><?= $stats['red'] ?></b>
+            <span class="card-sub" title="Nguy cấp (ĐTB < 3.5, CK < 3.0, hoặc hỏng cả GK và CK)">Cần can thiệp sớm</span>
         </div>
     </section>
 </div>
@@ -1224,6 +1171,21 @@ $tt22Slices = [
         <button type="button" class="chip active chip-all" data-filter="all" title="Xem toàn bộ danh sách">
             <span>Tất cả</span>
             <span class="chip-count">(<?= $stats['total'] ?>)</span>
+        </button>
+        <button type="button" class="chip chip-red" data-filter="red" title="Mức Nguy cấp">
+            <span class="chip-dot dot-red"></span>
+            <span>Nguy cấp</span>
+            <span class="chip-count">(<?= $stats['red'] ?>)</span>
+        </button>
+        <button type="button" class="chip chip-yellow" data-filter="yellow" title="Mức Cần chú ý">
+            <span class="chip-dot dot-yellow"></span>
+            <span>Cần chú ý</span>
+            <span class="chip-count">(<?= $stats['yellow'] ?>)</span>
+        </button>
+        <button type="button" class="chip chip-green" data-filter="green" title="Mức Ổn định">
+            <span class="chip-dot dot-green"></span>
+            <span>Ổn định</span>
+            <span class="chip-count">(<?= $stats['green'] ?>)</span>
         </button>
 
         <span class="toolbar-sep" aria-hidden="true"></span>
@@ -1460,7 +1422,7 @@ $tt22Slices = [
                 </div>
             </div>
         </div>
-        <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject === 'all' ? ($filterSubjects[0] ?? 'Toán') : $selectedSubject) ?>" class="btn primary" style="padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject === 'all' ? ($filterSubjects[0] ?? '') : $selectedSubject) ?>" class="btn primary" style="padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
             <?= get_svg_icon('file-text', 15) ?>
             <span>Vào Sổ Điểm Nhập Điểm</span>
         </a>
@@ -1506,337 +1468,7 @@ $tt22Slices = [
                     </td>
                 </tr>
             <?php else: ?>
-                <?php
-                // GOM NHÓM THEO HỌC SINH ĐỂ LOẠI BỎ TRÙNG TÊN VÀ TẠO MŨI TÊN XỔ CÁC MÔN
-                $studentsGrouped = [];
-                foreach ($students as $s) {
-                    $sid = (int)$s['student_id'];
-                    if (!isset($studentsGrouped[$sid])) {
-                        $studentsGrouped[$sid] = [
-                            'student' => $s,
-                            'subjects' => []
-                        ];
-                    }
-                    $studentsGrouped[$sid]['subjects'][] = $s;
-                }
-                ?>
-                <?php if ($selectedSubject === 'all'): ?>
-                    <?php $stt = 1; foreach ($studentsGrouped as $sid => $group): ?>
-                        <?php
-                            $mainStudent = $group['student'];
-                            $subjects = $group['subjects'];
-                            $hasMulti = count($subjects) > 1;
-
-                            // Tên và avatar
-                            $nameParts = explode(' ', trim($mainStudent['full_name']));
-                            $lastName = end($nameParts);
-                            $initials = mb_strtoupper(mb_substr($lastName, 0, 2, 'UTF-8'), 'UTF-8');
-
-                            // Đánh giá tổng hợp rủi ro
-                            $hasRed = false; $hasYellow = false; $hasPending = false; $hasGreen = false;
-                            $sumAvg = 0; $countAvg = 0;
-                            foreach ($subjects as $sub) {
-                                if ($sub['level'] === 'red') $hasRed = true;
-                                elseif ($sub['level'] === 'yellow') $hasYellow = true;
-                                elseif ($sub['level'] === 'pending') $hasPending = true;
-                                else $hasGreen = true;
-
-                                if ($sub['avg_score'] !== null && $sub['avg_score'] !== '') {
-                                    $sumAvg += (float)$sub['avg_score'];
-                                    $countAvg++;
-                                }
-                            }
-                            $overallRisk = $hasRed ? 'red' : ($hasYellow ? 'yellow' : ($hasGreen ? 'green' : 'pending'));
-                            $overallAvg = $countAvg > 0 ? round($sumAvg / $countAvg, 1) : null;
-
-                            if ($overallRisk === 'red') {
-                                $gradColor = 'linear-gradient(135deg, #ef4444, #dc2626)';
-                                $riskLabel = 'Nguy cấp';
-                                $riskTitle = 'Học sinh có môn ở mức nguy cấp';
-                            } elseif ($overallRisk === 'yellow') {
-                                $gradColor = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                                $riskLabel = 'Cần chú ý';
-                                $riskTitle = 'Học sinh có môn cần chú ý hoặc sa sút';
-                            } elseif ($overallRisk === 'pending') {
-                                $gradColor = 'linear-gradient(135deg, #94a3b8, #64748b)';
-                                $riskLabel = 'Chờ điểm';
-                                $riskTitle = 'Chưa có điểm đánh giá';
-                            } else {
-                                $gradColor = 'linear-gradient(135deg, #10b981, #059669)';
-                                $riskLabel = 'Ổn định';
-                                $riskTitle = 'Học tập ổn định trên các môn';
-                            }
-
-                            $firstSub = $subjects[0];
-                            $overallTierBadge = $studentOverallMap[$sid]['badge'] ?? $mainStudent['score_tier']['badge'];
-                            $overallTierClass = $studentOverallMap[$sid]['class'] ?? $mainStudent['score_tier']['class'];
-                            $overallTier = $studentOverallMap[$sid]['level'] ?? $mainStudent['score_tier']['tier'];
-                        ?>
-                        <tr class="radar-row" 
-                            data-student-id="<?= $sid ?>"
-                            data-student-code="<?= htmlspecialchars(!empty($mainStudent['student_code']) ? $mainStudent['student_code'] : 'HS' . $sid) ?>"
-                            data-full-name="<?= htmlspecialchars($mainStudent['full_name']) ?>"
-                            data-class-name="<?= htmlspecialchars($mainStudent['class_name']) ?>"
-                            data-subject="<?= htmlspecialchars(implode(', ', array_column($subjects, 'subject'))) ?>"
-                            data-birthday="<?= htmlspecialchars($mainStudent['birthday'] ?? '') ?>"
-                            data-phone="<?= htmlspecialchars($mainStudent['phone'] ?? '') ?>"
-                            data-tx1="<?= $firstSub['tx1'] !== null ? $firstSub['tx1'] : '' ?>"
-                            data-tx2="<?= $firstSub['tx2'] !== null ? $firstSub['tx2'] : '' ?>"
-                            data-tx3="<?= $firstSub['tx3'] !== null ? $firstSub['tx3'] : '' ?>"
-                            data-tx4="<?= $firstSub['tx4'] !== null ? $firstSub['tx4'] : '' ?>"
-                            data-gk="<?= $firstSub['gk'] !== null ? $firstSub['gk'] : '' ?>"
-                            data-ck="<?= $firstSub['ck'] !== null ? $firstSub['ck'] : '' ?>"
-                            data-avg="<?= $overallAvg !== null ? $overallAvg : '' ?>"
-                            data-level="<?= $overallRisk ?>" 
-                            data-trend="<?= $firstSub['trend'] ?>"
-                            data-momentum="<?= $firstSub['momentum'] ?>"
-                            data-momentum-label="<?= htmlspecialchars($firstSub['trend_label']) ?>"
-                            data-momentum-icon="<?= htmlspecialchars($firstSub['trend_icon']) ?>"
-                            data-tier="<?= $overallTier ?>"
-                            data-tier-label="<?= htmlspecialchars($overallTierBadge) ?>"
-                            data-tier-badge="<?= htmlspecialchars($overallTierBadge) ?>"
-                            data-tier-class="<?= htmlspecialchars($overallTierClass) ?>"
-                            data-overall="<?= htmlspecialchars($studentOverallMap[$sid]['level'] ?? '') ?>"
-                            data-txwarn="<?= !empty($firstSub['has_tx_warning']) ? '1' : '0' ?>"
-                            data-diagnostic="<?= htmlspecialchars($firstSub['diagnostic']) ?>"
-                            <?= format_math_data_attributes($firstSub) ?>
-                            data-advice="<?= htmlspecialchars($firstSub['competency']['pedagogical_advice'] ?? '') ?>"
-                            data-competency-title="<?= htmlspecialchars($firstSub['competency']['competency_title'] ?? '') ?>"
-                            data-note="<?= htmlspecialchars($firstSub['teacher_note'] ?? '') ?>"
-                            data-profile='<?= htmlspecialchars(json_encode($studentSubjectProfiles[$sid] ?? [], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?>'
-                            data-name="<?= htmlspecialchars(mb_strtolower($mainStudent['full_name'], 'UTF-8')) ?>" 
-                            data-search="<?= htmlspecialchars(mb_strtolower(($mainStudent['student_code'] ?? '') . ' ' . $mainStudent['full_name'] . ' ' . $mainStudent['class_name'] . ' ' . implode(' ', array_column($subjects, 'subject')) . ' ' . $firstSub['diagnostic'], 'UTF-8')) ?>">
-                            <td class="col-stt" style="white-space: nowrap;">
-                                <?= $stt++ ?>
-                                <?php if ($hasMulti): ?>
-                                    <button type="button" class="btn-toggle-subrows" 
-                                            onclick="event.stopPropagation(); toggleStudentSubrows(<?= $sid ?>, this)" 
-                                            title="Bấm để xem các môn học khác của học sinh này">
-                                        ▶
-                                    </button>
-                                <?php endif; ?>
-                            </td>
-                            <td class="col-code">
-                                <code class="mono-code">
-                                    <?= htmlspecialchars(!empty($mainStudent['student_code']) ? $mainStudent['student_code'] : 'HS' . $sid) ?>
-                                </code>
-                            </td>
-                            <td class="col-student">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <div class="avatar-status-container">
-                                        <div class="student-avatar-circle">
-                                            <?= $initials ?>
-                                        </div>
-                                        <span class="avatar-status-dot dot-<?= $overallRisk ?>" title="<?= $riskTitle ?>"></span>
-                                    </div>
-                                    <div style="min-width: 0; flex: 1;">
-                                        <div style="font-weight: 700; color: var(--text-heading); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($mainStudent['full_name']) ?>">
-                                            <?= htmlspecialchars($mainStudent['full_name']) ?>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; margin-top: 2px; overflow: hidden;">
-                                            <?php if ($overallRisk === 'red'): ?>
-                                                <span class="risk-pill-inline pill-red" title="Học sinh ở mức nguy cấp · Yếu">Yếu</span>
-                                            <?php elseif ($overallRisk === 'yellow'): ?>
-                                                <span class="risk-pill-inline pill-yellow" title="Học sinh cần chú ý · Trung bình">Trung bình</span>
-                                            <?php endif; ?>
-                                            <?php if (!empty($mainStudent['phone'])): ?>
-                                                <span class="muted small"><?= htmlspecialchars($mainStudent['phone']) ?></span>
-                                            <?php endif; ?>
-                                            <?php if (!empty($mainStudent['teacher_note'])): ?>
-                                                <span class="badge-has-note js-note-badge" title="<?= htmlspecialchars(mb_substr($mainStudent['teacher_note'], 0, 80)) ?>...">Ghi chú GV</span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="col-class">
-                                <div style="display: flex; flex-direction: column; gap: 2px; align-items: center;">
-                                    <span class="badge-class"><?= htmlspecialchars($mainStudent['class_name']) ?></span>
-                                    <span class="badge-subject" style="background: #eef2ff; color: #4338ca; font-weight: 700;">
-                                        <?= count($subjects) ?> môn
-                                    </span>
-                                </div>
-                            </td>
-
-                            <!-- KHUNG 1: XU HƯỚNG TIẾN BỘ -->
-                            <td class="col-momentum">
-                                <span class="badge-momentum badge-momentum-<?= $firstSub['momentum'] ?>" title="<?= htmlspecialchars($firstSub['trend_description'] ?: $firstSub['trend_label']) ?>">
-                                    <?= htmlspecialchars($firstSub['trend_label']) ?>
-                                </span>
-                            </td>
-
-                            <!-- KHUNG 2: BẬC HỌC LỰC (TT22) -->
-                            <td class="col-tier">
-                                <span class="badge-tier <?= $overallTierClass ?>">
-                                    <?= htmlspecialchars($overallTierBadge) ?>
-                                </span>
-                            </td>
-
-                            <!-- ĐIỂM TRUNG BÌNH HỌC KỲ (TBM CHUNG) -->
-                            <td class="col-score-avg">
-                                <?php if ($overallAvg !== null): ?>
-                                    <span class="avg-score-badge avg-<?= $overallRisk ?>">
-                                        <?= number_format($overallAvg, 1) ?>
-                                    </span>
-                                <?php else: ?>
-                                    <span class="avg-score-badge avg-empty">-</span>
-                                <?php endif; ?>
-                            </td>
-
-                            <!-- ĐIỂM CHI TIẾT (ẨN MẶC ĐỊNH Ở CHẾ ĐỘ XEM CHUNG TOÀN MÔN ĐỂ BẢNG VỪA VẶN 100%) -->
-                            <td class="col-detail-score col-score-tx" style="text-align: center; color: #94a3b8; font-size: 11px;">(Từng môn)</td>
-                            <td class="col-detail-score col-score-sub" style="text-align: center; color: #94a3b8; font-size: 11px;">-</td>
-                            <td class="col-detail-score col-score-sub col-score-ck" style="text-align: center; color: #94a3b8; font-size: 11px;">-</td>
-
-                            <!-- NĂNG LỰC TỔNG THỂ & KHUYẾN NGHỊ SƯ PHẠM (HIỆN RÕ RÀNG KHÔNG CẦN CỘT ĐIỂM) -->
-                            <td class="col-advice">
-                                <div class="competency-cell">
-                                    <div class="competency-title">
-                                        <?= htmlspecialchars($mainStudent['competency']['competency_title']) ?>
-                                    </div>
-                                    <div class="competency-advice">
-                                        <?= htmlspecialchars($mainStudent['competency']['pedagogical_advice']) ?>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td class="col-actions">
-                                <div class="actions-stack">
-                                    <button type="button" class="btn-open-detail" title="Xem chi tiết & Ghi nhận xét sư phạm">
-                                        Chi tiết
-                                    </button>
-                                    <a href="nhap_diem.php?class_id=<?= urlencode((string)$mainStudent['class_id']) ?>&subject=<?= urlencode($firstSub['subject']) ?>" 
-                                       class="btn-goto-gradebook" 
-                                       title="Vào sổ điểm lớp <?= htmlspecialchars($mainStudent['class_name']) ?> môn <?= htmlspecialchars($firstSub['subject']) ?>"
-                                       onclick="event.stopPropagation();">
-                                        Sổ điểm
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- DÒNG MÔN HỌC CHI TIẾT XỔ XUỐNG KHI BẤM NÚT ▶ -->
-                        <?php foreach ($subjects as $sub): ?>
-                            <?php
-                                $subTxFormatted = [];
-                                for ($i = 1; $i <= 4; $i++) {
-                                    $val = $sub["tx$i"];
-                                    if ($val !== null && $val !== '') {
-                                        $num = (float)$val;
-                                        $fmt = number_format($num, 1);
-                                        if ($num < 3.5) {
-                                            $subTxFormatted[] = '<span class="tx-val-crit">' . $fmt . '</span>';
-                                        } elseif ($num < 5.0) {
-                                            $subTxFormatted[] = '<span class="tx-val-warn">' . $fmt . '</span>';
-                                        } else {
-                                            $subTxFormatted[] = '<span>' . $fmt . '</span>';
-                                        }
-                                    } else {
-                                        $subTxFormatted[] = '<span class="muted">-</span>';
-                                    }
-                                }
-                                $subRiskLabel = ($sub['level'] === 'red') ? 'Nguy cấp' : (($sub['level'] === 'yellow') ? 'Cần chú ý' : (($sub['level'] === 'pending') ? 'Chờ điểm' : 'Ổn định'));
-                            ?>
-                            <tr class="student-sub-row" 
-                                data-parent-student="<?= $sid ?>"
-                                data-student-id="<?= $sid ?>"
-                                data-student-code="<?= htmlspecialchars(!empty($mainStudent['student_code']) ? $mainStudent['student_code'] : 'HS' . $sid) ?>"
-                                data-full-name="<?= htmlspecialchars($mainStudent['full_name']) ?>"
-                                data-class-name="<?= htmlspecialchars($sub['class_name']) ?>"
-                                data-subject="<?= htmlspecialchars($sub['subject']) ?>"
-                                data-birthday="<?= htmlspecialchars($mainStudent['birthday'] ?? '') ?>"
-                                data-phone="<?= htmlspecialchars($mainStudent['phone'] ?? '') ?>"
-                                data-tx1="<?= $sub['tx1'] !== null ? $sub['tx1'] : '' ?>"
-                                data-tx2="<?= $sub['tx2'] !== null ? $sub['tx2'] : '' ?>"
-                                data-tx3="<?= $sub['tx3'] !== null ? $sub['tx3'] : '' ?>"
-                                data-tx4="<?= $sub['tx4'] !== null ? $sub['tx4'] : '' ?>"
-                                data-gk="<?= $sub['gk'] !== null ? $sub['gk'] : '' ?>"
-                                data-ck="<?= $sub['ck'] !== null ? $sub['ck'] : '' ?>"
-                                data-avg="<?= $sub['avg_score'] !== null ? $sub['avg_score'] : '' ?>"
-                                data-level="<?= $sub['level'] ?>" 
-                                data-trend="<?= $sub['trend'] ?>"
-                                data-momentum="<?= $sub['momentum'] ?>"
-                                data-momentum-label="<?= htmlspecialchars($sub['trend_label']) ?>"
-                                data-momentum-icon="<?= htmlspecialchars($sub['trend_icon']) ?>"
-                                data-tier="<?= $sub['score_tier']['tier'] ?>"
-                                data-tier-label="<?= htmlspecialchars($sub['score_tier']['label']) ?>"
-                                data-tier-badge="<?= htmlspecialchars($sub['score_tier']['badge']) ?>"
-                                data-tier-class="<?= htmlspecialchars($sub['score_tier']['class']) ?>"
-                                data-overall="<?= htmlspecialchars($sub['level']) ?>"
-                                data-txwarn="<?= !empty($sub['has_tx_warning']) ? '1' : '0' ?>"
-                                data-diagnostic="<?= htmlspecialchars($sub['diagnostic']) ?>"
-                                <?= format_math_data_attributes($sub) ?>
-                                data-advice="<?= htmlspecialchars($sub['competency']['pedagogical_advice'] ?? '') ?>"
-                                data-competency-title="<?= htmlspecialchars($sub['competency']['competency_title'] ?? '') ?>"
-                                data-note="<?= htmlspecialchars($sub['teacher_note'] ?? '') ?>"
-                                data-name="<?= htmlspecialchars(mb_strtolower($mainStudent['full_name'], 'UTF-8')) ?>" 
-                                data-search="<?= htmlspecialchars(mb_strtolower(($mainStudent['student_code'] ?? '') . ' ' . $mainStudent['full_name'] . ' ' . $sub['class_name'] . ' ' . $sub['subject'], 'UTF-8')) ?>"
-                                style="display: none;">
-                                <td class="col-stt" style="text-align: center;"></td>
-                                <td class="col-code" style="text-align: right;">
-                                    <span class="subrow-branch">↳</span>
-                                </td>
-                                <td class="col-student">
-                                    <span class="badge-subject" style="font-weight: 800; font-size: 11px; background: #f1f5f9; color: #1e293b;">
-                                        Môn <?= htmlspecialchars($sub['subject']) ?>
-                                    </span>
-                                </td>
-                                <td class="col-class">
-                                    <span class="badge-class">Lớp <?= htmlspecialchars($sub['class_name']) ?></span>
-                                </td>
-                                <td class="col-momentum">
-                                    <span class="badge-momentum badge-momentum-<?= $sub['momentum'] ?>" style="font-size: 11px; padding: 2px 6px;">
-                                        <?= htmlspecialchars($sub['trend_label']) ?>
-                                    </span>
-                                </td>
-                                <td class="col-tier">
-                                    <span class="badge-tier <?= $sub['score_tier']['class'] ?>" style="font-size: 11px; padding: 2px 6px;">
-                                        <?= htmlspecialchars($sub['score_tier']['badge']) ?>
-                                    </span>
-                                </td>
-                                <td class="col-score-avg" style="text-align: center; font-weight: 800;">
-                                    <span class="avg-score-badge avg-<?= $sub['level'] ?>" style="font-size: 12px; padding: 2px 6px;">
-                                        <?= ($sub['avg_score'] !== null && $sub['avg_score'] !== '') ? number_format((float)$sub['avg_score'], 1) : '-' ?>
-                                    </span>
-                                </td>
-                                <td class="col-detail-score col-score-tx" style="text-align: center; font-size: 11px; font-family: var(--font-mono);">
-                                    <?= implode(' · ', $subTxFormatted) ?>
-                                </td>
-                                <td class="col-detail-score col-score-sub" style="text-align: center; font-weight: 700; font-family: var(--font-mono); color: <?= ($sub['gk'] !== null && $sub['gk'] < 5.0) ? 'var(--danger)' : 'inherit' ?>;">
-                                    <?= ($sub['gk'] !== null && $sub['gk'] !== '') ? number_format((float)$sub['gk'], 1) : '-' ?>
-                                </td>
-                                <td class="col-detail-score col-score-sub col-score-ck" style="text-align: center; font-weight: 700; font-family: var(--font-mono); color: <?= ($sub['ck'] !== null && $sub['ck'] < 5.0) ? 'var(--danger)' : 'inherit' ?>;">
-                                    <?= ($sub['ck'] !== null && $sub['ck'] !== '') ? number_format((float)$sub['ck'], 1) : '-' ?>
-                                </td>
-                                <td class="col-advice">
-                                    <div class="competency-cell">
-                                        <div class="competency-title" style="color: #4338ca;">
-                                            <?= htmlspecialchars($sub['competency']['competency_title']) ?>
-                                        </div>
-                                        <div class="competency-advice">
-                                            <?= htmlspecialchars($sub['competency']['pedagogical_advice']) ?>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="col-actions">
-                                    <div class="actions-stack">
-                                        <button type="button" class="btn-open-detail" title="Xem chi tiết môn <?= htmlspecialchars($sub['subject']) ?>">
-                                            Chi tiết
-                                        </button>
-                                        <a href="nhap_diem.php?class_id=<?= urlencode((string)$sub['class_id']) ?>&subject=<?= urlencode($sub['subject']) ?>" 
-                                           class="btn-goto-gradebook" 
-                                           title="Vào sổ điểm lớp <?= htmlspecialchars($sub['class_name']) ?> môn <?= htmlspecialchars($sub['subject']) ?>"
-                                           onclick="event.stopPropagation();">
-                                            Sổ điểm
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <!-- KHI CHỌN XEM RIÊNG TỪNG PHÂN MÔN CỤ THỂ -->
-                    <?php $stt = 1; foreach ($students as $s): ?>
+                <?php $stt = 1; foreach ($students as $s): ?>
                         <?php
                             $nameParts = explode(' ', trim($s['full_name']));
                             $lastName = end($nameParts);
@@ -1861,7 +1493,7 @@ $tt22Slices = [
                             }
                         ?>
                         <tr class="radar-row" 
-                            data-student-id="<?= $s['student_id'] ?>"
+                            id="student-row-<?= $s['student_id'] ?>-<?= md5($s['subject']) ?>" data-sid="<?= $s['student_id'] ?>"
                             data-student-code="<?= htmlspecialchars(!empty($s['student_code']) ? $s['student_code'] : 'HS' . $s['student_id']) ?>"
                             data-full-name="<?= htmlspecialchars($s['full_name']) ?>"
                             data-class-name="<?= htmlspecialchars($s['class_name']) ?>"
@@ -1931,7 +1563,7 @@ $tt22Slices = [
                             <td class="col-class">
                                 <div style="display: flex; flex-direction: column; gap: 2px; align-items: center;">
                                     <span class="badge-class"><?= htmlspecialchars($s['class_name']) ?></span>
-                                    <span class="badge-subject"><?= htmlspecialchars($s['subject']) ?></span>
+                                    <span class="badge-subject">Môn <?= htmlspecialchars($s['subject']) ?></span>
                                 </div>
                             </td>
 
@@ -2004,7 +1636,7 @@ $tt22Slices = [
                                     </div>
                                     <?php if (!empty($s['diagnostic'])): ?>
                                         <div class="competency-diag-tag">
-                                            <?= htmlspecialchars($s['diagnostic']) ?>
+                                            <span class="reason-text"><?= htmlspecialchars($s['diagnostic']) ?></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -2027,7 +1659,6 @@ $tt22Slices = [
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                <?php endif; ?>
                 <tr id="radarEmptyRow" class="radar-filter-empty-row" style="display: none;">
                     <td colspan="12" style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
                         <div style="margin-bottom: 8px;"><?= get_svg_icon('search', 28, '', 'color: #94a3b8;') ?></div>
@@ -2050,7 +1681,7 @@ $tt22Slices = [
 <!-- DANH SÁCH HỌC SINH TINH GỌN KÈM 2 BÓNG MÀU TRỰC QUAN CHO ĐIỆN THOẠI (APPLE MINIMALIST ROSTER) -->
 <div class="mobile-student-list" id="mobileStudentList">
     <div class="mobile-list-header">
-        <span class="m-list-title">Danh Sách Học Sinh (<?= count($selectedSubject === 'all' ? $studentsGrouped : $students) ?>)</span>
+        <span class="m-list-title">Danh Sách Học Sinh (<?= count($students) ?>)</span>
         <div class="m-list-legend">
             <span class="legend-item"><span class="legend-dot dot-tier-sample"></span>Học lực</span>
             <span class="legend-item"><span class="legend-dot dot-trend-sample"></span>Tiến độ</span>
@@ -2061,77 +1692,40 @@ $tt22Slices = [
             Chưa có học sinh nào trong phạm vi lớp được chọn.
         </div>
     <?php else: ?>
-        <?php $mStt = 1; foreach (($selectedSubject === 'all' ? $studentsGrouped : $students) as $sidKey => $mItem): ?>
+        <?php $mStt = 1; foreach ($students as $mItem): ?>
             <?php
-                if ($selectedSubject === 'all') {
-                    $mStudent = $mItem['student'];
-                    $mSubjects = $mItem['subjects'];
-                    $mFirstSub = $mSubjects[0];
-                    $mSid = (int)$mStudent['student_id'];
-                    $mTierBadge = $studentOverallMap[$mSid]['badge'] ?? $mFirstSub['score_tier']['badge'];
-                    $mTierClass = $studentOverallMap[$mSid]['class'] ?? $mFirstSub['score_tier']['class'];
-                    $mOverall = $studentOverallMap[$mSid]['level'] ?? '';
-                    
-                    $mHasRed = false; $mHasYellow = false; $mHasGreen = false; $mSumAvg = 0; $mCountAvg = 0;
-                    foreach ($mSubjects as $sSub) {
-                        if ($sSub['level'] === 'red') $mHasRed = true;
-                        elseif ($sSub['level'] === 'yellow') $mHasYellow = true;
-                        else $mHasGreen = true;
-                        if ($sSub['avg_score'] !== null && $sSub['avg_score'] !== '') {
-                            $mSumAvg += (float)$sSub['avg_score'];
-                            $mCountAvg++;
-                        }
-                    }
-                    $mRisk = $mHasRed ? 'red' : ($mHasYellow ? 'yellow' : ($mHasGreen ? 'green' : 'pending'));
-                    $mAvg = $mCountAvg > 0 ? round($mSumAvg / $mCountAvg, 1) : null;
-                } else {
-                    $mStudent = $mItem;
-                    $mSubjects = [$mItem];
-                    $mFirstSub = $mItem;
-                    $mSid = (int)$mItem['student_id'];
-                    $mTierBadge = $mItem['score_tier']['badge'];
-                    $mTierClass = $mItem['score_tier']['class'];
-                    $mOverall = $studentOverallMap[$mSid]['level'] ?? '';
-                    $mRisk = $mItem['level'];
-                    $mAvg = ($mItem['avg_score'] !== null && $mItem['avg_score'] !== '') ? (float)$mItem['avg_score'] : null;
-                }
-
-                $mTierKey = ($selectedSubject === 'all')
-                    ? ($studentOverallMap[$mSid]['level'] ?? $mFirstSub['score_tier']['tier'] ?? 'pending')
-                    : ($mFirstSub['score_tier']['tier'] ?? 'pending');
-                $mTierName = ($selectedSubject === 'all')
-                    ? ($studentOverallMap[$mSid]['label'] ?? $mFirstSub['score_tier']['label'] ?? 'Chờ điểm')
-                    : ($mFirstSub['score_tier']['label'] ?? 'Chờ điểm');
-                $mTrendKey = $mFirstSub['momentum'] ?? 'pending';
-                $mTrendName = $mFirstSub['trend_label'] ?? 'Chờ điểm';
-                $mCode = !empty($mStudent['student_code']) ? $mStudent['student_code'] : 'HS' . $mSid;
+                $mSid = (int)$mItem['student_id'];
+                $mCode = !empty($mItem['student_code']) ? $mItem['student_code'] : ('HS' . $mSid);
+                $mRisk = $mItem['level'];
+                $mAvg = ($mItem['avg_score'] !== null && $mItem['avg_score'] !== '') ? (float)$mItem['avg_score'] : null;
+                $mTierKey = $mItem['score_tier']['tier'] ?? 'pending';
+                $mTierName = $mItem['score_tier']['label'] ?? 'Chờ điểm';
+                $mTrendKey = $mItem['momentum'] ?? 'pending';
+                $mTrendName = $mItem['trend_label'] ?? 'Chờ điểm';
             ?>
             <div class="m-student-row" 
-                 data-student-id="<?= $mSid ?>"
+                 data-sid="<?= $mSid ?>"
                  data-level="<?= $mRisk ?>"
-                 data-trend="<?= $mFirstSub['trend'] ?>"
-                 data-momentum="<?= $mFirstSub['momentum'] ?>"
+                 data-trend="<?= $mItem['trend'] ?>"
+                 data-momentum="<?= $mItem['momentum'] ?>"
                  data-tier="<?= $mTierKey ?>"
-                 data-overall="<?= htmlspecialchars($mOverall) ?>"
-                 data-txwarn="<?= !empty($mFirstSub['has_tx_warning']) ? '1' : '0' ?>"
-                 data-search="<?= htmlspecialchars(mb_strtolower(($mStudent['student_code'] ?? '') . ' ' . $mStudent['full_name'] . ' ' . $mStudent['class_name'] . ' ' . implode(' ', array_column($mSubjects, 'subject')), 'UTF-8')) ?>"
+                 data-overall="<?= htmlspecialchars($studentOverallMap[$mSid]['level'] ?? '') ?>"
+                 data-txwarn="<?= !empty($mItem['has_tx_warning']) ? '1' : '0' ?>"
+                 data-search="<?= htmlspecialchars(mb_strtolower($mCode . ' ' . $mItem['full_name'] . ' ' . $mItem['class_name'] . ' ' . $mItem['subject'], 'UTF-8')) ?>"
                  onclick="openStudentModalFromId(<?= $mSid ?>)"
                  role="button"
                  tabindex="0"
-                 title="Chạm để mở thẻ chi tiết học sinh <?= htmlspecialchars($mStudent['full_name']) ?>">
+                 title="Chạm để mở thẻ chi tiết học sinh <?= htmlspecialchars($mItem['full_name']) ?>">
                 
                 <span class="m-row-stt"><?= $mStt++ ?></span>
                 <div class="m-row-info">
-                    <div class="m-row-name"><?= htmlspecialchars($mStudent['full_name']) ?></div>
+                    <div class="m-row-name"><?= htmlspecialchars($mItem['full_name']) ?></div>
                     <div class="m-row-sub">
                         <span style="font-family: var(--font-mono); font-weight: 700; color: #4338ca;"><?= htmlspecialchars($mCode) ?></span>
                         <span>•</span>
-                        <span>Lớp <?= htmlspecialchars($mStudent['class_name']) ?></span>
-                        <?php if ($selectedSubject !== 'all'): ?>
-                            <span>•</span><span>Môn <?= htmlspecialchars($mFirstSub['subject']) ?></span>
-                        <?php else: ?>
-                            <span>•</span><span><?= count($mSubjects) ?> môn</span>
-                        <?php endif; ?>
+                        <span>Lớp <?= htmlspecialchars($mItem['class_name']) ?></span>
+                        <span>•</span>
+                        <span>Môn <?= htmlspecialchars($mItem['subject']) ?></span>
                     </div>
                 </div>
 
@@ -2163,7 +1757,7 @@ $tt22Slices = [
 
 <?php 
     $reportClassId = $selectedClassId > 0 ? $selectedClassId : (!empty($filterClasses) ? array_key_first($filterClasses) : 0);
-    $reportSubject = $selectedSubject !== 'all' ? $selectedSubject : (!empty($filterSubjects) ? $filterSubjects[0] : 'Toán học');
+    $reportSubject = $selectedSubject !== 'all' ? $selectedSubject : (!empty($filterSubjects) ? $filterSubjects[0] : '');
 ?>
 <?php if ($reportClassId > 0): ?>
     <!-- KHU VỰC XUẤT BÁO CÁO NỘP BAN GIÁM HIỆU (ĐƯỢC CHUYỂN XUỐNG ĐÁY TRANG HỢP LÝ) -->
@@ -2440,7 +2034,7 @@ $tt22Slices = [
 <?= json_encode([
     'trend' => [
         'title' => 'Xu hướng tiến bộ',
-        'sub' => 'Đo lường nhịp độ học tập qua các cột điểm theo thuật toán OLS',
+        'sub' => 'Đo lường nhịp độ học tập qua các cột điểm theo phương pháp OLS',
         'items' => $trendSlices
     ],
     'tt22' => [
@@ -2453,6 +2047,15 @@ $tt22Slices = [
 
 <?php
 $extraScripts = '
+<script>
+window.openStudentModalFromId = function(studentId) {
+    const row = document.querySelector(\'tr.radar-row[data-sid="\' + studentId + \'"]\');
+    if (row) {
+        const btn = row.querySelector(\'.btn-open-detail\');
+        if (btn) btn.click();
+    }
+};
+</script>
 <script src="assets/js/main.js?v=' . filemtime(__DIR__ . '/assets/js/main.js') . '"></script>
 <script>
 function filterGradeChips(grade, btn) {

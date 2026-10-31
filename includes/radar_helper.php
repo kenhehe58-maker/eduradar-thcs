@@ -6,19 +6,19 @@
  * 
  * HỆ THỐNG ĐÁNH GIÁ ĐA CHIỀU (DUAL-PERSPECTIVE ASSESSMENT):
  * 1. XU HƯỚNG TIẾN BỘ (Learning Trajectory / OLS) — [ƯU TIÊN THEO DÕI]:
- *    - Tăng (📈 Tiến bộ rõ rệt): Bài sau cao hơn bài trước hoặc CK tiến bộ so với GK.
- *    - Đều (🔄 Duy trì đều): Điểm các bài đi đều đặn, không bị rơi rụng.
+ *    - Tăng (Tiến bộ rõ rệt): Bài sau cao hơn bài trước hoặc CK tiến bộ so với GK.
+ *    - Đều (Duy trì đều): Điểm các bài đi đều đặn, không bị rơi rụng.
  *      * Logic cốt lõi: Khi học sinh có học lực ở mức Thấp hoặc Trung bình mà "đang đi đều"
  *        thì đây là "Duy trì ổn định, cần bồi dưỡng nâng cao" vì điểm còn trong khuôn khổ chưa cao.
- *    - Giảm (📉 Sa sút / ⚠️ Cần can thiệp): Chuỗi điểm tụt dốc (như 10 -> 9 -> 8 -> 6) hoặc CK giảm sâu.
- *    - Chờ điểm (⏳ Chờ điểm): Chưa có bài kiểm tra ghi nhận, tách riêng để không tính ảo.
+ *    - Giảm (Sa sút / Cần can thiệp): Chuỗi điểm tụt dốc (như 10 -> 9 -> 8 -> 6) hoặc CK giảm sâu.
+ *    - Chờ điểm: Chưa có bài kiểm tra ghi nhận, tách riêng để không tính ảo.
  *
  * 2. BẬC HỌC LỰC (Attainment / TT22 Level):
- *    - Tốt / Giỏi (⭐ ĐTB >= 8.0)
- *    - Khá (✨ 6.5 <= ĐTB < 8.0)
- *    - Đạt / Trung bình (⚖️ 5.0 <= ĐTB < 6.5)
- *    - Chưa Đạt / Cần hỗ trợ (⚠️ ĐTB < 5.0, trong đó < 3.5 là Nguy cấp)
- *    - Chờ điểm (⏳ Chưa có điểm)
+ *    - Tốt / Giỏi (ĐTB >= 8.0)
+ *    - Khá (6.5 <= ĐTB < 8.0)
+ *    - Đạt / Trung bình (5.0 <= ĐTB < 6.5)
+ *    - Chưa Đạt / Cần hỗ trợ (ĐTB < 5.0, trong đó < 3.5 là Nguy cấp)
+ *    - Chờ điểm (Chưa có điểm)
  *
  * 3. NĂNG LỰC TỔNG THỂ & KHUYẾN NGHỊ SƯ PHẠM:
  *    - Giao thoa giữa Xu Hướng Tiến Bộ và Bậc Học Lực (TT22).
@@ -43,8 +43,8 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
         return [
             'tier'       => 'pending',
             'label'      => 'Chờ điểm',
-            'badge'      => '⏳ Chờ điểm',
-            'icon'       => '⏳',
+            'badge'      => 'Chờ điểm',
+            'icon'       => 'pending',
             'class'      => 'tier-pending',
             'color'      => '#64748b',
             'bg'         => '#f1f5f9',
@@ -70,8 +70,8 @@ function determineScoreTier(?float $avg, ?float $gk = null, ?float $ck = null, a
         return [
             'tier'       => 'pending',
             'label'      => 'Chờ điểm',
-            'badge'      => '⏳ Chờ điểm',
-            'icon'       => '⏳',
+            'badge'      => 'Chờ điểm',
+            'icon'       => 'pending',
             'class'      => 'tier-pending',
             'color'      => '#64748b',
             'bg'         => '#f1f5f9',
@@ -163,7 +163,7 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
             'momentum'          => 'pending',
             'trend'             => 'pending',
             'trend_label'       => 'Chờ điểm',
-            'trend_icon'        => '⏳',
+            'trend_icon'        => 'pending',
             'trend_reasons'     => ['Chưa có bài kiểm tra nào'],
             'trend_description' => 'Chưa có bài kiểm tra nào',
             'tx_stats'          => [
@@ -233,7 +233,7 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
 
     if ($gk !== null && $ck !== null) {
         $examDelta = round($ck - $gk, 1);
-        if ($examDelta <= -1.5) {
+        if ($examDelta < -1.5) {
             $isExamDrop = true;
             $examProgressText = "Thi CK sa sút (giảm " . abs($examDelta) . "đ so với GK: {$gk} → {$ck})";
         } elseif ($examDelta >= 1.0) {
@@ -246,7 +246,7 @@ function analyzeLearningTrend(?float $avg, ?float $gk, ?float $ck, array $txScor
     } elseif ($gk !== null && $ck === null && $avgTx !== null) {
         // GIAI ĐOẠN VỪA THI GIỮA KỲ XONG (CHƯA THI CUỐI KỲ): So sánh GK với điểm trung bình TX
         $examDelta = round($gk - $avgTx, 1);
-        if ($examDelta <= -1.5) {
+        if ($examDelta < -1.5) {
             $isExamDrop = true;
             $examProgressText = "Thi Giữa kỳ sút giảm (giảm " . abs($examDelta) . "đ so với TX: {$avgTx} → {$gk})";
         } elseif ($examDelta >= 1.0) {
@@ -470,7 +470,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
     $txWarningLevel = null;
 
     // -------------------------------------------------------------------------
-    // 1. VÙNG 🔴 NGUY CẤP (CRITICAL ZONE)
+    // 1. VÙNG NGUY CẤP (CRITICAL ZONE)
     // -------------------------------------------------------------------------
     $isAvgCrit = ($avg !== null && $avg < 3.5);
     if ($isAvgCrit) {
@@ -535,7 +535,7 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
         }
     }
 
-    // 2.2 Điểm thi thành phần định kỳ dưới trung bình (< 5.0)
+    // 2.2 Điểm thi thành phần định kỳ dưới trung bình (< 5.0) - Bắt buộc xếp vào Yellow
     if ($ck !== null && $ck < 5.0) {
         $isWarning = true;
         $reasons[] = 'Thi cuối kỳ dưới trung bình (' . number_format($ck, 1) . ')';
@@ -545,12 +545,12 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
         $reasons[] = 'Thi giữa kỳ dưới trung bình (' . number_format($gk, 1) . ')';
     }
 
-    // 2.3 Sa sút cuối kỳ: ck < gk - 1.5 <=> (gk - ck) >= 1.5
+    // 2.3 Sa sút cuối kỳ: ck < gk - 1.5 <=> (gk - ck) > 1.5
     if ($gk !== null && $ck !== null) {
         $drop = round((float)$gk - (float)$ck, 1);
-        if ($drop >= 1.5) {
+        if ($drop > 1.5) {
             $isWarning = true;
-            $reasons[] = 'Sa sút cuối kỳ (giảm ' . number_format($drop, 1) . 'đ so với GK)';
+            $reasons[] = 'Sa sút cuối kỳ (giảm ' . number_format($drop, 1) . ' đ so với GK)';
         }
     }
 
@@ -604,18 +604,19 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
     // -------------------------------------------------------------------------
     // 3. VÙNG ỔN ĐỊNH (STABLE ZONE)
     // -------------------------------------------------------------------------
+    // Học sinh chưa có điểm / trống điểm: gán vào Green để bảo toàn phân hoạch kín total === red + yellow + green
     if ($avg === null && empty($validTx) && $gk === null && $ck === null) {
-        $reasons[] = 'Chưa đủ dữ liệu điểm số';
+        $reasons[] = 'Chờ điểm / Chưa đủ dữ liệu điểm số';
         return [
-            'level'             => 'pending',
-            'label'             => 'Chờ điểm',
+            'level'             => 'green',
+            'label'             => 'Ổn định',
             'reasons'           => $reasons,
             'diagnostic'        => implode(' · ', $reasons),
             'trend'             => 'pending',
             'trend_label'       => 'Chờ điểm',
             'trend_icon'        => 'pending',
             'trend_reasons'     => $reasons,
-            'trend_description' => 'Chưa đủ dữ liệu điểm số',
+            'trend_description' => 'Chờ điểm / Chưa đủ dữ liệu điểm số',
             'momentum'          => 'pending',
             'score_tier'        => $tierData,
             'competency'        => $competency,
@@ -623,7 +624,34 @@ function evaluateRiskZone(?float $avg, ?float $gk, ?float $ck, array $txScores =
             'has_tx_warning'    => false,
             'tx_warning_level'  => null,
         ];
-    } elseif ($trendData['trend'] === 'up') {
+    }
+
+    // Bảo vệ bất biến TT22: Tuyệt đối không để học sinh có CK < 5.0 hoặc GK < 5.0 lọt vào vùng Xanh
+    if (($ck !== null && $ck < 5.0) || ($gk !== null && $gk < 5.0)) {
+        if (empty($reasons)) {
+            if ($ck !== null && $ck < 5.0) $reasons[] = 'Thi cuối kỳ dưới trung bình (' . number_format($ck, 1) . ')';
+            if ($gk !== null && $gk < 5.0) $reasons[] = 'Thi giữa kỳ dưới trung bình (' . number_format($gk, 1) . ')';
+        }
+        return [
+            'level'             => 'yellow',
+            'label'             => 'Cần chú ý',
+            'reasons'           => $reasons,
+            'diagnostic'        => implode(' · ', $reasons),
+            'trend'             => $trendData['trend'],
+            'trend_label'       => $trendData['trend_label'],
+            'trend_icon'        => $trendData['trend_icon'],
+            'trend_reasons'     => $trendData['trend_reasons'],
+            'trend_description' => $trendData['trend_description'],
+            'momentum'          => $trendData['momentum'],
+            'score_tier'        => $tierData,
+            'competency'        => $competency,
+            'tx_stats'          => $txStats,
+            'has_tx_warning'    => $hasTxEarlyWarning,
+            'tx_warning_level'  => $txWarningLevel,
+        ];
+    }
+
+    if ($trendData['trend'] === 'up') {
         $reasons[] = $trendData['trend_description'];
         if ($avg !== null && $avg >= 8.0) {
             $reasons[] = 'Học lực Giỏi, kết quả xuất sắc (' . number_format($avg, 1) . ')';

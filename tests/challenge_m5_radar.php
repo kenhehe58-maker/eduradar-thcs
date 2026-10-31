@@ -143,6 +143,14 @@ class LiveClient
     }
 }
 
+// Start session safely BEFORE any output or echo is emitted
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$_SESSION['user_id'] = 1;
+$_SESSION['username'] = 'admin';
+$_SESSION['role'] = 'admin';
+
 echo PHP_EOL;
 echo ANSI_BOLD . "=============================================================================" . ANSI_RESET . PHP_EOL;
 echo ANSI_BOLD . "  EMPIRICAL ADVERSARIAL CHALLENGE SUITE: MILESTONE 5 EARLY-WARNING RADAR" . ANSI_RESET . PHP_EOL;
@@ -151,12 +159,6 @@ echo ANSI_BOLD . "==============================================================
 
 $pdo = db();
 $client = new LiveClient('http://localhost/my-web-project');
-
-// Load index.php's real evaluateRiskZone() function safely
-session_start();
-$_SESSION['user_id'] = 1;
-$_SESSION['username'] = 'admin';
-$_SESSION['role'] = 'admin';
 
 ob_start();
 // Mute warning output during initial include so terminal output remains clean
@@ -663,59 +665,77 @@ challenge("V8.5", "Zero modal code verification: 0 occurrences of actionModal in
 echo PHP_EOL . ANSI_YELLOW . "--- VECTOR 9: Live Database Score Injection, HTTP Render & Cleanup ---" . ANSI_RESET . PHP_EOL;
 
 challenge("V9.1", "Live DB injection & Apache render for boundary 3.49 vs 3.50", function() use ($pdo, $client) {
-    // Backup student 1 scores in Toán
-    $backup = $pdo->query("SELECT * FROM scores WHERE student_id = 1 AND subject = 'Toán'")->fetch();
+    // Dynamic lookup of student 1 and their assigned subject from live DB
+    $st1 = $pdo->query("SELECT s.id, s.student_code, s.full_name, s.class_id, tc.subject 
+                        FROM students s 
+                        LEFT JOIN teacher_classes tc ON tc.class_id = s.class_id 
+                        WHERE s.id = 1 LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $stCode = strtolower($st1['student_code'] ?? 'hs1');
+    $subject = $st1['subject'] ?? 'Ngữ Văn';
+
+    // Backup student 1 scores in assigned subject
+    $backup = $pdo->query("SELECT * FROM scores WHERE student_id = 1 AND subject = '$subject'")->fetch();
     
     try {
         // Step 1: Set student 1 avg_score to 3.49 in DB
-        $pdo->prepare("UPDATE scores SET avg_score = 3.49, gk = 5.0, ck = 5.0 WHERE student_id = 1 AND subject = 'Toán'")->execute();
+        $pdo->prepare("UPDATE scores SET avg_score = 3.49, gk = 5.0, ck = 5.0 WHERE student_id = 1 AND subject = ?")->execute([$subject]);
         
         $client->clearCookies();
         $client->login('admin', '123456');
         $res349 = $client->get('index.php');
         
-        if (!preg_match('/<tr[^>]+data-level="red"[^>]+data-search="[^"]*hs6a101[^"]*"/', $res349['body'])) {
-            throw new Exception("Expected student 1 (HS6A101) to render with data-level='red' for avg=3.49");
+        $pat349 = '/<tr[^>]+data-level="red"[^>]+data-search="[^"]*' . preg_quote($stCode, '/') . '[^"]*"/';
+        if (!preg_match($pat349, $res349['body'])) {
+            throw new Exception("Expected student 1 ({$st1['student_code']}) to render with data-level='red' for avg=3.49 in $subject");
         }
         
         // Step 2: Set student 1 avg_score to 3.50 in DB
-        $pdo->prepare("UPDATE scores SET avg_score = 3.50, gk = 5.0, ck = 5.0 WHERE student_id = 1 AND subject = 'Toán'")->execute();
+        $pdo->prepare("UPDATE scores SET avg_score = 3.50, gk = 5.0, ck = 5.0 WHERE student_id = 1 AND subject = ?")->execute([$subject]);
         $res350 = $client->get('index.php');
         
-        if (!preg_match('/<tr[^>]+data-level="yellow"[^>]+data-search="[^"]*hs6a101[^"]*"/', $res350['body'])) {
-            throw new Exception("Expected student 1 (HS6A101) to render with data-level='yellow' for avg=3.50");
+        $pat350 = '/<tr[^>]+data-level="yellow"[^>]+data-search="[^"]*' . preg_quote($stCode, '/') . '[^"]*"/';
+        if (!preg_match($pat350, $res350['body'])) {
+            throw new Exception("Expected student 1 ({$st1['student_code']}) to render with data-level='yellow' for avg=3.50 in $subject");
         }
     } finally {
         // Restore backup
         if ($backup) {
-            $pdo->prepare("UPDATE scores SET tx1=?, tx2=?, tx3=?, tx4=?, gk=?, ck=?, avg_score=? WHERE student_id=1 AND subject='Toán'")
-                ->execute([$backup['tx1'], $backup['tx2'], $backup['tx3'], $backup['tx4'], $backup['gk'], $backup['ck'], $backup['avg_score']]);
+            $pdo->prepare("UPDATE scores SET tx1=?, tx2=?, tx3=?, tx4=?, gk=?, ck=?, avg_score=? WHERE student_id=1 AND subject=?")
+                ->execute([$backup['tx1'], $backup['tx2'], $backup['tx3'], $backup['tx4'], $backup['gk'], $backup['ck'], $backup['avg_score'], $subject]);
         }
     }
     return "Live DB injection verified: 3.49 -> red, 3.50 -> yellow on Apache DOM";
 });
 
 challenge("V9.2", "Live DB injection & Apache render for ck=2.90 critical override", function() use ($pdo, $client) {
-    $backup = $pdo->query("SELECT * FROM scores WHERE student_id = 1 AND subject = 'Toán'")->fetch();
+    $st1 = $pdo->query("SELECT s.id, s.student_code, s.full_name, s.class_id, tc.subject 
+                        FROM students s 
+                        LEFT JOIN teacher_classes tc ON tc.class_id = s.class_id 
+                        WHERE s.id = 1 LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $stCode = strtolower($st1['student_code'] ?? 'hs1');
+    $subject = $st1['subject'] ?? 'Ngữ Văn';
+
+    $backup = $pdo->query("SELECT * FROM scores WHERE student_id = 1 AND subject = '$subject'")->fetch();
     
     try {
         // Set ck=2.90 with high average (6.50)
-        $pdo->prepare("UPDATE scores SET avg_score = 6.50, gk = 7.00, ck = 2.90 WHERE student_id = 1 AND subject = 'Toán'")->execute();
+        $pdo->prepare("UPDATE scores SET avg_score = 6.50, gk = 7.00, ck = 2.90 WHERE student_id = 1 AND subject = ?")->execute([$subject]);
         
         $client->clearCookies();
         $client->login('admin', '123456');
         $res = $client->get('index.php');
         
-        if (!preg_match('/<tr[^>]+data-level="red"[^>]+data-search="[^"]*hs6a101[^"]*"/', $res['body'])) {
-            throw new Exception("Expected student 1 (HS6A101) to render with data-level='red' for ck=2.90");
+        $pat290 = '/<tr[^>]+data-level="red"[^>]+data-search="[^"]*' . preg_quote($stCode, '/') . '[^"]*"/';
+        if (!preg_match($pat290, $res['body'])) {
+            throw new Exception("Expected student 1 ({$st1['student_code']}) to render with data-level='red' for ck=2.90 in $subject");
         }
         if (!str_contains($res['body'], 'cuối kỳ dưới 3.0')) {
             throw new Exception("Expected diagnostic 'cuối kỳ dưới 3.0' in live HTML table");
         }
     } finally {
         if ($backup) {
-            $pdo->prepare("UPDATE scores SET tx1=?, tx2=?, tx3=?, tx4=?, gk=?, ck=?, avg_score=? WHERE student_id=1 AND subject='Toán'")
-                ->execute([$backup['tx1'], $backup['tx2'], $backup['tx3'], $backup['tx4'], $backup['gk'], $backup['ck'], $backup['avg_score']]);
+            $pdo->prepare("UPDATE scores SET tx1=?, tx2=?, tx3=?, tx4=?, gk=?, ck=?, avg_score=? WHERE student_id=1 AND subject=?")
+                ->execute([$backup['tx1'], $backup['tx2'], $backup['tx3'], $backup['tx4'], $backup['gk'], $backup['ck'], $backup['avg_score'], $subject]);
         }
     }
     return "Live DB injection verified: ck=2.90 forces 🔴 Red in live DOM";

@@ -682,12 +682,17 @@ challenge("V2.11", "Non-positive class IDs [0, -5] in class_ids array are filter
 // Dọn dẹp các phân công hàng loạt thử nghiệm để đưa về trạng thái sạch ban đầu
 challenge("V2.12", "Cleanup: restore baseline teacher_classes assignments", function () use ($client, $pdo) {
     $teacherId = (int)$pdo->query("SELECT id FROM users WHERE username = 'gv_toan'")->fetchColumn();
-    // Giữ lại lớp 1 (6A1) và lớp 10 (7A1) theo seed data ban đầu
-    $pdo->prepare("DELETE FROM teacher_classes WHERE teacher_id = ? AND subject = 'Toán' AND class_id NOT IN (1, 10)")->execute([$teacherId]);
+    // Giữ lại lớp 1 (6A1), lớp 10 (7A1) và lớp 37 (7A6) theo seed data ban đầu (database.sql)
+    $pdo->prepare("DELETE FROM teacher_classes WHERE teacher_id = ? AND subject = 'Toán' AND class_id NOT IN (1, 10, 37)")->execute([$teacherId]);
     $check10 = $pdo->prepare("SELECT id FROM teacher_classes WHERE teacher_id = ? AND class_id = 10 AND subject = 'Toán'");
     $check10->execute([$teacherId]);
     if (!$check10->fetch()) {
         $pdo->prepare("INSERT INTO teacher_classes (teacher_id, class_id, subject) VALUES (?, 10, 'Toán')")->execute([$teacherId]);
+    }
+    $check37 = $pdo->prepare("SELECT id FROM teacher_classes WHERE teacher_id = ? AND class_id = 37 AND subject = 'Toán'");
+    $check37->execute([$teacherId]);
+    if (!$check37->fetch()) {
+        $pdo->prepare("INSERT INTO teacher_classes (teacher_id, class_id, subject) VALUES (?, 37, 'Toán')")->execute([$teacherId]);
     }
 
     $rem = (int)$pdo->query("SELECT COUNT(*) FROM teacher_classes WHERE teacher_id = $teacherId AND subject = 'Toán'")->fetchColumn();

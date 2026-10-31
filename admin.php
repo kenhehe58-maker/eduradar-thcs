@@ -209,13 +209,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'batch_assign') {
     require_admin();
     $teacher_id = (int)($_POST['teacher_id'] ?? 0);
-    $selected_classes = $_POST['class_ids'] ?? [];
+    $rawClassIds = $_POST['class_ids'] ?? [];
+    $selected_classes = [];
+    if (is_array($rawClassIds)) {
+        foreach ($rawClassIds as $rcid) {
+            $rcid = (int)$rcid;
+            if ($rcid > 0) {
+                $selected_classes[] = $rcid;
+            }
+        }
+    }
     $assign_mode = trim((string)($_POST['assign_mode'] ?? 'replace_subject'));
 
     // Thu thập danh sách phân môn: môn chính + các môn thứ 2, thứ 3...
     $rawSubjects = [];
-    if (!empty($_POST['subject'])) {
-        $rawSubjects[] = trim((string)$_POST['subject']);
+    $mainSubject = trim((string)($_POST['subject'] ?? ''));
+    if ($mainSubject !== '') {
+        $rawSubjects[] = $mainSubject;
     }
     if (!empty($_POST['additional_subjects']) && is_array($_POST['additional_subjects'])) {
         foreach ($_POST['additional_subjects'] as $as) {
@@ -821,23 +831,70 @@ $extraHead = '<style>
     .delete-class-btn { color: #94a3b8; border: none; background: none; cursor: pointer; padding: 2px 4px; border-radius: 4px; font-size: 11px; line-height: 1; transition: color .15s; }
     .delete-class-btn:hover { color: #ef4444; background: #fee2e2; }
 
-    /* MATRIX GRADE CARDS & PILLS */
-    .matrix-grade-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; }
+    /* MATRIX & BENTO GRADE CARDS & PILLS (3-CLICK RULE) */
+    .bento-classes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .matrix-grade-card, .bento-grade-card { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px 18px; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    .matrix-grade-card:hover, .bento-grade-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); border-color: #93c5fd; }
     .matrix-grade-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px; }
     .matrix-grade-title { font-size: 14px; color: #1e293b; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 800; }
     .matrix-grade-badge { background: #e2e8f0; color: #334155; font-size: 12px; font-family: "JetBrains Mono", monospace; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
-    .matrix-class-pill { display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 6px; font-size: 12.5px; color: #0f172a; }
-    .admin-create-class-form { display: flex; gap: 8px; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .matrix-class-pill { display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 8px; font-size: 13px; color: #0f172a; transition: all 0.2s ease; }
+    .matrix-class-pill:hover { border-color: var(--primary, #2563eb); background: #eef2ff; transform: translateY(-1px); }
+    .matrix-class-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: inherit; }
+    .admin-create-class-form { 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: 8px; 
+        align-items: center; 
+        background: #f8fafc; 
+        padding: 8px 12px; 
+        border-radius: 10px; 
+        border: 1px solid var(--border-color);
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    .admin-create-class-form select,
+    .admin-create-class-form input {
+        box-sizing: border-box;
+        min-height: 40px;
+    }
+    .admin-create-class-form button[type="submit"] {
+        min-height: 44px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    @media (max-width: 640px) {
+        .admin-create-class-form {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .admin-create-class-form .form-label-title {
+            grid-column: 1 / -1;
+        }
+        .admin-create-class-form input[name="name"] {
+            grid-column: 1 / -1;
+            width: 100% !important;
+        }
+        .admin-create-class-form button[type="submit"] {
+            grid-column: 1 / -1;
+            width: 100%;
+            min-height: 48px;
+        }
+    }
     .admin-assign-mode-box { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; }
     .admin-filter-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; font-weight: 600; background: #ffffff; color: #0f172a; }
     .admin-assign-teacher-select { padding: 5px 8px; border-radius: 6px; font-weight: 700; font-size: 13px; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; cursor: pointer; }
 
     /* DARK THEME ADMIN OVERRIDES */
-    [data-theme="dark"] .matrix-grade-card { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .matrix-grade-card, [data-theme="dark"] .bento-grade-card { background: #131b2e !important; border-color: #23324d !important; }
+    [data-theme="dark"] .matrix-grade-card:hover, [data-theme="dark"] .bento-grade-card:hover { border-color: #3b82f6 !important; }
     [data-theme="dark"] .matrix-grade-header { border-bottom-color: #23324d !important; }
     [data-theme="dark"] .matrix-grade-title { color: #f8fafc !important; }
     [data-theme="dark"] .matrix-grade-badge { background: #1a253c !important; color: #94a3b8 !important; }
     [data-theme="dark"] .matrix-class-pill { background: #1a253c !important; border-color: #2e3f60 !important; color: #f8fafc !important; }
+    [data-theme="dark"] .matrix-class-pill:hover { background: #233354 !important; border-color: #3b82f6 !important; }
     [data-theme="dark"] .admin-create-class-form { background: #131b2e !important; border-color: #23324d !important; }
     [data-theme="dark"] .admin-create-class-form select,
     [data-theme="dark"] .admin-create-class-form input { background: #1a253c !important; border-color: #2e3f60 !important; color: #f8fafc !important; }
@@ -974,7 +1031,7 @@ require_once __DIR__ . '/includes/header.php';
 <div style="margin-bottom: 24px;">
     <header class="topbar" style="margin-bottom: 12px;">
         <div>
-            <h1>TRUNG TÂM QUẢN TRỊ NHÀ TRƯỜNG</h1>
+            <h1>TRUNG TÂM QUẢN TRỊ NHÀ TRƯỜNG – ADMIN PORTAL</h1>
             <p class="muted">Quản lý lớp học THCS (Khối 6–9), phân công giảng dạy, nạp danh sách học sinh và theo dõi toàn trường.</p>
         </div>
         <div class="top-actions" style="display: flex; align-items: center; gap: 12px;">
@@ -1023,13 +1080,13 @@ require_once __DIR__ . '/includes/header.php';
     <!-- APPLE-STYLE SEGMENTED TABS (DEDICATED SECTIONS FOR CLASSES, TEACHERS & AUDIT) -->
     <div class="admin-tab-nav" role="tablist">
         <button type="button" class="btn-admin-tab active" data-tab="classes" onclick="switchAdminTab('classes', this)" role="tab" aria-selected="true">
-            Quản Lý Lớp Học & Học Sinh (<?= $statTotalClasses ?> Lớp · <?= $statTotalStudents ?> HS)
+            Quản lý lớp học & học sinh (<?= $statTotalClasses ?> Lớp · <?= $statTotalStudents ?> HS)
         </button>
         <button type="button" class="btn-admin-tab" data-tab="teachers" onclick="switchAdminTab('teachers', this)" role="tab" aria-selected="false">
-            Quản Lý Giáo Viên & Phân Công (<?= $statTotalTeachers ?> GV · <?= $statTotalAssignments ?> Phân Công)
+            Quản lý giáo viên & phân công (<?= $statTotalTeachers ?> GV · <?= $statTotalAssignments ?> Phân Công)
         </button>
         <button type="button" class="btn-admin-tab" data-tab="logs" onclick="switchAdminTab('logs', this)" role="tab" aria-selected="false">
-            Nhật Ký Hoạt Động (Audit Logs)
+            Nhật ký hoạt động (Audit Logs)
         </button>
     </div>
 
@@ -1039,18 +1096,18 @@ require_once __DIR__ . '/includes/header.php';
     <div class="admin-tab-pane active" id="pane-classes" role="tabpanel">
 
     <!-- ===================================================================== -->
-    <!-- PHẦN 1: MA TRẬN LỚP HỌC THCS (KHỐI 6–9) & TẠO LỚP HỌC MỚI             -->
+    <!-- MA TRẬN LỚP HỌC THCS (KHỐI 6–9) & TẠO LỚP HỌC MỚI                     -->
     <!-- ===================================================================== -->
     <section class="panel-box mb-3">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
             <div>
-                <h3>Danh Sách Lớp Học Toàn Trường (Khối 6, 7, 8, 9)</h3>
-                <p class="muted small">Xem danh sách lớp học được phân chia theo khối, theo dõi sĩ số học sinh và quản lý thêm/xóa lớp.</p>
+                <h3>Ma trận lớp học toàn trường (Khối 6, 7, 8, 9)</h3>
+                <p class="muted small">Bố cục Bento Grid phân cấp 4 tầng: Trường &rarr; Khối &rarr; Lớp &rarr; Học sinh. Bấm vào lớp để mở trực tiếp sổ điểm.</p>
             </div>
-            <!-- Biểu mẫu tạo lớp học mới -->
+            <!-- Biểu mẫu tạo lớp học mới (Tự động thích ứng, không bao giờ bị ẩn trên màn hình 360px-412px) -->
             <form method="POST" class="admin-create-class-form">
                 <input type="hidden" name="action" value="create_class">
-                <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase;">Thêm Lớp:</span>
+                <span class="form-label-title" style="font-size: 11.5px; font-weight: 800; text-transform: uppercase;">Thêm lớp:</span>
                 <select name="grade" required style="padding: 6px 8px; font-size: 13px; border-radius: 6px;">
                     <option value="6">Khối 6</option>
                     <option value="7">Khối 7</option>
@@ -1063,21 +1120,21 @@ require_once __DIR__ . '/includes/header.php';
                     <option value="C">Ban C</option>
                 </select>
                 <input type="number" name="class_num" min="1" max="9" value="1" style="width: 55px; padding: 6px 8px; font-size: 13px; border-radius: 6px;" title="Số thứ tự lớp (1-9)">
-                <input type="text" name="name" placeholder="Hoặc tên tùy chỉnh (6C4)" style="width: 140px; padding: 6px 8px; font-size: 13px; border-radius: 6px;">
-                <button type="submit" class="btn primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700;">
+                <input type="text" name="name" placeholder="Tên tùy chỉnh (6C4)" style="width: 140px; padding: 6px 8px; font-size: 13px; border-radius: 6px;">
+                <button type="submit" class="btn primary" style="padding: 8px 16px; font-size: 13px; font-weight: 700;">
                     Tạo Lớp
                 </button>
             </form>
         </div>
 
-        <!-- Hiển thị lưới lớp theo từng khối -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        <!-- Hiển thị lưới lớp Bento Grid theo từng khối (3-Click Rule: Trường -> Khối -> Lớp -> Học sinh) -->
+        <div class="bento-classes-grid">
             <?php foreach ([6, 7, 8, 9] as $g): ?>
                 <?php 
                     $classesInThisGrade = $groupedClasses[$g] ?? [];
                     $totalStudentsInGrade = array_sum(array_column($classesInThisGrade, 'student_count'));
                 ?>
-                <div class="matrix-grade-card">
+                <div class="matrix-grade-card bento-grade-card">
                     <div class="matrix-grade-header">
                         <b class="matrix-grade-title">Khối <?= $g ?></b>
                         <span class="matrix-grade-badge">
@@ -1090,10 +1147,12 @@ require_once __DIR__ . '/includes/header.php';
                         <?php else: ?>
                             <?php foreach ($classesInThisGrade as $c): ?>
                                 <div class="matrix-class-pill">
-                                    <b><?= htmlspecialchars($c['name']) ?></b>
-                                    <span class="badge-student-count <?= $c['student_count'] > 0 ? 'has-students' : '' ?>">
-                                        <?= $c['student_count'] ?> HS
-                                    </span>
+                                    <a href="nhap_diem.php?class_id=<?= $c['id'] ?>" class="matrix-class-link" title="Mở danh sách học sinh & sổ điểm lớp <?= htmlspecialchars($c['name']) ?>">
+                                        <b><?= htmlspecialchars($c['name']) ?></b>
+                                        <span class="badge-student-count <?= $c['student_count'] > 0 ? 'has-students' : '' ?>">
+                                            <?= $c['student_count'] ?> HS
+                                        </span>
+                                    </a>
                                     <a href="admin.php?delete_class=<?= $c['id'] ?>" class="delete-class-btn" title="Xóa lớp <?= htmlspecialchars($c['name']) ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa lớp <?= htmlspecialchars($c['name']) ?>? Tất cả dữ liệu học sinh và điểm liên quan sẽ bị xóa theo!')" aria-label="Xóa lớp <?= htmlspecialchars($c['name']) ?>" style="display: inline-flex; align-items: center; justify-content: center;">
                                         <?= get_svg_icon('trash', 12) ?>
                                     </a>
@@ -1108,21 +1167,21 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- FORM IMPORT DANH SÁCH HỌC SINH CHO LỚP -->
     <section class="panel-box" style="margin-bottom: 24px;">
-        <h3>Import Danh Sách Học Sinh Cho Lớp (.xlsx & .csv)</h3>
+        <h3>Nạp danh sách học sinh theo lớp (.xlsx, .csv)</h3>
         <p class="muted small mb-3">Nạp danh sách học sinh chuẩn VnEdu (.xlsx hoặc .csv) có chống trùng lặp dữ liệu.</p>
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="import_students">
             <div class="form-group mb-2">
-                <label>Chọn Lớp Học Đích</label>
+                <label>Chọn lớp học đích</label>
                 <select name="target_class_id" required>
-                    <option value="all" selected>TỰ ĐỘNG THEO TỪNG SHEET EXCEL (Toàn bộ các lớp trong file)</option>
+                    <option value="all" selected>Tự động theo từng sheet Excel (Toàn bộ các lớp trong file)</option>
                     <?php foreach ($allClasses as $c): ?>
                         <option value="<?= $c['id'] ?>">Lớp <?= htmlspecialchars($c['name']) ?> (Khối <?= $c['grade'] ?> - Hiện có <?= $c['student_count'] ?> HS)</option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-group mb-3">
-                <label style="font-weight: 700; display: block; margin-bottom: 6px;">Tệp Danh Sách Học Sinh (.xlsx hoặc .csv)</label>
+                <label style="font-weight: 700; display: block; margin-bottom: 6px;">Tệp danh sách học sinh (.xlsx hoặc .csv)</label>
                 <!-- Lucian UX/UI Prompt #032 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#032 -->
                 <div class="ux u032" id="adminStudentDropzone">
                     <button class="u032-zone" type="button" id="adminStudentZoneBtn" style="height: 140px;">
@@ -1138,13 +1197,13 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <button type="submit" class="btn primary" style="flex: 1; min-width: 160px; font-weight: 700;">
+                <button type="submit" class="btn primary" style="flex: 1; min-width: 160px; min-height: 48px; font-weight: 700; border-radius: 10px;">
                     Import Học Sinh Vào Lớp
                 </button>
-                <a href="sample_students.xlsx" download class="btn outline" style="font-size: 12.5px;">
+                <a href="sample_students.xlsx" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; border-radius: 10px;">
                     File mẫu .xlsx
                 </a>
-                <a href="sample_students.csv" download class="btn outline" style="font-size: 12.5px;">
+                <a href="sample_students.csv" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; border-radius: 10px;">
                     File mẫu .csv
                 </a>
             </div>
@@ -1158,47 +1217,47 @@ require_once __DIR__ . '/includes/header.php';
 <div class="admin-tab-pane" id="pane-teachers" role="tabpanel">
     <!-- Form Tạo tài khoản giáo viên mới -->
     <section class="panel-box mb-3">
-        <h3>Tạo Tài Khoản Giáo Viên Mới</h3>
+        <h3>Tạo tài khoản giáo viên mới</h3>
         <p class="muted small mb-3">Tạo tài khoản giáo viên THCS (mật khẩu băm Bcrypt chuẩn bảo mật).</p>
         <form method="POST">
             <input type="hidden" name="action" value="create_teacher">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 14px;">
                 <div class="form-group">
-                    <label>Tên Đăng Nhập (Username / VnEdu)</label>
-                    <input type="text" name="username" placeholder="Ví dụ: gv_toan3, nguyen_van_a" required>
+                    <label>Tài khoản (Username / VnEdu)</label>
+                    <input type="text" name="username" placeholder="Ví dụ: gv_toan3, nguyen_van_a" required style="min-height: 42px;">
                 </div>
                 <div class="form-group">
-                    <label>Họ và Tên Giáo Viên</label>
-                    <input type="text" name="full_name" placeholder="Ví dụ: Thầy Trần Quang Khải" required>
+                    <label>Họ và tên giáo viên</label>
+                    <input type="text" name="full_name" placeholder="Ví dụ: Thầy Trần Quang Khải" required style="min-height: 42px;">
                 </div>
                 <div class="form-group">
-                    <label>Mật Khẩu Khởi Tạo (Mặc định: 123456)</label>
-                    <input type="password" name="password" value="123456" required>
+                    <label>Mật khẩu khởi tạo (Mặc định: 123456)</label>
+                    <input type="password" name="password" value="123456" required style="min-height: 42px;">
                 </div>
             </div>
-            <button type="submit" class="btn primary" style="padding: 10px 24px; font-weight: 700;">
+            <button type="submit" class="btn primary" style="min-height: 48px; padding: 10px 24px; font-weight: 700; border-radius: 10px;">
                 Tạo Tài Khoản Giáo Viên
             </button>
         </form>
     </section>
 
-    <!-- PHẦN 2: BẢNG TÍCH CHỌN PHÂN CÔNG GIÁO VIÊN HÀNG LOẠT (BATCH ASSIGN)   -->
+    <!-- BẢNG TÍCH CHỌN PHÂN CÔNG GIÁO VIÊN HÀNG LOẠT (BATCH ASSIGN) -->
     <section class="panel-box mb-3">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h3>Phân Công Giảng Dạy Hàng Loạt Bằng Checkbox</h3>
+                <h3>Phân công giảng dạy theo khối lớp</h3>
                 <p class="muted small">Chọn giáo viên, chọn môn học và <b>tích chọn vào các ô lớp học</b> thuộc khối 6, 7, 8, 9 để phân công nhanh chóng.</p>
             </div>
             <!-- Thanh công cụ chọn toàn bộ / bỏ chọn toàn bộ -->
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <span id="selectedClassCount" style="font-size: 13px; color: var(--text-muted); margin-right: 4px;">Đã chọn: 0 lớp</span>
-                <button type="button" class="btn primary" style="font-size: 12px; padding: 6px 14px; background: #059669; border-color: #059669;" onclick="selectOnlyClassesWithStudents()">
+                <button type="button" class="btn primary" style="font-size: 12px; min-height: 40px; padding: 6px 14px; background: #059669; border-color: #059669;" onclick="selectOnlyClassesWithStudents()">
                     Chỉ chọn các lớp có học sinh
                 </button>
-                <button type="button" class="btn outline" style="font-size: 12px; padding: 6px 12px;" onclick="selectAllGrades(true)">
+                <button type="button" class="btn outline" style="font-size: 12px; min-height: 40px; padding: 6px 12px;" onclick="selectAllGrades(true)">
                     Chọn tất cả các khối
                 </button>
-                <button type="button" class="btn outline" style="font-size: 12px; padding: 6px 12px;" onclick="selectAllGrades(false)">
+                <button type="button" class="btn outline" style="font-size: 12px; min-height: 40px; padding: 6px 12px;" onclick="selectAllGrades(false)">
                     Bỏ chọn tất cả
                 </button>
             </div>
@@ -1207,10 +1266,10 @@ require_once __DIR__ . '/includes/header.php';
         <form method="POST">
             <input type="hidden" name="action" value="batch_assign">
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 14px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 14px;">
                 <div class="form-group">
-                    <label>1. Chọn Giáo Viên Phụ Trách</label>
-                    <select name="teacher_id" id="teacherSelectInput" required onchange="onTeacherSelectChange(this)">
+                    <label>Chọn giáo viên phụ trách</label>
+                    <select name="teacher_id" id="teacherSelectInput" required onchange="onTeacherSelectChange(this)" style="min-height: 42px;">
                         <option value="">-- Bấm chọn giáo viên cần phân công --</option>
                         <?php foreach ($teachers as $t): ?>
                             <option value="<?= $t['id'] ?>">
@@ -1222,7 +1281,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div id="teacherCurrentInfoBox" style="display: none; background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 8px; padding: 10px 14px; margin-top: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                             <span style="font-size: 12.5px; font-weight: 700; color: #3730a3;" id="teacherCurrentInfoText"></span>
-                            <button type="submit" form="formDeleteAllTeacherAssignments" class="btn outline" style="font-size: 11px; padding: 3px 8px; color: #dc2626; border-color: #fca5a5; background: #ffffff; font-weight: 700;" onclick="return confirm('CẢNH BÁO AN TOÀN: Bạn có chắc chắn muốn xóa TOÀN BỘ phân công hiện tại của giáo viên này để phân công lại từ đầu?')">
+                            <button type="submit" form="formDeleteAllTeacherAssignments" class="btn outline" style="font-size: 11px; padding: 4px 10px; color: #dc2626; border-color: #fca5a5; background: #ffffff; font-weight: 700;" onclick="return confirm('CẢNH BÁO AN TOÀN: Bạn có chắc chắn muốn xóa TOÀN BỘ phân công hiện tại của giáo viên này để phân công lại từ đầu?')">
                                 Xóa sạch phân công để gán lại
                             </button>
                         </div>
@@ -1230,12 +1289,12 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
                 <div class="form-group" id="subjectFieldContainer">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label style="margin: 0;">2. Môn Học Giảng Dạy / Phụ Trách</label>
-                        <button type="button" id="btnAddSecondSubject" class="btn outline" style="font-size: 11.5px; padding: 3px 8px; color: var(--primary); border-color: var(--primary-border); font-weight: 700;" onclick="addSecondSubjectField()">
+                        <label style="margin: 0;">Môn học phụ trách</label>
+                        <button type="button" id="btnAddSecondSubject" class="btn outline" style="font-size: 11.5px; padding: 4px 10px; color: var(--primary); border-color: var(--primary-border); font-weight: 700;" onclick="addSecondSubjectField()">
                             + Thêm môn thứ 2 (Dạy 2 môn)
                         </button>
                     </div>
-                    <select name="subject" id="primarySubjectSelect" required style="width: 100%;">
+                    <select name="subject" id="primarySubjectSelect" required style="width: 100%; min-height: 42px;">
                         <?php foreach ($thcsSubjects as $sub): ?>
                             <option value="<?= $sub ?>"><?= $sub ?></option>
                         <?php endforeach; ?>
@@ -1249,7 +1308,7 @@ require_once __DIR__ . '/includes/header.php';
 
             <!-- CHẾ ĐỘ PHÂN CÔNG (CẬP NHẬT / LÀM MỚI / THÊM MỚI) -->
             <div class="admin-assign-mode-box">
-                <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">Chế Độ Phân Công Khi Bấm Lưu:</label>
+                <label style="font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">Chế độ phân công khi lưu:</label>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                         <input type="radio" name="assign_mode" value="replace_subject" checked>
@@ -1267,7 +1326,7 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <label style="font-weight: 800; font-size: 13.5px; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 0.03em;">
-                3. Tích Chọn Các Lớp Học Cần Cấp Quyền Phân Công:
+                Tích chọn các lớp học phân công:
             </label>
             
             <?php foreach ([6, 7, 8, 9] as $grade): ?>
@@ -1312,9 +1371,9 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('check-circle', 14, '', 'color: #10b981;') ?>
                     <i>Hệ thống tự động bỏ qua nếu lớp học đó đã được phân công cùng giáo viên và môn học.</i>
                 </p>
-                <button type="submit" class="btn primary" style="padding: 12px 28px; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                <button type="submit" class="btn primary" style="min-height: 48px; padding: 12px 28px; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; border-radius: 10px;">
                     <?= get_svg_icon('check-circle', 16) ?>
-                    <span>Cấp Quyền & Phân Công Cho Giáo Viên Đã Chọn</span>
+                    <span>Cấp quyền và phân công cho giáo viên</span>
                 </button>
             </div>
         </form>
@@ -1326,14 +1385,12 @@ require_once __DIR__ . '/includes/header.php';
         <input type="hidden" name="teacher_id" id="hiddenDeleteTeacherId" value="">
     </form>
 
-    <!-- ===================================================================== -->
-    <!-- PHẦN 4: DANH SÁCH PHÂN CÔNG & TRUY CẬP TRỰC TIẾP SỔ ĐIỂM               -->
-    <!-- ===================================================================== -->
+    <!-- DANH SÁCH PHÂN CÔNG & TRUY CẬP TRỰC TIẾP SỔ ĐIỂM -->
     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
         <div>
             <h2 style="display: flex; align-items: center; gap: 8px;">
                 <?= get_svg_icon('file-text', 20, '', 'color: #2563eb;') ?>
-                <span>Danh Sách Phân Công Giảng Dạy & Giám Sát Sổ Điểm</span>
+                <span>Danh sách phân công giảng dạy và giám sát sổ điểm</span>
             </h2>
             <span class="muted small">Admin có thể chuyển giao giáo viên trực tiếp trên bảng hoặc mở trực tiếp bảng điểm của bất kỳ môn/lớp nào.</span>
         </div>
@@ -1435,7 +1492,7 @@ require_once __DIR__ . '/includes/header.php';
         <div>
             <h2 style="display: flex; align-items: center; gap: 8px;">
                 <?= get_svg_icon('shield-check', 20, '', 'color: #2563eb;') ?>
-                <span>Nhật Ký Kiểm Toán Hệ Thống (Audit Logs)</span>
+                <span>Nhật ký kiểm toán hệ thống (Audit Logs)</span>
             </h2>
             <span class="muted small">Tự động ghi nhận mọi hoạt động đăng nhập, phân công, nạp học sinh, sửa sổ điểm và các nỗ lực truy cập trái phép.</span>
         </div>
