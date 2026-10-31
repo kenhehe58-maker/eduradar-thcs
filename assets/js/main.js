@@ -1669,4 +1669,71 @@ document.addEventListener('DOMContentLoaded', function () {
     if (window.gsap) {
         window.runEduRadarEntrance();
     }
+
+
+    // =========================================================================
+    // HIỆU ỨNG HỘP LỘ DẦN KHI CUỘN TRANG (SCROLL REVEAL CHO TRANG CHỦ & QUÉT NHANH)
+    // Tự động gắn hiệu ứng mượt mà khi các thẻ/hộp xuất hiện trong viewport
+    // =========================================================================
+    function initScrollRevealBoxes() {
+        // Chỉ áp dụng cho trang chủ (welcome.php) và trang quét nhanh (quet_nhanh.php)
+        const isTargetPage = document.body.classList.contains('welcome-page') || 
+                             document.body.classList.contains('quet-nhanh-page') ||
+                             document.querySelector('.welcome-hero, .launchpad-card, .guest-banner, .u032-zone');
+
+        if (!isTargetPage) return;
+
+        const selector = [
+            '.welcome-hero',
+            '.kpi-card',
+            '.launchpad-card',
+            '.handbook-card',
+            '.quick-search-box',
+            '.step-card',
+            '.guest-banner',
+            '.u032-zone',
+            '.radar-stats-grid .stat-card',
+            '.search-box-wrap',
+            '.no-scores-alert-banner'
+        ].join(', ');
+
+        const boxes = document.querySelectorAll(selector);
+        if (!boxes.length) return;
+
+        // Nếu người dùng bật giảm chuyển động trong hệ điều hành
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        // Kiểm tra hỗ trợ IntersectionObserver
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '0px 0px -40px 0px',
+                threshold: 0.12
+            });
+
+            boxes.forEach((box, index) => {
+                box.classList.add('edu-scroll-reveal');
+                // Thêm độ trễ so le nhẹ nếu các phần tử cùng cấp (stagger effect)
+                const delay = (index % 4) * 0.08;
+                if (delay > 0) {
+                    box.style.transitionDelay = `${delay}s`;
+                }
+                observer.observe(box);
+            });
+        } else {
+            // Trình duyệt cũ không có IntersectionObserver thì hiện bình thường
+            boxes.forEach(box => box.classList.add('is-revealed'));
+        }
+    }
+
+    initScrollRevealBoxes();
 });

@@ -7859,3 +7859,29 @@ html, body {
     color: #ffffff !important;
     font-weight: 700 !important;
 }
+
+
+/* =========================================================================
+   SCROLL REVEAL / LỘ DẦN CHUYỂN ĐỘNG CHO CÁC HỘP (WELCOME & QUET_NHANH)
+   Hiệu ứng mượt mà: opacity 0 -> 1, translate-y 20px -> 0, scale 0.98 -> 1
+   ========================================================================= */
+.edu-scroll-reveal {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+    transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.edu-scroll-reveal.is-revealed {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .edu-scroll-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
