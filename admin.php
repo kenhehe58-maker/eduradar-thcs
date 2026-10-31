@@ -527,7 +527,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
 
         if (!empty($sheetsData)) {
-            $stmtFindClass = $pdo->prepare("SELECT id FROM classes WHERE name = ?");
+            $pdo->beginTransaction();
+            try {
+                $stmtFindClass = $pdo->prepare("SELECT id FROM classes WHERE name = ?");
             $stmtInsClass = $pdo->prepare("INSERT INTO classes (name, grade, section) VALUES (?, ?, ?)");
             $chkStudent = $pdo->prepare("SELECT id FROM students WHERE class_id = ? AND full_name = ? AND birthday = ?");
             $insStudent = $pdo->prepare("INSERT INTO students (class_id, student_code, full_name, birthday, gender, phone) VALUES (?, ?, ?, ?, ?, ?)");
@@ -682,6 +684,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 'Import học sinh', 
                 "Admin import học sinh vào $countClasses lớp [$classListStr] từ file [$fileName]: thêm mới $totalImported, trùng lặp bỏ qua $totalSkipped."
             );
+
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                $errorMsg = "Lỗi hệ thống khi nạp danh sách học sinh: " . $e->getMessage();
+            }
 
             if ($totalImported > 0 && $totalSkipped > 0) {
                 $msg = "Đã nhập thành công $totalImported học sinh vào $countClasses lớp ($classListStr), bỏ qua $totalSkipped học sinh đã có sẵn.";
