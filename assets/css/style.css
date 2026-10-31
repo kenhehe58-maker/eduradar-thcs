@@ -7549,3 +7549,140 @@ html, body {
 .card-heading-title {
     color: var(--text-heading, #0f172a);
 }
+
+
+/* =========================================================================
+   HOTFIX: MOBILE RING CHARTS & STUDENT ROSTER CARD THEME HARMONIZATION
+   ========================================================================= */
+.segmented-ring-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+}
+.ring-center-num {
+  fill: #0f172a !important;
+}
+.ring-center-label {
+  fill: #64748b !important;
+}
+.ring-card-title {
+  color: #0f172a !important;
+}
+.btn-ring-help {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+[data-theme="dark"] .segmented-ring-card {
+  background: #131b2e !important;
+  border: 1px solid #23324d !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+[data-theme="dark"] .ring-center-num {
+  fill: #f8fafc !important;
+}
+[data-theme="dark"] .ring-center-label {
+  fill: #94a3b8 !important;
+}
+[data-theme="dark"] .ring-card-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .btn-ring-help {
+  background: #1a253c !important;
+  color: #94a3b8 !important;
+  border-color: #2e3f60 !important;
+}
+
+/* Mobile student roster row contrast */
+.m-student-row {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04) !important;
+}
+.m-row-name {
+  color: #0f172a !important;
+}
+.m-row-sub {
+  color: #64748b !important;
+}
+.m-row-stt {
+  color: #64748b !important;
+  background: #f1f5f9 !important;
+  border-radius: 6px;
+}
+.m-dual-dots {
+  background: #f1f5f9 !important;
+}
+.m-dot-pill {
+  box-shadow: 0 0 0 1.5px #ffffff !important;
+}
+
+[data-theme="dark"] .m-student-row {
+  background: #131b2e !important;
+  border-color: #23324d !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+[data-theme="dark"] .m-student-row:active {
+  background: #1a253c !important;
+}
+[data-theme="dark"] .m-row-name {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .m-row-sub {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .m-row-stt {
+  color: #94a3b8 !important;
+  background: #1a253c !important;
+}
+[data-theme="dark"] .m-dual-dots {
+  background: #1e293b !important;
+}
+[data-theme="dark"] .m-dot-pill {
+  box-shadow: 0 0 0 1.5px #131b2e !important;
+}
+[data-theme="dark"] .m-row-chevron {
+  color: #64748b !important;
+}
+[data-theme="dark"] .m-list-title {
+  color: #f8fafc !important;
+}
+[data-theme="dark"] .m-list-legend {
+  color: #94a3b8 !important;
+}
+[data-theme="dark"] .m-row-avg.avg-green {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+[data-theme="dark"] .m-row-avg.avg-yellow {
+  background: rgba(234, 179, 8, 0.16) !important;
+  color: #facc15 !important;
+  border-color: rgba(234, 179, 8, 0.4) !important;
+}
+[data-theme="dark"] .m-row-avg.avg-red {
+  background: rgba(239, 68, 68, 0.16) !important;
+  color: #f87171 !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+[data-theme="dark"] .m-row-avg.avg-pending {
+  background: rgba(148, 163, 184, 0.12) !important;
+  color: #94a3b8 !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+.chip-segment-group {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+.chip-segment-group .segment-label {
+  color: #64748b !important;
+}
+[data-theme="dark"] .chip-segment-group {
+  background: #1a253c !important;
+  border-color: #2e3f60 !important;
+}
+[data-theme="dark"] .chip-segment-group .segment-label {
+  color: #94a3b8 !important;
+}
