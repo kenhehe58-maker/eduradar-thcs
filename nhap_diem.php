@@ -745,6 +745,11 @@ $extraHead = '
         .vnedu-header { background: #1e293b !important; color: #f8fafc !important; }
     </style>
 ';
+$breadcrumbs = [
+    ['title' => 'Trang Chủ', 'url' => 'welcome.php'],
+    ['title' => 'Sổ Điểm Điện Tử', 'url' => 'nhap_diem.php'],
+    ['title' => 'Lớp ' . ($curClassName ?? '') . ' • Môn ' . ($selectedSubject ?? ''), 'url' => '']
+];
 require_once __DIR__ . '/includes/header.php';
 ?>
     <!-- EDEXA & VNEDU SỔ ĐIỂM CHI TIẾT HEADER CARD (DỰA TRÊN ẢNH 4 VNEDU DESKTOP) -->

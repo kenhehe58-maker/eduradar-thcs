@@ -953,6 +953,10 @@ $extraHead = '<style>
         to { opacity: 1; transform: translateY(0); }
     }
 </style>';
+$breadcrumbs = [
+    ['title' => 'Trang Chủ', 'url' => 'welcome.php'],
+    ['title' => 'Cổng Quản Trị Nhà Trường', 'url' => '']
+];
 require_once __DIR__ . '/includes/header.php';
 ?>
 

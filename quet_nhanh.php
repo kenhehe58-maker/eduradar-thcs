@@ -716,6 +716,10 @@ $extraHead = '
         }
     </style>
 ';
+$breadcrumbs = [
+    ['title' => 'Trang Chủ', 'url' => 'welcome.php'],
+    ['title' => 'Quét Nhanh Bảng Điểm 1 Chạm', 'url' => '']
+];
 require_once __DIR__ . '/includes/header.php';
 ?>
 

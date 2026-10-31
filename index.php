@@ -607,6 +607,11 @@ if (!empty($studentScoresGrouped)) {
 $academicCalendar = get_academic_calendar_phase();
 $activeNav = 'dashboard';
 $pageTitle = 'Radar Cảnh Báo Sớm & Năng Lực Học Tập';
+$breadcrumbs = [
+    ['title' => 'Trang Chủ', 'url' => 'welcome.php'],
+    ['title' => 'Bảng Cảnh Báo Sớm', 'url' => 'index.php'],
+    ['title' => 'Lớp ' . ($filterClasses[$selectedClassId] ?? 'Tất cả') . ($selectedSubject !== 'all' ? ' • Môn ' . $selectedSubject : ''), 'url' => '']
+];
 require_once __DIR__ . '/includes/header.php';
 ?>
 
