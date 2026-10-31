@@ -163,6 +163,38 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
             -webkit-user-select: none;
             user-select: none;
         }
+        
+        /* HEADER HELP / SHORTCUT TRIGGER BUTTON */
+        .edexa-help-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--card-bg, #ffffff);
+            border: 1.5px solid var(--border-color, #cbd5e1);
+            color: var(--primary, #2563eb);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            flex-shrink: 0;
+            padding: 0;
+            font-weight: 800;
+            font-size: 13.5px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .edexa-help-toggle:hover {
+            border-color: var(--primary, #2563eb);
+            background: rgba(37, 99, 235, 0.08);
+            transform: translateY(-1px);
+        }
+        [data-theme="dark"] .edexa-help-toggle {
+            background: #1e293b;
+            border-color: #334155;
+            color: #93c5fd;
+        }
+
         .edexa-theme-toggle:hover {
             border-color: var(--primary, #2563eb);
             transform: translateY(-1px);
@@ -325,6 +357,10 @@ $pageTitle = $pageTitle ?? 'EduRadar THCS';
                 <span class="tech-indicator">SPEC</span>
                 <span>Thông tư 22</span>
             </div>
+                        <!-- HELP / SHORTCUT MODAL TRIGGER -->
+            <button type="button" class="edexa-help-toggle" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
+                <span>?</span>
+            </button>
             <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
             <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
                 <span class="theme-icon" id="themeIcon"><?= get_svg_icon('sun', 14) ?></span>

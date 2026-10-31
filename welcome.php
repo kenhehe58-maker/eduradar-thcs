@@ -392,6 +392,96 @@ require_once __DIR__ . '/includes/header.php';
     margin-bottom: 10px;
 }
 
+
+/* UNIFIED SEARCH BAR (COMPACT, INLINE, NO MOBILE BREAKING) */
+.unified-search-form {
+    width: 100%;
+    max-width: 520px;
+}
+.unified-search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg, #ffffff);
+    border: 1.5px solid var(--border-color, #cbd5e1);
+    border-radius: 14px;
+    padding: 4px 6px 4px 14px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 100%;
+    box-sizing: border-box;
+}
+.unified-search-bar:focus-within {
+    border-color: var(--primary, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+[data-theme="dark"] .unified-search-bar {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+.search-bar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+.unified-search-bar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-heading, #0f172a);
+    padding: 8px 4px;
+    font-family: inherit;
+}
+[data-theme="dark"] .unified-search-bar input {
+    color: #f1f5f9 !important;
+}
+.unified-search-bar input::placeholder {
+    color: var(--text-muted, #94a3b8);
+    font-size: 13px;
+}
+.search-bar-btn {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff !important;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.18s ease;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+.search-bar-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+@media (max-width: 768px) {
+    .unified-search-form {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .unified-search-bar {
+        padding: 3px 4px 3px 10px !important;
+    }
+    .unified-search-bar input {
+        font-size: 13px !important;
+        padding: 6px 2px !important;
+    }
+    .search-bar-btn {
+        padding: 7px 12px !important;
+        font-size: 12px !important;
+    }
+}
+
 /* QUICK SEARCH WIDGET (LAW #1 INPUT MASKS & LAW #7 SEARCHABLE DROPDOWN) */
 .quick-search-box {
     background: var(--card-bg, #ffffff);
@@ -729,14 +819,15 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <form method="GET" action="index.php" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-        <div class="search-input-mask-wrap">
-            <span style="display: flex; align-items: center;"><?= get_svg_icon('search', 16, '', 'color: #64748b;') ?></span>
-            <input type="text" name="search" id="quickStudentSearchInput" placeholder="Ví dụ: 2404815683 hoặc Trần Lê Ngọc..." aria-label="Mã học sinh hoặc tên học sinh">
+    <form method="GET" action="index.php" class="unified-search-form">
+        <div class="unified-search-bar">
+            <span class="search-bar-icon"><?= get_svg_icon('search', 17, '', 'color: var(--primary, #2563eb);') ?></span>
+            <input type="text" name="search" id="quickStudentSearchInput" placeholder="Ví dụ: 2404815683 hoặc Trần Lê Ngọc..." aria-label="Mã học sinh hoặc tên học sinh" autocomplete="off">
+            <button type="submit" class="search-bar-btn" aria-label="Bắt đầu tìm kiếm">
+                <span>Tìm kiếm</span>
+                <?= get_svg_icon('chevron_right', 14, '', 'margin-left: 2px;') ?>
+            </button>
         </div>
-        <button type="submit" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: 13.5px; border: none; cursor: pointer;">
-            Tìm kiếm
-        </button>
     </form>
 </div>
 

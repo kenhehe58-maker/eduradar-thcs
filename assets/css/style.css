@@ -6937,14 +6937,15 @@ tr.gb-row-focused td {
     z-index: 1040;
 }
 @media (max-width: 768px) {
+    /* Ẩn FAB nổi trên mobile để tuyệt đối không che thanh Dock Bottom Navigation */
     .floating-help-widget {
-        right: 18px !important;
-        bottom: 74px !important; /* Đẩy cao hơn thanh Navigation Bar đáy màn hình (50px) để không bị đè */
-        z-index: 1060 !important;
+        display: none !important;
     }
-    .floating-help-btn {
-        width: 44px !important;
-        height: 44px !important;
+    /* Đảm bảo toàn bộ nội dung cách đáy dock an toàn, không bị che lấp mép dưới */
+    .content.full-width,
+    main.container,
+    .main-wrapper {
+        padding-bottom: calc(75px + env(safe-area-inset-bottom, 0px)) !important;
     }
 }
 .floating-help-btn {
