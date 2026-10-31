@@ -491,7 +491,7 @@ class StateGuardian
         $this->pdo->exec("DELETE FROM students WHERE class_id IN (1, 2, 3)");
 
         // Clean test assignments created for subject 'Tin Học'
-        $this->pdo->exec("DELETE FROM teacher_classes WHERE subject = 'Tin Học'");
+        $this->pdo->exec("DELETE FROM teacher_classes WHERE subject = 'Âm Nhạc'");
 
         // Delete test teachers (cascades assignments via FK)
         foreach ($this->ephemeralUsers as $username) {
@@ -504,7 +504,7 @@ class StateGuardian
         }
 
         // Clean test scores for ephemeral test subjects
-        $this->pdo->exec("DELETE FROM scores WHERE subject = 'Tin Học'");
+        $this->pdo->exec("DELETE FROM scores WHERE subject = 'Âm Nhạc'");
     }
 }
 
@@ -1059,15 +1059,15 @@ $runner->runTest("T3.02", "Admin Batch Checkbox Assignment (Feature #8)", functi
     $res = $runner->recordResponse($admin->post('admin.php', [
         'action'     => 'batch_assign',
         'teacher_id' => 2,
-        'subject'    => 'Tin Học',
+        'subject'    => 'Âm Nhạc',
         'class_ids'  => [2, 3]
     ]));
     $res->assertCleanHtml('batch_assign');
-    $cnt = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Tin Học' AND class_id IN (2, 3)");
+    $cnt = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Âm Nhạc' AND class_id IN (2, 3)");
     if ($cnt !== 2) {
-        throw new RuntimeException("Expected 2 assigned classes for Tin Học, found {$cnt}");
+        throw new RuntimeException("Expected 2 assigned classes for Âm Nhạc, found {$cnt}");
     }
-    $audit->assertLogged('Phân công giáo viên', 'admin', 'Tin Học');
+    $audit->assertLogged('Phân công giáo viên', 'admin', 'Âm Nhạc');
 });
 
 $runner->runTest("T3.03", "Admin Teacher Account Creation (Feature #8)", function() use ($sessions, $runner, $db, $audit) {
@@ -1378,18 +1378,18 @@ $runner->runTest("T4.01", "Deduplication: Class Creation Rejection (Feature #2)"
 
 $runner->runTest("T4.02", "Deduplication: Batch Assignment Idempotency (Feature #2)", function() use ($sessions, $runner, $db) {
     $admin = $sessions->client('admin');
-    $beforeCount = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Tin Học' AND class_id IN (2, 3)");
+    $beforeCount = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Âm Nhạc' AND class_id IN (2, 3)");
 
     // Submit identical assignment again
     $res = $runner->recordResponse($admin->post('admin.php', [
         'action'     => 'batch_assign',
         'teacher_id' => 2,
-        'subject'    => 'Tin Học',
+        'subject'    => 'Âm Nhạc',
         'class_ids'  => [2, 3]
     ]));
     $res->assertCleanHtml('dedup_batch_assign');
 
-    $afterCount = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Tin Học' AND class_id IN (2, 3)");
+    $afterCount = $db->count('teacher_classes', "teacher_id = 2 AND subject = 'Âm Nhạc' AND class_id IN (2, 3)");
     if ($afterCount !== $beforeCount) {
         throw new RuntimeException("Duplicate assignments inserted! Before: {$beforeCount}, After: {$afterCount}");
     }
