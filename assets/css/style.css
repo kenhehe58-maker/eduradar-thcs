@@ -5468,7 +5468,7 @@ tr.gb-row-focused td {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  body.fx-off *, body.fx-off *::before, body.fx-off *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

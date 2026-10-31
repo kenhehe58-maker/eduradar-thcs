@@ -374,6 +374,12 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
                 <span class="tech-indicator">SPEC</span>
                 <span>Thông tư 22</span>
             </div>
+            <?php if (!empty($fxPage)): ?>
+            <!-- REPLAY GSAP ANIMATIONS BUTTON (WELCOME & QUET_NHANH) -->
+            <button type="button" class="edexa-help-toggle" id="btnReplayFx" title="Chạy lại hiệu ứng chuyển động GSAP" aria-label="Chạy lại hiệu ứng">
+                <svg id="replayFxIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+            <?php endif; ?>
             <!-- HELP / SHORTCUT MODAL TRIGGER -->
             <button type="button" class="edexa-help-toggle" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
                 <span>?</span>
