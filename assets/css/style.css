@@ -6237,54 +6237,99 @@ tr.gb-row-focused td {
   display: block;
 }
 
+/* Segmented Donut Ring - Expenses Style (ba738ea3) */
 .ring-track {
   stroke: #f1f5f9;
 }
 
+[data-theme="dark"] .ring-track {
+  stroke: rgba(255, 255, 255, 0.07) !important;
+}
+
 .ring-center-num {
-  font-size: 23px;
-  font-weight: 900;
-  fill: var(--text-heading, #0f172a);
+  font-size: 21px;
+  font-weight: 800;
+  fill: #0f172a;
   font-family: 'JetBrains Mono', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
 }
 
 .ring-center-label {
-  font-size: 9.5px;
-  font-weight: 800;
+  font-size: 10px;
+  font-weight: 700;
   fill: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.ring-mini-legend {
+[data-theme="dark"] .ring-center-num {
+  fill: #f8fafc !important;
+}
+
+[data-theme="dark"] .ring-center-label {
+  fill: #94a3b8 !important;
+}
+
+/* Expenses Style Legend Chips / Pills */
+.ring-chip-legend {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 5px;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 10px;
   padding-top: 8px;
   border-top: 1px dashed rgba(226, 232, 240, 0.8);
 }
 
-.ring-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--text-muted, #475569);
-  font-family: 'JetBrains Mono', monospace;
+[data-theme="dark"] .ring-chip-legend {
+  border-top-color: rgba(255, 255, 255, 0.08);
 }
 
-.ring-legend-dot {
+.ring-legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.25;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .ring-legend-chip {
+  background: #141d33;
+  border-color: #243452;
+  color: #cbd5e1;
+}
+
+.ring-legend-sq {
   display: inline-block;
   width: 7px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: 2px;
   flex-shrink: 0;
 }
+
+.chip-label {
+  font-weight: 600;
+}
+
+.chip-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  margin-left: 2px;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .chip-count {
+  color: #f8fafc;
 }
 
 /* Bottom Sheet Modal */

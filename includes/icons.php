@@ -155,22 +155,22 @@ if (!function_exists('get_simple_icon')) {
 
 if (!function_exists('render_segmented_donut_ring')) {
     /**
-     * Render SVG Segmented Donut Ring (Apple Activity Ring / Dribbble SaaS Style)
+     * Render SVG Segmented Donut Ring (Expenses / Dribbble SaaS Style)
      *
-     * @param array  $slices       Mảng các phân đoạn: [['count' => 7, 'color' => '#10b981', 'label' => '...']]
+     * @param array  $slices       Mảng các phân đoạn: [['count' => 7, 'color' => '#10b981', 'label' => '...', 'short' => '...']]
      * @param string $centerNumber Con số lớn ở giữa
-     * @param string $centerLabel  Nhãn phụ ở giữa
+     * @param string $centerLabel  Nhãn phụ ở giữa (hiển thị phía trên số)
      * @param string $title        Tiêu đề thẻ
      * @param string $sheetType    Loại modal ('trend' hoặc 'tt22')
      * @return string
      */
     function render_segmented_donut_ring(array $slices, string $centerNumber, string $centerLabel, string $title, string $sheetType): string
     {
-        $r = 44.0;
+        $r = 42.0;
         $cx = 60.0;
         $cy = 60.0;
-        $strokeWidth = 9.0;
-        $circumference = 2 * M_PI * $r; // ~276.46
+        $strokeWidth = 14.0;
+        $circumference = 2 * M_PI * $r; // ~263.89
 
         $total = 0;
         $activeSlices = [];
@@ -197,7 +197,7 @@ if (!function_exists('render_segmented_donut_ring')) {
                 $cx, $cy, $r, $strokeWidth
             );
 
-            $gap = $activeCount > 1 ? 5.5 : 0.0;
+            $gap = $activeCount > 1 ? 6.5 : 0.0;
             $currentOffset = 0.0;
 
             foreach ($activeSlices as $slice) {
@@ -206,7 +206,7 @@ if (!function_exists('render_segmented_donut_ring')) {
                 $color = htmlspecialchars($slice['color'] ?? '#3b82f6', ENT_QUOTES, 'UTF-8');
                 $dashLength = max(2.5, $arc - $gap);
                 $dashSpace = $circumference - $dashLength;
-                $cap = ($arc > 14.0) ? 'round' : 'butt';
+                $cap = ($arc > 12.0) ? 'round' : 'butt';
 
                 $pathsSvg .= sprintf(
                     '<circle cx="%.1f" cy="%.1f" r="%.1f" fill="none" stroke="%s" stroke-width="%.1f" stroke-linecap="%s" stroke-dasharray="%.2f %.2f" stroke-dashoffset="%.2f" transform="rotate(-90 %.1f %.1f)" />',
@@ -222,15 +222,16 @@ if (!function_exists('render_segmented_donut_ring')) {
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
         $safeSheet = htmlspecialchars($sheetType, ENT_QUOTES, 'UTF-8');
 
-        // Render mini legend dots
-        $legendHtml = '<div class="ring-mini-legend">';
+        // Render modern legend chips (Expenses Style - Pill Badges with Color Squares)
+        $legendHtml = '<div class="ring-chip-legend">';
         foreach ($slices as $sl) {
             $slColor = htmlspecialchars($sl['color'] ?? '#3b82f6', ENT_QUOTES, 'UTF-8');
             $slCnt = (int)($sl['count'] ?? 0);
             $slLbl = htmlspecialchars($sl['label'] ?? '', ENT_QUOTES, 'UTF-8');
+            $slShort = htmlspecialchars($sl['short'] ?? $slLbl, ENT_QUOTES, 'UTF-8');
             $legendHtml .= sprintf(
-                '<span class="ring-legend-item" title="%s: %d"><i class="ring-legend-dot" style="background:%s;"></i><b>%d</b></span>',
-                $slLbl, $slCnt, $slColor, $slCnt
+                '<span class="ring-legend-chip" title="%s: %d"><i class="ring-legend-sq" style="background:%s;"></i><span class="chip-label">%s</span><b class="chip-count">%d</b></span>',
+                $slLbl, $slCnt, $slColor, $slShort, $slCnt
             );
         }
         $legendHtml .= '</div>';
@@ -238,7 +239,7 @@ if (!function_exists('render_segmented_donut_ring')) {
         return '<div class="segmented-ring-card" onclick="openRingHelp(\'' . $safeSheet . '\')" role="button" tabindex="0" aria-label="Bấm để xem chi tiết ' . $safeTitle . '">
             <div class="ring-card-header">
                 <span class="ring-card-title">' . $safeTitle . '</span>
-                <span class="ring-info-badge" aria-hidden="true">
+                <span class="ring-info-badge" title="Bấm xem giải thích chi tiết" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <path d="M12 16v-4"></path>
@@ -249,8 +250,8 @@ if (!function_exists('render_segmented_donut_ring')) {
             <div class="ring-svg-wrapper">
                 <svg class="segmented-ring-svg" viewBox="0 0 120 120" width="128" height="128" aria-hidden="true">
                     ' . $pathsSvg . '
-                    <text x="60" y="55" text-anchor="middle" class="ring-center-num">' . $safeNum . '</text>
-                    <text x="60" y="72" text-anchor="middle" class="ring-center-label">' . $safeLabel . '</text>
+                    <text x="60" y="49" text-anchor="middle" class="ring-center-label">' . $safeLabel . '</text>
+                    <text x="60" y="71" text-anchor="middle" class="ring-center-num">' . $safeNum . '</text>
                 </svg>
             </div>
             ' . $legendHtml . '

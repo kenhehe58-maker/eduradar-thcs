@@ -892,10 +892,10 @@ require_once __DIR__ . '/includes/header.php';
 <?php
 // Chuẩn bị dữ liệu cho 2 vòng tròn phân đoạn SVG trên Mobile (Apple Activity Rings / Dribbble SaaS Style)
 $trendSlices = [
-    ['label' => 'Đang tiến bộ rõ rệt', 'count' => (int)$stats['momentum_up'], 'pct' => (float)$stats['up_pct'], 'color' => '#10b981', 'desc' => 'Điểm số có chiều hướng đi lên hoặc thi định kỳ tiến bộ hơn thường xuyên.'],
-    ['label' => 'Duy trì ổn định', 'count' => (int)$stats['momentum_steady'], 'pct' => (float)$stats['steady_pct'], 'color' => '#3b82f6', 'desc' => 'Điểm số giữ nhịp đều đặn, phong độ đồng đều không có bài tụt sâu.'],
-    ['label' => 'Có dấu hiệu sa sút', 'count' => (int)$stats['momentum_down'], 'pct' => (float)$stats['down_pct'], 'color' => '#ef4444', 'desc' => 'Điểm kiểm tra sụt giảm liên tục hoặc thi định kỳ sụt giảm bất thường.'],
-    ['label' => 'Chờ cập nhật điểm', 'count' => (int)$stats['momentum_pending'], 'pct' => (float)$stats['pending_pct'], 'color' => '#94a3b8', 'desc' => 'Chưa có bài kiểm tra nào ghi nhận trong sổ điểm.'],
+    ['label' => 'Đang tiến bộ rõ rệt', 'short' => 'Tiến bộ', 'count' => (int)$stats['momentum_up'], 'pct' => (float)$stats['up_pct'], 'color' => '#10b981', 'desc' => 'Điểm số có chiều hướng đi lên hoặc thi định kỳ tiến bộ hơn thường xuyên.'],
+    ['label' => 'Duy trì ổn định', 'short' => 'Duy trì', 'count' => (int)$stats['momentum_steady'], 'pct' => (float)$stats['steady_pct'], 'color' => '#3b82f6', 'desc' => 'Điểm số giữ nhịp đều đặn, phong độ đồng đều không có bài tụt sâu.'],
+    ['label' => 'Có dấu hiệu sa sút', 'short' => 'Sa sút', 'count' => (int)$stats['momentum_down'], 'pct' => (float)$stats['down_pct'], 'color' => '#ef4444', 'desc' => 'Điểm kiểm tra sụt giảm liên tục hoặc thi định kỳ sụt giảm bất thường.'],
+    ['label' => 'Chờ cập nhật điểm', 'short' => 'Chờ điểm', 'count' => (int)$stats['momentum_pending'], 'pct' => (float)$stats['pending_pct'], 'color' => '#94a3b8', 'desc' => 'Chưa có bài kiểm tra nào ghi nhận trong sổ điểm.'],
 ];
 
 $goodCount = (int)($stats['tier_excellent'] + $stats['tier_good']);
@@ -906,9 +906,9 @@ $lowCount = (int)$stats['tier_low'];
 $lowPctVal = $stats['total'] > 0 ? round(($lowCount / $stats['total']) * 100, 1) : 0;
 
 $tt22Slices = [
-    ['label' => 'Mức Tốt & Khá', 'count' => $goodCount, 'pct' => $goodPctVal, 'color' => '#10b981', 'desc' => 'ĐTB ≥ 6.5, phong độ vững vàng và nắm chắc kiến thức.'],
-    ['label' => 'Mức Đạt (Trung bình)', 'count' => $avgCount, 'pct' => $avgPctVal, 'color' => '#f59e0b', 'desc' => '5.0 ≤ ĐTB < 6.5, đạt chuẩn kiến thức kỹ năng cơ bản.'],
-    ['label' => 'Chưa Đạt (Cần hỗ trợ)', 'count' => $lowCount, 'pct' => $lowPctVal, 'color' => '#ef4444', 'desc' => 'ĐTB < 5.0 hoặc có điểm dưới ngưỡng khống chế cần bồi dưỡng.'],
+    ['label' => 'Mức Tốt & Khá', 'short' => 'Tốt / Khá', 'count' => $goodCount, 'pct' => $goodPctVal, 'color' => '#10b981', 'desc' => 'ĐTB ≥ 6.5, phong độ vững vàng và nắm chắc kiến thức.'],
+    ['label' => 'Mức Đạt (Trung bình)', 'short' => 'Đạt', 'count' => $avgCount, 'pct' => $avgPctVal, 'color' => '#f59e0b', 'desc' => '5.0 ≤ ĐTB < 6.5, đạt chuẩn kiến thức kỹ năng cơ bản.'],
+    ['label' => 'Chưa Đạt (Cần hỗ trợ)', 'short' => 'Chưa đạt', 'count' => $lowCount, 'pct' => $lowPctVal, 'color' => '#ef4444', 'desc' => 'ĐTB < 5.0 hoặc có điểm dưới ngưỡng khống chế cần bồi dưỡng.'],
 ];
 ?>
 
