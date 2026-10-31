@@ -81,7 +81,7 @@ require_once __DIR__ . '/icons.php';
 </footer>
 
 <!-- FLOATING QUICK SUPPORT BUTTON (BOTTOM RIGHT) -->
-<div class="floating-help-widget" id="floatingHelpWidget">
+<div class="floating-help-widget hidden-mobile-fab" id="floatingHelpWidget">
     <button type="button" class="floating-help-btn" onclick="toggleHelpDrawer()" aria-label="Mở bảng trợ giúp và phím tắt" title="Trợ giúp & Phím tắt nhanh (?)">
         <svg class="help-btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10"></circle>

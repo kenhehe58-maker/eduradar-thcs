@@ -501,6 +501,7 @@ $activeNav = 'scan';
 $extraHead = '
     <style>
         .guest-banner {
+            margin-top: 1.5rem;
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
             color: #ffffff;
             padding: 16px 24px;
@@ -608,10 +609,12 @@ $extraHead = '
         .upload-input-group input, .upload-input-group select {
             width: 100%;
             padding: 10px 14px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--input-border, #cbd5e1);
             border-radius: 8px;
             font-family: inherit;
             font-size: 13.5px;
+            background: var(--input-bg, #ffffff);
+            color: var(--input-text, #0f172a);
         }
 
         .features-grid {

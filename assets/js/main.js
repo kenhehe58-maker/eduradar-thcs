@@ -706,8 +706,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const modalSlopeCard = document.getElementById('modalSlopeCard');
         if (modalSlopeCard) {
-            modalSlopeCard.style.background = slopeBg;
-            modalSlopeCard.style.borderColor = slopeBorder;
+            const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDarkNow) {
+                modalSlopeCard.style.background = 'rgba(255, 255, 255, 0.05)';
+                modalSlopeCard.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            } else {
+                modalSlopeCard.style.background = slopeBg;
+                modalSlopeCard.style.borderColor = slopeBorder;
+            }
         }
 
         // 2. Phân tích Tâm Lý & Phong Độ Phòng Thi (chuyển hóa từ Độ lệch chuẩn σ)
@@ -754,8 +760,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const modalStabilityCard = document.getElementById('modalStabilityCard');
         if (modalStabilityCard) {
-            modalStabilityCard.style.background = stabBg;
-            modalStabilityCard.style.borderColor = stabBorder;
+            const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDarkNow) {
+                modalStabilityCard.style.background = 'rgba(255, 255, 255, 0.05)';
+                modalStabilityCard.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            } else {
+                modalStabilityCard.style.background = stabBg;
+                modalStabilityCard.style.borderColor = stabBorder;
+            }
         }
 
         // 3. Dự Báo Điểm Cuối Kỳ Cần Đạt (Thẻ Mục Tiêu chuẩn màu: CAM Đạt, VÀNG Khá, XANH Tốt)
@@ -773,7 +785,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 card.style.padding = '10px 12px';
                 card.style.borderRadius = '10px';
                 card.style.border = `1.5px solid ${t.border}`;
-                card.style.background = t.bg;
+                const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDarkNow) {
+                    card.style.background = 'rgba(255, 255, 255, 0.04)';
+                    card.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                } else {
+                    card.style.background = t.bg;
+                }
                 card.style.textAlign = 'center';
 
                 let scoreText = '-';

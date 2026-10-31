@@ -9,11 +9,14 @@
     /* =========================================================================
        1. CORE BRAND TOKENS (3-TIER SLATE/ZINC PALETTE & HIGH-CONTRAST SYSTEM)
        ========================================================================= */
-    --bg-primary: #0f172a;
-    --bg-card: #1e293b;
-    --border-color: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
+    --bg-primary: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #cbd5e1;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --input-bg: #ffffff;
+    --input-text: #0f172a;
+    --input-border: #cbd5e1;
     --status-red: #ef4444;
     --status-yellow: #f59e0b;
     --status-green: #10b981;
@@ -91,6 +94,9 @@
     
     --bg-primary: #0f172a;
     --bg-card: #1e293b;
+    --input-bg: #1e293b;
+    --input-text: #f8fafc;
+    --input-border: #334155;
     --bg-main: #0f172a;
     --card-bg: #1e293b;
     --surface-hover: #334155;
@@ -6787,6 +6793,29 @@ tr.gb-row-focused td {
     padding: 36px 36px 20px 36px;
     box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.02);
 }
+@media (min-width: 1024px) {
+    .eduradar-pro-footer {
+        margin-left: 230px !important;
+        width: calc(100% - 230px) !important;
+        max-width: calc(100vw - 230px) !important;
+        box-sizing: border-box !important;
+    }
+}
+@media (min-width: 769px) and (max-width: 1023px) {
+    .eduradar-pro-footer {
+        margin-left: 68px !important;
+        width: calc(100% - 68px) !important;
+        box-sizing: border-box !important;
+    }
+}
+@media (max-width: 768px) {
+    .eduradar-pro-footer {
+        margin-left: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    }
+}
 [data-theme="dark"] .eduradar-pro-footer {
     background: #111827;
     border-color: #1f2937;
@@ -6980,8 +7009,12 @@ tr.gb-row-focused td {
 }
 @media (max-width: 1024px) {
     /* Ẩn FAB nổi trên mobile & tablet để tuyệt đối không che thanh Dock Bottom Navigation */
-    .floating-help-widget {
+    #floatingHelpWidget,
+    .floating-help-widget,
+    .hidden-mobile-fab {
         display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
     }
     /* Đảm bảo toàn bộ nội dung cách đáy dock an toàn, không bị che lấp mép dưới */
     .content.full-width,
@@ -7381,7 +7414,7 @@ html, body {
         overflow-x: clip;
     }
 }
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .content,
     .content.full-width,
     main {
@@ -7389,7 +7422,7 @@ html, body {
         overflow-x: hidden !important;
         padding-left: clamp(10px, 3vw, 16px) !important;
         padding-right: clamp(10px, 3vw, 16px) !important;
-        padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px)) !important;
         min-height: 100dvh !important;
     }
 
@@ -7470,4 +7503,49 @@ html, body {
     gap: 4px;
     min-height: 44px;
     padding: 6px 0;
+}
+
+
+/* =========================================================================
+   HOTFIX: STUDENT DETAIL MODAL THEME HARMONIZATION & ZERO CONTRAST CLASH
+   ========================================================================= */
+.competency-modal-card {
+    background: var(--bg-card, #ffffff) !important;
+    color: var(--text-body, #0f172a) !important;
+    border: 1px solid var(--border-color, #e2e8f0) !important;
+}
+[data-theme="dark"] .competency-modal-card {
+    background: #0f172a !important;
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+}
+[data-theme="dark"] .modal-apple-stat-bar,
+[data-theme="dark"] .modal-apple-stat-item,
+[data-theme="dark"] .score-timeline-ribbon,
+[data-theme="dark"] .apple-pedagogical-card,
+[data-theme="dark"] .math-metric-card,
+[data-theme="dark"] .math-target-card,
+[data-theme="dark"] .profile-feedback-box {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+[data-theme="dark"] .card-heading-title,
+[data-theme="dark"] .modal-apple-stat-val {
+    color: #f8fafc !important;
+}
+[data-theme="dark"] .modal-apple-stat-label,
+[data-theme="dark"] .math-metric-desc,
+[data-theme="dark"] #modalMathTargetPrompt,
+[data-theme="dark"] #modalMathSlopeSummary,
+[data-theme="dark"] #modalMathStabilityDesc {
+    color: #cbd5e1 !important;
+}
+.math-metric-desc {
+    font-size: 11.5px;
+    color: var(--text-muted, #475569);
+    margin-top: 4px;
+    line-height: 1.45;
+}
+.card-heading-title {
+    color: var(--text-heading, #0f172a);
 }

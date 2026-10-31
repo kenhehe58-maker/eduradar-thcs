@@ -1839,11 +1839,11 @@ $tt22Slices = [
             </div>
 
             <!-- DỰ BÁO TIẾN ĐỘ & MỤC TIÊU ĐIỂM THI SƯ PHẠM (Chuyển hóa từ OLS & Thông tư 22) -->
-            <div class="apple-pedagogical-card" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0;">
+            <div class="apple-pedagogical-card" style="margin-top: 14px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <?= get_svg_icon('radar', 16, '', 'color: #2563eb;') ?>
-                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Dự Báo Tiến Bộ &amp; Mục Tiêu Điểm Thi</span>
+                        <span class="card-heading-title" style="font-weight: 800; font-size: 13.5px;">Dự Báo Tiến Bộ &amp; Mục Tiêu Điểm Thi</span>
                         <span id="modalMathAcademicBadge" style="font-size: 11px; font-weight: 700; background: #fefce8; color: #b45309; border: 1px solid #fde047; padding: 2px 8px; border-radius: 9999px;">Học kỳ I</span>
                     </div>
                     <span style="font-size: 11px; background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 3px 8px; border-radius: 6px; font-weight: 700; font-family: inherit;">Dự báo Sư phạm TT22</span>
@@ -1851,27 +1851,27 @@ $tt22Slices = [
 
                 <!-- 2 Hộp Phân Tích Thực Tế Dành Riêng Cho Giáo Viên: Xu Hướng & Phong Độ -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px;">
-                    <div class="math-metric-card" id="modalSlopeCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <div class="math-metric-card" id="modalSlopeCard" style="padding: 12px; border-radius: 10px;">
                         <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
                             <?= get_svg_icon('trend-up', 13) ?>
                             <span>Xu Hướng Học Tập</span>
                         </div>
                         <div id="modalMathSlope" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
-                        <div id="modalMathSlopeSummary" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Chuỗi điểm đang phân tích...</div>
+                        <div id="modalMathSlopeSummary" class="math-metric-desc">Chuỗi điểm đang phân tích...</div>
                     </div>
-                    <div class="math-metric-card" id="modalStabilityCard" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+                    <div class="math-metric-card" id="modalStabilityCard" style="padding: 12px; border-radius: 10px;">
                         <div style="font-size: 10.5px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px;">
                             <?= get_svg_icon('activity', 13) ?>
                             <span>Tâm Lý &amp; Độ Ổn Định Phong Độ</span>
                         </div>
                         <div id="modalMathStability" style="font-size: 14px; font-weight: 800; margin-top: 4px;">Đang phân tích...</div>
-                        <div id="modalMathStabilityDesc" style="font-size: 11.5px; color: #334155; margin-top: 4px; line-height: 1.45;">Mức độ phân tán phong độ</div>
+                        <div id="modalMathStabilityDesc" class="math-metric-desc">Mức độ phân tán phong độ</div>
                     </div>
                 </div>
 
                 <!-- Target CK Projection Cards (Không bịa đặt kế hoạch hành động) -->
-                <div class="math-target-card" style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; color: #334155; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
+                <div class="math-target-card" style="padding: 12px; border-radius: 10px;">
+                    <div id="modalMathTargetPrompt" style="font-size: 11.5px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 5px;">
                         <?= get_svg_icon('radar', 13) ?>
                         <span>Điểm Cuối kỳ (CK) cần đạt để đạt mục tiêu:</span>
                     </div>
@@ -1882,11 +1882,11 @@ $tt22Slices = [
             </div>
 
             <!-- KHU VỰC PHÂN TÍCH PHỔ ĐIỂM & THẾ MẠNH SỞ TRƯỜNG NĂNG LỰC TỪNG MÔN -->
-            <div class="apple-pedagogical-card" id="modalSubjectProfileCard" style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0; display: none;">
+            <div class="apple-pedagogical-card" id="modalSubjectProfileCard" style="margin-top: 14px; display: none;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <?= get_svg_icon('award', 16, '', 'color: #4f46e5;') ?>
-                        <span style="font-weight: 800; font-size: 13.5px; color: #1e293b;">Phổ điểm môn học &amp; Năng lực nổi bật</span>
+                        <span class="card-heading-title" style="font-weight: 800; font-size: 13.5px;">Phổ điểm môn học &amp; Năng lực nổi bật</span>
                     </div>
                     <span id="modalAptitudeBadge" style="font-size: 11px; font-weight: 800; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 10px; border-radius: 9999px;">
                         Thiên hướng năng lực
@@ -1951,7 +1951,7 @@ $tt22Slices = [
             </div>
 
             <!-- Sổ Can Thiệp Sư Phạm & Lịch Sử Sửa Điểm (Audit Trail) -->
-            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
+            <div class="apple-pedagogical-card" style="border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <div style="display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 800; color: #1e293b;">
                         <?= get_svg_icon('clock', 14, '', 'color: #4f46e5;') ?>
