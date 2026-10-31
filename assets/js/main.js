@@ -1415,7 +1415,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // -------------------------------------------------------------------------
-    // 9. CLIENT-SIDE BILINGUAL ENGINE (VI | EN) & LOCALSTORAGE PERSISTENCE
+// 9. CLIENT-SIDE BILINGUAL ENGINE (VI | EN) & LOCALSTORAGE PERSISTENCE
     // -------------------------------------------------------------------------
     const i18nDict = {
         vi: {
@@ -1440,7 +1440,84 @@ document.addEventListener('DOMContentLoaded', function () {
             'role_admin': 'Quản Trị Viên',
             'role_teacher': 'Giáo Viên Bộ Môn',
             'theme_light': 'Giao diện sáng',
-            'theme_dark': 'Giao diện tối'
+            'theme_dark': 'Giao diện tối',
+
+            // Welcome Page (home.*)
+            'home.semester_phase': 'Học kỳ I • Niên khóa 2026–2027',
+            'home.role_label': 'Giáo Viên Bộ Môn',
+            'home.hero_title': 'Theo dõi tiến trình & Cảnh báo sớm học lực THCS',
+            'home.hero_desc': 'Hệ thống quan sát dữ liệu học tập tự động hóa theo chuẩn Thông tư 22/2021/TT-BGDĐT. Nhận diện sớm nguy cơ sụt giảm phong độ qua quỹ đạo điểm số OLS và ma trận sổ điểm điện tử.',
+            'home.cta_radar': 'Xem Bảng Cảnh Báo Sớm',
+            'home.cta_gradebook': 'Sổ Điểm Bộ Môn',
+            'home.cta_admin': 'Quản Trị Nhà Trường',
+
+            'home.kpi_total_students': 'Sĩ số toàn trường',
+            'home.badge_classes': 'Lớp',
+            'home.kpi_total_sub': 'Học sinh đăng ký trên hệ thống',
+            'home.kpi_red_rate': 'Tỷ lệ nguy cấp',
+            'home.badge_students': 'HS',
+            'home.kpi_red_sub': 'ĐTB < 3.5 hoặc thi cuối kỳ < 3.0',
+            'home.kpi_yellow_rate': 'Cần chú ý',
+            'home.kpi_yellow_sub': 'Điểm số sa sút hoặc ĐTB < 5.0',
+            'home.kpi_school_avg': 'Điểm TB trường',
+            'home.badge_good': 'Khá Tốt',
+            'home.kpi_school_avg_sub': 'Thang điểm 10 Thông tư 22',
+
+            'home.launchpad_title': 'Phân hệ làm việc',
+            'home.launchpad_desc': 'Truy cập nhanh các chức năng nghiệp vụ của hệ thống quan sát học tập EduRadar.',
+            'home.launchpad_tag': 'Hệ thống mở 24/7',
+            'home.lp1_badge': 'Ra-đa',
+            'home.lp1_title': 'Cảnh báo sớm & Xu hướng OLS',
+            'home.lp1_desc': 'Quan sát quỹ đạo tiến bộ học tập qua các bài kiểm tra, phân tầng cảnh báo Nguy cấp, Cần chú ý, Ổn định và đề xuất can thiệp sư phạm tức thì.',
+            'home.lp1_action': 'Mở bảng cảnh báo sớm',
+            'home.lp2_badge': 'VnEdu',
+            'home.lp2_title': 'Sổ điểm điện tử bộ môn',
+            'home.lp2_desc': 'Ma trận điểm 2D chuẩn VnEdu với ĐDGtx (1–4), Giữa kỳ (HS 2), Cuối kỳ (HS 3). Tự động tính ĐTBmhk, hỗ trợ phím mũi tên và xuất nhập Excel OpenXML.',
+            'home.lp2_action': 'Vào sổ điểm bộ môn',
+            'home.lp3_badge': 'Tiện ích',
+            'home.lp3_title': 'Quét nhanh bảng điểm',
+            'home.lp3_desc': 'Chế độ trải nghiệm không cần đăng nhập: kéo thả tệp Excel, CSV hoặc ảnh chụp sổ điểm để nhận phân tích Ra-đa và xuất phiếu học tập tức thì.',
+            'home.lp3_action': 'Dùng thử quét nhanh',
+            'home.lp4_badge': 'Quản trị',
+            'home.lp4_title': 'Quản trị nhà trường',
+            'home.lp4_desc': 'Quản lý ma trận lớp học Khối 6–9, phân công chuyên môn hàng loạt, nạp danh sách học sinh toàn trường và theo dõi nhật ký kiểm toán hệ thống.',
+            'home.lp4_action': 'Mở cổng quản trị',
+
+            'home.stepper_title': 'Quy trình theo dõi học lực THCS',
+            'home.stepper_desc': 'Lộ trình chuẩn hóa từ nhập liệu điểm số đến can thiệp sư phạm.',
+            'home.stepper_badge': 'Quy trình TT22',
+            'home.step1_tag': 'CHẶNG 01',
+            'home.step1_badge': 'Nhập liệu',
+            'home.step1_title': 'Ghi nhận điểm định kỳ',
+            'home.step1_desc': 'Vào sổ điểm bộ môn, nhập điểm kiểm tra thường xuyên (1–4), Giữa kỳ và Cuối kỳ trực tiếp hoặc qua file mẫu Excel VnEdu.',
+            'home.step1_link': 'Mở sổ điểm điện tử',
+            'home.step2_tag': 'CHẶNG 02',
+            'home.step2_badge': 'Giám sát',
+            'home.step2_title': 'Phân tích quỹ đạo OLS',
+            'home.step2_desc': 'Hệ thống tự động tính hệ số góc OLS và phát hiện xu hướng: Tiến bộ rõ rệt, Duy trì ổn định, hoặc Cần chú ý sa sút phong độ.',
+            'home.step2_link': 'Xem bảng cảnh báo',
+            'home.step3_tag': 'CHẶNG 03',
+            'home.step3_badge': 'Can thiệp',
+            'home.step3_title': 'Kế hoạch hỗ trợ sư phạm',
+            'home.step3_desc': 'Khoanh vùng học sinh nguy cấp và cần lưu ý, lưu nhận xét sư phạm trực tiếp và lập kế hoạch phụ đạo kịp thời trước kỳ thi.',
+            'home.step3_link': 'Kế hoạch bồi dưỡng',
+
+            'home.search_title': 'Tra cứu nhanh hồ sơ học sinh',
+            'home.search_desc': 'Nhập mã học sinh định danh hoặc họ tên để điều hướng thẳng đến bảng phân tích học lực.',
+            'home.search_btn': 'Tìm kiếm',
+            'home.search_placeholder': 'Ví dụ: 2404815683 hoặc Nguyễn Văn...',
+
+            'home.tt22_title': 'Khung tiêu chuẩn đánh giá Thông tư 22/2021/TT-BGDĐT',
+            'home.tt22_desc': 'Quy chuẩn xếp loại kết quả học tập THCS kết hợp giữa nhận xét và điểm số đánh giá.',
+            'home.tt22_grades': 'Áp dụng Khối 6, 7, 8, 9',
+            'home.tier_tot': 'Mức Tốt',
+            'home.tier_tot_body': '&bull; ĐTBMhk &ge; 8.0<br>&bull; Không có môn nào dưới 6.5<br>&bull; Các môn nhận xét: Đạt',
+            'home.tier_kha': 'Mức Khá',
+            'home.tier_kha_body': '&bull; ĐTBMhk &ge; 6.5 (chưa đạt Tốt)<br>&bull; Không có môn nào dưới 5.0<br>&bull; Các môn nhận xét: Đạt',
+            'home.tier_dat': 'Mức Đạt',
+            'home.tier_dat_body': '&bull; ĐTBMhk &ge; 5.0 (chưa đạt Khá)<br>&bull; Không có môn nào dưới 3.5<br>&bull; Tối đa 1 môn nhận xét Chưa Đạt',
+            'home.tier_chuadat': 'Mức Chưa đạt',
+            'home.tier_chuadat_body': '&bull; Các trường hợp còn lại<br>&bull; ĐTBMhk &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0: Ra-đa khoanh vùng nguy cấp'
         },
         en: {
             'nav_home': 'Home',
@@ -1464,7 +1541,84 @@ document.addEventListener('DOMContentLoaded', function () {
             'role_admin': 'Administrator',
             'role_teacher': 'Subject Teacher',
             'theme_light': 'Light Theme',
-            'theme_dark': 'Dark Theme'
+            'theme_dark': 'Dark Theme',
+
+            // Welcome Page (home.*)
+            'home.semester_phase': 'Semester 1 • Academic Year 2026–2027',
+            'home.role_label': 'Subject Teacher',
+            'home.hero_title': 'Secondary School Academic Progress & Early Warning System',
+            'home.hero_desc': 'Automated academic performance monitoring aligned with Circular 22/2021/TT-BGDĐT. Early detection of performance drop risks via OLS trajectories and digital gradebooks.',
+            'home.cta_radar': 'View Early Warning Radar',
+            'home.cta_gradebook': 'Subject Gradebook',
+            'home.cta_admin': 'School Administration',
+
+            'home.kpi_total_students': 'Total Students',
+            'home.badge_classes': 'Classes',
+            'home.kpi_total_sub': 'Students registered on system',
+            'home.kpi_red_rate': 'Critical Risk Rate',
+            'home.badge_students': 'Students',
+            'home.kpi_red_sub': 'Term GPA < 3.5 or Final exam < 3.0',
+            'home.kpi_yellow_rate': 'Needs Attention',
+            'home.kpi_yellow_sub': 'Declining score trend or GPA < 5.0',
+            'home.kpi_school_avg': 'School Average GPA',
+            'home.badge_good': 'Fair / Good',
+            'home.kpi_school_avg_sub': 'Scale of 10, Circular 22',
+
+            'home.launchpad_title': 'System Modules',
+            'home.launchpad_desc': 'Quick access to core academic monitoring workflows in EduRadar.',
+            'home.launchpad_tag': 'System Active 24/7',
+            'home.lp1_badge': 'Radar',
+            'home.lp1_title': 'Early Warning & OLS Trend',
+            'home.lp1_desc': 'Track learning progress trajectory across evaluations, tier risk into Critical, Attention, and Stable, and recommend pedagogical interventions.',
+            'home.lp1_action': 'Open Early Warning',
+            'home.lp2_badge': 'VnEdu',
+            'home.lp2_title': 'Subject Digital Gradebook',
+            'home.lp2_desc': '2D gradebook matrix compliant with VnEdu standard: Continuous (1–4), Midterm (coeff 2), Final (coeff 3). Auto-calculates GPA, supports arrow key navigation and Excel OpenXML import/export.',
+            'home.lp2_action': 'Open Digital Gradebook',
+            'home.lp3_badge': 'Utility',
+            'home.lp3_title': 'Quick Gradebook Scanner',
+            'home.lp3_desc': 'Guest experience mode without login: drag-and-drop Excel, CSV or gradebook photos to get instant Radar diagnostics and study reports.',
+            'home.lp3_action': 'Try Quick Scanner',
+            'home.lp4_badge': 'Admin',
+            'home.lp4_title': 'School Administration',
+            'home.lp4_desc': 'Manage Grades 6–9 class matrix, bulk teaching assignments, schoolwide student rosters, and system audit logs.',
+            'home.lp4_action': 'Open Admin Portal',
+
+            'home.stepper_title': 'Secondary School Academic Tracking Roadmap',
+            'home.stepper_desc': 'Standardized roadmap from grade entry to pedagogical intervention.',
+            'home.stepper_badge': 'Circular 22 Protocol',
+            'home.step1_tag': 'STAGE 01',
+            'home.step1_badge': 'Input',
+            'home.step1_title': 'Record Periodic Scores',
+            'home.step1_desc': 'Access subject gradebook, enter continuous evaluations (1–4), midterm and final exam scores directly or via VnEdu Excel template.',
+            'home.step1_link': 'Open Digital Gradebook',
+            'home.step2_tag': 'STAGE 02',
+            'home.step2_badge': 'Monitor',
+            'home.step2_title': 'Analyze OLS Trajectory',
+            'home.step2_desc': 'System automatically calculates OLS slope and detects trends: Clear Progress, Stable Maintenance, or Declining Risk.',
+            'home.step2_link': 'View Early Warning',
+            'home.step3_tag': 'STAGE 03',
+            'home.step3_badge': 'Intervene',
+            'home.step3_title': 'Pedagogical Support Plan',
+            'home.step3_desc': 'Identify critical and at-risk students, save pedagogical observations directly, and organize timely tutoring plans before exams.',
+            'home.step3_link': 'Tutoring Plan',
+
+            'home.search_title': 'Quick Student Record Search',
+            'home.search_desc': 'Enter student ID or full name to navigate directly to academic diagnostic profile.',
+            'home.search_btn': 'Search',
+            'home.search_placeholder': 'e.g. 2404815683 or John Doe...',
+
+            'home.tt22_title': 'Circular 22/2021/TT-BGDĐT Assessment Standards',
+            'home.tt22_desc': 'Secondary school academic classification standard combining qualitative remarks and evaluated scores.',
+            'home.tt22_grades': 'Applies to Grades 6, 7, 8, 9',
+            'home.tier_tot': 'Good Tier',
+            'home.tier_tot_body': '&bull; Term GPA &ge; 8.0<br>&bull; No subject below 6.5<br>&bull; Qualitative subjects: Pass',
+            'home.tier_kha': 'Fair Tier',
+            'home.tier_kha_body': '&bull; Term GPA &ge; 6.5 (not Good)<br>&bull; No subject below 5.0<br>&bull; Qualitative subjects: Pass',
+            'home.tier_dat': 'Pass Tier',
+            'home.tier_dat_body': '&bull; Term GPA &ge; 5.0 (not Fair)<br>&bull; No subject below 3.5<br>&bull; Max 1 qualitative subject Below Pass',
+            'home.tier_chuadat': 'Below Pass / Fail',
+            'home.tier_chuadat_body': '&bull; All other cases<br>&bull; Term GPA &lt; 3.5 or Final exam &lt; 3.0: Radar flags as critical risk'
         }
     };
 
@@ -1499,8 +1653,29 @@ document.addEventListener('DOMContentLoaded', function () {
         'Ổn định': 'Stable',
         'Quản Trị Viên': 'Administrator',
         'Giáo Viên Bộ Môn': 'Subject Teacher',
+        'Khách Dùng Thử': 'Guest Demo',
+        'Khách Trải Nghiệm': 'Guest User',
         'Giao diện sáng': 'Light Theme',
-        'Giao diện tối': 'Dark Theme'
+        'Giao diện tối': 'Dark Theme',
+        'Thông tư 22': 'Circular 22',
+        'SPEC Thông tư 22': 'SPEC Circular 22',
+        'Xu Hướng Tiến Bộ': 'Learning Trajectory',
+        'Xu hướng tiến bộ': 'Learning Trajectory',
+        'Mức Độ Tích Lũy': 'Attainment Level',
+        'Mức độ tích lũy': 'Attainment Level',
+        'Tiến Bộ': 'Progress',
+        'TIẾN BỘ': 'PROGRESS',
+        'Học Sinh': 'Students',
+        'HỌC SINH': 'STUDENTS',
+        'Đang tiến bộ': 'Accelerating',
+        'Duy trì ổn định': 'Steady',
+        'Sa sút phong độ': 'Declining',
+        'Chờ dữ liệu điểm': 'Pending Data',
+        'Tất cả lớp': 'All Classes',
+        'Tất cả môn': 'All Subjects',
+        'Xuất Excel': 'Export Excel',
+        'In Báo Cáo': 'Print Report',
+        'Bộ Lọc Nhanh': 'Quick Filters'
     };
 
     function applyLanguage(lang) {
@@ -1523,30 +1698,105 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (i18nElements && i18nElements.length > 0) {
                     i18nElements.forEach(function(el) {
                         const key = el.getAttribute('data-i18n');
-                        if (key && i18nDict[lang] && i18nDict[lang][key]) {
-                            el.textContent = i18nDict[lang][key];
+                        if (!key) return;
+                        if (!el.getAttribute('data-i18n-orig')) {
+                            el.setAttribute('data-i18n-orig', el.innerHTML.trim());
+                        }
+                        if (lang === 'en' && i18nDict.en && i18nDict.en[key]) {
+                            const val = i18nDict.en[key];
+                            if (val.indexOf('<') !== -1) {
+                                el.innerHTML = val;
+                            } else {
+                                const childSpan = el.querySelector('span:not(.chip-pulse):not(.hero-pulse-dot):not(.ring-info-badge)');
+                                if (childSpan) {
+                                    childSpan.textContent = val;
+                                } else {
+                                    el.textContent = val;
+                                }
+                            }
+                        } else if (lang === 'vi') {
+                            const orig = el.getAttribute('data-i18n-orig');
+                            if (orig) {
+                                el.innerHTML = orig;
+                            } else if (i18nDict.vi && i18nDict.vi[key]) {
+                                el.textContent = i18nDict.vi[key];
+                            }
                         }
                     });
                 }
             } catch (e) {}
         }
 
-        // 2. Navigation items (.u040-it-label)
+        // 2. Elements with data-i18n-placeholder attribute
         if (typeof document.querySelectorAll === 'function') {
             try {
-                const navLabels = document.querySelectorAll('.u040-it-label, .u040-dock-tip, .u040-logout-text');
-                if (navLabels && navLabels.length > 0) {
-                    navLabels.forEach(function(el) {
+                const i18nPlaceholders = document.querySelectorAll('[data-i18n-placeholder]');
+                if (i18nPlaceholders && i18nPlaceholders.length > 0) {
+                    i18nPlaceholders.forEach(function(input) {
+                        const key = input.getAttribute('data-i18n-placeholder');
+                        if (!key) return;
+                        if (!input.getAttribute('data-i18n-ph-orig')) {
+                            input.setAttribute('data-i18n-ph-orig', input.placeholder || '');
+                        }
+                        if (lang === 'en' && i18nDict.en && i18nDict.en[key]) {
+                            input.placeholder = i18nDict.en[key];
+                        } else if (lang === 'vi') {
+                            const orig = input.getAttribute('data-i18n-ph-orig');
+                            input.placeholder = orig || (i18nDict.vi && i18nDict.vi[key]) || '';
+                        }
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // 3. User personalized greeting in top bar (.edexa-welcome-text)
+        if (typeof document.querySelector === 'function') {
+            try {
+                const welcomeEl = document.querySelector('.edexa-welcome-text');
+                if (welcomeEl) {
+                    if (!welcomeEl.getAttribute('data-i18n-orig')) {
+                        welcomeEl.setAttribute('data-i18n-orig', welcomeEl.textContent.trim());
+                    }
+                    const orig = welcomeEl.getAttribute('data-i18n-orig');
+                    if (lang === 'en') {
+                        if (orig.trim() === 'Chào' || orig.trim() === 'Chào Thầy/Cô') {
+                            welcomeEl.textContent = 'Welcome, Teacher';
+                        } else {
+                            welcomeEl.textContent = orig.replace(/^Chào\s+/i, 'Welcome, ');
+                        }
+                    } else {
+                        welcomeEl.textContent = orig;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // 4. Theme Label (#themeLabel)
+        const themeLabel = document.getElementById('themeLabel');
+        if (themeLabel) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (lang === 'en') {
+                themeLabel.textContent = isDark ? 'Dark Theme' : 'Light Theme';
+            } else {
+                themeLabel.textContent = isDark ? 'Giao diện tối' : 'Giao diện sáng';
+            }
+        }
+
+        // 5. Navigation labels, Role Pill, Ring titles & Common phrases
+        if (typeof document.querySelectorAll === 'function') {
+            try {
+                const translatables = document.querySelectorAll('.ring-card-title, .ring-center-label, .chip-mobile-hide span, .u040-it-label, .u040-dock-tip, .u040-logout-text, .edexa-role-pill');
+                if (translatables && translatables.length > 0) {
+                    translatables.forEach(function(el) {
+                        if (!el.getAttribute('data-i18n-orig')) {
+                            el.setAttribute('data-i18n-orig', el.textContent.trim());
+                        }
+                        const orig = el.getAttribute('data-i18n-orig');
                         if (lang === 'en') {
-                            if (!el.getAttribute('data-i18n-orig')) {
-                                el.setAttribute('data-i18n-orig', el.textContent.trim());
-                            }
-                            const orig = el.getAttribute('data-i18n-orig');
                             if (phraseMapEn[orig]) {
                                 el.textContent = phraseMapEn[orig];
                             }
                         } else {
-                            const orig = el.getAttribute('data-i18n-orig');
                             if (orig) {
                                 el.textContent = orig;
                             }
@@ -1556,30 +1806,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (e) {}
         }
 
-        // 3. User Role pill in header (.edexa-role-pill)
-        if (typeof document.querySelector === 'function') {
-            try {
-                const rolePill = document.querySelector('.edexa-role-pill');
-                if (rolePill) {
-                    if (lang === 'en') {
-                        if (!rolePill.getAttribute('data-i18n-orig')) {
-                            rolePill.setAttribute('data-i18n-orig', rolePill.textContent.trim());
-                        }
-                        const orig = rolePill.getAttribute('data-i18n-orig');
-                        if (phraseMapEn[orig]) {
-                            rolePill.textContent = phraseMapEn[orig];
-                        }
-                    } else {
-                        const orig = rolePill.getAttribute('data-i18n-orig');
-                        if (orig) {
-                            rolePill.textContent = orig;
-                        }
-                    }
-                }
-            } catch (e) {}
-        }
-
-        // 4. Save button (#btnSaveScores)
+        // 6. Save button (#btnSaveScores)
         const btnSave = document.getElementById('btnSaveScores');
         if (btnSave) {
             if (lang === 'en') {
@@ -1595,7 +1822,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        // 5. Search placeholder (#search)
+        // 7. Search placeholder (#search)
         const searchInput = document.getElementById('search');
         if (searchInput) {
             if (lang === 'en') {

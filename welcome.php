@@ -278,6 +278,7 @@ require_once __DIR__ . '/includes/header.php';
 .bento-kpi-badge {
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     padding: 2px 7px;
     border-radius: 4px;
     font-family: var(--font-mono);
@@ -562,9 +563,80 @@ require_once __DIR__ . '/includes/header.php';
     color: var(--cobalt-ink-2);
     margin: 0;
 }
+/* 10. RESPONSIVE OPTIMIZATIONS (RWD - MOBILE FIRST) */
+.welcome-shell {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+@media (max-width: 768px) {
+    .hero-telemetry-dock {
+        padding: 22px 18px 20px 18px;
+    }
+    .hero-heading {
+        font-size: clamp(22px, 5.5vw, 30px);
+        margin-bottom: 12px;
+    }
+    .hero-summary {
+        font-size: 13.5px;
+        line-height: 1.55;
+        margin-bottom: 18px;
+    }
+    .hero-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .hero-actions-bar .cobalt-key {
+        width: 100%;
+        justify-content: center;
+    }
+    .bento-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .launchpad-matrix {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+    .stepper-dock, .quick-search-dock, .handbook-dock {
+        padding: 18px 16px;
+        margin-bottom: 20px;
+    }
+    .quick-search-dock {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .quick-search-desc-wrap, .quick-search-form-wrap {
+        max-width: 100%;
+        width: 100%;
+    }
+    .quick-search-input-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+    .quick-search-input-group .cobalt-key {
+        width: 100%;
+        justify-content: center;
+    }
+    .handbook-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+@media (max-width: 480px) {
+    .bento-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 
-<div class="content">
+<div class="welcome-shell">
 
     <!-- 1. HERO OBSERVABILITY DOCK -->
     <section class="hero-telemetry-dock cobalt-cut" aria-labelledby="welcomeHeroTitle">
@@ -611,7 +683,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="bento-kpi-item cobalt-cut">
             <div class="bento-kpi-head">
                 <span class="bento-kpi-title" data-i18n="home.kpi_total_students">Sĩ số toàn trường</span>
-                <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);"><?= $totalClasses ?> Lớp</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);"><span class="kpi-count"><?= $totalClasses ?></span> <span data-i18n="home.badge_classes">Lớp</span></span>
             </div>
             <div class="bento-kpi-value"><?= number_format($totalStudents) ?></div>
             <div class="bento-kpi-sub" data-i18n="home.kpi_total_sub">Học sinh đăng ký trên hệ thống</div>
@@ -621,7 +693,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid var(--cobalt-ruby);">
             <div class="bento-kpi-head">
                 <span class="bento-kpi-title" data-i18n="home.kpi_red_rate" style="color: var(--cobalt-ruby);">Tỷ lệ nguy cấp</span>
-                <span class="bento-kpi-badge" style="background: var(--cobalt-ruby-wash); color: var(--cobalt-ruby);"><?= (int)($scoreStats['red_count'] ?? 0) ?> HS</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-ruby-wash); color: var(--cobalt-ruby);"><span class="kpi-count"><?= (int)($scoreStats['red_count'] ?? 0) ?></span> <span data-i18n="home.badge_students">HS</span></span>
             </div>
             <div class="bento-kpi-value" style="color: var(--cobalt-ruby);"><?= $pctRed ?>%</div>
             <div class="bento-kpi-sub" data-i18n="home.kpi_red_sub">ĐTB &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0</div>
@@ -631,7 +703,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid var(--cobalt-amber);">
             <div class="bento-kpi-head">
                 <span class="bento-kpi-title" data-i18n="home.kpi_yellow_rate" style="color: var(--cobalt-amber);">Cần chú ý</span>
-                <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);"><?= (int)($scoreStats['yellow_count'] ?? 0) ?> HS</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);"><span class="kpi-count"><?= (int)($scoreStats['yellow_count'] ?? 0) ?></span> <span data-i18n="home.badge_students">HS</span></span>
             </div>
             <div class="bento-kpi-value" style="color: var(--cobalt-amber);"><?= $pctYellow ?>%</div>
             <div class="bento-kpi-sub" data-i18n="home.kpi_yellow_sub">Điểm số sa sút hoặc ĐTB &lt; 5.0</div>
@@ -641,7 +713,7 @@ require_once __DIR__ . '/includes/header.php';
         <div class="bento-kpi-item cobalt-cut">
             <div class="bento-kpi-head">
                 <span class="bento-kpi-title" data-i18n="home.kpi_school_avg">Điểm TB trường</span>
-                <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);"><?= $pctGood ?>% Khá Tốt</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);"><span class="kpi-count"><?= $pctGood ?>%</span> <span data-i18n="home.badge_good">Khá Tốt</span></span>
             </div>
             <div class="bento-kpi-value"><?= $schoolAvg ?></div>
             <div class="bento-kpi-sub" data-i18n="home.kpi_school_avg_sub">Thang điểm 10 Thông tư 22</div>
@@ -769,7 +841,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div>
                     <div class="step-stage-meta">
                         <span class="step-stage-tag" data-i18n="home.step1_tag">CHẶNG 01</span>
-                        <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);">Nhập liệu</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);" data-i18n="home.step1_badge">Nhập liệu</span>
                     </div>
                     <h4 class="step-stage-title" data-i18n="home.step1_title">Ghi nhận điểm định kỳ</h4>
                     <p class="step-stage-text" data-i18n="home.step1_desc">
@@ -787,7 +859,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div>
                     <div class="step-stage-meta">
                         <span class="step-stage-tag" data-i18n="home.step2_tag">CHẶNG 02</span>
-                        <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);">Giám sát</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);" data-i18n="home.step2_badge">Giám sát</span>
                     </div>
                     <h4 class="step-stage-title" data-i18n="home.step2_title">Phân tích quỹ đạo OLS</h4>
                     <p class="step-stage-text" data-i18n="home.step2_desc">
@@ -805,7 +877,7 @@ require_once __DIR__ . '/includes/header.php';
                 <div>
                     <div class="step-stage-meta">
                         <span class="step-stage-tag" data-i18n="home.step3_tag">CHẶNG 03</span>
-                        <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);">Can thiệp</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);" data-i18n="home.step3_badge">Can thiệp</span>
                     </div>
                     <h4 class="step-stage-title" data-i18n="home.step3_title">Kế hoạch hỗ trợ sư phạm</h4>
                     <p class="step-stage-text" data-i18n="home.step3_desc">

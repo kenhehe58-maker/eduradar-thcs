@@ -15,7 +15,7 @@ require_once __DIR__ . '/icons.php';
 $headerCalendar = get_academic_calendar_phase();
 $currentUserRole = $_SESSION['role'] ?? 'teacher';
 $currentUsername = $_SESSION['username'] ?? '';
-$currentUserFullName = $_SESSION['full_name'] ?? $currentUsername;
+$currentUserFullName = !empty($_SESSION['full_name']) ? $_SESSION['full_name'] : (!empty($currentUsername) ? $currentUsername : 'Thầy/Cô');
 $activeNav = $activeNav ?? 'dashboard'; // 'welcome' | 'dashboard' | 'gradebook' | 'admin' | 'slides'
 $pageTitle = $pageTitle ?? 'EduRadar THCS';
 $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm học lực THCS theo chuẩn Thông tư 22/2021/TT-BGDĐT. Giám sát nguy cơ, phân tích biến thiên điểm số và sổ điểm điện tử bộ môn.';
