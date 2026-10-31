@@ -44,6 +44,19 @@
 
 ---
 
+
+### 1.7. Khoa Học Trải Nghiệm Người Dùng (UX Science) & Kiến Trúc SASS Chuyên Nghiệp
+* **lexpate/awesome-design-systems** (D:\vibe-coding-tools\knowledge-repos\awesome-design-systems): **[26.3k ⭐]**
+  - Tổng hợp các Design System hàng đầu thế giới (Google Material 3, Apple Human Interface, Atlassian, Shopify Polaris).
+  - Chuẩn mực thiết kế Component Tokens, Accessibility (A11y), cấu trúc Spacing scale (4px, 8px, 12px, 16px, 24px) và Elevation bóng đổ.
+* **Famolus/awesome-sass** (D:\vibe-coding-tools\knowledge-repos\awesome-sass): **[1.9k ⭐]**
+  - Chuẩn mực kiến trúc SASS 7-1 (Abstracts, Base, Components, Layout, Pages, Themes, Vendors).
+  - Tối ưu hóa Mixins, biến màu sắc, nesting không vượt quá 3 cấp để tránh phình dung lượng CSS.
+* **Cẩm nang Khoa Học Người Dùng (user_experience_and_sass_guide.md)**:
+  - **Định luật Fitts**: Kích thước nút tối thiểu 44px, đặt ở vị trí thuận mắt (Góc phải dưới, đuôi form).
+  - **Định luật Hick**: Mỗi màn hình chỉ có 1 nút Primary nổi bật nhất; áp dụng Progressive Disclosure (tiết lộ lũy tiến) để tránh làm người dùng ngợp.
+  - **Định luật Jakob**: Tôn trọng thói quen cũ của thầy cô (phím mũi tên, Enter nhảy ô như VnEdu/Excel).
+
 ## 2. QUY CHUẨN KIẾN TRÚC GIAO DIỆN & NỘI DUNG (INTERDATA STANDARD)
 * **Hạ tầng (Infrastructure)**: Apache/XAMPP, PHP 8.0+, MariaDB, Domain tĩnh Ngrok HTTPS.
 * **Kiến trúc nội dung (Information Architecture)**: Phân cấp hình tháp (Trang chủ > Phân hệ > Sổ điểm chi tiết theo Lớp/Môn).
