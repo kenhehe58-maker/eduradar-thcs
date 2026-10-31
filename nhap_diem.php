@@ -1,4 +1,12 @@
 <?php
+/**
+ * =============================================================================
+ * Hệ Thống Quản Lý Điểm & Cảnh Báo Sớm THCS (EduRadar)
+ * Module: Sổ Điểm Điện Tử Bộ Môn 2D Matrix (Chuẩn VnEdu & Thông tư 22)
+ * Thiết kế: Ground-Up Redesign — Ngôn ngữ Hallmark v2 Cobalt Technical Telemetry
+ * =============================================================================
+ */
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -9,7 +17,7 @@ require_once __DIR__ . '/includes/algorithms.php';
 
 require_login();
 
-// Nhận diện tiến độ năm học chuẩn VnEdu: thời điểm Giữa kì 1 (Cuối kỳ 1 khóa theo lịch)
+// 1. Nhận diện tiến độ năm học chuẩn VnEdu: thời điểm Giữa kì 1 (Cuối kỳ 1 khóa theo lịch)
 $academicCalendar = get_academic_calendar_phase();
 $isHk1Mid = ($academicCalendar['semester'] === 'HK1' && $academicCalendar['phase_key'] !== 'hk1_finals');
 
@@ -18,7 +26,7 @@ $realUserId = (int)$_SESSION['user_id'];
 $realUserRole = $_SESSION['role'] ?? 'teacher';
 $currentTeacherName = $_SESSION['full_name'] ?? $_SESSION['username'];
 
-// KHỬ GIẢ MẠO: Chỉ tài khoản Admin mới được sử dụng tham số ?teacher_id
+// 2. KHỬ GIẢ MẠO: Chỉ tài khoản Admin mới được sử dụng tham số ?teacher_id
 $actingTeacherId = 0;
 if ($realUserRole === 'admin') {
     if (isset($_GET['teacher_id']) && (int)$_GET['teacher_id'] > 0) {
@@ -43,7 +51,7 @@ if ($realUserRole === 'admin') {
 $msg = '';
 $errorMsg = '';
 
-// Lấy danh sách lớp và môn được phân công
+// 3. Lấy danh sách lớp và môn được phân công
 $targetTeacherId = ($realUserRole === 'admin' && $actingTeacherId > 0) ? $actingTeacherId : $realUserId;
 
 if ($realUserRole === 'admin' && $actingTeacherId === 0) {
@@ -96,7 +104,7 @@ if ($realUserRole === 'admin' && $actingTeacherId === 0) {
                 'subjects' => []
             ];
         }
-        if (!in_array($sub, $assignedClasses[$cid]['subjects'])) {
+        if (!in_array($sub, $assignedClasses[$cid]['subjects'], true)) {
             $assignedClasses[$cid]['subjects'][] = $sub;
         }
 
@@ -112,7 +120,7 @@ if ($realUserRole === 'admin' && $actingTeacherId === 0) {
     }
 }
 
-// 1. Xác định môn học được chọn (Cô lập ngữ cảnh theo từng tài khoản):
+// 4. Xác định môn học được chọn (Cô lập ngữ cảnh theo từng tài khoản):
 $userNavCtx = get_user_nav_context($targetTeacherId);
 $selectedSubject = '';
 if (isset($_GET['subject']) && trim((string)$_GET['subject']) !== '') {
@@ -133,18 +141,16 @@ if (!empty($selectedSubject)) {
     $_SESSION['last_selected_sub_' . $targetTeacherId] = $selectedSubject;
 }
 
-// 2. Xác định danh sách lớp thuộc môn học được chọn:
+// 5. Xác định danh sách lớp thuộc môn học được chọn:
 $classesInCurrentSubject = $teacherSubjects[$selectedSubject] ?? $assignedClasses;
 
-// 3. Xác định lớp được chọn:
+// 6. Xác định lớp được chọn:
 $selectedClassId = 0;
 if (isset($_GET['class_id']) && (int)$_GET['class_id'] > 0) {
-    // Nếu truyền class_id tường minh từ URL, giữ nguyên để rào chắn bảo mật BOLA kiểm tra
     $selectedClassId = (int)$_GET['class_id'];
 } elseif ($userNavCtx['class_id'] > 0 && isset($classesInCurrentSubject[$userNavCtx['class_id']])) {
     $selectedClassId = $userNavCtx['class_id'];
 } elseif (!empty($classesInCurrentSubject)) {
-    // Ưu tiên tự động chọn lớp ĐẦU TIÊN CÓ HỌC SINH của môn này
     foreach ($classesInCurrentSubject as $cid => $cData) {
         if ($cData['student_count'] > 0) {
             $selectedClassId = $cid;
@@ -174,7 +180,7 @@ if ($selectedClassId > 0 && !empty($selectedSubject)) {
 $availableSubjectsForClass = $assignedClasses[$selectedClassId]['subjects'] ?? (!empty($selectedSubject) ? [$selectedSubject] : ['Toán']);
 $myClasses = array_values($assignedClasses);
 
-// RÀO CHẮN BẢO MẬT & TỰ ĐỘNG ĐỒNG BỘ PHÂN CÔNG (BOLA/IDOR PREVENTION)
+// 7. RÀO CHẮN BẢO MẬT & TỰ ĐỘNG ĐỒNG BỘ PHÂN CÔNG (BOLA/IDOR PREVENTION)
 if ($realUserRole !== 'admin') {
     if (empty($assignedClasses)) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -184,7 +190,6 @@ if ($realUserRole !== 'admin') {
             exit;
         }
     } else {
-        // Nếu có tham số GET tường minh từ URL: Kiểm tra phân quyền BOLA nghiêm ngặt
         $hasExplicitClass = isset($_GET['class_id']) && (int)$_GET['class_id'] > 0;
         $hasExplicitSubject = isset($_GET['subject']) && trim((string)$_GET['subject']) !== '';
 
@@ -202,7 +207,6 @@ if ($realUserRole !== 'admin') {
             exit;
         }
 
-        // Nếu truy cập tự nhiên không truyền tham số: Tự động chọn lớp & môn hợp lệ
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && (!$hasExplicitClass || !$hasExplicitSubject)) {
             if ($selectedClassId <= 0 || !isset($assignedClasses[$selectedClassId])) {
                 $selectedClassId = 0;
@@ -359,7 +363,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 
-    // Xác minh học sinh thuộc lớp được chọn (Anti-BOLA)
     $chkSt = $pdo->prepare("SELECT id, full_name FROM students WHERE id = ? AND class_id = ? LIMIT 1");
     $chkSt->execute([$studentId, $postClassId]);
     $stRow = $chkSt->fetch();
@@ -390,8 +393,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $sTx = array_sum($txList);
 
     $avg = null;
-    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2).
-    // Nếu chưa có điểm thi (không có GK và không có CK, lúc đầu năm) thì không hiện ĐTBm.
     if ($nTx > 0) {
         if ($ck !== null) {
             $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
@@ -420,7 +421,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         ");
         $upStmt->execute([$studentId, $postSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
 
-        // Ghi nhận Audit Log cho từng ô điểm có thay đổi
         $fieldsToCheck = ['tx1' => $tx1, 'tx2' => $tx2, 'tx3' => $tx3, 'tx4' => $tx4, 'gk' => $gk, 'ck' => $ck];
         foreach ($fieldsToCheck as $fKey => $newFVal) {
             $oldFVal = isset($oldScores[$fKey]) && $oldScores[$fKey] !== null ? (float)$oldScores[$fKey] : null;
@@ -460,7 +460,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         require_teacher_assignment($realUserId, $selectedClassId, $selectedSubject);
     }
     if (!empty($_POST['scores']) && is_array($_POST['scores'])) {
-        // Lấy danh sách ID học sinh hợp lệ của lớp (anti-BOLA whitelist)
         $vStmt = $pdo->prepare("SELECT id FROM students WHERE class_id = ?");
         $vStmt->execute([$selectedClassId]);
         $validStudentMap = array_flip($vStmt->fetchAll(PDO::FETCH_COLUMN));
@@ -503,12 +502,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             foreach ($_POST['scores'] as $studentId => $row) {
                 $studentId = (int)$studentId;
-                // Bỏ qua học sinh không thuộc lớp được chọn (chống BOLA)
                 if (!isset($validStudentMap[$studentId])) {
                     continue;
                 }
 
-                // Hỗ trợ cả key chuẩn (tx1..tx4) lẫn key cũ (m1, m2, p15_1, p15_2, t1_1)
                 $tx1 = $parseScore($row['tx1'] ?? $row['m1'] ?? null);
                 $tx2 = $parseScore($row['tx2'] ?? $row['m2'] ?? null);
                 $tx3 = $parseScore($row['tx3'] ?? $row['p15_1'] ?? null);
@@ -524,7 +521,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $sTx = array_sum($txList);
 
                 $avg = null;
-                // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2)
                 if ($nTx > 0) {
                     if ($ck !== null) {
                         $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
@@ -536,7 +532,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $upsertStmt->execute([$studentId, $selectedSubject, $tx1, $tx2, $tx3, $tx4, $gk, $ck, $avg]);
                 $savedCount++;
 
-                // Ghi audit log nếu có ô điểm thay đổi
                 $exStudent = $existingScoreMap[$studentId] ?? null;
                 $chkFields = ['tx1' => $tx1, 'tx2' => $tx2, 'tx3' => $tx3, 'tx4' => $tx4, 'gk' => $gk, 'ck' => $ck];
                 foreach ($chkFields as $fK => $nVal) {
@@ -614,7 +609,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                     $row = $rows[$i];
                     if (empty($row) || !is_array($row)) continue;
 
-                    // Lấy Họ tên
                     $fullName = '';
                     if (isset($colMap['full_name']) && isset($row[$colMap['full_name']])) {
                         $fullName = trim((string)$row[$colMap['full_name']]);
@@ -626,21 +620,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
 
                     if ($fullName === '' || mb_stripos($fullName, 'tổng số') !== false) continue;
 
-                    // Lấy Mã HS
                     $studentCode = isset($colMap['student_code']) && isset($row[$colMap['student_code']]) ? trim((string)$row[$colMap['student_code']]) : null;
                     if ($studentCode === '') $studentCode = null;
 
-                    // Lấy Ngày sinh
                     $rawBday = isset($colMap['birthday']) && isset($row[$colMap['birthday']]) ? $row[$colMap['birthday']] : null;
                     $normBday = normalize_excel_date($rawBday);
 
-                    // Lấy SĐT
                     $phone = '';
                     if (isset($colMap['phone']) && isset($row[$colMap['phone']])) {
                         $phone = preg_replace('/[^0-9]/', '', (string)$row[$colMap['phone']]);
                     }
 
-                    // Khớp học sinh trong lớp đang chọn
                     $studentId = null;
                     if ($studentCode !== null) {
                         $findStudentCode->execute([$selectedClassId, $studentCode]);
@@ -655,7 +645,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                         $studentId = $findStudentNameOnly->fetchColumn();
                     }
 
-                    // Tự động thêm học sinh vào lớp nếu chưa có
                     if (!$studentId) {
                         try {
                             $insStudent->execute([$selectedClassId, $studentCode, $fullName, $normBday, $phone]);
@@ -672,7 +661,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
 
                     if (!$studentId) continue;
 
-                    // Trích xuất điểm
                     $cleanScore = function($val) {
                         if ($val === null || $val === '') return null;
                         $s = str_replace(',', '.', trim((string)$val));
@@ -693,7 +681,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                     $sTx = array_sum($txList);
 
                     $avg = null;
-                    // Căn cứ Thông tư 22/2021/TT-BGDĐT: ĐTBm tính theo 4 kỳ đánh giá (GK1, CK1, GK2, CK2)
                     if ($nTx > 0) {
                         if ($ck !== null) {
                             $avg = round(($sTx + 2 * ($gk ?? $ck) + 3 * $ck) / ($nTx + ($gk !== null ? 2 : 0) + 3), 1);
@@ -721,7 +708,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
     }
 }
 
-// Lấy danh sách học sinh
+// 8. Lấy danh sách học sinh
 $studentList = [];
 if ($selectedClassId) {
     $stmt = $pdo->prepare("
@@ -735,174 +722,536 @@ if ($selectedClassId) {
     $stmt->execute([$selectedSubject, $selectedClassId]);
     $studentList = $stmt->fetchAll();
 }
-?>
-<?php
+
 $pageTitle = 'Sổ Điểm Điện Tử Chuẩn VnEdu - EduRadar';
 $activeNav = 'gradebook';
+
+// =============================================================================
+// HALLMARK COBALT THEME STYLES & PRECISION KEYCAPS FOR 2D GRADEBOOK
+// =============================================================================
 $extraHead = '
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .vnedu-col { text-align: center !important; min-width: 65px; }
-        .vnedu-header { background: #1e293b !important; color: #f8fafc !important; }
-        
-        /* Proximity and visual grouping for 2D Gradebook Matrix */
-        .group-tx, .cell-tx {
-            background-color: rgba(59, 130, 246, 0.03);
+        /* --- COBALT TELEMETRY TOKENS --- */
+        :root {
+            --cobalt-paper: #f8fafc;
+            --cobalt-surface: #ffffff;
+            --cobalt-ink: #0f172a;
+            --cobalt-ink-muted: #475569;
+            --cobalt-rule: #e2e8f0;
+            --cobalt-rule-strong: #cbd5e1;
+            --cobalt-accent: #2563eb;
+            --cobalt-accent-edge: #1d4ed8;
+            --cobalt-accent-ink: #ffffff;
+            --cobalt-key-face: #ffffff;
+            --cobalt-key-edge: #cbd5e1;
+            --cobalt-key-ink: #0f172a;
+            --cobalt-mono: "JetBrains Mono", ui-monospace, monospace;
+            --cobalt-display: "Familjen Grotesk", var(--font-sans), sans-serif;
         }
-        .group-gk, .cell-gk {
-            background-color: rgba(245, 158, 11, 0.04);
-            border-left: 1.5px solid var(--border-color, #cbd5e1);
+        [data-theme="dark"], body.dark-mode {
+            --cobalt-paper: #0b1120;
+            --cobalt-surface: #121a2d;
+            --cobalt-ink: #f8fafc;
+            --cobalt-ink-muted: #94a3b8;
+            --cobalt-rule: #1e2c47;
+            --cobalt-rule-strong: #334466;
+            --cobalt-accent: #3b82f6;
+            --cobalt-accent-edge: #1d4ed8;
+            --cobalt-accent-ink: #ffffff;
+            --cobalt-key-face: #1a253c;
+            --cobalt-key-edge: #2e3e5c;
+            --cobalt-key-ink: #f8fafc;
         }
-        .group-ck, .cell-ck {
-            background-color: rgba(239, 68, 68, 0.04);
-            border-left: 1px dashed var(--border-color, #cbd5e1);
-        }
-        .group-avg, .cell-avg {
-            border-left: 2px solid var(--border-color, #94a3b8);
-            background-color: rgba(16, 185, 129, 0.04);
-        }
-        
-        /* Fitts Law >= 48x48px CTA touch targets */
-        .btn-cta-fitts {
+
+        /* --- 3D KEYCAP BUTTONS (FITTS-COMPLIANT >= 48x48px) --- */
+        .key {
+            border: 1px solid var(--cobalt-rule-strong);
+            border-radius: 8px;
+            padding: 0 18px;
             min-height: 48px;
             min-width: 48px;
-            padding: 12px 24px;
+            background: var(--cobalt-key-face);
+            color: var(--cobalt-key-ink);
+            font-family: var(--cobalt-display);
+            font-weight: 600;
             font-size: 14px;
-            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            box-shadow: 0 3px 0 0 var(--cobalt-key-edge), 0 6px 10px -4px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+            transition: transform 90ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 90ms cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-decoration: none;
+            user-select: none;
+            box-sizing: border-box;
         }
-        .btn-cta-fitts:active {
-            transform: scale(0.97);
+        .key:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 0 0 var(--cobalt-key-edge), 0 8px 14px -4px rgba(15,23,42,0.16);
+            color: var(--cobalt-key-ink);
+        }
+        .key:active {
+            transform: translateY(3px);
+            box-shadow: inset 0 2px 3px rgba(15,23,42,0.18);
+        }
+        .key--primary {
+            background: var(--cobalt-accent);
+            border-color: var(--cobalt-accent-edge);
+            color: var(--cobalt-accent-ink) !important;
+            box-shadow: 0 3px 0 0 var(--cobalt-accent-edge), 0 6px 12px -3px rgba(37,99,235,0.38), inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+        .key--primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 0 0 #1e40af, 0 8px 16px -3px rgba(37,99,235,0.45);
+        }
+        .key--primary:active {
+            transform: translateY(3px);
+            box-shadow: inset 0 2px 4px rgba(15,23,42,0.3);
+        }
+        .key--sm {
+            min-height: 38px;
+            padding: 0 12px;
+            font-size: 13px;
         }
 
-        /* WCAG AA Dark Mode contrast (>= 4.5:1) in Slate/Zinc palette */
-        [data-theme="dark"] .vnedu-control-card {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+        /* --- CUT-CORNER PANELS --- */
+        .cut-card {
+            background: var(--cobalt-surface);
+            border: 1px solid var(--cobalt-rule);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+            transition: border-color 0.2s ease;
         }
-        [data-theme="dark"] .vnedu-control-card > div:first-child {
-            border-bottom-color: #334155 !important;
+        @supports (corner-shape: bevel) {
+            .cut-card {
+                border-radius: 14px 4px 14px 4px;
+                corner-shape: bevel round bevel round;
+            }
         }
-        [data-theme="dark"] .gb-meta-chip {
-            background: #0f172a !important;
-            border-color: #334155 !important;
-            color: #cbd5e1 !important;
+
+        /* --- CONTROL STRIP --- */
+        .telemetry-strip {
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
-        [data-theme="dark"] .gb-meta-chip strong {
-            color: #f8fafc !important;
+        .telemetry-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        [data-theme="dark"] .gb-meta-chip.chip-main {
-            background: rgba(37, 99, 235, 0.2) !important;
-            border-color: rgba(59, 130, 246, 0.4) !important;
-            color: #93c5fd !important;
+        .telemetry-pills {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
-        [data-theme="dark"] .gb-meta-chip.chip-permission {
-            background: rgba(16, 185, 129, 0.15) !important;
-            border-color: rgba(16, 185, 129, 0.3) !important;
-            color: #6ee7b7 !important;
-        }
-        [data-theme="dark"] .gb-select-box {
-            background: #0f172a !important;
-            color: #f8fafc !important;
-            border-color: #475569 !important;
-        }
-        [data-theme="dark"] .gb-btn-action {
-            background: #0f172a !important;
-            border-color: #475569 !important;
-            color: #e2e8f0 !important;
-            min-height: 48px;
-        }
-        [data-theme="dark"] .gb-btn-action:hover {
-            background: #334155 !important;
-            color: #ffffff !important;
-            border-color: #64748b !important;
-        }
-        [data-theme="dark"] .spreadsheet-toolbar {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        [data-theme="dark"] .toolbar-title {
-            color: #f8fafc !important;
-        }
-        [data-theme="dark"] .gradebook-filter-bar {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        [data-theme="dark"] .btn-gb-filter {
-            background: #0f172a !important;
-            border-color: #334155 !important;
-            color: #94a3b8 !important;
-        }
-        [data-theme="dark"] .btn-gb-filter:hover {
-            background: #1e293b !important;
-            color: #f8fafc !important;
-        }
-        [data-theme="dark"] .btn-gb-filter.active {
-            background: #2563eb !important;
-            color: #ffffff !important;
-            border-color: #3b82f6 !important;
-        }
-        [data-theme="dark"] #gbSearchInput {
-            background: #0f172a !important;
-            border-color: #475569 !important;
-            color: #f8fafc !important;
-        }
-        [data-theme="dark"] .spreadsheet-table th {
-            background: #0f172a !important;
-            border-color: #334155 !important;
-            color: #cbd5e1 !important;
-        }
-        [data-theme="dark"] .spreadsheet-table td {
-            border-color: #334155 !important;
-            background: #1e293b !important;
-        }
-        [data-theme="dark"] .score-input {
-            background: #0f172a !important;
-            color: #f8fafc !important;
-            border-color: #334155 !important;
-        }
-        [data-theme="dark"] .score-input:focus {
-            background: #1e293b !important;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4) !important;
-        }
-        [data-theme="dark"] .panel-box {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-        }
-        [data-theme="dark"] input[type="file"] {
-            background: #0f172a !important;
-            color: #f1f5f9 !important;
-            border-color: #475569 !important;
-            min-height: 48px;
-        }
-        [data-theme="dark"] input[type="file"]::file-selector-button {
-            background: #334155 !important;
-            color: #f8fafc !important;
-            border: 1px solid #64748b !important;
-            padding: 8px 14px;
+        .telemetry-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--cobalt-paper);
+            border: 1px solid var(--cobalt-rule);
+            padding: 6px 12px;
             border-radius: 6px;
-            cursor: pointer;
+            font-size: 13px;
+            color: var(--cobalt-ink-muted);
+            font-family: "IBM Plex Sans", system-ui, sans-serif;
+        }
+        .telemetry-pill strong {
+            color: var(--cobalt-ink);
             font-weight: 600;
         }
-        [data-theme="dark"] .btn.outline {
-            background: #1e293b !important;
-            color: #f1f5f9 !important;
-            border-color: #475569 !important;
+        .telemetry-pill.pill-accent {
+            background: rgba(37,99,235,0.08);
+            border-color: rgba(37,99,235,0.3);
+            color: var(--cobalt-accent);
         }
-        [data-theme="dark"] .btn.outline:hover {
-            background: #334155 !important;
-            color: #ffffff !important;
-            border-color: #64748b !important;
+        .telemetry-pill.pill-success {
+            background: rgba(16,185,129,0.08);
+            border-color: rgba(16,185,129,0.3);
+            color: #059669;
+        }
+
+        /* --- SELECTORS SUNKEN TRAY --- */
+        .selector-tray {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .cobalt-select {
+            min-height: 44px;
+            padding: 0 14px;
+            border-radius: 8px;
+            border: 1px solid var(--cobalt-rule-strong);
+            background: var(--cobalt-key-face);
+            color: var(--cobalt-ink);
+            font-family: var(--cobalt-display);
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 0 0 var(--cobalt-key-edge);
+        }
+        .cobalt-select:focus {
+            border-color: var(--cobalt-accent);
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+        }
+
+        /* --- SCHEDULE & PROGRESS HAIRLINE DOCK --- */
+        .schedule-hairline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--cobalt-rule);
+            background: var(--cobalt-paper);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .schedule-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--cobalt-ink);
+        }
+
+        /* --- TOOLBAR & FILTER TRAY --- */
+        .gradebook-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .gradebook-filter-tray {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .tray-key {
+            border: 1px solid var(--cobalt-rule);
+            background: var(--cobalt-key-face);
+            color: var(--cobalt-ink-muted);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12.5px;
+            font-weight: 600;
+            font-family: var(--cobalt-display);
+            cursor: pointer;
+            box-shadow: 0 2px 0 0 var(--cobalt-key-edge);
+            transition: all 90ms ease;
+        }
+        .tray-key:hover {
+            color: var(--cobalt-ink);
+            border-color: var(--cobalt-rule-strong);
+        }
+        .tray-key.active {
+            background: var(--cobalt-accent);
+            border-color: var(--cobalt-accent-edge);
+            color: #ffffff;
+            box-shadow: 0 2px 0 0 var(--cobalt-accent-edge);
+        }
+        .cobalt-search-input {
+            min-height: 40px;
+            padding: 0 14px;
+            border-radius: 6px;
+            border: 1px solid var(--cobalt-rule-strong);
+            background: var(--cobalt-key-face);
+            color: var(--cobalt-ink);
+            font-family: "IBM Plex Sans", system-ui, sans-serif;
+            font-size: 13px;
+            outline: none;
+            width: 230px;
+            box-shadow: inset 0 1px 2px rgba(15,23,42,0.06);
+        }
+        .cobalt-search-input:focus {
+            border-color: var(--cobalt-accent);
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+        }
+
+        /* --- 2D MATRIX SPREADSHEET TABLE --- */
+        .spreadsheet-matrix-wrap {
+            border: 1px solid var(--cobalt-rule);
+            border-radius: 12px;
+            overflow-x: auto;
+            background: var(--cobalt-surface);
+            box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+            margin-bottom: 20px;
+        }
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-family: "IBM Plex Sans", system-ui, sans-serif;
+            font-size: 13.5px;
+        }
+        .spreadsheet-table th {
+            background: var(--cobalt-paper);
+            color: var(--cobalt-ink);
+            font-family: var(--cobalt-display);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--cobalt-rule-strong);
+            border-right: 1px solid var(--cobalt-rule);
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .spreadsheet-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--cobalt-rule);
+            border-right: 1px solid var(--cobalt-rule);
+            vertical-align: middle;
+            background: var(--cobalt-surface);
+        }
+        .spreadsheet-table tr:hover td {
+            background: rgba(37,99,235,0.025);
+        }
+        .spreadsheet-table tr.gb-row-focused td {
+            background: rgba(37,99,235,0.04);
+        }
+
+        /* Sticky Columns */
+        .col-sticky-stt {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: var(--cobalt-surface) !important;
+            width: 44px;
+            text-align: center;
+            font-family: var(--cobalt-mono);
+            font-weight: 600;
+            color: var(--cobalt-ink-muted);
+        }
+        .spreadsheet-table th.col-sticky-stt {
+            background: var(--cobalt-paper) !important;
+            z-index: 4;
+        }
+        .col-code {
+            font-family: var(--cobalt-mono);
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--cobalt-accent);
+            text-align: center;
+            width: 90px;
+        }
+        .col-sticky-name {
+            position: sticky;
+            left: 44px;
+            z-index: 3;
+            background: var(--cobalt-surface) !important;
+            min-width: 180px;
+            border-right: 2px solid var(--cobalt-rule-strong) !important;
+        }
+        .spreadsheet-table th.col-sticky-name {
+            background: var(--cobalt-paper) !important;
+            z-index: 4;
+            border-right: 2px solid var(--cobalt-rule-strong) !important;
+        }
+        .col-dob {
+            text-align: center;
+            width: 95px;
+            font-size: 12.5px;
+            color: var(--cobalt-ink-muted);
+        }
+
+        /* Score Groups Styling */
+        .group-tx {
+            background: rgba(37,99,235,0.03) !important;
+        }
+        .group-gk {
+            background: rgba(245,158,11,0.04) !important;
+            border-left: 2px solid var(--cobalt-rule-strong) !important;
+        }
+        .group-ck {
+            background: rgba(239,68,68,0.04) !important;
+            border-left: 1px dashed var(--cobalt-rule-strong) !important;
+        }
+        .group-avg {
+            background: rgba(16,185,129,0.05) !important;
+            border-left: 2px solid var(--cobalt-rule-strong) !important;
+            min-width: 80px;
+        }
+
+        /* --- MONOSPACE SCORE INPUTS (TABULAR FIGURES) --- */
+        .score-input {
+            width: 100%;
+            min-width: 52px;
+            height: 38px;
+            text-align: center;
+            font-family: var(--cobalt-mono) !important;
+            font-size: 15px !important;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: var(--cobalt-ink);
+            background: var(--cobalt-surface);
+            border: 1px solid var(--cobalt-rule);
+            border-radius: 6px;
+            outline: none;
+            padding: 0 4px;
+            transition: all 120ms ease;
+            box-sizing: border-box;
+        }
+        .score-input:hover {
+            border-color: var(--cobalt-rule-strong);
+        }
+        .score-input:focus {
+            background: var(--cobalt-paper);
+            border-color: var(--cobalt-accent);
+            box-shadow: 0 0 0 2px rgba(37,99,235,0.3);
+            color: var(--cobalt-accent);
+        }
+        .score-input.is-invalid {
+            border-color: #ef4444 !important;
+            background: #fef2f2 !important;
+            color: #dc2626 !important;
+        }
+        .score-input.is-locked-vnedu {
+            background: var(--cobalt-paper);
+            color: var(--cobalt-ink-muted);
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+        .score-input.is-saved-pulse {
+            animation: pulse-saved 0.6s ease;
+        }
+        @keyframes pulse-saved {
+            0% { background-color: rgba(16,185,129,0.25); }
+            100% { background-color: var(--cobalt-surface); }
+        }
+
+        /* Average Badge */
+        .avg-badge {
+            display: inline-block;
+            font-family: var(--cobalt-mono);
+            font-weight: 700;
+            font-size: 14.5px;
+            font-variant-numeric: tabular-nums;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 44px;
+        }
+        .avg-badge.level-excellent {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+        .avg-badge.level-good {
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #7dd3fc;
+        }
+        .avg-badge.level-warning {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+        .avg-badge.level-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        .avg-badge.level-empty {
+            background: var(--cobalt-paper);
+            color: var(--cobalt-ink-muted);
+            border: 1px solid var(--cobalt-rule);
+        }
+
+        /* Dirty Save Badge */
+        .dirty-badge {
+            font-family: var(--cobalt-display);
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dirty-badge.clean {
+            background: rgba(16,185,129,0.1);
+            color: #059669;
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .dirty-badge.dirty {
+            background: rgba(245,158,11,0.12);
+            color: #d97706;
+            border: 1px solid rgba(245,158,11,0.3);
+            animation: pulse-dirty 1.5s infinite alternate;
+        }
+        @keyframes pulse-dirty {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
+        }
+
+        /* Tooltip */
+        .score-tooltip {
+            position: fixed;
+            z-index: 1000;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 12px;
+            font-family: "IBM Plex Sans", system-ui, sans-serif;
+            padding: 6px 12px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            pointer-events: none;
+            transform: translateY(-100%);
+        }
+
+        /* --- UTILITY PANELS (IMPORT & EXPORT) --- */
+        .utility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .utility-panel {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .panel-icon-wrap {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cobalt-paper);
+            border: 1px solid var(--cobalt-rule);
+            color: var(--cobalt-accent);
         }
     </style>
 ';
+
 $breadcrumbs = [
     ['title' => 'Trang Chủ', 'url' => 'welcome.php'],
     ['title' => 'Sổ Điểm Điện Tử', 'url' => 'nhap_diem.php'],
@@ -910,39 +1259,42 @@ $breadcrumbs = [
 ];
 require_once __DIR__ . '/includes/header.php';
 ?>
-    <!-- EDEXA & VNEDU SỔ ĐIỂM CHI TIẾT HEADER CARD -->
-    <div class="vnedu-control-card" style="background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15,23,42,0.03);">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <div class="gb-meta-chip chip-main">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    <span>Sổ điểm chi tiết</span>
+
+    <!-- 1. TELEMETRY & NAVIGATION STRIP (COBALT CUT-CARD) -->
+    <section class="cut-card telemetry-strip" aria-label="Thanh điều khiển chuyên môn và lớp học">
+        <div class="telemetry-row">
+            <div class="telemetry-pills">
+                <div class="telemetry-pill pill-accent">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span data-i18n="gradebook.title">Sổ Điểm Điện Tử 2D</span>
                 </div>
-                <div class="gb-meta-chip">
-                    <span class="meta-label">Lớp:</span>
+                <div class="telemetry-pill">
+                    <span data-i18n="gradebook.class_label">Lớp:</span>
                     <strong><?= htmlspecialchars($curClassName) ?></strong>
-                    <span class="meta-sub">(Khối <?= htmlspecialchars((string)($classesInCurrentSubject[$selectedClassId]['grade'] ?? '')) ?>)</span>
+                    <span style="opacity: 0.75;">(Khối <?= htmlspecialchars((string)($classesInCurrentSubject[$selectedClassId]['grade'] ?? '')) ?>)</span>
                 </div>
-                <div class="gb-meta-chip">
-                    <span class="meta-label">Môn học:</span>
-                    <strong style="color: var(--primary);"><?= htmlspecialchars($selectedSubject) ?></strong>
-                    <span class="meta-sub">• <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ I') ?></span>
+                <div class="telemetry-pill">
+                    <span data-i18n="gradebook.subject_label">Môn học:</span>
+                    <strong style="color: var(--cobalt-accent);"><?= htmlspecialchars($selectedSubject) ?></strong>
+                    <span style="opacity: 0.75;">• <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ I') ?></span>
                 </div>
-                <div class="gb-meta-chip">
-                    <span class="meta-label">Giáo viên dạy:</span>
+                <div class="telemetry-pill">
+                    <span data-i18n="gradebook.teacher_label">Giáo viên:</span>
                     <strong><?= htmlspecialchars($currentTeacherName) ?></strong>
                 </div>
-                <div class="gb-meta-chip chip-permission">
-                    <span>Quyền hạn: Có thể nhập điểm</span>
+                <div class="telemetry-pill pill-success">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span data-i18n="gradebook.permission_status">Quyền hạn: Có thể nhập điểm</span>
                 </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <form method="GET" style="display: flex; gap: 8px; align-items: center;">
+            <!-- SELECTORS FORM -->
+            <div class="selector-tray">
+                <form method="GET" style="display: flex; gap: 8px; align-items: center; margin: 0;">
                     <?php if ($actingTeacherId > 0 && $realUserRole === 'admin'): ?>
                         <input type="hidden" name="teacher_id" value="<?= $actingTeacherId ?>">
                     <?php endif; ?>
-                    <select name="class_id" onchange="this.form.submit()" class="gb-select-box" aria-label="Chọn lớp học" title="Chọn lớp học">
+                    <select name="class_id" onchange="this.form.submit()" class="cobalt-select" aria-label="Chọn lớp học" title="Chọn lớp học">
                         <?php if (empty($classesInCurrentSubject)): ?>
                             <option value="">(Chưa có lớp cho môn này)</option>
                         <?php else: ?>
@@ -955,7 +1307,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
-                    <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" class="gb-select-box" aria-label="Chọn phân môn phụ trách" title="Chọn phân môn phụ trách">
+                    <select name="subject" onchange="this.form.class_id.value=''; this.form.submit()" class="cobalt-select" aria-label="Chọn phân môn phụ trách" title="Chọn phân môn phụ trách">
                         <?php 
                             $allSubjectsToDisplay = !empty($teacherSubjects) ? array_keys($teacherSubjects) : $availableSubjectsForClass;
                             foreach ($allSubjectsToDisplay as $sub): 
@@ -967,101 +1319,56 @@ require_once __DIR__ . '/includes/header.php';
             </div>
         </div>
 
-        <!-- ACTION BUTTONS STRIP -->
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <!-- QUICK LINKS & ACTIONS -->
+        <div class="telemetry-row" style="border-top: 1px solid var(--cobalt-rule); padding-top: 12px;">
             <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="btn primary btn-cta-fitts" style="background: #2563eb; color: #ffffff; border: none; cursor: pointer;">
+                <button type="button" onclick="document.getElementById('btnSaveScores').click();" class="key key--primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                    <span>Lưu bảng điểm</span>
+                    <span data-i18n="gradebook.save_button">Lưu bảng điểm</span>
                 </button>
-                <a href="sample_gradebook.xlsx" download class="btn gb-btn-action" style="min-height: 48px; display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;">
+                <a href="sample_gradebook.xlsx" download class="key">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span>Xuất Excel mẫu</span>
+                    <span data-i18n="gradebook.sample_excel">Tải file mẫu Excel</span>
                 </a>
-                <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="btn gb-btn-action" style="min-height: 48px; display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px;">
+                <a href="nhap_diem.php?class_id=<?= $selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" class="key">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    <span>Làm mới</span>
+                    <span data-i18n="gradebook.reload_button">Làm mới</span>
                 </a>
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="dirty-badge clean">Đã lưu trên máy chủ</span>
+                <span class="dirty-badge clean" id="saveStatusBadgeTop" data-i18n="gradebook.server_saved_badge">Đã lưu trên máy chủ</span>
             </div>
         </div>
-    </div>
+    </section>
 
-    <?php if (!empty($teacherSubjects)): ?>
-        <!-- THANH CHỌN MÔN HỌC GIẢNG DẠY (CHUẨN BỘ MÁY PHÂN QUYỀN VNEDU) -->
-        <div class="gb-chips-strip">
-            <span class="gb-strip-label">Môn giảng dạy:</span>
-            <?php foreach ($teacherSubjects as $subName => $subClasses): ?>
-                <?php 
-                    $isSubActive = ($subName === $selectedSubject);
-                    $tParam = ($actingTeacherId > 0 && $realUserRole === 'admin') ? "&teacher_id={$actingTeacherId}" : "";
-                    $firstClassId = 0;
-                    foreach ($subClasses as $cId => $cInfo) {
-                        if ($cInfo['student_count'] > 0) { $firstClassId = $cId; break; }
-                    }
-                    if ($firstClassId === 0) $firstClassId = array_key_first($subClasses) ?: 0;
-                ?>
-                <a href="nhap_diem.php?class_id=<?= $firstClassId ?>&subject=<?= urlencode($subName) ?><?= $tParam ?>" 
-                   class="gb-subject-chip <?= $isSubActive ? 'active' : '' ?>">
-                    <span>Môn <?= htmlspecialchars($subName) ?></span>
-                    <span class="chip-count">
-                        <?= count($subClasses) ?> lớp
-                    </span>
-                </a>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($classesInCurrentSubject) && count($classesInCurrentSubject) > 1): ?>
-        <!-- THANH CHUYỂN NHANH LỚP PHÂN CÔNG THEO MÔN (CHUẨN VNEDU) -->
-        <div class="gb-chips-strip">
-            <span class="gb-strip-label">Lớp phân công:</span>
-            <?php foreach ($classesInCurrentSubject as $cid => $c): ?>
-                <?php 
-                    if ($c['student_count'] == 0 && $cid != $selectedClassId) continue;
-                    $isActive = ($cid == $selectedClassId);
-                    $tParam = ($actingTeacherId > 0 && $realUserRole === 'admin') ? "&teacher_id={$actingTeacherId}" : "";
-                ?>
-                <a href="nhap_diem.php?class_id=<?= $cid ?>&subject=<?= urlencode($selectedSubject) ?><?= $tParam ?>" 
-                   class="gb-class-chip <?= $isActive ? 'active' : '' ?>">
-                    <span>Lớp <?= htmlspecialchars($c['name']) ?></span>
-                    <span class="chip-count">
-                        <?= $c['student_count'] ?> HS
-                    </span>
-                </a>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
+    <!-- ALERTS -->
     <?php if ($msg): ?>
-        <div class="alert success mb-3" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <div class="alert success mb-3" style="background: rgba(16,185,129,0.12); color: #065f46; border: 1px solid #a7f3d0; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
             <?= get_svg_icon('check-circle', 16) ?>
             <span><?= htmlspecialchars($msg) ?></span>
         </div>
     <?php endif; ?>
 
     <?php if ($errorMsg): ?>
-        <div class="alert error mb-3" style="background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <div class="alert error mb-3" style="background: rgba(239,68,68,0.12); color: #991b1b; border: 1px solid #fecaca; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
             <?= get_svg_icon('alert-triangle', 16) ?>
             <span><?= htmlspecialchars($errorMsg) ?></span>
         </div>
     <?php endif; ?>
 
     <?php if ($realUserRole === 'admin' && $actingTeacherId > 0): ?>
-        <div class="alert mb-3" style="background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <div class="alert mb-3" style="background: rgba(37,99,235,0.1); color: #1e40af; border: 1px solid #bfdbfe; padding: 12px 18px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
             <?= get_svg_icon('shield-check', 16) ?>
-            <span><b>Chế độ Admin:</b> Bạn đang xem và có thể chỉnh sửa sổ điểm môn <b><?= htmlspecialchars($selectedSubject) ?></b> của giáo viên này.</span>
+            <span><b>Chế độ Admin:</b> Bạn đang kiểm tra và có thể chỉnh sửa sổ điểm môn <b><?= htmlspecialchars($selectedSubject) ?></b> của giáo viên này.</span>
             <a href="admin.php" style="margin-left: 10px; font-weight: bold; text-decoration: underline;">Quay lại Admin</a>
         </div>
     <?php endif; ?>
 
     <?php if (empty($myClasses)): ?>
-        <div class="panel-box" style="text-align: center; padding: 40px; background: #fff; border-radius: 12px; border: 1px solid var(--border-color);">
-            <h3>Bạn chưa được phân công lớp phụ trách</h3>
-            <p class="muted mb-3">Vui lòng liên hệ tài khoản Admin trường để được tích chọn cấp quyền vào các lớp khối 6, 7, 8, 9.</p>
+        <div class="cut-card" style="text-align: center; padding: 48px 24px; margin-bottom: 24px;">
+            <h3 style="font-family: var(--cobalt-display); font-size: 18px; font-weight: 700; color: var(--cobalt-ink);">Bạn chưa được phân công lớp phụ trách</h3>
+            <p style="color: var(--cobalt-ink-muted); margin-top: 6px; font-size: 14px;">Vui lòng liên hệ tài khoản Admin trường để được tích chọn cấp quyền vào các lớp khối 6, 7, 8, 9.</p>
         </div>
     <?php else: ?>
 
@@ -1084,132 +1391,140 @@ require_once __DIR__ . '/includes/header.php';
     }
     ?>
 
-    <!-- SPREADSHEET TOOLBAR -->
-    <div class="spreadsheet-toolbar">
-        <div class="toolbar-info">
-            <span class="toolbar-title">Sổ Điểm Môn <?= htmlspecialchars($selectedSubject) ?> — Lớp <?= htmlspecialchars($curClassName) ?></span>
-            <span class="badge" style="background: #e0e7ff; color: #3730a3; font-weight: 700; font-family: 'JetBrains Mono', monospace;">
-                SĨ SỐ: <?= count($studentList) ?> HS
-            </span>
-        </div>
-        <div class="toolbar-actions">
-            <span id="saveStatusBadge" class="dirty-badge clean">Đã lưu trên máy chủ</span>
-            <button type="submit" form="gradebookForm" id="btnSaveScores" class="btn primary btn-cta-fitts" style="border: none; cursor: pointer;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                <span>Lưu bảng điểm</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- THANH CÔNG CỤ LỌC PHÂN LOẠI HỌC SINH & TÌM KIẾM TỨC THÌ -->
-    <div class="gradebook-filter-bar">
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-                Lọc phân loại:
-            </span>
-            <button type="button" class="btn-gb-filter active" data-gb-filter="all" onclick="applyGbFilter('all', this)">
-                Tất cả (<?= count($studentList) ?>)
-            </button>
-            <button type="button" class="btn-gb-filter filter-excellent" data-gb-filter="excellent" onclick="applyGbFilter('excellent', this)">
-                Giỏi (<?= $gbCountExcellent ?>)
-            </button>
-            <button type="button" class="btn-gb-filter filter-good" data-gb-filter="good" onclick="applyGbFilter('good', this)">
-                Khá (<?= $gbCountGood ?>)
-            </button>
-            <button type="button" class="btn-gb-filter filter-average" data-gb-filter="average" onclick="applyGbFilter('average', this)">
-                Đạt (<?= $gbCountAverage ?>)
-            </button>
-            <button type="button" class="btn-gb-filter filter-low" data-gb-filter="low" onclick="applyGbFilter('low', this)">
-                Phụ đạo (<?= $gbCountLow ?>)
-            </button>
-            <?php if ($gbCountPending > 0): ?>
-            <button type="button" class="btn-gb-filter filter-pending" data-gb-filter="pending" onclick="applyGbFilter('pending', this)">
-                Chưa có điểm (<?= $gbCountPending ?>)
-            </button>
-            <?php endif; ?>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" placeholder="Tìm theo tên, mã HS..." title="Tìm kiếm học sinh theo tên hoặc mã số" aria-label="Tìm kiếm học sinh theo tên hoặc mã số">
-        </div>
-    </div>
-
+    <!-- 2. VNEDU SCHEDULE TIMELINE BAR (HAIRLINE PRECISION) -->
     <?php if ($isHk1Mid): ?>
-    <!-- MÔ PHỎNG LỊCH NHẬP ĐIỂM VNEDU CHUẨN: GIAI ĐOẠN HIỆN TẠI VỪA THI GIỮA KỲ 1 -->
-    <div class="vnedu-schedule-bar" id="vneduScheduleBar">
-        <div class="vnedu-schedule-left">
-            <span class="vnedu-badge-icon"><?= get_svg_icon('lock', 16) ?></span>
-            <div class="vnedu-schedule-text">
-                <b>Khung Thời Gian Nhập Điểm:</b> Hiện tại đang trong đợt Giữa kỳ I. Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa theo kế hoạch (dự kiến mở chính thức từ 15/12).
+    <div class="schedule-hairline" id="vneduScheduleBar">
+        <div class="schedule-info">
+            <span style="color: #d97706;"><?= get_svg_icon('lock', 16) ?></span>
+            <div>
+                <b data-i18n="gradebook.schedule_title">Khung Thời Gian Nhập Điểm:</b>
+                <span data-i18n="gradebook.schedule_desc">Hiện đang trong đợt Giữa kỳ I. Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa theo tiến độ VnEdu (dự kiến mở chính thức từ 15/12).</span>
             </div>
         </div>
-        <button type="button" class="btn-vnedu-toggle-lock" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Bấm để mở khóa nhập sớm nếu nhà trường tổ chức thi sớm">
-            <span id="btnLockIcon"><?= get_svg_icon('unlock', 14) ?></span> <span id="btnLockLabel">Mở khóa nhập sớm</span>
+        <button type="button" class="key key--sm" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Bấm để mở khóa nhập sớm nếu nhà trường tổ chức thi sớm">
+            <span id="btnLockIcon"><?= get_svg_icon('unlock', 14) ?></span>
+            <span id="btnLockLabel" data-i18n="gradebook.unlock_early">Mở khóa nhập sớm</span>
         </button>
     </div>
     <?php endif; ?>
 
-    <!-- SPREADSHEET FORM -->
+    <!-- 3. GRADEBOOK TOOLBAR WITH COBALT KEYCAPS & INSTANT SEARCH -->
+    <div class="cut-card gradebook-toolbar">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="font-family: var(--cobalt-display); font-weight: 700; font-size: 16px; color: var(--cobalt-ink);">
+                <span>Sổ Điểm Môn <?= htmlspecialchars($selectedSubject) ?> — Lớp <?= htmlspecialchars($curClassName) ?></span>
+            </div>
+            <span style="font-family: var(--cobalt-mono); font-size: 12px; font-weight: 700; background: rgba(37,99,235,0.1); color: var(--cobalt-accent); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(37,99,235,0.25);">
+                SĨ SỐ: <?= count($studentList) ?> HS
+            </span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span id="saveStatusBadge" class="dirty-badge clean" data-i18n="gradebook.server_saved_badge">Đã lưu trên máy chủ</span>
+            <!-- HARD CONTRACT: id="btnSaveScores" and text contains "Lưu bảng điểm" -->
+            <button type="submit" form="gradebookForm" id="btnSaveScores" class="key key--primary" style="font-size: 14px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span data-i18n="gradebook.save_button">Lưu bảng điểm</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 4. FILTER PILLS & INSTANT SEARCH TRAY -->
+    <div class="cut-card" style="padding: 12px 18px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div class="gradebook-filter-tray">
+            <span style="font-size: 11.5px; font-weight: 700; font-family: var(--cobalt-display); text-transform: uppercase; letter-spacing: 0.05em; color: var(--cobalt-ink-muted);" data-i18n="gradebook.filter_label">
+                Lọc phân loại:
+            </span>
+            <button type="button" class="tray-key active" data-gb-filter="all" onclick="applyGbFilter('all', this)">
+                <span data-i18n="gradebook.filter_all">Tất cả</span> (<?= count($studentList) ?>)
+            </button>
+            <button type="button" class="tray-key" data-gb-filter="excellent" onclick="applyGbFilter('excellent', this)">
+                <span data-i18n="gradebook.filter_excellent">Giỏi</span> (<?= $gbCountExcellent ?>)
+            </button>
+            <button type="button" class="tray-key" data-gb-filter="good" onclick="applyGbFilter('good', this)">
+                <span data-i18n="gradebook.filter_good">Khá</span> (<?= $gbCountGood ?>)
+            </button>
+            <button type="button" class="tray-key" data-gb-filter="average" onclick="applyGbFilter('average', this)">
+                <span data-i18n="gradebook.filter_average">Đạt</span> (<?= $gbCountAverage ?>)
+            </button>
+            <button type="button" class="tray-key" data-gb-filter="low" onclick="applyGbFilter('low', this)">
+                <span data-i18n="gradebook.filter_low">Phụ đạo</span> (<?= $gbCountLow ?>)
+            </button>
+            <?php if ($gbCountPending > 0): ?>
+            <button type="button" class="tray-key" data-gb-filter="pending" onclick="applyGbFilter('pending', this)">
+                <span data-i18n="gradebook.filter_pending">Chưa có điểm</span> (<?= $gbCountPending ?>)
+            </button>
+            <?php endif; ?>
+        </div>
+
+        <div>
+            <input type="text" id="gbSearchInput" oninput="applyGbSearch(this.value)" class="cobalt-search-input" placeholder="Tìm tên, mã HS..." title="Tìm kiếm học sinh theo tên hoặc mã số" aria-label="Tìm kiếm học sinh theo tên hoặc mã số" data-i18n-placeholder="gradebook.search_placeholder">
+        </div>
+    </div>
+
+    <!-- 5. 2D GRADEBOOK MATRIX SPREADSHEET FORM -->
     <form method="POST" id="gradebookForm">
         <input type="hidden" name="action" value="save_scores">
         
-        <div class="spreadsheet-container">
+        <div class="spreadsheet-matrix-wrap">
             <table class="spreadsheet-table" id="gradebookTable">
                 <thead>
-                    <!-- TIER 1 HEADER: SUPER-GROUPS -->
-                    <tr class="header-tier-1">
-                        <th rowspan="2" class="col-sticky-stt">STT</th>
-                        <th rowspan="2" class="col-code">Mã HS</th>
-                        <th rowspan="2" class="col-sticky-name">Họ và Tên Học Sinh</th>
-                        <th rowspan="2" class="col-dob">Ngày Sinh</th>
-                        <th colspan="4" class="group-header group-tx">
-                            <span class="group-pill pill-tx">ĐĐG THƯỜNG XUYÊN (HS 1)</span>
+                    <!-- TIER 1 HEADER: SUPER-GROUPS (HARD CONTRACT FOR TESTS: 'ĐĐGtx', 'ĐĐGgk', 'ĐĐGck', 'ĐTBmhk') -->
+                    <tr>
+                        <th rowspan="2" class="col-sticky-stt" data-i18n="gradebook.th_stt">STT</th>
+                        <th rowspan="2" class="col-code" data-i18n="gradebook.th_code">Mã HS</th>
+                        <th rowspan="2" class="col-sticky-name" data-i18n="gradebook.th_name">Họ và Tên Học Sinh</th>
+                        <th rowspan="2" class="col-dob" data-i18n="gradebook.th_dob">Ngày Sinh</th>
+                        <th colspan="4" class="group-tx">
+                            <span data-i18n="gradebook.th_tx">ĐĐG THƯỜNG XUYÊN (HS 1)</span>
                         </th>
-                        <th rowspan="2" class="group-header group-gk">
-                            <span class="group-pill pill-gk">GIỮA KỲ</span><br>
-                            <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">HS 2</span>
+                        <th rowspan="2" class="group-gk">
+                            <span data-i18n="gradebook.th_gk">GIỮA KỲ</span><br>
+                            <span style="font-size: 11px; opacity: 0.8; font-weight: 500;">HS 2</span>
                         </th>
-                        <th rowspan="2" class="group-header group-ck" id="thCkHeader">
-                            <span class="group-pill pill-ck">CUỐI KỲ</span><br>
-                            <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">HS 3</span>
+                        <th rowspan="2" class="group-ck" id="thCkHeader">
+                            <span data-i18n="gradebook.th_ck">CUỐI KỲ</span><br>
+                            <span style="font-size: 11px; opacity: 0.8; font-weight: 500;">HS 3</span>
                             <?php if ($isHk1Mid): ?>
-                                <span class="vnedu-lock-indicator" id="vneduLockIndicator" title="Cột Cuối kỳ I khóa theo lịch VnEdu (Mở từ 15/12)"><?= get_svg_icon('lock', 12) ?> Mở 15/12</span>
+                                <span id="vneduLockIndicator" style="display: block; font-size: 10px; color: #d97706; margin-top: 2px;">
+                                    <?= get_svg_icon('lock', 11) ?> Mở 15/12
+                                </span>
                             <?php endif; ?>
                         </th>
-                        <th rowspan="2" class="group-header group-avg">
-                            <span class="group-pill pill-avg">ĐTBmhk</span><br>
-                            <span class="weight-tag" style="font-size: 11px; opacity: 0.85;">Tự động</span>
+                        <th rowspan="2" class="group-avg">
+                            <span data-i18n="gradebook.th_avg">ĐTBmhk</span><br>
+                            <span style="font-size: 11px; opacity: 0.8; font-weight: 500;" data-i18n="gradebook.th_auto">Tự động</span>
                         </th>
                     </tr>
                     <!-- TIER 2 HEADER: TX SUB-COLUMNS -->
-                    <tr class="header-tier-2">
-                        <th class="sub-tx">TX1</th>
-                        <th class="sub-tx">TX2</th>
-                        <th class="sub-tx">TX3</th>
-                        <th class="sub-tx">TX4</th>
+                    <tr>
+                        <th class="group-tx" style="font-family: var(--cobalt-mono); font-size: 11.5px;">TX1</th>
+                        <th class="group-tx" style="font-family: var(--cobalt-mono); font-size: 11.5px;">TX2</th>
+                        <th class="group-tx" style="font-family: var(--cobalt-mono); font-size: 11.5px;">TX3</th>
+                        <th class="group-tx" style="font-family: var(--cobalt-mono); font-size: 11.5px;">TX4</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($studentList)): ?>
                         <tr>
-                            <td colspan="11" style="text-align: center; padding: 48px 20px; color: #64748b; background: #fafafa;">
-                                <div style="margin-bottom: 10px;"><?= get_svg_icon('users', 36, '', 'color: #94a3b8;') ?></div>
-                                <b style="font-size: 16px; color: #1e293b; display: block; margin-bottom: 6px;">
+                            <td colspan="11" style="text-align: center; padding: 48px 20px; color: var(--cobalt-ink-muted);">
+                                <div style="margin-bottom: 10px;"><?= get_svg_icon('users', 36) ?></div>
+                                <b style="font-size: 16px; color: var(--cobalt-ink); display: block; margin-bottom: 6px;">
                                     Lớp <?= htmlspecialchars($curClassName) ?> hiện chưa có danh sách học sinh (Sĩ số: 0)
                                 </b>
-                                <p style="margin-bottom: 18px; font-size: 13.5px; color: #64748b; max-width: 600px; margin-left: auto; margin-right: auto;">
-                                    Lớp này chưa được nạp danh sách học sinh. Bạn có thể bấm chọn ngay một trong các lớp thực tế đã có học sinh bên dưới:
+                                <p style="margin-bottom: 18px; font-size: 13.5px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                                    Lớp này chưa có danh sách học sinh. Bạn có thể chọn lớp khác đã có dữ liệu bên dưới:
                                 </p>
-                                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+                                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                                     <?php foreach ($assignedClasses as $altC): ?>
                                         <?php if ($altC['student_count'] > 0): ?>
-                                            <a href="nhap_diem.php?class_id=<?= $altC['id'] ?>&subject=<?= urlencode($altC['subjects'][0] ?? 'Toán') ?><?= ($actingTeacherId > 0 && $realUserRole === 'admin') ? '&teacher_id=' . $actingTeacherId : '' ?>" class="btn primary" style="font-size: 13px; padding: 7px 16px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                            <a href="nhap_diem.php?class_id=<?= $altC['id'] ?>&subject=<?= urlencode($altC['subjects'][0] ?? 'Toán') ?><?= ($actingTeacherId > 0 && $realUserRole === 'admin') ? '&teacher_id=' . $actingTeacherId : '' ?>" class="key key--sm">
                                                 <?= get_svg_icon('arrow-right', 13) ?>
                                                 <span>Lớp <?= htmlspecialchars($altC['name']) ?> (<?= $altC['student_count'] ?> HS)</span>
                                             </a>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
                                 </div>
-                                <p class="muted small">Hoặc bạn có thể sử dụng công cụ nạp file Excel phía dưới để nạp học sinh vào lớp này.</p>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -1234,15 +1549,15 @@ require_once __DIR__ . '/includes/header.php';
                                 <td class="col-sticky-stt"><?= $r + 1 ?></td>
                                 <td class="col-code"><?= $code ?></td>
                                 <td class="col-sticky-name">
-                                    <div class="student-name font-semibold" style="font-weight: 700; color: var(--text-heading);"><?= htmlspecialchars($s['full_name']) ?></div>
+                                    <div style="font-weight: 700; color: var(--cobalt-ink);"><?= htmlspecialchars($s['full_name']) ?></div>
                                     <?php if (!empty($s['phone'])): ?>
-                                        <div class="student-phone muted small" style="font-size: 11.5px; color: #64748b;"><?= htmlspecialchars($s['phone']) ?></div>
+                                        <div style="font-size: 11.5px; color: var(--cobalt-ink-muted); font-family: var(--cobalt-mono);"><?= htmlspecialchars($s['phone']) ?></div>
                                     <?php endif; ?>
                                 </td>
                                 <td class="col-dob"><?= $dob ?></td>
                                 
                                 <!-- 4 CỘT TX (HỆ SỐ 1) -->
-                                <td class="col-score cell-tx">
+                                <td class="group-tx">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx1]"
                                            value="<?= $s['tx1'] !== null ? (float)$s['tx1'] : '' ?>"
@@ -1251,7 +1566,7 @@ require_once __DIR__ . '/includes/header.php';
                                            data-student-id="<?= $sId ?>" data-field="tx1"
                                            data-row="<?= $r ?>" data-col="0" placeholder="—" autocomplete="off">
                                 </td>
-                                <td class="col-score cell-tx">
+                                <td class="group-tx">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx2]"
                                            value="<?= $s['tx2'] !== null ? (float)$s['tx2'] : '' ?>"
@@ -1260,7 +1575,7 @@ require_once __DIR__ . '/includes/header.php';
                                            data-student-id="<?= $sId ?>" data-field="tx2"
                                            data-row="<?= $r ?>" data-col="1" placeholder="—" autocomplete="off">
                                 </td>
-                                <td class="col-score cell-tx">
+                                <td class="group-tx">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx3]"
                                            value="<?= $s['tx3'] !== null ? (float)$s['tx3'] : '' ?>"
@@ -1269,7 +1584,7 @@ require_once __DIR__ . '/includes/header.php';
                                            data-student-id="<?= $sId ?>" data-field="tx3"
                                            data-row="<?= $r ?>" data-col="2" placeholder="—" autocomplete="off">
                                 </td>
-                                <td class="col-score cell-tx">
+                                <td class="group-tx">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-tx"
                                            name="scores[<?= $sId ?>][tx4]"
                                            value="<?= $s['tx4'] !== null ? (float)$s['tx4'] : '' ?>"
@@ -1280,7 +1595,7 @@ require_once __DIR__ . '/includes/header.php';
                                 </td>
                                 
                                 <!-- CỘT GIỮA KỲ (HỆ SỐ 2) -->
-                                <td class="col-score cell-gk">
+                                <td class="group-gk">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" class="score-input group-gk"
                                            name="scores[<?= $sId ?>][gk]"
                                            value="<?= $s['gk'] !== null ? (float)$s['gk'] : '' ?>"
@@ -1291,7 +1606,7 @@ require_once __DIR__ . '/includes/header.php';
                                 </td>
                                 
                                 <!-- CỘT CUỐI KỲ (HỆ SỐ 3) -->
-                                <td class="col-score cell-ck">
+                                <td class="group-ck">
                                     <input type="text" inputmode="decimal" min="0" max="10" step="0.1" maxlength="4" 
                                            class="score-input group-ck <?= ($isHk1Mid && $s['ck'] === null) ? 'is-locked-vnedu' : '' ?>"
                                            name="scores[<?= $sId ?>][ck]"
@@ -1306,7 +1621,7 @@ require_once __DIR__ . '/includes/header.php';
                                 </td>
                                 
                                 <!-- CỘT ĐTB MÔN HỌC KỲ (TỰ ĐỘNG) -->
-                                <td class="cell-avg">
+                                <td class="group-avg" style="text-align: center;">
                                     <span class="avg-badge <?= $avgClass ?>" data-avg-student="<?= $sId ?>">
                                         <?= $avg !== null ? $avg : '—' ?>
                                     </span>
@@ -1315,10 +1630,10 @@ require_once __DIR__ . '/includes/header.php';
                         <?php $r++; endforeach; ?>
                     <?php endif; ?>
                     <tr id="gbFilterEmptyRow" style="display: none;">
-                        <td colspan="11" style="text-align: center; padding: 36px 20px; color: #64748b; font-weight: 600;">
+                        <td colspan="11" style="text-align: center; padding: 36px 20px; color: var(--cobalt-ink-muted); font-weight: 600;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
                                 <?= get_svg_icon('search', 16) ?>
-                                <span>Không tìm thấy học sinh nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm.</span>
+                                <span data-i18n="gradebook.filter_empty">Không tìm thấy học sinh nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm.</span>
                             </div>
                         </td>
                     </tr>
@@ -1327,10 +1642,10 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
-            <p class="muted small" style="margin: 0; line-height: 1.6;">
+            <p style="margin: 0; line-height: 1.6; font-size: 13px; color: var(--cobalt-ink-muted);" data-i18n="gradebook.keyboard_guide">
                 <b>Phím tắt điều hướng:</b> Nhấn <code>Enter</code> hoặc <code>↓</code> để xuống dòng trong cùng cột; <code>↑</code> để lên trên; <code>←</code> <code>→</code> hoặc <code>Tab</code> sang ngang; tự động chọn số khi focus; nhập dấu phẩy <code>,</code> tự chuyển thành <code>.</code>
             </p>
-            <button type="submit" class="btn primary btn-cta-fitts" style="border: none; cursor: pointer;">
+            <button type="submit" class="key key--primary">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 <span>Lưu bảng điểm môn <?= htmlspecialchars($selectedSubject) ?></span>
             </button>
@@ -1340,60 +1655,70 @@ require_once __DIR__ . '/includes/header.php';
     <!-- FLOATING TOOLTIP FOR ERROR HINTS -->
     <div id="scoreTooltip" class="score-tooltip" style="display: none;"></div>
 
-    <!-- BOTTOM PANEL: IMPORT & EXPORT GRADEBOOK -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 32px;">
+    <!-- 6. UTILITY PANELS: IMPORT & EXPORT GRADEBOOK -->
+    <div class="utility-grid">
         <!-- Khối 1: Nạp điểm bằng File -->
-        <section class="panel-box" style="margin-bottom: 0; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color);">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0e7ff; color: #4338ca; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <section class="cut-card utility-panel">
+            <div>
+                <div class="panel-header">
+                    <div class="panel-icon-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0; font-family: var(--cobalt-display); font-size: 15px; font-weight: 700; color: var(--cobalt-ink);" data-i18n="gradebook.import_title">
+                            Nạp điểm bằng file (.xlsx, .csv)
+                        </h3>
+                        <p style="margin: 0; font-size: 12.5px; color: var(--cobalt-ink-muted);" data-i18n="gradebook.import_desc">
+                            Nạp tự động điểm số chuẩn VnEdu vào lớp đang chọn
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Nạp điểm bằng file (.xlsx, .csv)</h3>
-                    <p class="muted small" style="margin: 0;">Nạp tự động điểm số chuẩn VnEdu vào lớp đang chọn</p>
-                </div>
+                <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">
+                    <input type="hidden" name="action" value="import_file">
+                    <input type="file" name="gradebook_file" accept=".xlsx, .xls, .csv, .txt" required 
+                           title="Chọn tệp bảng điểm Excel hoặc CSV" aria-label="Chọn tệp bảng điểm Excel hoặc CSV"
+                           style="padding: 10px; border: 1px dashed var(--cobalt-rule-strong); border-radius: 8px; font-size: 13px; min-height: 48px; background: var(--cobalt-paper); color: var(--cobalt-ink);">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <button type="submit" class="key key--primary">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span data-i18n="gradebook.btn_upload_import">Tải lên & nhập sổ điểm</span>
+                        </button>
+                        <a href="sample_gradebook.xlsx" download class="key key--sm">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span data-i18n="gradebook.btn_sample_xlsx">File mẫu Excel (.xlsx)</span>
+                        </a>
+                        <a href="sample_vnedu.csv" download class="key key--sm">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span data-i18n="gradebook.btn_sample_csv">File mẫu CSV</span>
+                        </a>
+                    </div>
+                </form>
             </div>
-            <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">
-                <input type="hidden" name="action" value="import_file">
-                <input type="file" name="gradebook_file" accept=".xlsx, .xls, .csv, .txt" required 
-                       title="Chọn tệp bảng điểm Excel hoặc CSV" aria-label="Chọn tệp bảng điểm Excel hoặc CSV"
-                       style="padding: 10px; border: 1px dashed var(--border-color); border-radius: 8px; font-size: 13px; min-height: 48px;">
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                    <button type="submit" class="btn primary" style="min-height: 48px; padding: 10px 20px; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; cursor: pointer;">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Tải lên & nhập sổ điểm</span>
-                    </button>
-                    <a href="sample_gradebook.xlsx" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border-radius: 10px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <span>File mẫu Excel (.xlsx)</span>
-                    </a>
-                    <a href="sample_vnedu.csv" download class="btn outline" style="min-height: 48px; padding: 10px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; border-radius: 10px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        <span>File mẫu CSV</span>
-                    </a>
-                </div>
-            </form>
         </section>
 
         <!-- Khối 2: Xuất sổ điểm ra Excel -->
-        <section class="panel-box" style="margin-bottom: 0; padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between;">
+        <section class="cut-card utility-panel">
             <div>
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <div style="width: 36px; height: 36px; border-radius: 8px; background: #dcfce7; color: #15803d; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <div class="panel-header">
+                    <div class="panel-icon-wrap" style="color: #059669; background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     </div>
                     <div>
-                        <h3 style="margin: 0; font-size: 15px; font-weight: 800;">Xuất sổ điểm điện tử (.xlsx)</h3>
-                        <p class="muted small" style="margin: 0;">Tải sổ điểm lớp <?= htmlspecialchars($curClassName) ?> môn <?= htmlspecialchars($selectedSubject) ?> chuẩn ECMA-376</p>
+                        <h3 style="margin: 0; font-family: var(--cobalt-display); font-size: 15px; font-weight: 700; color: var(--cobalt-ink);" data-i18n="gradebook.export_title">
+                            Xuất sổ điểm điện tử (.xlsx)
+                        </h3>
+                        <p style="margin: 0; font-size: 12.5px; color: var(--cobalt-ink-muted);" data-i18n="gradebook.export_desc">
+                            Tải sổ điểm lớp <?= htmlspecialchars($curClassName) ?> môn <?= htmlspecialchars($selectedSubject) ?> chuẩn ECMA-376
+                        </p>
                     </div>
                 </div>
-                <p class="muted small" style="line-height: 1.6; margin-top: 8px;">
-                    File Excel xuất ra chứa đầy đủ danh sách học sinh, mã định danh, ngày sinh, các cột ĐĐGtx 1..4, ĐĐGgk, ĐĐGck và ĐTBmhk tính tự động.
+                <p style="font-size: 13px; color: var(--cobalt-ink-muted); line-height: 1.6; margin-top: 8px;" data-i18n="gradebook.export_info">
+                    File Excel xuất ra chứa đầy đủ danh sách học sinh, mã định danh, ngày sinh, các cột ĐĐGtx 1..4, ĐĐGgk, ĐĐGck và ĐTBmhk tính tự động chuẩn Thông tư 22.
                 </p>
             </div>
-            <div style="margin-top: 16px;">
+            <div style="margin-top: 18px;">
                 <a href="nhap_diem.php?export=xlsx&class_id=<?= (int)$selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" 
-                   class="btn outline" style="display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 12px 20px; font-weight: 700; background: #f0fdf4; border-color: #86efac; color: #166534; text-decoration: none; border-radius: 10px;">
+                   class="key key--primary" style="background: #059669; border-color: #047857;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span>Xuất Excel sổ điểm môn <?= htmlspecialchars($selectedSubject) ?></span>
                 </a>
@@ -1411,21 +1736,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const totalRows = document.querySelectorAll('#gradebookTable tbody tr[data-student-id]').length;
     const saveBadge = document.getElementById('saveStatusBadge');
+    const saveBadgeTop = document.getElementById('saveStatusBadgeTop');
     const form = document.getElementById('gradebookForm');
     const tooltip = document.getElementById('scoreTooltip');
     let isDirty = false;
 
     function setDirty(state) {
         isDirty = state;
-        if (saveBadge) {
+        const badges = [saveBadge, saveBadgeTop].filter(Boolean);
+        badges.forEach(b => {
             if (state) {
-                saveBadge.className = 'dirty-badge dirty';
-                saveBadge.textContent = '● Có thay đổi chưa lưu';
+                b.className = 'dirty-badge dirty';
+                b.textContent = '● Có thay đổi chưa lưu';
             } else {
-                saveBadge.className = 'dirty-badge clean';
-                saveBadge.textContent = 'Đã lưu thay đổi';
+                b.className = 'dirty-badge clean';
+                b.textContent = 'Đã lưu trên máy chủ';
             }
-        }
+        });
     }
 
     function showTooltip(elem, text) {
@@ -1525,7 +1852,7 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (rounded < 8.0) cls = 'level-good';
             badge.className = 'avg-badge ' + cls;
             if (window.gsap) {
-                gsap.fromTo(badge, { scale: 1.2 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
+                gsap.fromTo(badge, { scale: 1.15 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
             }
         } else {
             badge.textContent = '—';
@@ -1550,7 +1877,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const tr = this.closest('tr');
             if (tr) tr.classList.remove('gb-row-focused');
             let v = this.value.trim().replace(',', '.');
-            // Hỗ trợ gõ tắt tốc độ cao chuẩn VnEdu: gõ "85" -> "8.5", "75" -> "7.5"
             if (/^[1-9][0-9]$/.test(v) && v !== '10') {
                 v = (parseInt(v, 10) / 10).toFixed(1);
                 this.value = v;
@@ -1657,17 +1983,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // LỌC PHÂN LOẠI HỌC SINH THEO HỌC LỰC & TÌM KIẾM
+    // Toggle VnEdu CK Lock
+    window.toggleVnEduCkLock = function () {
+        const lockedInputs = document.querySelectorAll('.score-input.group-ck');
+        const btnLabel = document.getElementById('btnLockLabel');
+        const lockIndicator = document.getElementById('vneduLockIndicator');
+        let isCurrentlyLocked = false;
+
+        lockedInputs.forEach(inp => {
+            if (inp.hasAttribute('readonly')) {
+                isCurrentlyLocked = true;
+                inp.removeAttribute('readonly');
+                inp.classList.remove('is-locked-vnedu');
+            } else {
+                inp.setAttribute('readonly', 'readonly');
+                inp.classList.add('is-locked-vnedu');
+            }
+        });
+
+        if (btnLabel) {
+            btnLabel.textContent = isCurrentlyLocked ? 'Khóa lại theo lịch' : 'Mở khóa nhập sớm';
+        }
+        if (lockIndicator) {
+            lockIndicator.style.display = isCurrentlyLocked ? 'none' : 'block';
+        }
+    };
+
+    // Filter by Tier and Search
     let currentGbFilter = 'all';
     let currentGbSearch = '';
 
     window.applyGbFilter = function (filterVal, btn) {
         currentGbFilter = filterVal;
-        document.querySelectorAll('.btn-gb-filter').forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tray-key').forEach(function (b) { b.classList.remove('active'); });
         if (btn) {
             btn.classList.add('active');
             if (window.gsap) {
-                gsap.fromTo(btn, { scale: 0.94 }, { scale: 1, duration: 0.25, ease: 'back.out(2)', clearProps: 'transform' });
+                gsap.fromTo(btn, { scale: 0.95 }, { scale: 1, duration: 0.2, ease: 'back.out(2)', clearProps: 'transform' });
             }
         }
         filterGradebookRows();
@@ -1702,8 +2054,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (window.gsap && visibleRows.length > 0) {
             gsap.killTweensOf(visibleRows);
             gsap.fromTo(visibleRows.slice(0, 30),
-                { opacity: 0, y: 8 },
-                { opacity: 1, y: 0, duration: 0.26, stagger: 0.012, ease: 'power2.out', clearProps: 'transform' }
+                { opacity: 0, y: 6 },
+                { opacity: 1, y: 0, duration: 0.22, stagger: 0.01, ease: 'power2.out', clearProps: 'transform' }
             );
         }
 

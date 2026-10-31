@@ -3,7 +3,7 @@
  * Theme: Tech-Telemetry Modern (Data-Dense Dashboard + Apple Fluid Physics)
  * Direction: High-Contrast Technical Aesthetic, Precision Tabular Typography, Zero AI Slop
  */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap');
 
 :root {
     /* =========================================================================
@@ -21,7 +21,8 @@
     --status-yellow: #f59e0b;
     --status-green: #10b981;
 
-    --primary: #2563eb;
+    --primary: #4f46e5;
+    --primary-cobalt: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: #eff6ff;
     --primary-border: #bfdbfe;
@@ -80,6 +81,57 @@
 
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* =========================================================================
+       HALLMARK v2 COBALT DESIGN TOKENS
+       ========================================================================= */
+    --color-paper: oklch(98.6% 0.005 250);
+    --color-paper-2: oklch(96.2% 0.008 252);
+    --color-paper-3: oklch(93% 0.011 252);
+    --color-ink: oklch(21% 0.028 262);
+    --color-ink-2: oklch(36% 0.022 260);
+    --color-muted: oklch(50% 0.018 258);
+    --color-rule: oklch(90% 0.009 252);
+    --color-rule-2: oklch(83% 0.012 252);
+    --color-graphite: oklch(21% 0.024 262);
+    --color-graphite-2: oklch(26.5% 0.026 262);
+    --color-graphite-ink: oklch(93% 0.010 250);
+    --color-graphite-muted: oklch(69% 0.022 256);
+    --color-accent: oklch(52% 0.19 258);
+    --color-accent-2: oklch(76% 0.13 254);
+    --color-accent-wash: oklch(95% 0.028 256);
+    --color-accent-ink: oklch(98.6% 0.005 250);
+    --color-focus: oklch(52% 0.19 258);
+    --color-accent-deep: oklch(43% 0.2 262);
+    --color-accent-edge: oklch(39% 0.16 260);
+    --color-glyph-1: oklch(89% 0.025 254);
+    --color-glyph-2: oklch(81% 0.045 255);
+    --color-glyph-3: oklch(70% 0.085 256);
+    --color-glyph-4: oklch(60% 0.13 257);
+    --color-graphite-glyph-1: oklch(33% 0.03 262);
+    --color-graphite-glyph-2: oklch(41% 0.05 260);
+    --color-graphite-glyph-3: oklch(53% 0.1 258);
+    --color-key-face: oklch(99.4% 0.003 250);
+    --color-key-edge: oklch(80% 0.016 254);
+    --font-display: "Familjen Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans", "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-outlier: "JetBrains Mono", ui-monospace, monospace;
+    --radius-card: 8px;
+    --radius-input: 6px;
+    --radius-pill: 999px;
+    --cell-w: 8px;
+    --cell-h: 16px;
+    --cut: 8px;
+    --cut-l: 16px;
+    --rule-hair: 1px;
+    --shadow-card: 0 1px 2px oklch(21% 0.028 262 / 0.06);
+    --shadow-key: 0 3px 0 0 var(--color-key-edge), 0 6px 8px -4px oklch(21% 0.028 262 / 0.28), inset 0 1px 0 oklch(100% 0 0 / 0.9);
+    --shadow-key-accent: 0 3px 0 0 var(--color-accent-edge), 0 6px 8px -4px oklch(30% 0.12 260 / 0.45), inset 0 1px 0 oklch(100% 0 0 / 0.22);
+    --shadow-key-press: inset 0 1px 2px oklch(21% 0.028 262 / 0.14);
+    --tracking-display: -0.028em;
+    --display-weight: 600;
+    --dur-micro: 120ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* =========================================================================
@@ -128,6 +180,198 @@
 
     --tech-cyan-bg: rgba(2, 132, 199, 0.15);
     --tech-cyan-border: rgba(14, 165, 233, 0.35);
+
+    /* Hallmark v2 Cobalt Dark Mode Surfaces */
+    --color-paper: var(--color-graphite);
+    --color-paper-2: var(--color-graphite-2);
+    --color-paper-3: oklch(32% 0.026 262);
+    --color-ink: var(--color-graphite-ink);
+    --color-ink-2: oklch(85% 0.015 252);
+    --color-muted: var(--color-graphite-muted);
+    --color-rule: oklch(33% 0.025 262);
+    --color-rule-2: oklch(40% 0.028 262);
+    --color-key-face: oklch(26.5% 0.026 262);
+    --color-key-edge: oklch(16% 0.02 262);
+    --shadow-key: 0 3px 0 0 var(--color-key-edge), 0 6px 8px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* =========================================================================
+   HALLMARK v2 COBALT: 3D KEYCAPS & PHYSICAL ELEVATION
+   ========================================================================= */
+.key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: var(--rule-hair, 1px) solid var(--color-rule-2, oklch(83% 0.012 252));
+    border-radius: var(--radius-input, 6px);
+    padding: 0 16px;
+    min-height: 48px;
+    background: var(--color-key-face, oklch(99.4% 0.003 250));
+    color: var(--color-ink, oklch(21% 0.028 262));
+    font-family: var(--font-display, "Familjen Grotesk", sans-serif);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1;
+    box-shadow: var(--shadow-key);
+    cursor: pointer;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform var(--dur-micro, 120ms) var(--ease-out, ease), 
+                box-shadow var(--dur-micro, 120ms) var(--ease-out, ease),
+                background-color 0.15s ease, color 0.15s ease;
+}
+.key:hover {
+    transform: translateY(-1px);
+    color: var(--color-ink, oklch(21% 0.028 262));
+}
+.key:active {
+    transform: translateY(3px);
+    box-shadow: var(--shadow-key-press);
+}
+.key:focus-visible {
+    outline: 2px solid var(--color-focus, var(--color-accent));
+    outline-offset: 2px;
+}
+.key--primary {
+    background: var(--color-accent, #2563eb);
+    border-color: var(--color-accent-edge, oklch(39% 0.16 260));
+    color: var(--color-accent-ink, #ffffff);
+    box-shadow: var(--shadow-key-accent);
+}
+.key--primary:hover {
+    background: var(--color-accent-deep, oklch(43% 0.2 262));
+    color: var(--color-accent-ink, #ffffff);
+}
+.key--primary:active {
+    transform: translateY(3px);
+    box-shadow: var(--shadow-key-press);
+}
+.key--sm {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12.5px;
+}
+
+/* =========================================================================
+   HALLMARK v2 COBALT: CUT-CORNER PANELS & BEVEL GEOMETRY
+   ========================================================================= */
+.cut {
+    border: var(--rule-hair, 1px) solid var(--color-rule, oklch(90% 0.009 252));
+    border-radius: var(--radius-card, 8px);
+    background: var(--color-paper, #ffffff);
+}
+@supports (corner-shape: bevel) {
+    .cut {
+        border-radius: var(--cut-l, 16px) 4px var(--cut-l, 16px) 4px;
+        corner-shape: bevel round bevel round;
+    }
+}
+.cut--sm {
+    border-radius: var(--cut, 8px);
+}
+@supports (corner-shape: bevel) {
+    .cut--sm {
+        border-radius: var(--cut, 8px) 3px var(--cut, 8px) 3px;
+        corner-shape: bevel round bevel round;
+    }
+}
+
+/* Graphite material */
+.graphite {
+    background: var(--color-graphite, oklch(21% 0.024 262));
+    color: var(--color-graphite-ink, oklch(93% 0.010 250));
+    border: 1px solid var(--color-rule-2, oklch(33% 0.025 262));
+}
+.graphite .token {
+    color: var(--color-accent-2, oklch(76% 0.13 254));
+}
+
+/* Hallmark Typography */
+h1, h2, h3, .heading-display {
+    font-family: var(--font-display, "Familjen Grotesk", "Plus Jakarta Sans", sans-serif);
+    font-weight: 600;
+    letter-spacing: var(--tracking-display, -0.028em);
+    color: var(--color-ink, var(--text-heading));
+}
+h3 {
+    font-weight: 500;
+}
+
+/* Bilingual VI | EN Toggle Button */
+.edexa-lang-toggle, #langToggleBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 36px;
+    min-width: 48px;
+    padding: 4px 10px;
+    border-radius: var(--radius-input, 6px);
+    background: var(--color-key-face, var(--card-bg, #ffffff));
+    border: 1px solid var(--color-rule-2, var(--border-color, #cbd5e1));
+    color: var(--color-ink, var(--text-heading, #0f172a));
+    font-family: var(--font-display, "Familjen Grotesk", "Plus Jakarta Sans", sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: var(--shadow-key);
+    transition: transform var(--dur-micro, 120ms) ease, box-shadow var(--dur-micro, 120ms) ease, background-color 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.edexa-lang-toggle:hover, #langToggleBtn:hover {
+    transform: translateY(-1px);
+}
+.edexa-lang-toggle:active, #langToggleBtn:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-key-press);
+}
+.edexa-lang-toggle .lang-badge, #langToggleBtn .lang-badge {
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+.edexa-lang-toggle .lang-badge.active, #langToggleBtn .lang-badge.active {
+    background: var(--color-accent, #2563eb);
+    color: #ffffff;
+}
+.edexa-lang-toggle .lang-sep, #langToggleBtn .lang-sep {
+    color: var(--color-muted, #94a3b8);
+    font-weight: 400;
+}
+
+[data-theme="dark"] .edexa-lang-toggle, 
+[data-theme="dark"] #langToggleBtn {
+    background: var(--color-graphite-2, #1a253c);
+    color: var(--color-graphite-ink, #f8fafc);
+    border-color: var(--color-rule-2, #334466);
+}
+
+/* Mobile responsive chip hide & Fitts's law touch targets */
+@media (max-width: 768px) {
+    .chip-mobile-hide {
+        display: none !important;
+    }
+    #langToggleBtn {
+        min-width: 48px !important;
+        min-height: 48px !important;
+        padding: 6px !important;
+    }
+    #themeToggleBtn {
+        min-width: 48px !important;
+        min-height: 48px !important;
+    }
+}
+@media (max-width: 412px) {
+    .chip-mobile-hide {
+        display: none !important;
+    }
 }
 
 [data-theme="dark"] body.liquid-glass-layout {

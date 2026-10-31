@@ -1,6 +1,6 @@
 <?php
 // welcome.php - Trang Chủ & Trung Tâm Khởi Động EduRadar THCS
-// Chuẩn Dribbble EdTech Pro & UX Laws (Proximity, Stepper Progress, Actionable Labels)
+// Ground-up Redesign: Hallmark v2 Cobalt Theme & Observability Telemetry
 if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
@@ -23,20 +23,25 @@ $totalStudents = (int)$pdo->query("SELECT COUNT(*) FROM students")->fetchColumn(
 $totalClasses = (int)$pdo->query("SELECT COUNT(*) FROM classes")->fetchColumn();
 $totalScores = (int)$pdo->query("SELECT COUNT(*) FROM scores WHERE avg_score IS NOT NULL OR gk IS NOT NULL OR tx1 IS NOT NULL")->fetchColumn();
 
-// Thống kê phân tầng điểm toàn trường
+// Thống kê phân tầng điểm toàn trường theo Thông tư 22
 $scoreStats = $pdo->query("
     SELECT 
         COUNT(CASE WHEN avg_score >= 8.0 THEN 1 END) as excellent_count,
         COUNT(CASE WHEN avg_score >= 6.5 AND avg_score < 8.0 THEN 1 END) as good_count,
         COUNT(CASE WHEN avg_score >= 5.0 AND avg_score < 6.5 THEN 1 END) as average_count,
         COUNT(CASE WHEN (avg_score < 5.0 AND avg_score IS NOT NULL) OR (gk < 5.0 AND gk IS NOT NULL) THEN 1 END) as low_count,
-        COUNT(CASE WHEN avg_score IS NOT NULL OR gk IS NOT NULL THEN 1 END) as total_evaluated
+        COUNT(CASE WHEN (avg_score < 3.5 AND avg_score IS NOT NULL) OR (ck < 3.0 AND ck IS NOT NULL) THEN 1 END) as red_count,
+        COUNT(CASE WHEN ((avg_score >= 3.5 AND avg_score < 5.0) OR (gk < 5.0 AND gk >= 3.5) OR (ck < 5.0 AND ck >= 3.0)) AND NOT ((avg_score < 3.5 AND avg_score IS NOT NULL) OR (ck < 3.0 AND ck IS NOT NULL)) THEN 1 END) as yellow_count,
+        COUNT(CASE WHEN avg_score IS NOT NULL OR gk IS NOT NULL THEN 1 END) as total_evaluated,
+        ROUND(AVG(avg_score), 2) as school_avg
     FROM scores 
 ")->fetch();
 
 $totalEval = max(1, (int)($scoreStats['total_evaluated'] ?? 0));
+$pctRed = round(((int)($scoreStats['red_count'] ?? 0)) / $totalEval * 100, 1);
+$pctYellow = round(((int)($scoreStats['yellow_count'] ?? 0)) / $totalEval * 100, 1);
 $pctGood = round(((int)($scoreStats['excellent_count'] ?? 0) + (int)($scoreStats['good_count'] ?? 0)) / $totalEval * 100, 1);
-$pctLow = round(((int)($scoreStats['low_count'] ?? 0)) / $totalEval * 100, 1);
+$schoolAvg = $scoreStats['school_avg'] !== null ? number_format((float)$scoreStats['school_avg'], 1) : '--';
 
 $pageTitle = 'Trang Chủ — EduRadar THCS';
 $activeNav = 'welcome';
@@ -45,824 +50,895 @@ require_once __DIR__ . '/includes/header.php';
 
 <style>
 /* =========================================================================
-   DRIBBLE-INSPIRED HOMEPAGE & BENTO GRID SYSTEM
+   HALLMARK V2 COBALT DESIGN TOKENS & SURFACES
+   Exact, technical register: Cool near-white paper, blue-grey ink,
+   hairlines, keycaps with 3D bottom edge, cut-corner panels.
    ========================================================================= */
-.welcome-hero {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ffffff 0%, #eff6ff 50%, #dbeafe 100%);
-    border: 1px solid var(--border-subtle, #bfdbfe);
-    border-radius: 24px;
-    padding: 36px 40px;
-    margin-bottom: 24px;
-    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
-}
-[data-theme="dark"] .welcome-hero {
-    background: linear-gradient(135deg, #111827 0%, #1e293b 60%, #0f172a 100%) !important;
-    border-color: #23324d !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+:root {
+    --cobalt-paper: #f8fafc;
+    --cobalt-paper-2: #f1f5f9;
+    --cobalt-paper-3: #e2e8f0;
+    --cobalt-ink: #0f172a;
+    --cobalt-ink-2: #334155;
+    --cobalt-muted: #64748b;
+    --cobalt-rule: rgba(203, 213, 225, 0.85);
+    --cobalt-rule-2: #cbd5e1;
+    --cobalt-accent: #2563eb;
+    --cobalt-accent-2: #3b82f6;
+    --cobalt-accent-wash: rgba(37, 99, 235, 0.06);
+    --cobalt-graphite: #0f172a;
+    --cobalt-graphite-ink: #f8fafc;
+    --cobalt-key-face: #ffffff;
+    --cobalt-key-edge: #cbd5e1;
+    --cobalt-ruby: #dc2626;
+    --cobalt-ruby-wash: rgba(220, 38, 38, 0.08);
+    --cobalt-amber: #d97706;
+    --cobalt-amber-wash: rgba(217, 119, 6, 0.08);
+    --cobalt-emerald: #059669;
+    --cobalt-emerald-wash: rgba(5, 150, 105, 0.08);
+    --cut-radius: 12px;
+    --font-display: "Familjen Grotesk", system-ui, -apple-system, sans-serif;
+    --font-body: "IBM Plex Sans", "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-.welcome-badge {
+[data-theme="dark"] {
+    --cobalt-paper: #0f172a;
+    --cobalt-paper-2: #1e293b;
+    --cobalt-paper-3: #334155;
+    --cobalt-ink: #f8fafc;
+    --cobalt-ink-2: #cbd5e1;
+    --cobalt-muted: #94a3b8;
+    --cobalt-rule: rgba(51, 65, 85, 0.85);
+    --cobalt-rule-2: #334155;
+    --cobalt-key-face: #1e293b;
+    --cobalt-key-edge: #0f172a;
+    --cobalt-accent-wash: rgba(59, 130, 246, 0.12);
+}
+
+/* 1. CUT-CORNER PANELS */
+.cobalt-cut {
+    border: 1px solid var(--cobalt-rule);
+    border-radius: var(--cut-radius);
+    background: var(--cobalt-paper);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+@supports (corner-shape: bevel) {
+    .cobalt-cut {
+        border-radius: 16px 4px 16px 4px;
+        corner-shape: bevel round bevel round;
+    }
+}
+
+/* 2. 3D KEYCAP BUTTONS */
+.cobalt-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 20px;
+    background: var(--cobalt-key-face);
+    color: var(--cobalt-ink);
+    border: 1px solid var(--cobalt-rule-2);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 var(--cobalt-key-edge), 0 5px 8px -3px rgba(15, 23, 42, 0.2);
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.1s ease;
+}
+.cobalt-key:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 0 var(--cobalt-key-edge), 0 7px 10px -3px rgba(15, 23, 42, 0.25);
+    text-decoration: none;
+}
+.cobalt-key:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.2);
+}
+.cobalt-key-primary {
+    background: var(--cobalt-accent);
+    color: #ffffff !important;
+    border-color: #1d4ed8;
+    box-shadow: 0 3px 0 0 #1d4ed8, 0 5px 8px -3px rgba(29, 78, 216, 0.4);
+}
+.cobalt-key-primary:hover {
+    background: #1d4ed8;
+    box-shadow: 0 4px 0 0 #1e40af, 0 7px 10px -3px rgba(29, 78, 216, 0.45);
+}
+.cobalt-key-primary:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.4);
+}
+
+/* 3. HERO OBSERVABILITY DOCK */
+.hero-telemetry-dock {
+    position: relative;
+    overflow: hidden;
+    padding: 36px 36px 32px 36px;
+    margin-bottom: 24px;
+    background: var(--cobalt-paper);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 16px;
+}
+@supports (corner-shape: bevel) {
+    .hero-telemetry-dock {
+        border-radius: 20px 4px 20px 4px;
+        corner-shape: bevel round bevel round;
+    }
+}
+.hero-telemetry-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* 4. ASCII TELEMETRY FIELD (BACKGROUND CANVASES / GRID) */
+.ascii-telemetry-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+}
+[data-theme="dark"] .ascii-telemetry-canvas {
+    opacity: 0.07;
+}
+
+.hero-status-strip {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 16px;
-    border-radius: 9999px;
-    background: #dbeafe;
-    color: #1d4ed8;
-    font-size: 12px;
-    font-weight: 700;
+    padding: 5px 12px;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--cobalt-muted);
     margin-bottom: 16px;
 }
-[data-theme="dark"] .welcome-badge {
-    background: rgba(59, 130, 246, 0.2) !important;
-    color: #93c5fd !important;
-    border: 1px solid rgba(59, 130, 246, 0.35);
+.hero-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cobalt-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-.welcome-title {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--text-heading, #0f172a);
-    letter-spacing: -0.03em;
-    line-height: 1.25;
-    margin-bottom: 12px;
-    max-width: 840px;
-}
-
-/* MASKED TEXT REVEAL: Chữ luôn hiển thị an toàn làm fallback, GSAP trượt lên tự nhiên */
-.masked-text-title {
+.hero-heading {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 4.5vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--cobalt-ink);
     margin: 0 0 14px 0;
+    max-width: 880px;
 }
-.masked-line {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 4px;
-}
-.masked-line-inner {
-    display: inline-block;
-    will-change: transform;
-}
-
-.welcome-desc {
+.hero-summary {
+    font-family: var(--font-body);
     font-size: 15px;
-    color: var(--text-muted, #475569);
     line-height: 1.6;
-    max-width: 780px;
-    margin-bottom: 24px;
+    color: var(--cobalt-ink-2);
+    margin: 0 0 24px 0;
+    max-width: 820px;
 }
-
-.welcome-cta-group {
+.hero-actions-bar {
     display: flex;
+    align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    align-items: center;
 }
 
-/* BENTO KPI SUMMARY GRID */
-.welcome-kpi-grid {
+/* 5. BENTO GRID KPI METRICS */
+.bento-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 28px;
 }
-
-@media (max-width: 768px) {
-    .welcome-hero {
-        padding: 22px 18px !important;
-        border-radius: 18px !important;
-        margin-bottom: 18px !important;
+@media (max-width: 960px) {
+    .bento-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    .welcome-badge {
-        font-size: 11px !important;
-        padding: 4px 10px !important;
-        margin-bottom: 10px !important;
-    }
-    .welcome-title {
-        font-size: 20px !important;
-        line-height: 1.3 !important;
-        margin-bottom: 8px !important;
-    }
-    .welcome-desc {
-        font-size: 13px !important;
-        line-height: 1.55 !important;
-        margin-bottom: 16px !important;
-    }
-    .welcome-cta-group {
-        display: grid !important;
-        grid-template-columns: 1fr !important;
-        width: 100% !important;
-        gap: 8px !important;
-    }
-    .welcome-cta-group .btn {
-        width: 100% !important;
-        justify-content: center !important;
-        padding: 12px 16px !important;
-        box-sizing: border-box !important;
-    }
-    /* Mobile 2x2 Clean Bento KPI Grid */
-    .welcome-kpi-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-        margin-bottom: 20px !important;
-    }
-    .kpi-card {
-        padding: 14px 12px !important;
-        border-radius: 14px !important;
-        gap: 10px !important;
-    }
-    .kpi-icon-box {
-        width: 38px !important;
-        height: 38px !important;
-        border-radius: 10px !important;
-        font-size: 18px !important;
-    }
-    .kpi-card span[style*="font-size: 11.5px"] {
-        font-size: 10px !important;
-        display: block !important;
-        line-height: 1.2 !important;
-    }
-    .kpi-card div[style*="font-size: 26px"] {
-        font-size: 20px !important;
-        margin: 2px 0 !important;
-    }
-    .kpi-card span[style*="font-size: 12px"] {
-        font-size: 11px !important;
-        display: block !important;
-    }
-    .launchpad-grid {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-    }
-    .launchpad-card {
-        padding: 18px 16px !important;
-        border-radius: 16px !important;
-    }
-    .stepper-container {
-        padding: 18px 16px !important;
-        border-radius: 16px !important;
-        margin-bottom: 20px !important;
-    }
-    .quick-search-box {
-        padding: 18px 16px !important;
-        border-radius: 16px !important;
-    }
-
-    .handbook-box {
-        padding: 18px 16px !important;
-        border-radius: 16px !important;
+}
+@media (max-width: 520px) {
+    .bento-kpi-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-.kpi-card {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 18px;
-    padding: 20px 22px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-}
-[data-theme="dark"] .kpi-card {
-    background: #131b2e !important;
-    border-color: #23324d !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
-}
-.kpi-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    display: grid;
-    place-items: center;
-    font-size: 22px;
-    flex: none;
-}
-[data-theme="dark"] .kpi-icon-box {
-    background: rgba(255, 255, 255, 0.05) !important;
-}
-
-/* LAUNCHPAD CORE PORTALS (DRIBBLE CARDS) */
-.launchpad-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
-    margin-bottom: 32px;
-}
-
-.launchpad-card {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 20px;
-    padding: 26px;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-    transition: all 0.25s ease;
+.bento-kpi-item {
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    min-height: 124px;
+}
+.bento-kpi-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.bento-kpi-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cobalt-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.bento-kpi-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+}
+.bento-kpi-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--cobalt-ink);
+    margin-bottom: 6px;
+}
+.bento-kpi-sub {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--cobalt-muted);
+}
+
+/* 6. LAUNCHPAD GRID (4 PHÂN HỆ ĐIỀU HƯỚNG) */
+.launchpad-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.launchpad-section-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cobalt-ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+.launchpad-section-desc {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--cobalt-muted);
+    margin: 0;
+}
+
+.launchpad-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+}
+.launchpad-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px;
     text-decoration: none;
     color: inherit;
     position: relative;
-    overflow: hidden;
+    border: 1px solid var(--cobalt-rule);
+    background: var(--cobalt-paper);
+    transition: transform 0.12s ease-out, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.launchpad-card:hover {
-    transform: translateY(-4px);
-    border-color: #93c5fd;
-    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.1);
+.launchpad-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--cobalt-accent);
+    box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.18);
+    text-decoration: none;
 }
-[data-theme="dark"] .launchpad-card {
-    background: #131b2e !important;
-    border-color: #23324d !important;
-}
-[data-theme="dark"] .launchpad-card:hover {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5) !important;
-}
-
-.launchpad-card-header {
+.launchpad-item-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
-
-.launchpad-card-title {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--text-heading, #0f172a);
-    margin-bottom: 6px;
-    letter-spacing: -0.02em;
-}
-
-.launchpad-card-desc {
-    font-size: 13.5px;
-    color: var(--text-muted, #64748b);
-    line-height: 1.5;
-    margin-bottom: 20px;
-    flex: 1;
-}
-
-.launchpad-card-footer {
+.launchpad-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
+    justify-content: center;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+}
+.launchpad-item-title {
+    font-family: var(--font-display);
+    font-size: 17px;
     font-weight: 700;
-    color: #2563eb;
-    border-top: 1px solid var(--border-subtle, #f1f5f9);
+    letter-spacing: -0.015em;
+    color: var(--cobalt-ink);
+    margin: 0 0 8px 0;
+}
+.launchpad-item-desc {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--cobalt-ink-2);
+    margin: 0 0 18px 0;
+    flex-grow: 1;
+}
+.launchpad-item-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding-top: 14px;
-}
-[data-theme="dark"] .launchpad-card-footer {
-    border-color: #1e293d !important;
-    color: #60a5fa !important;
+    border-top: 1px solid var(--cobalt-rule);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cobalt-accent);
 }
 
-/* STEPPER PROGRESS TRACK (LAW #3 & LAW #2) */
-.stepper-container {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 20px;
-    padding: 28px;
+/* 7. STEPPER QUY TRÌNH 3 BƯỚC */
+.stepper-dock {
+    padding: 24px 26px;
     margin-bottom: 28px;
+    background: var(--cobalt-paper);
+    border: 1px solid var(--cobalt-rule);
 }
-[data-theme="dark"] .stepper-container {
-    background: #131b2e !important;
-    border-color: #23324d !important;
+.stepper-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
-
-.stepper-track {
+.stepper-track-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     position: relative;
-    margin-top: 20px;
 }
-@media (max-width: 860px) {
-    .stepper-track { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+    .stepper-track-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
-.step-card {
-    background: var(--bg-main, #f8fafc);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 14px;
-    padding: 18px 20px;
-    position: relative;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+.step-stage-card {
+    padding: 16px 18px;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
-.step-card:hover {
-    transform: translateY(-2px);
-    border-color: #3b82f6;
-}
-[data-theme="dark"] .step-card {
-    background: #1a253c !important;
-    border-color: #2e3f60 !important;
-}
-
-.step-number-badge {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    display: inline-grid;
-    place-items: center;
-    font-size: 13px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
-
-
-/* UNIFIED SEARCH BAR (COMPACT, INLINE, NO MOBILE BREAKING) */
-.unified-search-form {
-    width: 100%;
-    max-width: 520px;
-}
-.unified-search-bar {
+.step-stage-meta {
     display: flex;
     align-items: center;
-    background: var(--card-bg, #ffffff);
-    border: 1.5px solid var(--border-color, #cbd5e1);
-    border-radius: 14px;
-    padding: 4px 6px 4px 14px;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    width: 100%;
-    box-sizing: border-box;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
-.unified-search-bar:focus-within {
-    border-color: var(--primary, #2563eb);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(37, 99, 235, 0.08);
-}
-[data-theme="dark"] .unified-search-bar {
-    background: #0f172a !important;
-    border-color: #334155 !important;
-}
-.search-bar-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-right: 8px;
-}
-.unified-search-bar input {
-    flex: 1 1 auto;
-    min-width: 0;
-    border: none !important;
-    outline: none !important;
-    background: transparent !important;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-heading, #0f172a);
-    padding: 8px 4px;
-    font-family: inherit;
-}
-[data-theme="dark"] .unified-search-bar input {
-    color: #f1f5f9 !important;
-}
-.unified-search-bar input::placeholder {
-    color: var(--text-muted, #94a3b8);
-    font-size: 13px;
-}
-.search-bar-btn {
-    flex-shrink: 0;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff !important;
-    border: none;
-    border-radius: 10px;
-    padding: 8px 16px;
-    font-size: 13px;
+.step-stage-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
     font-weight: 700;
-    cursor: pointer;
+    letter-spacing: 0.05em;
+    color: var(--cobalt-muted);
+}
+.step-stage-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cobalt-ink);
+    margin: 0 0 6px 0;
+}
+.step-stage-text {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--cobalt-ink-2);
+    margin: 0 0 12px 0;
+}
+.step-stage-link {
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--cobalt-accent);
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: all 0.18s ease;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
 }
-.search-bar-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
-}
-@media (max-width: 768px) {
-    .unified-search-form {
-        max-width: 100% !important;
-        width: 100% !important;
-    }
-    .unified-search-bar {
-        padding: 3px 4px 3px 10px !important;
-    }
-    .unified-search-bar input {
-        font-size: 13px !important;
-        padding: 6px 2px !important;
-    }
-    .search-bar-btn {
-        padding: 7px 12px !important;
-        font-size: 12px !important;
-    }
+.step-stage-link:hover {
+    text-decoration: underline;
 }
 
-/* QUICK SEARCH WIDGET (LAW #1 INPUT MASKS & LAW #7 SEARCHABLE DROPDOWN) */
-.quick-search-box {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 20px;
-    padding: 24px 28px;
+/* 8. QUICK SEARCH CONTAINER */
+.quick-search-dock {
+    padding: 22px 26px;
     margin-bottom: 28px;
+    background: var(--cobalt-paper);
+    border: 1px solid var(--cobalt-rule);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 20px;
-}
-[data-theme="dark"] .quick-search-box {
-    background: #131b2e !important;
-    border-color: #23324d !important;
-}
-
-.search-input-mask-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--bg-main, #f8fafc);
-    border: 1.5px solid var(--border-color, #cbd5e1);
-    border-radius: 12px;
-    padding: 8px 16px;
-    flex: 1;
-    min-width: 280px;
-    max-width: 520px;
-}
-[data-theme="dark"] .search-input-mask-wrap {
-    background: #0f172a !important;
-    border-color: #2a3a5a !important;
-}
-.search-input-mask-wrap input {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-heading, #0f172a);
-    width: 100%;
-}
-[data-theme="dark"] .search-input-mask-wrap input {
-    color: #f8fafc !important;
-}
-
-/* HANDBOOK BOX & CARDS */
-.handbook-box {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-subtle, #e2e8f0);
-    border-radius: 20px;
-    padding: 28px;
-    margin-bottom: 28px;
-}
-[data-theme="dark"] .handbook-box {
-    background: #131b2e !important;
-    border-color: #23324d !important;
-}
-.handbook-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 16px;
 }
-.handbook-card {
-    border-radius: 14px;
-    padding: 16px 18px;
-    border: 1px solid transparent;
+.quick-search-desc-wrap {
+    max-width: 420px;
 }
-.handbook-card b {
+.quick-search-form-wrap {
+    flex-grow: 1;
+    max-width: 540px;
+}
+.quick-search-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.quick-search-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--cobalt-rule-2);
+    border-radius: 6px;
+    background: var(--cobalt-paper-2);
+    color: var(--cobalt-ink);
+    font-family: var(--font-body);
     font-size: 14px;
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.handbook-card p {
-    font-size: 13px;
+.quick-search-input:focus {
+    border-color: var(--cobalt-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+    background: var(--cobalt-paper);
+}
+
+/* 9. THÔNG TƯ 22 REFERENCE */
+.handbook-dock {
+    padding: 24px 26px;
+    margin-bottom: 24px;
+    background: var(--cobalt-paper);
+    border: 1px solid var(--cobalt-rule);
+}
+.handbook-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+}
+@media (max-width: 960px) {
+    .handbook-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 520px) {
+    .handbook-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.handbook-tier-card {
+    padding: 16px 18px;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 6px;
+    border-top: 3px solid var(--cobalt-rule-2);
+}
+.handbook-tier-card.tier-tot { border-top-color: var(--cobalt-emerald); }
+.handbook-tier-card.tier-kha { border-top-color: var(--cobalt-accent); }
+.handbook-tier-card.tier-dat { border-top-color: var(--cobalt-amber); }
+.handbook-tier-card.tier-chuadat { border-top-color: var(--cobalt-ruby); }
+
+.handbook-tier-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cobalt-ink);
+    margin: 0 0 8px 0;
+}
+.handbook-tier-body {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--cobalt-ink-2);
     margin: 0;
-    line-height: 1.6;
-}
-.handbook-card.card-tot { background: #f0fdf4; border-color: #bbf7d0; }
-.handbook-card.card-tot b { color: #15803d; }
-.handbook-card.card-tot p { color: #166534; }
-
-.handbook-card.card-kha { background: #fefce8; border-color: #fef08a; }
-.handbook-card.card-kha b { color: #b45309; }
-.handbook-card.card-kha p { color: #92400e; }
-
-.handbook-card.card-dat { background: #fff7ed; border-color: #fed7aa; }
-.handbook-card.card-dat b { color: #c2410c; }
-.handbook-card.card-dat p { color: #9a3412; }
-
-.handbook-card.card-chuadat { background: #fef2f2; border-color: #fecaca; }
-.handbook-card.card-chuadat b { color: #dc2626; }
-.handbook-card.card-chuadat p { color: #b91c1c; }
-
-[data-theme="dark"] .handbook-card.card-tot { background: rgba(16, 185, 129, 0.12) !important; border-color: rgba(16, 185, 129, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-tot b { color: #34d399 !important; }
-[data-theme="dark"] .handbook-card.card-tot p { color: #a7f3d0 !important; }
-
-[data-theme="dark"] .handbook-card.card-kha { background: rgba(234, 179, 8, 0.12) !important; border-color: rgba(234, 179, 8, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-kha b { color: #facc15 !important; }
-[data-theme="dark"] .handbook-card.card-kha p { color: #fef08a !important; }
-
-[data-theme="dark"] .handbook-card.card-dat { background: rgba(249, 115, 22, 0.12) !important; border-color: rgba(249, 115, 22, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-dat b { color: #fb923c !important; }
-[data-theme="dark"] .handbook-card.card-dat p { color: #fed7aa !important; }
-
-[data-theme="dark"] .handbook-card.card-chuadat { background: rgba(239, 68, 68, 0.12) !important; border-color: rgba(239, 68, 68, 0.35) !important; }
-[data-theme="dark"] .handbook-card.card-chuadat b { color: #f87171 !important; }
-[data-theme="dark"] .handbook-card.card-chuadat p { color: #fecaca !important; }
-
-.handbook-badge {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-}
-[data-theme="dark"] .handbook-badge {
-    background: rgba(59, 130, 246, 0.18) !important;
-    color: #93c5fd !important;
-    border-color: rgba(59, 130, 246, 0.4) !important;
 }
 </style>
 
-<!-- 1. HERO SHOWCASE BANNER -->
-<section class="welcome-hero">
-    <div class="welcome-badge">
-        <span>Năm học <?= htmlspecialchars($welcomeCalendar['school_year']) ?> &bull; <?= htmlspecialchars($welcomeCalendar['semester_name']) ?></span>
-        <span>&bull;</span>
-        <span>EduRadar THCS</span>
-    </div>
-    <h1 class="welcome-title masked-text-title" aria-label="Theo dõi tiến trình & Cảnh báo sớm học lực THCS">
-        <div class="masked-line"><span class="masked-line-inner">Theo dõi tiến trình &amp;</span></div>
-        <div class="masked-line"><span class="masked-line-inner">Cảnh báo sớm học lực THCS</span></div>
-    </h1>
-    <p class="welcome-desc">
-        Hệ thống tự động phân tích biến thiên điểm số thường xuyên (ĐĐGtx) theo <b>Thông tư 22/2021/TT-BGDĐT</b>, hỗ trợ giáo viên bộ môn và Ban Giám hiệu nắm bắt kịp thời nguy cơ sa sút để phối hợp can thiệp sớm.
-    </p>
+<div class="content">
 
-    <div class="welcome-cta-group">
-        <a href="index.php" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">
-            <?= get_svg_icon('radar', 18) ?>
-            <span>Xem bảng cảnh báo</span>
-        </a>
-        <a href="nhap_diem.php" class="btn" style="background: var(--card-bg, #ffffff); color: var(--text-heading, #0f172a); border: 1.5px solid var(--border-color, #cbd5e1); padding: 11px 22px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-            <?= get_svg_icon('file-text', 18) ?>
-            <span>Sổ điểm bộ môn</span>
-        </a>
-    </div>
-</section>
+    <!-- 1. HERO OBSERVABILITY DOCK -->
+    <section class="hero-telemetry-dock cobalt-cut" aria-labelledby="welcomeHeroTitle">
+        <canvas id="asciiTelemetryField" class="ascii-telemetry-canvas" aria-hidden="true"></canvas>
 
-<!-- 2. TOÀN TRƯỜNG KPI SUMMARY CARDS (BENTO PRO) -->
-<div class="welcome-kpi-grid">
-    <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #eff6ff; color: #2563eb;"><?= get_svg_icon('users', 20) ?></div>
-        <div>
-            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Tổng học sinh</span>
-            <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
-                <?= number_format($totalStudents) ?>
+        <div class="hero-telemetry-content">
+            <div class="hero-status-strip">
+                <span class="hero-pulse-dot" aria-hidden="true"></span>
+                <span data-i18n="home.semester_phase"><?= htmlspecialchars($welcomeCalendar['phase_label'] ?? 'Học kỳ I') ?> &bull; Niên khóa <?= htmlspecialchars($welcomeCalendar['academic_year'] ?? '2026–2027') ?></span>
+                <span style="opacity: 0.5;">|</span>
+                <span data-i18n="home.role_label"><?= htmlspecialchars($userRoleTitle) ?></span>
             </div>
-            <span style="font-size: 12px; color: #10b981; font-weight: 600;">Toàn trường <?= $totalClasses ?> lớp</span>
-        </div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #ecfdf5; color: #059669;"><?= get_svg_icon('award', 20) ?></div>
-        <div>
-            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Tỷ lệ Khá &amp; Tốt</span>
-            <div style="font-size: 26px; font-weight: 800; color: #059669; font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
-                <?= $pctGood ?>%
+
+            <h1 id="welcomeHeroTitle" class="hero-heading" data-i18n="home.hero_title">
+                Theo dõi tiến trình &amp; Cảnh báo sớm học lực THCS
+            </h1>
+
+            <p class="hero-summary" data-i18n="home.hero_desc">
+                Hệ thống quan sát dữ liệu học tập tự động hóa theo chuẩn Thông tư 22/2021/TT-BGDĐT. Nhận diện sớm nguy cơ sụt giảm phong độ qua quỹ đạo điểm số OLS và ma trận sổ điểm điện tử.
+            </p>
+
+            <div class="hero-actions-bar">
+                <a href="index.php" class="cobalt-key cobalt-key-primary" data-i18n="home.cta_radar">
+                    <?= get_svg_icon('activity', 18) ?>
+                    <span>Xem Bảng Cảnh Báo Sớm</span>
+                </a>
+                <a href="nhap_diem.php" class="cobalt-key" data-i18n="home.cta_gradebook">
+                    <?= get_svg_icon('file-text', 18) ?>
+                    <span>Sổ Điểm Bộ Môn</span>
+                </a>
+                <?php if ($userRole === 'admin'): ?>
+                <a href="admin.php" class="cobalt-key" data-i18n="home.cta_admin">
+                    <?= get_svg_icon('settings', 18) ?>
+                    <span>Quản Trị Nhà Trường</span>
+                </a>
+                <?php endif; ?>
             </div>
-            <span style="font-size: 12px; color: var(--text-subtle, #64748b);">Theo chuẩn TT22</span>
         </div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #fffbeb; color: #d97706;"><?= get_svg_icon('activity', 20) ?></div>
-        <div>
-            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Cột điểm đã nhập</span>
-            <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
-                <?= number_format($totalScores) ?>
+    </section>
+
+    <!-- 2. BENTO GRID KPI METRICS -->
+    <section class="bento-kpi-grid" aria-label="Thống kê tổng quan trường học">
+        <!-- KPI 1: Sĩ số toàn trường -->
+        <div class="bento-kpi-item cobalt-cut">
+            <div class="bento-kpi-head">
+                <span class="bento-kpi-title" data-i18n="home.kpi_total_students">Sĩ số toàn trường</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);"><?= $totalClasses ?> Lớp</span>
             </div>
-            <span style="font-size: 12px; color: #3b82f6; font-weight: 600;">Dữ liệu Học kỳ I</span>
+            <div class="bento-kpi-value"><?= number_format($totalStudents) ?></div>
+            <div class="bento-kpi-sub" data-i18n="home.kpi_total_sub">Học sinh đăng ký trên hệ thống</div>
         </div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-icon-box" style="background: #fef2f2; color: #dc2626;"><?= get_svg_icon('alert-triangle', 20) ?></div>
-        <div>
-            <span style="font-size: 11.5px; font-weight: 700; color: var(--text-subtle, #64748b);">Cần lưu ý hỗ trợ</span>
-            <div style="font-size: 26px; font-weight: 800; color: #dc2626; font-family: 'JetBrains Mono', monospace; margin: 2px 0;">
-                <?= $pctLow ?>%
+
+        <!-- KPI 2: Tỷ lệ Nguy cấp (Red) -->
+        <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid var(--cobalt-ruby);">
+            <div class="bento-kpi-head">
+                <span class="bento-kpi-title" data-i18n="home.kpi_red_rate" style="color: var(--cobalt-ruby);">Tỷ lệ nguy cấp</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-ruby-wash); color: var(--cobalt-ruby);"><?= (int)($scoreStats['red_count'] ?? 0) ?> HS</span>
             </div>
-            <span style="font-size: 12px; color: #dc2626; font-weight: 600;">Khoanh vùng theo dõi</span>
+            <div class="bento-kpi-value" style="color: var(--cobalt-ruby);"><?= $pctRed ?>%</div>
+            <div class="bento-kpi-sub" data-i18n="home.kpi_red_sub">ĐTB &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0</div>
         </div>
-    </div>
-</div>
 
-<!-- 3. PHÂN HỆ LÀM VIỆC -->
-<div style="margin-bottom: 14px;">
-    <h2 style="font-size: 20px; font-weight: 800; color: var(--text-heading, #0f172a); letter-spacing: -0.02em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-        <?= get_svg_icon('radar', 22, '', 'color: #2563eb;') ?>
-        <span>Phân hệ làm việc</span>
-    </h2>
-    <p style="font-size: 13.5px; color: var(--text-muted, #64748b); margin: 0 0 16px 0;">
-        Truy cập nhanh các chức năng nghiệp vụ của hệ thống EduRadar.
-    </p>
-</div>
+        <!-- KPI 3: Tỷ lệ Cần chú ý (Yellow) -->
+        <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid var(--cobalt-amber);">
+            <div class="bento-kpi-head">
+                <span class="bento-kpi-title" data-i18n="home.kpi_yellow_rate" style="color: var(--cobalt-amber);">Cần chú ý</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);"><?= (int)($scoreStats['yellow_count'] ?? 0) ?> HS</span>
+            </div>
+            <div class="bento-kpi-value" style="color: var(--cobalt-amber);"><?= $pctYellow ?>%</div>
+            <div class="bento-kpi-sub" data-i18n="home.kpi_yellow_sub">Điểm số sa sút hoặc ĐTB &lt; 5.0</div>
+        </div>
 
-<div class="launchpad-grid">
-    <!-- PHÂN HỆ: CẢNH BÁO SỚM -->
-    <a href="index.php" class="launchpad-card">
-        <div class="launchpad-card-header">
-            <div style="color: #2563eb;"><?= get_svg_icon('activity', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(37, 99, 235, 0.1); color: #2563eb;">Trọng tâm</span>
+        <!-- KPI 4: Điểm TB trường -->
+        <div class="bento-kpi-item cobalt-cut">
+            <div class="bento-kpi-head">
+                <span class="bento-kpi-title" data-i18n="home.kpi_school_avg">Điểm TB trường</span>
+                <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);"><?= $pctGood ?>% Khá Tốt</span>
+            </div>
+            <div class="bento-kpi-value"><?= $schoolAvg ?></div>
+            <div class="bento-kpi-sub" data-i18n="home.kpi_school_avg_sub">Thang điểm 10 Thông tư 22</div>
         </div>
-        <div class="launchpad-card-title">Cảnh báo sớm & Xu hướng</div>
-        <div class="launchpad-card-desc">
-            Phân tích tự động quỹ đạo tiến bộ học tập (Tiến bộ · Duy trì · Sa sút) kết hợp phân tầng Thông tư 22, tự động gợi ý định hướng sư phạm cho từng học sinh.
-        </div>
-        <div class="launchpad-card-footer">
-            <span>Mở bảng cảnh báo sớm</span>
-            <?= get_svg_icon('chevron-right', 16) ?>
-        </div>
-    </a>
+    </section>
 
-    <!-- PHÂN HỆ: SỔ ĐIỂM BỘ MÔN -->
-    <a href="nhap_diem.php" class="launchpad-card">
-        <div class="launchpad-card-header">
-            <div style="color: #059669;"><?= get_svg_icon('file-text', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(5, 150, 105, 0.1); color: #059669;">Sổ điểm</span>
+    <!-- 3. PHÂN HỆ LÀM VIỆC (LAUNCHPAD) -->
+    <section aria-labelledby="launchpadHeader">
+        <div class="launchpad-section-header">
+            <div>
+                <h2 id="launchpadHeader" class="launchpad-section-title" data-i18n="home.launchpad_title">
+                    <?= get_svg_icon('radar', 20, '', 'color: var(--cobalt-accent);') ?>
+                    <span>Phân hệ làm việc</span>
+                </h2>
+                <p class="launchpad-section-desc" data-i18n="home.launchpad_desc">
+                    Truy cập nhanh các chức năng nghiệp vụ của hệ thống quan sát học tập EduRadar.
+                </p>
+            </div>
+            <span class="hero-status-strip" style="margin: 0;" data-i18n="home.launchpad_tag">Hệ thống mở 24/7</span>
         </div>
-        <div class="launchpad-card-title">Sổ điểm điện tử bộ môn</div>
-        <div class="launchpad-card-desc">
-            Ma trận điểm số ĐĐGtx (1–4), Giữa kỳ (HS 2), Cuối kỳ (HS 3). Hỗ trợ điều hướng phím mũi tên nhanh, tự tính điểm trung bình và lưu tự động.
-        </div>
-        <div class="launchpad-card-footer">
-            <span>Mở sổ điểm bộ môn</span>
-            <?= get_svg_icon('chevron-right', 16) ?>
-        </div>
-    </a>
 
-    <!-- PHÂN HỆ: QUÉT NHANH BẢNG ĐIỂM -->
-    <a href="quet_nhanh.php" class="launchpad-card">
-        <div class="launchpad-card-header">
-            <div style="color: #d97706;"><?= get_svg_icon('qr-code', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(217, 119, 6, 0.1); color: #d97706;">Tiện ích</span>
-        </div>
-        <div class="launchpad-card-title">Quét nhanh bảng điểm</div>
-        <div class="launchpad-card-desc">
-            Dành cho giáo viên kiểm tra nhanh lớp ngoài hoặc tài khoản trải nghiệm: tải tệp Excel, CSV hoặc ảnh bảng điểm và nhận báo cáo phân tích ngay lập tức.
-        </div>
-        <div class="launchpad-card-footer">
-            <span>Dùng thử quét nhanh</span>
-            <?= get_svg_icon('chevron-right', 16) ?>
-        </div>
-    </a>
+        <div class="launchpad-matrix">
+            <!-- 1. BẢNG CẢNH BÁO SỚM -->
+            <a href="index.php" class="launchpad-item cobalt-cut">
+                <div>
+                    <div class="launchpad-item-top">
+                        <div class="launchpad-icon-wrap" style="color: var(--cobalt-accent);">
+                            <?= get_svg_icon('activity', 22) ?>
+                        </div>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);" data-i18n="home.lp1_badge">Ra-đa</span>
+                    </div>
+                    <h3 class="launchpad-item-title" data-i18n="home.lp1_title">Cảnh báo sớm &amp; Xu hướng OLS</h3>
+                    <p class="launchpad-item-desc" data-i18n="home.lp1_desc">
+                        Quan sát quỹ đạo tiến bộ học tập qua các bài kiểm tra, phân tầng cảnh báo Nguy cấp, Cần chú ý, Ổn định và đề xuất can thiệp sư phạm tức thì.
+                    </p>
+                </div>
+                <div class="launchpad-item-footer">
+                    <span data-i18n="home.lp1_action">Mở bảng cảnh báo sớm</span>
+                    <?= get_svg_icon('chevron-right', 16) ?>
+                </div>
+            </a>
 
-    <?php if ($userRole === 'admin'): ?>
-    <!-- PHÂN HỆ: QUẢN TRỊ ADMIN -->
-    <a href="admin.php" class="launchpad-card">
-        <div class="launchpad-card-header">
-            <div style="color: #475569;"><?= get_svg_icon('settings', 24) ?></div>
-            <span style="font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(71, 85, 105, 0.1); color: #475569;">Quản trị</span>
-        </div>
-        <div class="launchpad-card-title">Quản trị nhà trường</div>
-        <div class="launchpad-card-desc">
-            Phân công chuyên môn theo lớp và môn học, quản lý tài khoản giáo viên, nhập danh sách học sinh và theo dõi nhật ký hoạt động hệ thống.
-        </div>
-        <div class="launchpad-card-footer">
-            <span>Vào trang quản trị</span>
-            <?= get_svg_icon('chevron-right', 16) ?>
-        </div>
-    </a>
-    <?php endif; ?>
-</div>
+            <!-- 2. SỔ ĐIỂM BỘ MÔN -->
+            <a href="nhap_diem.php" class="launchpad-item cobalt-cut">
+                <div>
+                    <div class="launchpad-item-top">
+                        <div class="launchpad-icon-wrap" style="color: var(--cobalt-emerald);">
+                            <?= get_svg_icon('file-text', 22) ?>
+                        </div>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);" data-i18n="home.lp2_badge">VnEdu</span>
+                    </div>
+                    <h3 class="launchpad-item-title" data-i18n="home.lp2_title">Sổ điểm điện tử bộ môn</h3>
+                    <p class="launchpad-item-desc" data-i18n="home.lp2_desc">
+                        Ma trận điểm 2D chuẩn VnEdu với ĐĐGtx (1–4), Giữa kỳ (HS 2), Cuối kỳ (HS 3). Tự động tính ĐTBmhk, hỗ trợ phím mũi tên và xuất nhập Excel OpenXML.
+                    </p>
+                </div>
+                <div class="launchpad-item-footer">
+                    <span data-i18n="home.lp2_action">Vào sổ điểm bộ môn</span>
+                    <?= get_svg_icon('chevron-right', 16) ?>
+                </div>
+            </a>
 
-<!-- 4. QUY TRÌNH THEO DÕI HỌC LỰC -->
-<div class="stepper-container">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
-        <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <?= get_svg_icon('check-circle', 20, '', 'color: #2563eb;') ?>
-                <span>Quy trình theo dõi học lực</span>
+            <!-- 3. QUÉT NHANH BẢNG ĐIỂM -->
+            <a href="quet_nhanh.php" class="launchpad-item cobalt-cut">
+                <div>
+                    <div class="launchpad-item-top">
+                        <div class="launchpad-icon-wrap" style="color: var(--cobalt-amber);">
+                            <?= get_svg_icon('qr-code', 22) ?>
+                        </div>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);" data-i18n="home.lp3_badge">Tiện ích</span>
+                    </div>
+                    <h3 class="launchpad-item-title" data-i18n="home.lp3_title">Quét nhanh bảng điểm</h3>
+                    <p class="launchpad-item-desc" data-i18n="home.lp3_desc">
+                        Chế độ trải nghiệm không cần đăng nhập: kéo thả tệp Excel, CSV hoặc ảnh chụp sổ điểm để nhận phân tích Ra-đa và xuất phiếu học tập tức thì.
+                    </p>
+                </div>
+                <div class="launchpad-item-footer">
+                    <span data-i18n="home.lp3_action">Dùng thử quét nhanh</span>
+                    <?= get_svg_icon('chevron-right', 16) ?>
+                </div>
+            </a>
+
+            <?php if ($userRole === 'admin'): ?>
+            <!-- 4. QUẢN TRỊ ADMIN -->
+            <a href="admin.php" class="launchpad-item cobalt-cut">
+                <div>
+                    <div class="launchpad-item-top">
+                        <div class="launchpad-icon-wrap" style="color: #475569;">
+                            <?= get_svg_icon('settings', 22) ?>
+                        </div>
+                        <span class="bento-kpi-badge" style="background: rgba(71, 85, 105, 0.1); color: #475569;" data-i18n="home.lp4_badge">Quản trị</span>
+                    </div>
+                    <h3 class="launchpad-item-title" data-i18n="home.lp4_title">Quản trị nhà trường</h3>
+                    <p class="launchpad-item-desc" data-i18n="home.lp4_desc">
+                        Quản lý ma trận lớp học Khối 6–9, phân công chuyên môn hàng loạt, nạp danh sách học sinh toàn trường và theo dõi nhật ký kiểm toán hệ thống.
+                    </p>
+                </div>
+                <div class="launchpad-item-footer">
+                    <span data-i18n="home.lp4_action">Mở cổng quản trị</span>
+                    <?= get_svg_icon('chevron-right', 16) ?>
+                </div>
+            </a>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- 4. STEPPER QUY TRÌNH 3 BƯỚC -->
+    <section class="stepper-dock cobalt-cut" aria-labelledby="stepperTitle">
+        <div class="stepper-header-row">
+            <div>
+                <h3 id="stepperTitle" class="launchpad-section-title" style="font-size: 18px;" data-i18n="home.stepper_title">
+                    <?= get_svg_icon('check-circle', 18, '', 'color: var(--cobalt-accent);') ?>
+                    <span>Quy trình theo dõi học lực THCS</span>
+                </h3>
+                <p class="launchpad-section-desc" data-i18n="home.stepper_desc">
+                    Lộ trình chuẩn hóa từ nhập liệu điểm số đến can thiệp sư phạm.
+                </p>
+            </div>
+            <span class="hero-status-strip" style="margin: 0;" data-i18n="home.stepper_badge">Quy trình TT22</span>
+        </div>
+
+        <div class="stepper-track-grid">
+            <!-- CHẶNG 01 -->
+            <div class="step-stage-card">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" data-i18n="home.step1_tag">CHẶNG 01</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);">Nhập liệu</span>
+                    </div>
+                    <h4 class="step-stage-title" data-i18n="home.step1_title">Ghi nhận điểm định kỳ</h4>
+                    <p class="step-stage-text" data-i18n="home.step1_desc">
+                        Vào sổ điểm bộ môn, nhập điểm kiểm tra thường xuyên (1–4), Giữa kỳ và Cuối kỳ trực tiếp hoặc qua file mẫu Excel VnEdu.
+                    </p>
+                </div>
+                <a href="nhap_diem.php" class="step-stage-link" data-i18n="home.step1_link">
+                    <span>Mở sổ điểm điện tử</span>
+                    <?= get_svg_icon('chevron-right', 14) ?>
+                </a>
+            </div>
+
+            <!-- CHẶNG 02 -->
+            <div class="step-stage-card">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" data-i18n="home.step2_tag">CHẶNG 02</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);">Giám sát</span>
+                    </div>
+                    <h4 class="step-stage-title" data-i18n="home.step2_title">Phân tích quỹ đạo OLS</h4>
+                    <p class="step-stage-text" data-i18n="home.step2_desc">
+                        Hệ thống tự động tính hệ số góc OLS và phát hiện xu hướng: Tiến bộ rõ rệt, Duy trì ổn định, hoặc Cần chú ý sa sút phong độ.
+                    </p>
+                </div>
+                <a href="index.php" class="step-stage-link" style="color: var(--cobalt-emerald);" data-i18n="home.step2_link">
+                    <span>Xem bảng cảnh báo</span>
+                    <?= get_svg_icon('chevron-right', 14) ?>
+                </a>
+            </div>
+
+            <!-- CHẶNG 03 -->
+            <div class="step-stage-card">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" data-i18n="home.step3_tag">CHẶNG 03</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);">Can thiệp</span>
+                    </div>
+                    <h4 class="step-stage-title" data-i18n="home.step3_title">Kế hoạch hỗ trợ sư phạm</h4>
+                    <p class="step-stage-text" data-i18n="home.step3_desc">
+                        Khoanh vùng học sinh nguy cấp và cần lưu ý, lưu nhận xét sư phạm trực tiếp và lập kế hoạch phụ đạo kịp thời trước kỳ thi.
+                    </p>
+                </div>
+                <a href="index.php" class="step-stage-link" style="color: var(--cobalt-amber);" data-i18n="home.step3_link">
+                    <span>Kế hoạch bồi dưỡng</span>
+                    <?= get_svg_icon('chevron-right', 14) ?>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. TÌM KIẾM NHANH HỌC SINH (HARD CONTRACT PRESERVED) -->
+    <section class="quick-search-dock cobalt-cut" aria-labelledby="quickSearchTitle">
+        <div class="quick-search-desc-wrap">
+            <h3 id="quickSearchTitle" class="launchpad-section-title" style="font-size: 17px;" data-i18n="home.search_title">
+                <?= get_svg_icon('search', 18, '', 'color: var(--cobalt-accent);') ?>
+                <span>Tra cứu nhanh hồ sơ học sinh</span>
             </h3>
-            <p style="font-size: 13px; color: var(--text-muted, #64748b); margin: 0;">
-                Quy trình tinh gọn giúp Thầy/Cô hoàn tất theo dõi và hỗ trợ học sinh hiệu quả.
+            <p class="launchpad-section-desc" data-i18n="home.search_desc">
+                Nhập mã học sinh định danh hoặc họ tên để điều hướng thẳng đến bảng phân tích học lực.
             </p>
-        </div>
-        <span class="badge handbook-badge" style="font-weight: 600; padding: 5px 12px; border-radius: 999px;">
-            Dành cho GV &amp; BGH
-        </span>
-    </div>
-
-    <div class="stepper-track">
-        <!-- BƯỚC 1 -->
-        <div class="step-card">
-            <div class="step-number-badge" style="background: rgba(37, 99, 235, 0.12); color: #2563eb;">1</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Nhập điểm định kỳ</b>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Vào sổ điểm, chọn lớp và môn được phân công. Nhập các cột ĐĐGtx (1–4), Giữa kỳ trực tiếp hoặc nạp từ file Excel.
-            </p>
-            <a href="nhap_diem.php" style="font-size: 12.5px; font-weight: 700; color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Vào sổ điểm <?= get_svg_icon('chevron-right', 14) ?></a>
         </div>
 
-        <!-- BƯỚC 2 -->
-        <div class="step-card">
-            <div class="step-number-badge" style="background: rgba(16, 185, 129, 0.12); color: #059669;">2</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Theo dõi xu hướng</b>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Xem tự động nhịp độ học tập, khoảng cách giữa các bài kiểm tra và phát hiện sớm nguy cơ sụt giảm điểm số.
-            </p>
-            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #059669; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Xem bảng cảnh báo <?= get_svg_icon('chevron-right', 14) ?></a>
+        <div class="quick-search-form-wrap">
+            <form method="GET" action="index.php" class="unified-search-form">
+                <div class="quick-search-input-group">
+                    <input type="text" name="search" id="quickStudentSearchInput" class="quick-search-input" placeholder="Ví dụ: 2404815683 hoặc Nguyễn Văn..." aria-label="Mã học sinh hoặc họ tên học sinh" autocomplete="off" data-i18n-placeholder="home.search_placeholder">
+                    <button type="submit" class="cobalt-key cobalt-key-primary" style="white-space: nowrap;" data-i18n="home.search_btn">
+                        <?= get_svg_icon('search', 16) ?>
+                        <span>Tìm kiếm</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 6. CẨM NANG THÔNG TƯ 22 (TT22 QUICK REFERENCE) -->
+    <section class="handbook-dock cobalt-cut" aria-labelledby="handbookTitle">
+        <div class="stepper-header-row" style="margin-bottom: 8px;">
+            <div>
+                <h3 id="handbookTitle" class="launchpad-section-title" style="font-size: 17px;" data-i18n="home.tt22_title">
+                    <?= get_svg_icon('book-open', 18, '', 'color: var(--cobalt-accent);') ?>
+                    <span>Khung tiêu chuẩn đánh giá Thông tư 22/2021/TT-BGDĐT</span>
+                </h3>
+                <p class="launchpad-section-desc" data-i18n="home.tt22_desc">
+                    Quy chuẩn xếp loại kết quả học tập THCS kết hợp giữa nhận xét và điểm số đánh giá.
+                </p>
+            </div>
+            <span class="hero-status-strip" style="margin: 0;" data-i18n="home.tt22_grades">Áp dụng Khối 6, 7, 8, 9</span>
         </div>
 
-        <!-- BƯỚC 3 -->
-        <div class="step-card">
-            <div class="step-number-badge" style="background: rgba(245, 158, 11, 0.12); color: #d97706;">3</div>
-            <b style="font-size: 14px; color: var(--text-heading); display: block; margin-bottom: 6px;">Kế hoạch hỗ trợ</b>
-            <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px 0; line-height: 1.55;">
-                Lưu ghi chú chuyên môn cho từng học sinh và xuất phiếu học tập gửi phụ huynh chỉ với một thao tác.
-            </p>
-            <a href="index.php" style="font-size: 12.5px; font-weight: 700; color: #d97706; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Xem kế hoạch hỗ trợ <?= get_svg_icon('chevron-right', 14) ?></a>
+        <div class="handbook-cards-grid">
+            <div class="handbook-tier-card tier-tot">
+                <div class="handbook-tier-name" style="color: var(--cobalt-emerald);" data-i18n="home.tier_tot">Mức Tốt</div>
+                <p class="handbook-tier-body" data-i18n="home.tier_tot_body">
+                    &bull; ĐTBMhk &ge; 8.0<br>
+                    &bull; Không có môn nào dưới 6.5<br>
+                    &bull; Các môn nhận xét: Đạt
+                </p>
+            </div>
+            <div class="handbook-tier-card tier-kha">
+                <div class="handbook-tier-name" style="color: var(--cobalt-accent);" data-i18n="home.tier_kha">Mức Khá</div>
+                <p class="handbook-tier-body" data-i18n="home.tier_kha_body">
+                    &bull; ĐTBMhk &ge; 6.5 (chưa đạt Tốt)<br>
+                    &bull; Không có môn nào dưới 5.0<br>
+                    &bull; Các môn nhận xét: Đạt
+                </p>
+            </div>
+            <div class="handbook-tier-card tier-dat">
+                <div class="handbook-tier-name" style="color: var(--cobalt-amber);" data-i18n="home.tier_dat">Mức Đạt</div>
+                <p class="handbook-tier-body" data-i18n="home.tier_dat_body">
+                    &bull; ĐTBMhk &ge; 5.0 (chưa đạt Khá)<br>
+                    &bull; Không có môn nào dưới 3.5<br>
+                    &bull; Tối đa 1 môn nhận xét Chưa Đạt
+                </p>
+            </div>
+            <div class="handbook-tier-card tier-chuadat">
+                <div class="handbook-tier-name" style="color: var(--cobalt-ruby);" data-i18n="home.tier_chuadat">Mức Chưa đạt</div>
+                <p class="handbook-tier-body" data-i18n="home.tier_chuadat_body">
+                    &bull; Các trường hợp còn lại<br>
+                    &bull; ĐTBMhk &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0: Ra-đa khoanh vùng nguy cấp
+                </p>
+            </div>
         </div>
-    </div>
+    </section>
+
 </div>
 
-<!-- 5. TÌM KIẾM NHANH HỌC SINH VỚI INPUT MASK -->
-<div class="quick-search-box">
-    <div>
-        <div style="font-size: 15px; font-weight: 800; color: var(--text-heading); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-            <?= get_svg_icon('search', 18, '', 'color: #2563eb;') ?>
-            <span>Tra cứu hồ sơ học sinh</span>
-        </div>
-        <div style="font-size: 12.5px; color: var(--text-muted);">
-            Nhập mã học sinh chuẩn (ví dụ: <code>2404XXXXXX</code>) hoặc họ tên để mở bảng điểm ngay.
-        </div>
-    </div>
+<script>
+// ASCII Telemetry Field Background Animation (Restrained, 30fps)
+(function() {
+    const canvas = document.getElementById('asciiTelemetryField');
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    <form method="GET" action="index.php" class="unified-search-form">
-        <div class="unified-search-bar">
-            <span class="search-bar-icon"><?= get_svg_icon('search', 17, '', 'color: var(--primary, #2563eb);') ?></span>
-            <input type="text" name="search" id="quickStudentSearchInput" placeholder="Ví dụ: 2404815683 hoặc Trần Lê Ngọc..." aria-label="Mã học sinh hoặc tên học sinh" autocomplete="off">
-            <button type="submit" class="search-bar-btn" aria-label="Bắt đầu tìm kiếm">
-                <span>Tìm kiếm</span>
-                <?= get_svg_icon('chevron_right', 14, '', 'margin-left: 2px;') ?>
-            </button>
-        </div>
-    </form>
-</div>
+    const chars = ['.', ':', '+', '*', '8', '9', '7', '6', '%', '#', '@', '[', ']'];
+    let width = 0, height = 0;
+    const cellW = 14, cellH = 18;
 
-<!-- 6. CẨM NANG THÔNG TƯ 22 (TT22 QUICK REFERENCE) -->
-<div class="handbook-box">
-    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
-        <div>
-            <h3 style="font-size: 18px; font-weight: 800; color: var(--text-heading, #0f172a); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
-                <?= get_svg_icon('book-open', 20, '', 'color: #2563eb;') ?>
-                <span>Quy chuẩn đánh giá theo Thông tư 22/2021/TT-BGDĐT</span>
-            </h3>
-            <p style="font-size: 13px; color: var(--text-muted, #64748b); margin: 0;">
-                Quy định đánh giá học sinh THCS theo phương pháp kết hợp nhận xét và điểm số.
-            </p>
-        </div>
-        <span class="badge handbook-badge" style="font-weight: 600; padding: 6px 12px; border-radius: 999px;">
-            Áp dụng Khối 6, 7, 8, 9
-        </span>
-    </div>
+    function resize() {
+        if (!canvas.parentElement) return;
+        width = canvas.width = canvas.parentElement.offsetWidth;
+        height = canvas.height = canvas.parentElement.offsetHeight;
+        draw();
+    }
 
-    <div class="handbook-grid">
-        <div class="handbook-card card-tot">
-            <b>Mức Tốt</b>
-            <p>
-                • ĐTBMhk ≥ 8.0<br>
-                • Không có môn học nào có ĐTBMhk dưới 6.5<br>
-                • Các môn đánh giá nhận xét: Đạt mức Đạt.
-            </p>
-        </div>
-        <div class="handbook-card card-kha">
-            <b>Mức Khá</b>
-            <p>
-                • ĐTBMhk ≥ 6.5 (chưa đạt Tốt)<br>
-                • Không có môn học nào có ĐTBMhk dưới 5.0<br>
-                • Các môn đánh giá nhận xét: Đạt mức Đạt.
-            </p>
-        </div>
-        <div class="handbook-card card-dat">
-            <b>Mức Đạt</b>
-            <p>
-                • ĐTBMhk ≥ 5.0 (chưa đạt Khá)<br>
-                • Không có môn học nào có ĐTBMhk dưới 3.5<br>
-                • Tối đa 1 môn nhận xét xếp loại Chưa Đạt.
-            </p>
-        </div>
-        <div class="handbook-card card-chuadat">
-            <b>Mức Chưa đạt</b>
-            <p>
-                • Các trường hợp còn lại<br>
-                • Học sinh có ĐTBMhk &lt; 3.5 hoặc thi cuối kỳ dưới 3.0 được hệ thống đưa vào diện cần can thiệp.
-            </p>
-        </div>
-    </div>
-</div>
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#94a3b8' : '#334155';
+
+        const cols = Math.floor(width / cellW);
+        const rows = Math.floor(height / cellH);
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                // Subtle static noise pattern with density gradient from left to right
+                const noise = Math.sin(c * 0.15 + r * 0.2);
+                if (noise > 0.4) {
+                    const charIdx = Math.floor(Math.abs(noise * 100)) % chars.length;
+                    ctx.fillText(chars[charIdx], c * cellW, r * cellH);
+                }
+            }
+        }
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+})();
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

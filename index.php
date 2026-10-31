@@ -155,8 +155,23 @@ if ($userRole === 'teacher') {
     // 1. Xác định lớp học được chọn:
     if ($hasGetClass && isset($filterClasses[$rawGetClass])) {
         $selectedClassId = $rawGetClass;
+    } elseif (isset($_SESSION['shared_class_id']) && is_numeric($_SESSION['shared_class_id']) && (int)$_SESSION['shared_class_id'] > 0 && isset($filterClasses[(int)$_SESSION['shared_class_id']])) {
+        $selectedClassId = (int)$_SESSION['shared_class_id'];
+    } elseif (isset($_SESSION['last_class_id']) && is_numeric($_SESSION['last_class_id']) && (int)$_SESSION['last_class_id'] > 0 && isset($filterClasses[(int)$_SESSION['last_class_id']])) {
+        $selectedClassId = (int)$_SESSION['last_class_id'];
+    } elseif (!empty($userNavCtx['class_id']) && isset($filterClasses[$userNavCtx['class_id']])) {
+        $selectedClassId = $userNavCtx['class_id'];
     } else {
         $selectedClassId = 0;
+        foreach ($filterClasses as $cid => $cName) {
+            if (($classCounts[$cid] ?? 0) > 0) {
+                $selectedClassId = $cid;
+                break;
+            }
+        }
+        if ($selectedClassId === 0 && !empty($filterClasses)) {
+            $selectedClassId = (int)array_key_first($filterClasses);
+        }
     }
 
     // 2. Xác định môn học theo lớp đã chọn (Giáo viên chỉ được xem môn mình dạy ở lớp đó)
@@ -166,11 +181,21 @@ if ($userRole === 'teacher') {
 
     if ($hasGetSubject && in_array($rawGetSubject, $validSubjectsForSelectedClass, true)) {
         $selectedSubject = $rawGetSubject;
+    } elseif (!empty($_SESSION['shared_subject']) && in_array($_SESSION['shared_subject'], $validSubjectsForSelectedClass, true)) {
+        $selectedSubject = $_SESSION['shared_subject'];
+    } elseif (!empty($_SESSION['last_subject']) && in_array($_SESSION['last_subject'], $validSubjectsForSelectedClass, true)) {
+        $selectedSubject = $_SESSION['last_subject'];
+    } elseif (!empty($userNavCtx['subject']) && in_array($userNavCtx['subject'], $validSubjectsForSelectedClass, true)) {
+        $selectedSubject = $userNavCtx['subject'];
     } else {
-        $selectedSubject = 'all';
+        $selectedSubject = !empty($validSubjectsForSelectedClass) ? $validSubjectsForSelectedClass[0] : 'all';
     }
 
     // Ghi nhớ lớp & môn vào không gian tên riêng của tài khoản
+    $_SESSION['shared_class_id'] = $selectedClassId;
+    $_SESSION['last_class_id'] = $selectedClassId;
+    $_SESSION['shared_subject'] = $selectedSubject;
+    $_SESSION['last_subject'] = $selectedSubject;
     set_user_nav_context($userId, $selectedClassId, $selectedSubject);
 
     $whereClauses = ["tc.teacher_id = ?"];
@@ -565,55 +590,356 @@ $breadcrumbs = [
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<!-- EDEXA HERO NOTICE BOARD / WELCOME CARD (DRIBBLE SHOT INSPIRATION) -->
-<div class="edexa-hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #bfdbfe; border-radius: 20px; padding: 24px 28px; margin-bottom: 22px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-    <div style="max-width: 680px;">
-        <!-- MILESTONE HEADER BANNER (DRIBBLE SAAS / APPLE CLEAN STATUS PILL) -->
-        <div class="academic-milestone-banner">
-            <div class="milestone-badge-row">
-                <span class="milestone-dot" aria-hidden="true"></span>
-                <span class="milestone-txt-year">NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?></span>
-                <span class="milestone-divider" aria-hidden="true">&bull;</span>
-                <span class="milestone-txt-sem"><?= htmlspecialchars($academicCalendar['semester_name']) ?></span>
-                <span class="milestone-phase-badge"><?= htmlspecialchars($academicCalendar['phase_title']) ?></span>
-            </div>
-            <div class="milestone-focus-tag">
-                <span class="focus-prefix">Trọng tâm:</span>
-                <span class="focus-desc"><?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
-            </div>
+<style>
+/* =========================================================================
+   HALLMARK V2 COBALT THEME - EARLY WARNING RADAR
+   Exact, technical register: hairlines, 3D keycaps, cut corners,
+   observability telemetry ground, WCAG AA contrast.
+   ========================================================================= */
+:root {
+    --cobalt-paper: #f8fafc;
+    --cobalt-paper-2: #f1f5f9;
+    --cobalt-paper-3: #e2e8f0;
+    --cobalt-ink: #0f172a;
+    --cobalt-ink-2: #334155;
+    --cobalt-muted: #64748b;
+    --cobalt-rule: rgba(203, 213, 225, 0.85);
+    --cobalt-rule-2: #cbd5e1;
+    --cobalt-accent: #2563eb;
+    --cobalt-accent-wash: rgba(37, 99, 235, 0.06);
+    --cobalt-key-face: #ffffff;
+    --cobalt-key-edge: #cbd5e1;
+    --cobalt-ruby: #dc2626;
+    --cobalt-ruby-wash: rgba(220, 38, 38, 0.08);
+    --cobalt-amber: #d97706;
+    --cobalt-amber-wash: rgba(217, 119, 6, 0.08);
+    --cobalt-emerald: #059669;
+    --cobalt-emerald-wash: rgba(5, 150, 105, 0.08);
+    --cut-radius: 12px;
+    --font-display: "Familjen Grotesk", system-ui, -apple-system, sans-serif;
+    --font-body: "IBM Plex Sans", "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+}
+
+[data-theme="dark"] {
+    --cobalt-paper: #0f172a;
+    --cobalt-paper-2: #1e293b;
+    --cobalt-paper-3: #334155;
+    --cobalt-ink: #f8fafc;
+    --cobalt-ink-2: #cbd5e1;
+    --cobalt-muted: #94a3b8;
+    --cobalt-rule: rgba(51, 65, 85, 0.85);
+    --cobalt-rule-2: #334155;
+    --cobalt-key-face: #1e293b;
+    --cobalt-key-edge: #0f172a;
+    --cobalt-accent-wash: rgba(59, 130, 246, 0.12);
+}
+
+.cobalt-cut {
+    border: 1px solid var(--cobalt-rule) !important;
+    border-radius: var(--cut-radius) !important;
+    background: var(--cobalt-paper) !important;
+}
+@supports (corner-shape: bevel) {
+    .cobalt-cut {
+        border-radius: 16px 4px 16px 4px !important;
+        corner-shape: bevel round bevel round !important;
+    }
+}
+
+.cobalt-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 8px 18px;
+    background: var(--cobalt-key-face);
+    color: var(--cobalt-ink);
+    border: 1px solid var(--cobalt-rule-2);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 3px 0 0 var(--cobalt-key-edge), 0 5px 8px -3px rgba(15, 23, 42, 0.2);
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+.cobalt-key:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 0 var(--cobalt-key-edge), 0 7px 10px -3px rgba(15, 23, 42, 0.25);
+    text-decoration: none;
+}
+.cobalt-key:active {
+    transform: translateY(3px);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.2);
+}
+.cobalt-key-primary {
+    background: var(--cobalt-accent) !important;
+    color: #ffffff !important;
+    border-color: #1d4ed8 !important;
+    box-shadow: 0 3px 0 0 #1d4ed8, 0 5px 8px -3px rgba(29, 78, 216, 0.4) !important;
+}
+.cobalt-key-primary:hover {
+    background: #1d4ed8 !important;
+    box-shadow: 0 4px 0 0 #1e40af, 0 7px 10px -3px rgba(29, 78, 216, 0.45) !important;
+}
+
+.hero-telemetry-dock {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 32px;
+    margin-bottom: 22px;
+    background: var(--cobalt-paper);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+@supports (corner-shape: bevel) {
+    .hero-telemetry-dock {
+        border-radius: 20px 4px 20px 4px;
+        corner-shape: bevel round bevel round;
+    }
+}
+.hero-telemetry-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+}
+[data-theme="dark"] .hero-telemetry-canvas {
+    opacity: 0.07;
+}
+
+.hero-status-strip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--cobalt-muted);
+    margin-bottom: 12px;
+}
+.hero-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cobalt-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.radar-telemetry-title {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--cobalt-ink);
+    margin: 0 0 8px 0;
+}
+.radar-telemetry-desc {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--cobalt-ink-2);
+    margin: 0 0 16px 0;
+    max-width: 680px;
+}
+
+.radar-hero-kpi-wrap {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+}
+.radar-hero-kpi-box {
+    border: 1px solid var(--cobalt-rule);
+    background: var(--cobalt-paper-2);
+    border-radius: 8px;
+    padding: 12px 18px;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 0 2px 0 0 var(--cobalt-key-edge);
+}
+.radar-hero-kpi-val {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--cobalt-ink);
+    line-height: 1.1;
+    margin-top: 2px;
+}
+
+/* Feature Ledger Table Styling */
+.radar-table-wrap {
+    border: 1px solid var(--cobalt-rule) !important;
+    border-radius: 12px !important;
+    background: var(--cobalt-paper) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+.radar-table th {
+    background: var(--cobalt-paper-2) !important;
+    color: var(--cobalt-muted) !important;
+    font-family: var(--font-display) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.03em !important;
+    border-bottom: 1px solid var(--cobalt-rule) !important;
+}
+.radar-table td {
+    border-bottom: 1px solid var(--cobalt-rule) !important;
+    color: var(--cobalt-ink) !important;
+}
+.radar-table tr.radar-row:hover {
+    background: var(--cobalt-accent-wash) !important;
+}
+
+/* 3D Keycap Stat Cards */
+.stat-card {
+    border: 1px solid var(--cobalt-rule) !important;
+    background: var(--cobalt-paper) !important;
+    border-radius: var(--cut-radius) !important;
+    box-shadow: 0 3px 0 0 var(--cobalt-key-edge), 0 5px 8px -3px rgba(15, 23, 42, 0.08) !important;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out !important;
+}
+.stat-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 0 0 var(--cobalt-key-edge), 0 8px 14px -3px rgba(15, 23, 42, 0.12) !important;
+}
+.stat-card.total { border-top: 3px solid var(--cobalt-accent) !important; }
+.stat-card.green { border-top: 3px solid var(--cobalt-emerald) !important; }
+.stat-card.yellow { border-top: 3px solid var(--cobalt-amber) !important; }
+.stat-card.red { border-top: 3px solid var(--cobalt-ruby) !important; }
+
+/* 3D Keycap Chips */
+.chip {
+    box-shadow: 0 2px 0 0 var(--cobalt-key-edge) !important;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out !important;
+}
+.chip:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 0 0 var(--cobalt-key-edge) !important;
+}
+.chip:active {
+    transform: translateY(2px) !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.15) !important;
+}
+.chip.active {
+    box-shadow: 0 2px 0 0 #1d4ed8 !important;
+}
+
+/* Horizontal scrolling for mobile class chips */
+.matrix-class-chips {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+</style>
+
+<!-- 1. HERO TELEMETRY DOCK (HALLMARK V2 COBALT GROUND-UP REDESIGN) -->
+<section class="hero-telemetry-dock cobalt-cut" aria-labelledby="radarHeroTitle">
+    <canvas id="asciiRadarTelemetry" class="hero-telemetry-canvas" aria-hidden="true"></canvas>
+
+    <div style="max-width: 720px; position: relative; z-index: 2;">
+        <div class="hero-status-strip">
+            <span class="hero-pulse-dot" aria-hidden="true"></span>
+            <span data-i18n="radar.school_year">NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?> &bull; <?= htmlspecialchars($academicCalendar['semester_name']) ?></span>
+            <span style="opacity: 0.5;">|</span>
+            <span data-i18n="radar.phase_title"><?= htmlspecialchars($academicCalendar['phase_title']) ?> &bull; <?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
         </div>
-        <h1 style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); letter-spacing: -0.03em; margin: 0 0 8px 0; line-height: 1.25;">
+
+        <h1 id="radarHeroTitle" class="radar-telemetry-title" data-i18n="radar.hero_title">
             Bảng theo dõi &amp; Cảnh báo sớm học lực
         </h1>
-        <p style="font-size: 13.5px; color: var(--text-muted, #475569); margin: 0 0 16px 0; line-height: 1.5;">
+
+        <p class="radar-telemetry-desc" data-i18n="radar.hero_desc">
             Theo dõi tiến trình học tập, phát hiện sớm nguy cơ sụt giảm điểm số theo <b>Thông tư 22/2021/TT-BGDĐT</b> và hỗ trợ xây dựng kế hoạch can thiệp sư phạm kịp thời.
         </p>
+
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-            <a href="nhap_diem.php<?= $navQuery ?>" class="btn primary" style="background: #2563eb; color: #ffffff; padding: 9px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+            <a href="nhap_diem.php<?= ($selectedClassId > 0 && $selectedSubject !== '' && $selectedSubject !== 'all') ? '?class_id=' . $selectedClassId . '&subject=' . urlencode($selectedSubject) : '' ?>" class="cobalt-key cobalt-key-primary" data-i18n="radar.btn_gradebook">
                 <?= get_svg_icon('file-text', 16) ?>
                 <span>Sổ điểm bộ môn</span>
             </a>
+            <?php if ($userRole === 'admin'): ?>
+            <a href="admin.php" class="cobalt-key" data-i18n="radar.btn_admin">
+                <?= get_svg_icon('settings', 16) ?>
+                <span>Quản trị nhà trường</span>
+            </a>
+            <?php endif; ?>
         </div>
     </div>
-    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-        <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
-            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b);">Tổng học sinh</span>
-            <div style="font-size: 26px; font-weight: 800; color: var(--text-heading, #0f172a); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
-                <?= count($students) ?>
-            </div>
-            <span style="font-size: 11.5px; color: #10b981; font-weight: 600;">100% Hồ sơ</span>
+
+    <div class="radar-hero-kpi-wrap">
+        <div class="radar-hero-kpi-box">
+            <span style="font-size: 11px; font-weight: 700; color: var(--cobalt-muted); text-transform: uppercase;" data-i18n="radar.hero_kpi_total">Tổng học sinh</span>
+            <div class="radar-hero-kpi-val"><?= count($students) ?></div>
+            <span style="font-size: 11.5px; color: var(--cobalt-emerald); font-weight: 600;" data-i18n="radar.hero_kpi_total_sub">100% Hồ sơ</span>
         </div>
-        <div class="hero-kpi-box" style="border-radius: 14px; padding: 14px 20px; text-align: center; min-width: 130px; box-shadow: 0 2px 6px rgba(15,23,42,0.02);">
-            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted, #64748b);">Khá &amp; Tốt</span>
-            <div style="font-size: 26px; font-weight: 800; color: #3b82f6; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+        <div class="radar-hero-kpi-box">
+            <span style="font-size: 11px; font-weight: 700; color: var(--cobalt-muted); text-transform: uppercase;" data-i18n="radar.hero_kpi_good">Khá &amp; Tốt</span>
+            <div class="radar-hero-kpi-val" style="color: var(--cobalt-accent);">
                 <?= $stats['tier_excellent'] + $stats['tier_good'] ?>
             </div>
-            <span style="font-size: 11.5px; color: #3b82f6; font-weight: 600;">
+            <span style="font-size: 11.5px; color: var(--cobalt-accent); font-weight: 600;">
                 <?= round(($stats['tier_excellent'] + $stats['tier_good']) / max(1, count($students)) * 100, 1) ?>%
             </span>
         </div>
     </div>
-</div>
+</section>
+
+<script>
+(function() {
+    const canvas = document.getElementById('asciiRadarTelemetry');
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const chars = ['.', ':', '+', '8', '5', '9', 'k', 'o', '%', '#'];
+    let w = 0, h = 0;
+    function resize() {
+        if (!canvas.parentElement) return;
+        w = canvas.width = canvas.parentElement.offsetWidth;
+        h = canvas.height = canvas.parentElement.offsetHeight;
+        draw();
+    }
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#94a3b8' : '#334155';
+        const cols = Math.floor(w / 16);
+        const rows = Math.floor(h / 20);
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const noise = Math.sin(c * 0.18 + r * 0.25);
+                if (noise > 0.45) {
+                    const idx = Math.floor(Math.abs(noise * 100)) % chars.length;
+                    ctx.fillText(chars[idx], c * 16, r * 20);
+                }
+            }
+        }
+    }
+    window.addEventListener('resize', resize);
+    resize();
+})();
+</script>
 
 <!-- KHỐI TIÊU ĐỀ DASHBOARD -->
 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 16px; flex-wrap: wrap;">
@@ -724,8 +1050,35 @@ require_once __DIR__ . '/includes/header.php';
 
         <!-- HÀNG CHỌN PHÂN MÔN & THAO TÁC LỌC -->
         <form method="GET" action="index.php" id="matrixFilterForm" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color);">
-            <input type="hidden" name="class_id" value="<?= (int)$selectedClassId ?>">
-            <div class="matrix-form-row" style="align-items: center; justify-content: flex-start; gap: 14px;">
+            <div class="matrix-form-row" style="align-items: center; justify-content: flex-start; gap: 14px; flex-wrap: wrap;">
+                <!-- 1. MỤC CHỌN LỚP HỌC -->
+                <div class="matrix-field-group" style="min-width: 220px;">
+                    <label class="matrix-field-label" for="selectClassId" style="display: flex; align-items: center; gap: 6px;">
+                        <?= get_svg_icon('users', 14) ?>
+                        <span>Chọn Lớp Học:</span>
+                    </label>
+                    <select name="class_id" id="selectClassId" class="matrix-select" onchange="this.form.submit()">
+                        <?php if ($userRole === 'admin'): ?>
+                            <option value="0" <?= $selectedClassId === 0 ? 'selected' : '' ?>>
+                                🏢 Tất cả các lớp (<?= count($filterClasses) ?> lớp - <?= array_sum($classCounts) ?> HS)
+                            </option>
+                            <?php foreach ($filterClasses as $cId => $cName): ?>
+                                <option value="<?= $cId ?>" <?= $selectedClassId === $cId ? 'selected' : '' ?>>
+                                    Lớp <?= htmlspecialchars($cName) ?> (<?= $classCounts[$cId] ?? 0 ?> HS)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($filterClasses as $cId => $cName): ?>
+                                <?php $assignedSubs = $teacherClassSubjectMap[$cId]['subjects'] ?? []; ?>
+                                <option value="<?= $cId ?>" <?= $selectedClassId === $cId ? 'selected' : '' ?>>
+                                    Lớp <?= htmlspecialchars($cName) ?> [Môn: <?= implode(', ', $assignedSubs) ?>] (<?= $classCounts[$cId] ?? 0 ?> HS)
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <!-- 2. MỤC CHỌN PHÂN MÔN -->
                 <div class="matrix-field-group" style="min-width: 220px;">
                     <label class="matrix-field-label" for="selectSubject" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('book-open', 14) ?>
@@ -734,7 +1087,7 @@ require_once __DIR__ . '/includes/header.php';
                     <?php if ($userRole === 'admin'): ?>
                         <select name="subject" id="selectSubject" class="matrix-select" onchange="this.form.submit()">
                             <option value="all" <?= $selectedSubject === 'all' ? 'selected' : '' ?>>
-                                Tất cả môn học (<?= count($filterSubjects) ?> môn)
+                                📖 Tất cả môn học (<?= count($filterSubjects) ?> môn)
                             </option>
                             <?php foreach ($filterSubjects as $subj): ?>
                                 <option value="<?= htmlspecialchars($subj) ?>" <?= $selectedSubject === $subj ? 'selected' : '' ?>>
@@ -762,9 +1115,22 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 8px; margin-top: 18px;">
-                    <button class="btn primary" type="submit" style="padding: 7px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; background: #2563eb; color: #ffffff; border: none; cursor: pointer;">
-                        Áp dụng
-                    </button>
+                    <!-- Lucian UX/UI Prompt #001 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#001 -->
+                    <div class="ux u001" id="u001FilterBtnWrapper" data-state="idle">
+                        <div class="u001-blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+                        <div class="u001-mag">
+                            <div class="u001-float">
+                                <button class="u001-btn btn-compact" type="submit" id="btnFilterApply">
+                                    <span class="u001-sheen" aria-hidden="true"></span>
+                                    <span class="u001-txt">Áp Dụng Lọc</span>
+                                    <span class="u001-spin" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="10"/></svg></span>
+                                    <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Xong</span>
+                                </button>
+                            </div>
+                        </div>
+                        <span class="u001-live" aria-live="polite"></span>
+                    </div>
+
                     <?php if ($selectedClassId > 0 || $selectedSubject !== 'all'): ?>
                         <a href="index.php" style="font-size: 12.5px; color: var(--primary); text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: #eef2ff;">
                             Đặt lại bộ lọc

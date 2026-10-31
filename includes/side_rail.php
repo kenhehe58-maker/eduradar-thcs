@@ -19,11 +19,9 @@ $railSavedCtx = ($railUserId > 0 && function_exists('get_user_nav_context'))
 $ctxClassId = (int)($_GET['class_id'] ?? $railSavedCtx['class_id'] ?? 0);
 $ctxSubject = trim((string)($_GET['subject'] ?? $railSavedCtx['subject'] ?? ''));
 $navQuery = '';
-if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubject !== 'all'))) {
-    $qp = [];
-    if ($ctxClassId > 0) $qp['class_id'] = $ctxClassId;
-    if ($ctxSubject !== '' && $ctxSubject !== 'all') $qp['subject'] = $ctxSubject;
-    if (!empty($qp)) $navQuery = '?' . http_build_query($qp);
+if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubject !== 'all') {
+    $qp = ['class_id' => $ctxClassId, 'subject' => $ctxSubject];
+    $navQuery = '?' . http_build_query($qp);
 }
 ?>
 <style>
@@ -38,7 +36,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   width: 230px;
   z-index: 1020;
   background: var(--card-bg, #ffffff);
-  border-right: 1px solid var(--border-subtle, #e2e8f0);
+  border-right: var(--rule-hair, 1px) solid var(--color-rule, #e2e8f0);
   box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03);
   display: flex;
   flex-direction: column;
@@ -64,7 +62,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   align-items: center;
   gap: 12px;
   padding: 4px 6px 20px 6px;
-  border-bottom: 1px solid var(--border-subtle, #f1f5f9);
+  border-bottom: var(--rule-hair, 1px) solid var(--color-rule-2, #f1f5f9);
   margin-bottom: 16px;
 }
 .u040-logo {
@@ -143,9 +141,14 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
 }
 .u040-it:hover {
-  background: var(--surface-hover, #f1f5f9);
-  color: var(--text-heading, #0f172a);
-  transform: translateX(2px);
+  background: var(--color-paper-2, var(--surface-hover, #f1f5f9));
+  color: var(--color-ink, var(--text-heading, #0f172a));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-key);
+}
+.u040-it:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-key-press);
 }
 .u040-it svg {
   width: 20px;
@@ -165,13 +168,13 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
   text-overflow: ellipsis;
 }
 .u040-it[aria-current="page"] {
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  background: var(--color-accent, #2563eb);
+  color: var(--color-accent-ink, #ffffff);
+  box-shadow: var(--shadow-key-accent);
   font-weight: 700;
 }
 .u040-it[aria-current="page"] svg {
-  stroke: #ffffff;
+  stroke: var(--color-accent-ink, #ffffff);
 }
 
 /* BADGE COUNTER IN EDEXA STYLE */
@@ -201,7 +204,7 @@ if ($userRole !== 'guest' && ($ctxClassId > 0 || ($ctxSubject !== '' && $ctxSubj
 .u040-footer-sec {
   margin-top: auto;
   padding-top: 14px;
-  border-top: 1px solid var(--border-subtle, #f1f5f9);
+  border-top: var(--rule-hair, 1px) solid var(--color-rule-2, #f1f5f9);
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -38,7 +38,7 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?> – <?= htmlspecialchars(APP_NAME ?? 'EduRadar THCS', ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css?v=<?= file_exists(__DIR__ . '/../assets/css/style.css') ? filemtime(__DIR__ . '/../assets/css/style.css') : time() ?>">
     <?php $fxPage = in_array(basename($_SERVER['SCRIPT_NAME'] ?? ''), ['welcome.php', 'quet_nhanh.php'], true); ?>
     <?php if ($fxPage): /* GSAP chỉ nạp cho Trang chủ & Quét nhanh */ ?>
@@ -367,7 +367,7 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
 
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
         <div class="glass-status-group">
-            <div class="glass-status-chip chip-accent" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+            <div class="glass-status-chip chip-accent chip-mobile-hide" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 <span><?= get_svg_icon('calendar', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?><?= htmlspecialchars($headerCalendar['school_year'] ?? '2024-2025', ENT_QUOTES, 'UTF-8') ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ 1', ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <div class="glass-status-chip chip-mobile-hide" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
@@ -376,13 +376,19 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
             </div>
             <?php if (!empty($fxPage)): ?>
             <!-- REPLAY GSAP ANIMATIONS BUTTON (WELCOME & QUET_NHANH) -->
-            <button type="button" class="edexa-help-toggle" id="btnReplayFx" title="Chạy lại hiệu ứng chuyển động GSAP" aria-label="Chạy lại hiệu ứng">
+            <button type="button" class="edexa-help-toggle chip-mobile-hide" id="btnReplayFx" title="Chạy lại hiệu ứng chuyển động GSAP" aria-label="Chạy lại hiệu ứng">
                 <svg id="replayFxIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
             <?php endif; ?>
             <!-- HELP / SHORTCUT MODAL TRIGGER -->
-            <button type="button" class="edexa-help-toggle" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
+            <button type="button" class="edexa-help-toggle chip-mobile-hide" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
                 <span>?</span>
+            </button>
+            <!-- BILINGUAL VI | EN TOGGLE BUTTON -->
+            <button type="button" class="edexa-theme-toggle edexa-lang-toggle key key--sm" id="langToggleBtn" title="Chuyển đổi ngôn ngữ Tiếng Việt / English" aria-label="Chuyển đổi ngôn ngữ Tiếng Việt / English">
+                <span class="lang-badge active" id="langBadgeVi">VI</span>
+                <span class="lang-sep">|</span>
+                <span class="lang-badge" id="langBadgeEn">EN</span>
             </button>
             <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
             <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">

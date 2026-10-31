@@ -1413,4 +1413,227 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (e) {}
         }
     }
+
+    // -------------------------------------------------------------------------
+    // 9. CLIENT-SIDE BILINGUAL ENGINE (VI | EN) & LOCALSTORAGE PERSISTENCE
+    // -------------------------------------------------------------------------
+    const i18nDict = {
+        vi: {
+            'nav_home': 'Trang Chủ',
+            'nav_radar': 'Cảnh Báo',
+            'nav_radar_full': 'Cảnh Báo Sớm',
+            'nav_gradebook': 'Sổ Điểm',
+            'nav_gradebook_full': 'Sổ Điểm Bộ Môn',
+            'nav_scan': 'Quét',
+            'nav_scan_full': 'Quét Nhanh 1 Chạm',
+            'nav_admin': 'Quản Trị',
+            'nav_admin_full': 'Cổng Quản Trị Trường',
+            'btn_save': 'Lưu bảng điểm',
+            'btn_logout': 'Thoát',
+            'btn_logout_full': 'Đăng Xuất',
+            'btn_login': 'Đăng Nhập',
+            'btn_filter': 'Lọc',
+            'btn_search': 'Tìm kiếm',
+            'status_critical': 'Nguy cấp',
+            'status_attention': 'Cần chú ý',
+            'status_stable': 'Ổn định',
+            'role_admin': 'Quản Trị Viên',
+            'role_teacher': 'Giáo Viên Bộ Môn',
+            'theme_light': 'Giao diện sáng',
+            'theme_dark': 'Giao diện tối'
+        },
+        en: {
+            'nav_home': 'Home',
+            'nav_radar': 'Early Warning',
+            'nav_radar_full': 'Early Warning',
+            'nav_gradebook': 'Subject Gradebook',
+            'nav_gradebook_full': 'Subject Gradebook',
+            'nav_scan': 'Quick Scan',
+            'nav_scan_full': 'Quick Scan',
+            'nav_admin': 'School Administration',
+            'nav_admin_full': 'School Administration',
+            'btn_save': 'Save Gradebook',
+            'btn_logout': 'Sign Out',
+            'btn_logout_full': 'Sign Out',
+            'btn_login': 'Sign In',
+            'btn_filter': 'Filter',
+            'btn_search': 'Search',
+            'status_critical': 'Critical',
+            'status_attention': 'Attention',
+            'status_stable': 'Stable',
+            'role_admin': 'Administrator',
+            'role_teacher': 'Subject Teacher',
+            'theme_light': 'Light Theme',
+            'theme_dark': 'Dark Theme'
+        }
+    };
+
+    const phraseMapEn = {
+        'Trang Chủ': 'Home',
+        'Trang chủ': 'Home',
+        'Cảnh Báo': 'Early Warning',
+        'Cảnh báo': 'Early Warning',
+        'Cảnh Báo Sớm': 'Early Warning',
+        'Cảnh báo sớm': 'Early Warning',
+        'Sổ Điểm': 'Gradebook',
+        'Sổ điểm': 'Gradebook',
+        'Sổ Điểm Bộ Môn': 'Subject Gradebook',
+        'Sổ điểm bộ môn': 'Subject Gradebook',
+        'Quét': 'Quick Scan',
+        'Quét Nhanh': 'Quick Scan',
+        'Quét nhanh': 'Quick Scan',
+        'Quét Nhanh 1 Chạm': 'Quick Scan',
+        'Quản Trị': 'Admin Console',
+        'Quản trị': 'Admin Console',
+        'Cổng Quản Trị Trường': 'School Administration',
+        'Lưu bảng điểm': 'Save Gradebook',
+        'Đăng Xuất': 'Sign Out',
+        'Đăng xuất': 'Sign Out',
+        'Thoát': 'Sign Out',
+        'Đăng Nhập': 'Sign In',
+        'Đăng nhập': 'Sign In',
+        'Lọc': 'Filter',
+        'Tìm kiếm': 'Search',
+        'Nguy cấp': 'Critical',
+        'Cần chú ý': 'Attention',
+        'Ổn định': 'Stable',
+        'Quản Trị Viên': 'Administrator',
+        'Giáo Viên Bộ Môn': 'Subject Teacher',
+        'Giao diện sáng': 'Light Theme',
+        'Giao diện tối': 'Dark Theme'
+    };
+
+    function applyLanguage(lang) {
+        const badgeVi = document.getElementById('langBadgeVi');
+        const badgeEn = document.getElementById('langBadgeEn');
+        if (badgeVi && badgeEn) {
+            if (lang === 'en') {
+                if (badgeVi.classList && typeof badgeVi.classList.remove === 'function') badgeVi.classList.remove('active');
+                if (badgeEn.classList && typeof badgeEn.classList.add === 'function') badgeEn.classList.add('active');
+            } else {
+                if (badgeVi.classList && typeof badgeVi.classList.add === 'function') badgeVi.classList.add('active');
+                if (badgeEn.classList && typeof badgeEn.classList.remove === 'function') badgeEn.classList.remove('active');
+            }
+        }
+
+        // 1. Elements with data-i18n attribute
+        if (typeof document.querySelectorAll === 'function') {
+            try {
+                const i18nElements = document.querySelectorAll('[data-i18n]');
+                if (i18nElements && i18nElements.length > 0) {
+                    i18nElements.forEach(function(el) {
+                        const key = el.getAttribute('data-i18n');
+                        if (key && i18nDict[lang] && i18nDict[lang][key]) {
+                            el.textContent = i18nDict[lang][key];
+                        }
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // 2. Navigation items (.u040-it-label)
+        if (typeof document.querySelectorAll === 'function') {
+            try {
+                const navLabels = document.querySelectorAll('.u040-it-label, .u040-dock-tip, .u040-logout-text');
+                if (navLabels && navLabels.length > 0) {
+                    navLabels.forEach(function(el) {
+                        if (lang === 'en') {
+                            if (!el.getAttribute('data-i18n-orig')) {
+                                el.setAttribute('data-i18n-orig', el.textContent.trim());
+                            }
+                            const orig = el.getAttribute('data-i18n-orig');
+                            if (phraseMapEn[orig]) {
+                                el.textContent = phraseMapEn[orig];
+                            }
+                        } else {
+                            const orig = el.getAttribute('data-i18n-orig');
+                            if (orig) {
+                                el.textContent = orig;
+                            }
+                        }
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // 3. User Role pill in header (.edexa-role-pill)
+        if (typeof document.querySelector === 'function') {
+            try {
+                const rolePill = document.querySelector('.edexa-role-pill');
+                if (rolePill) {
+                    if (lang === 'en') {
+                        if (!rolePill.getAttribute('data-i18n-orig')) {
+                            rolePill.setAttribute('data-i18n-orig', rolePill.textContent.trim());
+                        }
+                        const orig = rolePill.getAttribute('data-i18n-orig');
+                        if (phraseMapEn[orig]) {
+                            rolePill.textContent = phraseMapEn[orig];
+                        }
+                    } else {
+                        const orig = rolePill.getAttribute('data-i18n-orig');
+                        if (orig) {
+                            rolePill.textContent = orig;
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // 4. Save button (#btnSaveScores)
+        const btnSave = document.getElementById('btnSaveScores');
+        if (btnSave) {
+            if (lang === 'en') {
+                if (!btnSave.getAttribute('data-i18n-orig')) {
+                    btnSave.setAttribute('data-i18n-orig', btnSave.textContent.trim());
+                }
+                btnSave.textContent = 'Save Gradebook';
+            } else {
+                const orig = btnSave.getAttribute('data-i18n-orig');
+                if (orig) {
+                    btnSave.textContent = orig;
+                }
+            }
+        }
+
+        // 5. Search placeholder (#search)
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            if (lang === 'en') {
+                if (!searchInput.getAttribute('data-i18n-placeholder-orig')) {
+                    searchInput.setAttribute('data-i18n-placeholder-orig', searchInput.placeholder || '');
+                }
+                searchInput.placeholder = 'Search student name, ID, class...';
+            } else {
+                const orig = searchInput.getAttribute('data-i18n-placeholder-orig');
+                if (orig) searchInput.placeholder = orig;
+            }
+        }
+    }
+
+    // Initialize Language from localStorage (Defensively)
+    let currentLang = 'vi';
+    try {
+        if (typeof localStorage !== 'undefined') {
+            currentLang = localStorage.getItem('edu_radar_lang') || 'vi';
+        }
+    } catch (e) {}
+
+    if (currentLang === 'en') {
+        applyLanguage('en');
+    }
+
+    // Wire click listener on #langToggleBtn
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    if (langToggleBtn && typeof langToggleBtn.addEventListener === 'function') {
+        langToggleBtn.addEventListener('click', function(e) {
+            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            currentLang = (currentLang === 'vi') ? 'en' : 'vi';
+            try {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.setItem('edu_radar_lang', currentLang);
+                }
+            } catch (err) {}
+            applyLanguage(currentLang);
+        });
+    }
 });
