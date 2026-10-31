@@ -8689,3 +8689,59 @@ body.fx-off *, body.fx-off *::before, body.fx-off *::after {
     color: #cbd5e1 !important;
     opacity: 1 !important;
 }
+
+
+/* 9. SETTINGS DRAWER & CARDS (APPLE DESIGN & COBALT THEME) */
+.settings-choice-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--card-bg, #ffffff);
+    border: 1.5px solid var(--border-subtle, #e2e8f0);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+    outline: none;
+    text-align: left;
+}
+.settings-choice-card:hover {
+    border-color: var(--primary, #2563eb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+.settings-choice-card.is-active {
+    border-color: var(--primary, #2563eb) !important;
+    background: rgba(37, 99, 235, 0.04) !important;
+    box-shadow: 0 0 0 1px var(--primary, #2563eb);
+}
+[data-theme="dark"] .settings-choice-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+[data-theme="dark"] .settings-choice-card.is-active {
+    background: rgba(37, 99, 235, 0.16) !important;
+    border-color: #3b82f6 !important;
+}
+.settings-check-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary, #2563eb);
+    color: #ffffff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+.settings-icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}

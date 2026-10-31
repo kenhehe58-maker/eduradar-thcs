@@ -686,7 +686,6 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);"><span class="kpi-count"><?= $totalClasses ?></span> <span data-i18n="home.badge_classes">Lớp</span></span>
             </div>
             <div class="bento-kpi-value"><?= number_format($totalStudents) ?></div>
-            <div class="bento-kpi-sub" data-i18n="home.kpi_total_sub">Học sinh đăng ký trên hệ thống</div>
         </div>
 
         <!-- KPI 2: Tỷ lệ Nguy cấp (Red) -->
@@ -696,7 +695,6 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="bento-kpi-badge" style="background: var(--cobalt-ruby-wash); color: var(--cobalt-ruby);"><span class="kpi-count"><?= (int)($scoreStats['red_count'] ?? 0) ?></span> <span data-i18n="home.badge_students">HS</span></span>
             </div>
             <div class="bento-kpi-value" style="color: var(--cobalt-ruby);"><?= $pctRed ?>%</div>
-            <div class="bento-kpi-sub" data-i18n="home.kpi_red_sub">ĐTB &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0</div>
         </div>
 
         <!-- KPI 3: Tỷ lệ Cần chú ý (Yellow) -->
@@ -706,7 +704,6 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);"><span class="kpi-count"><?= (int)($scoreStats['yellow_count'] ?? 0) ?></span> <span data-i18n="home.badge_students">HS</span></span>
             </div>
             <div class="bento-kpi-value" style="color: var(--cobalt-amber);"><?= $pctYellow ?>%</div>
-            <div class="bento-kpi-sub" data-i18n="home.kpi_yellow_sub">Điểm số sa sút hoặc ĐTB &lt; 5.0</div>
         </div>
 
         <!-- KPI 4: Điểm TB trường -->
@@ -720,19 +717,18 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </section>
 
-    <!-- 3. PHÂN HỆ LÀM VIỆC (LAUNCHPAD) -->
+    <!-- 3. GIỚI THIỆU TỔNG QUAN HỆ THỐNG & PHÂN HỆ LÀM VIỆC -->
     <section aria-labelledby="launchpadHeader">
         <div class="launchpad-section-header">
             <div>
                 <h2 id="launchpadHeader" class="launchpad-section-title" data-i18n="home.launchpad_title">
                     <?= get_svg_icon('radar', 20, '', 'color: var(--cobalt-accent);') ?>
-                    <span>Phân hệ làm việc</span>
+                    <span>Giới thiệu tổng quan hệ thống</span>
                 </h2>
                 <p class="launchpad-section-desc" data-i18n="home.launchpad_desc">
-                    Truy cập nhanh các chức năng nghiệp vụ của hệ thống quan sát học tập EduRadar.
+                    Hệ thống quan sát học lực THCS Thông tư 22: tích hợp Sổ điểm VnEdu, cảnh báo sớm nguy cơ sa sút và định hướng can thiệp sư phạm.
                 </p>
             </div>
-            <span class="hero-status-strip" style="margin: 0;" data-i18n="home.launchpad_tag">Hệ thống mở 24/7</span>
         </div>
 
         <div class="launchpad-matrix">
@@ -828,9 +824,6 @@ require_once __DIR__ . '/includes/header.php';
                     <?= get_svg_icon('check-circle', 18, '', 'color: var(--cobalt-accent);') ?>
                     <span>Quy trình theo dõi học lực THCS</span>
                 </h3>
-                <p class="launchpad-section-desc" data-i18n="home.stepper_desc">
-                    Lộ trình chuẩn hóa từ nhập liệu điểm số đến can thiệp sư phạm.
-                </p>
             </div>
             <span class="hero-status-strip" style="margin: 0;" data-i18n="home.stepper_badge">Quy trình TT22</span>
         </div>

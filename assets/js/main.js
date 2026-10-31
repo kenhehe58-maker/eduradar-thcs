@@ -1,4 +1,4 @@
-// =============================================================================
+﻿// =============================================================================
 // EduRadar THCS: Master Client-side Interactions
 // Features:
 // 1. Collapsible Left-side Navigation Sidebar with localStorage Persistence
@@ -1564,8 +1564,8 @@ document.addEventListener('DOMContentLoaded', function () {
             'home.badge_good': 'Fair / Good',
             'home.kpi_school_avg_sub': 'Scale of 10, Circular 22',
 
-            'home.launchpad_title': 'System Modules',
-            'home.launchpad_desc': 'Quick access to core academic monitoring workflows in EduRadar.',
+            'home.launchpad_title': 'System Overview & Core Modules',
+            'home.launchpad_desc': 'Circular 22 secondary school monitoring platform: VnEdu gradebook sync, early at-risk trajectory detection, and pedagogical intervention.',
             'home.launchpad_tag': 'System Active 24/7',
             'home.lp1_badge': 'Radar',
             'home.lp1_title': 'Early Warning & OLS Trend',
@@ -1675,7 +1675,12 @@ document.addEventListener('DOMContentLoaded', function () {
         'Tất cả môn': 'All Subjects',
         'Xuất Excel': 'Export Excel',
         'In Báo Cáo': 'Print Report',
-        'Bộ Lọc Nhanh': 'Quick Filters'
+        'Bộ Lọc Nhanh': 'Quick Filters',
+        'Cài đặt': 'Settings',
+        'Cài đặt hệ thống': 'System Settings',
+        'Giao diện Sáng': 'Light Theme',
+        'Giao diện Tối': 'Dark Theme',
+        'Tự động theo hệ thống': 'System Auto'
     };
 
     function applyLanguage(lang) {

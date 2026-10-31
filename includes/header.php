@@ -326,7 +326,8 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
                 border-radius: 50% !important;
                 justify-content: center !important;
             }
-            .edexa-theme-toggle #themeLabel {
+            .edexa-theme-toggle #themeLabel,
+            .edexa-theme-toggle #settingsLabel {
                 display: none !important;
             }
             .content.full-width {
@@ -471,6 +472,11 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
             <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
                 <span class="theme-icon" id="themeIcon"><?= get_svg_icon('sun', 14) ?></span>
                 <span id="themeLabel">Giao diện sáng</span>
+            </button>
+            <!-- SYSTEM SETTINGS TRIGGER MODAL -->
+            <button type="button" class="edexa-theme-toggle" id="settingsToggleBtn" onclick="toggleSettingsDrawer(true)" title="Cài đặt hệ thống (Ngôn ngữ &amp; Giao diện)" aria-label="Cài đặt hệ thống">
+                <span class="theme-icon"><?= get_svg_icon('settings', 14) ?></span>
+                <span id="settingsLabel" data-i18n="header.settings">Cài đặt</span>
             </button>
         </div>
     </div>

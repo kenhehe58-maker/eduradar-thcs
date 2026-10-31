@@ -179,6 +179,213 @@ require_once __DIR__ . '/icons.php';
     </div>
 </aside>
 
+<!-- SETTINGS DRAWER & MODAL OVERLAY -->
+<div class="help-drawer-overlay" id="settingsDrawerOverlay" onclick="toggleSettingsDrawer(false)" aria-hidden="true"></div>
+<aside class="help-drawer" id="settingsDrawer" role="dialog" aria-modal="true" aria-label="Cài Đặt Hệ Thống">
+    <div class="help-drawer-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="help-drawer-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--cobalt-accent, #2563eb);">
+                <?= get_svg_icon('settings', 18) ?>
+            </div>
+            <div>
+                <h3 class="help-drawer-title" data-i18n="settings.title">Cài Đặt Hệ Thống</h3>
+                <span class="help-drawer-sub" data-i18n="settings.subtitle">Tùy biến hiển thị ngôn ngữ &amp; giao diện</span>
+            </div>
+        </div>
+        <button type="button" class="help-drawer-close" onclick="toggleSettingsDrawer(false)" aria-label="Đóng cài đặt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+
+    <div class="help-drawer-body">
+        <!-- 1. CÀI ĐẶT NGÔN NGỮ -->
+        <div class="help-section">
+            <div class="help-section-title">
+                <?= get_svg_icon('globe', 18, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                <span data-i18n="settings.lang_group">Ngôn ngữ hiển thị (Language)</span>
+            </div>
+            <div class="settings-options-col" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <button type="button" class="settings-choice-card" id="optLangVi" onclick="setAppLanguage('vi')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">🇻🇳</span>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);">Tiếng Việt</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);">Ngôn ngữ mặc định theo Thông tư 22</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkLangVi">&#10003;</span>
+                </button>
+                <button type="button" class="settings-choice-card" id="optLangEn" onclick="setAppLanguage('en')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">🇬🇧</span>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);">English</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);">International &bull; Bilingual Interface</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkLangEn">&#10003;</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. CÀI ĐẶT GIAO DIỆN SÁNG / TỐI -->
+        <div class="help-section">
+            <div class="help-section-title">
+                <?= get_svg_icon('sun', 18, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                <span data-i18n="settings.theme_group">Chế độ giao diện (Appearance)</span>
+            </div>
+            <div class="settings-options-col" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <button type="button" class="settings-choice-card" id="optThemeLight" onclick="setAppThemeMode('light')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="settings-icon-box" style="background: #eff6ff; color: #2563eb;">
+                            <?= get_svg_icon('sun', 18) ?>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);" data-i18n="settings.theme_light">Giao diện Sáng</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);" data-i18n="settings.theme_light_desc">Nền trắng sạch, độ tương phản cao ban ngày</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkThemeLight">&#10003;</span>
+                </button>
+                <button type="button" class="settings-choice-card" id="optThemeDark" onclick="setAppThemeMode('dark')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="settings-icon-box" style="background: #1e293b; color: #60a5fa;">
+                            <?= get_svg_icon('moon', 18) ?>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);" data-i18n="settings.theme_dark">Giao diện Tối</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);" data-i18n="settings.theme_dark_desc">Nền Cobalt dịu mắt, làm việc ca đêm</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkThemeDark">&#10003;</span>
+                </button>
+                <button type="button" class="settings-choice-card" id="optThemeAuto" onclick="setAppThemeMode('auto')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="settings-icon-box" style="background: #f1f5f9; color: #475569;">
+                            <?= get_svg_icon('settings', 18) ?>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);" data-i18n="settings.theme_auto">Tự động theo hệ thống</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);" data-i18n="settings.theme_auto_desc">Đồng bộ chế độ Dark/Light của thiết bị</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkThemeAuto">&#10003;</span>
+                </button>
+            </div>
+        </div>
+
+        <div style="margin-top: 18px;">
+            <button type="button" class="cobalt-key cobalt-key-primary" style="width: 100%;" onclick="toggleSettingsDrawer(false)">
+                <span data-i18n="settings.btn_done">Hoàn tất &amp; Đóng</span>
+            </button>
+        </div>
+    </div>
+</aside>
+
+<script>
+function toggleSettingsDrawer(forceState) {
+    var drawer = document.getElementById('settingsDrawer');
+    var overlay = document.getElementById('settingsDrawerOverlay');
+    if (!drawer || !overlay) return;
+    
+    var isOpen = drawer.classList.contains('is-open');
+    var shouldOpen = (typeof forceState === 'boolean') ? forceState : !isOpen;
+    
+    if (shouldOpen) {
+        drawer.classList.add('is-open');
+        overlay.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+        syncSettingsUIState();
+    } else {
+        drawer.classList.remove('is-open');
+        overlay.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+}
+
+function syncSettingsUIState() {
+    var currentLang = 'vi';
+    try {
+        currentLang = localStorage.getItem('edu_radar_lang') || 'vi';
+    } catch (e) {}
+    
+    var cardVi = document.getElementById('optLangVi');
+    var cardEn = document.getElementById('optLangEn');
+    var chkVi = document.getElementById('checkLangVi');
+    var chkEn = document.getElementById('checkLangEn');
+    if (cardVi && cardEn) {
+        if (currentLang === 'en') {
+            cardEn.classList.add('is-active');
+            cardVi.classList.remove('is-active');
+            if (chkEn) chkEn.style.display = 'inline-flex';
+            if (chkVi) chkVi.style.display = 'none';
+        } else {
+            cardVi.classList.add('is-active');
+            cardEn.classList.remove('is-active');
+            if (chkVi) chkVi.style.display = 'inline-flex';
+            if (chkEn) chkEn.style.display = 'none';
+        }
+    }
+
+    var themePref = 'light';
+    try {
+        themePref = localStorage.getItem('eduradar_theme_pref') || localStorage.getItem('eduradar_theme') || 'light';
+    } catch (e) {}
+
+    var cardLight = document.getElementById('optThemeLight');
+    var cardDark = document.getElementById('optThemeDark');
+    var cardAuto = document.getElementById('optThemeAuto');
+    var chkLight = document.getElementById('checkThemeLight');
+    var chkDark = document.getElementById('checkThemeDark');
+    var chkAuto = document.getElementById('checkThemeAuto');
+
+    [cardLight, cardDark, cardAuto].forEach(function(c) { if (c) c.classList.remove('is-active'); });
+    [chkLight, chkDark, chkAuto].forEach(function(k) { if (k) k.style.display = 'none'; });
+
+    if (themePref === 'auto') {
+        if (cardAuto) cardAuto.classList.add('is-active');
+        if (chkAuto) chkAuto.style.display = 'inline-flex';
+    } else if (themePref === 'dark') {
+        if (cardDark) cardDark.classList.add('is-active');
+        if (chkDark) chkDark.style.display = 'inline-flex';
+    } else {
+        if (cardLight) cardLight.classList.add('is-active');
+        if (chkLight) chkLight.style.display = 'inline-flex';
+    }
+}
+
+function setAppLanguage(lang) {
+    try {
+        localStorage.setItem('edu_radar_lang', lang);
+    } catch (e) {}
+    if (typeof applyLanguage === 'function') {
+        applyLanguage(lang);
+    } else if (window.applyLanguage) {
+        window.applyLanguage(lang);
+    }
+    syncSettingsUIState();
+}
+
+function setAppThemeMode(mode) {
+    try {
+        localStorage.setItem('eduradar_theme_pref', mode);
+    } catch (e) {}
+    
+    var appliedTheme = mode;
+    if (mode === 'auto') {
+        appliedTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', appliedTheme);
+    try {
+        localStorage.setItem('eduradar_theme', appliedTheme);
+    } catch (e) {}
+    if (typeof updateThemeUI === 'function') {
+        updateThemeUI(appliedTheme);
+    }
+    syncSettingsUIState();
+}
+</script>
+
 <script>
 function toggleHelpDrawer(forceState) {
     var drawer = document.getElementById('helpDrawer');

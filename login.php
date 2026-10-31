@@ -355,16 +355,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 12px 14px;
             border-radius: 8px;
             border: 1px solid var(--cobalt-rule-strong);
-            background: var(--cobalt-paper);
-            color: var(--cobalt-ink);
-            font-size: 14px;
+            background: var(--cobalt-paper) !important;
+            color: var(--cobalt-ink) !important;
+            caret-color: var(--cobalt-accent);
+            font-size: 15px;
+            font-weight: 500;
             font-family: var(--cobalt-sans);
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .cobalt-input:focus {
             border-color: var(--cobalt-accent);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+            background: var(--cobalt-paper) !important;
+            color: var(--cobalt-ink) !important;
+        }
+        .cobalt-input::placeholder {
+            color: var(--cobalt-ink-muted);
+            opacity: 0.75;
+        }
+        /* Chrome, Safari, Edge autofill fix - preserve text color & background */
+        .cobalt-input:-webkit-autofill,
+        .cobalt-input:-webkit-autofill:hover, 
+        .cobalt-input:-webkit-autofill:focus, 
+        .cobalt-input:-webkit-autofill:active {
+            -webkit-text-fill-color: var(--cobalt-ink) !important;
+            -webkit-box-shadow: 0 0 0px 1000px var(--cobalt-paper) inset !important;
+            box-shadow: 0 0 0px 1000px var(--cobalt-paper) inset !important;
+            caret-color: var(--cobalt-accent) !important;
+            transition: background-color 5000s ease-in-out 0s;
         }
 
         /* 3D KEYCAP SUBMIT BUTTON (HALLMARK COBALT SPEC) */
@@ -563,39 +582,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // COORDINATED PRELOADER & GSAP ENTRANCE
-    window.addEventListener('load', function() {
+    function dismissPreloader() {
         const preloader = document.getElementById('loginPreloader');
-        if (preloader) {
+        if (preloader && !preloader.classList.contains('is-loaded')) {
             preloader.classList.add('is-loaded');
+            if (window.gsap) {
+                gsap.fromTo('#loginCard', 
+                    { opacity: 0, y: 15, scale: 0.99 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: 'power2.out', clearProps: 'all' }
+                );
+                gsap.fromTo('.brand-badge',
+                    { scale: 0.8, opacity: 0 },
+                    { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(1.5)', clearProps: 'all' }
+                );
+            }
         }
+    }
 
-        if (window.gsap) {
-            gsap.from('#loginCard', {
-                opacity: 0,
-                y: 20,
-                scale: 0.98,
-                duration: 0.6,
-                ease: 'power3.out'
-            });
-            gsap.from('.brand-badge', {
-                scale: 0,
-                rotation: -10,
-                duration: 0.5,
-                delay: 0.15,
-                ease: 'back.out(1.7)'
-            });
-            gsap.from('.demo-box, .form-group, #btnSubmitLogin, .guest-tray', {
-                opacity: 0,
-                y: 12,
-                duration: 0.45,
-                stagger: 0.07,
-                delay: 0.2,
-                ease: 'power2.out'
-            });
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateToggleBtn();
+        setTimeout(dismissPreloader, 80);
     });
-
-    document.addEventListener('DOMContentLoaded', updateToggleBtn);
+    window.addEventListener('load', dismissPreloader);
+    setTimeout(dismissPreloader, 350); // Failsafe guarantee
     </script>
 </body>
 </html>
