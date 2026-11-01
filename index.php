@@ -118,6 +118,10 @@ $classCounts = [];
 $classGrades = [];
 
 if ($userRole === 'teacher') {
+    $hrStmt = $pdo->prepare("SELECT homeroom_class_id FROM users WHERE id = ?");
+    $hrStmt->execute([$userId]);
+    $homeroomClassId = (int)($hrStmt->fetchColumn() ?: 0);
+
     // Giáo viên: CHỈ TRUY VẤN CÁC LỚP VÀ PHÂN MÔN ĐƯỢC PHÂN CÔNG
     $assignStmt = $pdo->prepare("
         SELECT DISTINCT tc.class_id, tc.subject, c.name AS class_name, c.grade,
@@ -149,6 +153,39 @@ if ($userRole === 'teacher') {
         }
         if (!in_array($a['subject'], $teacherClassSubjectMap[$cid]['subjects'], true)) {
             $teacherClassSubjectMap[$cid]['subjects'][] = $a['subject'];
+        }
+    }
+
+    if ($homeroomClassId > 0) {
+        $hrClassStmt = $pdo->prepare("SELECT c.id, c.name, c.grade, (SELECT COUNT(*) FROM students s WHERE s.class_id = c.id) as st_count FROM classes c WHERE c.id = ?");
+        $hrClassStmt->execute([$homeroomClassId]);
+        $hrClassRow = $hrClassStmt->fetch();
+        if ($hrClassRow) {
+            $filterClasses[$homeroomClassId] = $hrClassRow['name'];
+            $classCounts[$homeroomClassId] = (int)$hrClassRow['st_count'];
+            $classGrades[$homeroomClassId] = (int)$hrClassRow['grade'];
+            $hrSubjStmt = $pdo->prepare("SELECT DISTINCT subject FROM teacher_classes WHERE class_id = ? ORDER BY subject ASC");
+            $hrSubjStmt->execute([$homeroomClassId]);
+            $hrSubjs = array_column($hrSubjStmt->fetchAll(), 'subject');
+            if (empty($hrSubjs)) {
+                $hrSubjs = ['Toán', 'Ngữ Văn', 'Tiếng Anh', 'Khoa Học Tự Nhiên', 'Lịch Sử & Địa Lí', 'Tin Học'];
+            }
+            if (!isset($teacherClassSubjectMap[$homeroomClassId])) {
+                $teacherClassSubjectMap[$homeroomClassId] = [
+                    'name' => $hrClassRow['name'],
+                    'grade' => (int)$hrClassRow['grade'],
+                    'st_count' => (int)$hrClassRow['st_count'],
+                    'subjects' => []
+                ];
+            }
+            foreach ($hrSubjs as $hs) {
+                if (!in_array($hs, $teacherClassSubjectMap[$homeroomClassId]['subjects'], true)) {
+                    $teacherClassSubjectMap[$homeroomClassId]['subjects'][] = $hs;
+                }
+                if (!in_array($hs, $filterSubjects, true)) {
+                    $filterSubjects[] = $hs;
+                }
+            }
         }
     }
 
@@ -198,39 +235,62 @@ if ($userRole === 'teacher') {
     $_SESSION['last_subject'] = $selectedSubject;
     set_user_nav_context($userId, $selectedClassId, $selectedSubject);
 
-    $whereClauses = ["tc.teacher_id = ?"];
-    $queryParams = [$userId];
+    if ($homeroomClassId > 0 && $selectedClassId === $homeroomClassId) {
+        $subjParam = ($selectedSubject !== 'all' && $selectedSubject !== '') ? $selectedSubject : ($validSubjectsForSelectedClass[0] ?? 'Toán');
+        $sql = "
+            SELECT 
+                s.id AS student_id,
+                s.class_id,
+                s.student_code,
+                s.full_name,
+                s.birthday,
+                s.phone,
+                c.name AS class_name,
+                ? AS subject,
+                sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score, sc.teacher_note
+            FROM classes c
+            JOIN students s ON s.class_id = c.id
+            LEFT JOIN scores sc ON sc.student_id = s.id AND sc.subject = ?
+            WHERE c.id = ?
+            ORDER BY c.grade ASC, c.name ASC, s.full_name ASC
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$subjParam, $subjParam, $selectedClassId]);
+    } else {
+        $whereClauses = ["tc.teacher_id = ?"];
+        $queryParams = [$userId];
 
-    if ($selectedClassId > 0) {
-        $whereClauses[] = "tc.class_id = ?";
-        $queryParams[] = $selectedClassId;
-    }
-    if ($selectedSubject !== 'all') {
-        $whereClauses[] = "tc.subject = ?";
-        $queryParams[] = $selectedSubject;
-    }
+        if ($selectedClassId > 0) {
+            $whereClauses[] = "tc.class_id = ?";
+            $queryParams[] = $selectedClassId;
+        }
+        if ($selectedSubject !== 'all') {
+            $whereClauses[] = "tc.subject = ?";
+            $queryParams[] = $selectedSubject;
+        }
 
-    $whereSql = "WHERE " . implode(" AND ", $whereClauses);
-    $sql = "
-        SELECT 
-            s.id AS student_id,
-            s.class_id,
-            s.student_code,
-            s.full_name,
-            s.birthday,
-            s.phone,
-            c.name AS class_name,
-            tc.subject,
-            sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score, sc.teacher_note
-        FROM teacher_classes tc
-        JOIN classes c ON tc.class_id = c.id
-        JOIN students s ON s.class_id = c.id
-        LEFT JOIN scores sc ON sc.student_id = s.id AND sc.subject = tc.subject
-        $whereSql
-        ORDER BY c.grade ASC, c.name ASC, s.full_name ASC
-    ";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($queryParams);
+        $whereSql = "WHERE " . implode(" AND ", $whereClauses);
+        $sql = "
+            SELECT 
+                s.id AS student_id,
+                s.class_id,
+                s.student_code,
+                s.full_name,
+                s.birthday,
+                s.phone,
+                c.name AS class_name,
+                tc.subject,
+                sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score, sc.teacher_note
+            FROM teacher_classes tc
+            JOIN classes c ON tc.class_id = c.id
+            JOIN students s ON s.class_id = c.id
+            LEFT JOIN scores sc ON sc.student_id = s.id AND sc.subject = tc.subject
+            $whereSql
+            ORDER BY c.grade ASC, c.name ASC, s.full_name ASC
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($queryParams);
+    }
 } else {
     // Admin: TOÀN QUYỀN TRUY VẤN MỌI LỚP VÀ PHÂN MÔN TRONG TOÀN TRƯỜNG
     $classesList = $pdo->query("
@@ -790,6 +850,29 @@ require_once __DIR__ . '/includes/header.php';
     background: var(--cobalt-paper) !important;
     box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
 }
+.radar-table tr.radar-row {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 56px;
+}
+.m-student-card {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 130px;
+}
+.card-help-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--cobalt-paper-2);
+    border: 1px solid var(--cobalt-rule);
+    color: var(--cobalt-muted);
+    font-size: 9.5px;
+    font-weight: 800;
+    cursor: help;
+    margin-left: 2px;
+}
 .radar-table th {
     background: var(--cobalt-paper-2) !important;
     color: var(--cobalt-muted) !important;
@@ -856,14 +939,12 @@ require_once __DIR__ . '/includes/header.php';
 
 <!-- 1. HERO TELEMETRY DOCK (HALLMARK V2 COBALT GROUND-UP REDESIGN) -->
 <section class="hero-telemetry-dock cobalt-cut" aria-labelledby="radarHeroTitle">
-    <canvas id="asciiRadarTelemetry" class="hero-telemetry-canvas" aria-hidden="true"></canvas>
-
     <div style="max-width: 720px; position: relative; z-index: 2;">
         <div class="hero-status-strip">
             <span class="hero-pulse-dot" aria-hidden="true"></span>
             <span data-i18n="radar.school_year">NĂM HỌC <?= htmlspecialchars($academicCalendar['school_year']) ?> &bull; <?= htmlspecialchars($academicCalendar['semester_name']) ?></span>
             <span style="opacity: 0.5;">|</span>
-            <span data-i18n="radar.phase_title"><?= htmlspecialchars($academicCalendar['phase_title']) ?> &bull; <?= htmlspecialchars($academicCalendar['calc_focus']) ?></span>
+            <span data-i18n="radar.phase_title"><?= htmlspecialchars($academicCalendar['phase_title']) ?></span>
         </div>
 
         <h1 id="radarHeroTitle" class="radar-telemetry-title" data-i18n="radar.hero_title">
@@ -905,41 +986,6 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 </section>
-
-<script>
-(function() {
-    const canvas = document.getElementById('asciiRadarTelemetry');
-    if (!canvas || !canvas.getContext) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const chars = ['.', ':', '+', '8', '5', '9', 'k', 'o', '%', '#'];
-    let w = 0, h = 0;
-    function resize() {
-        if (!canvas.parentElement) return;
-        w = canvas.width = canvas.parentElement.offsetWidth;
-        h = canvas.height = canvas.parentElement.offsetHeight;
-        draw();
-    }
-    function draw() {
-        ctx.clearRect(0, 0, w, h);
-        ctx.font = '11px "JetBrains Mono", monospace';
-        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#94a3b8' : '#334155';
-        const cols = Math.floor(w / 16);
-        const rows = Math.floor(h / 20);
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                const noise = Math.sin(c * 0.18 + r * 0.25);
-                if (noise > 0.45) {
-                    const idx = Math.floor(Math.abs(noise * 100)) % chars.length;
-                    ctx.fillText(chars[idx], c * 16, r * 20);
-                }
-            }
-        }
-    }
-    window.addEventListener('resize', resize);
-    resize();
-})();
-</script>
 
 
 
@@ -1082,30 +1128,6 @@ require_once __DIR__ . '/includes/header.php';
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
-
-                <div style="display: flex; align-items: center; gap: 8px; margin-top: 18px;">
-                    <!-- Lucian UX/UI Prompt #001 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#001 -->
-                    <div class="ux u001" id="u001FilterBtnWrapper" data-state="idle">
-                        <div class="u001-blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-                        <div class="u001-mag">
-                            <div class="u001-float">
-                                <button class="u001-btn btn-compact" type="submit" id="btnFilterApply">
-                                    <span class="u001-sheen" aria-hidden="true"></span>
-                                    <span class="u001-txt">Áp Dụng Lọc</span>
-                                    <span class="u001-spin" aria-hidden="true"><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="10"/></svg></span>
-                                    <span class="u001-done" aria-hidden="true"><b><svg viewBox="0 0 16 16"><path d="M3.5 8.4l3 3 6-6.4"/></svg></b>Xong</span>
-                                </button>
-                            </div>
-                        </div>
-                        <span class="u001-live" aria-live="polite"></span>
-                    </div>
-
-                    <?php if ($selectedClassId > 0 || $selectedSubject !== 'all'): ?>
-                        <a href="index.php" style="font-size: 12.5px; color: var(--primary); text-decoration: none; font-weight: 700; padding: 6px 12px; border-radius: 8px; background: #eef2ff;">
-                            Đặt lại bộ lọc
-                        </a>
-                    <?php endif; ?>
-                </div>
             </div>
         </form>
 </div>
@@ -1204,56 +1226,56 @@ $tt22Slices = [
 
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 16px;">
-        <div class="card stat-card trend-up">
+        <div class="card stat-card trend-up" title="Điểm số có chiều hướng đi lên qua các bài kiểm tra">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('trend-up', 16) ?>
                     <span>Đang tiến bộ</span>
+                    <span class="card-help-tip" title="Điểm số có chiều hướng đi lên qua các bài kiểm tra (hệ số góc OLS k > 0)">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['up_pct'], 'green') ?>
                 <span class="card-pct trend-up"><?= $stats['up_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_up'] ?></b>
-            <span class="card-sub">Điểm số có chiều hướng đi lên qua các bài kiểm tra</span>
         </div>
 
-        <div class="card stat-card trend-steady">
+        <div class="card stat-card trend-steady" title="Điểm số giữ nhịp đều đặn, không sụt giảm phong độ">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('activity', 16) ?>
                     <span>Duy trì ổn định</span>
+                    <span class="card-help-tip" title="Điểm số giữ nhịp đều đặn, không sụt giảm phong độ">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['steady_pct'], 'yellow') ?>
                 <span class="card-pct green"><?= $stats['steady_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_steady'] ?></b>
-            <span class="card-sub">Điểm số giữ nhịp đều đặn, không sụt giảm phong độ</span>
         </div>
 
-        <div class="card stat-card trend-down">
+        <div class="card stat-card trend-down" title="Điểm kiểm tra sụt giảm liên tục, cần kịp thời nhắc nhở">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('trend-down', 16) ?>
                     <span>Cần chú ý sa sút</span>
+                    <span class="card-help-tip" title="Điểm kiểm tra sụt giảm liên tục (hệ số góc OLS k < 0), cần kịp thời nhắc nhở">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['down_pct'], 'red') ?>
                 <span class="card-pct trend-down"><?= $stats['down_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_down'] ?></b>
-            <span class="card-sub">Điểm kiểm tra sụt giảm liên tục, cần kịp thời nhắc nhở</span>
         </div>
 
-        <div class="card stat-card" style="border-left: 4px solid #64748b;">
+        <div class="card stat-card" style="border-left: 4px solid #64748b;" title="Chưa có đủ cột điểm trong sổ để tính xu hướng">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('clock', 16) ?>
                     <span>Chờ bổ sung điểm</span>
+                    <span class="card-help-tip" title="Chưa có đủ cột điểm trong sổ để tính xu hướng OLS">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['pending_pct'], 'gray') ?>
                 <span class="card-pct" style="color: #64748b;"><?= $stats['pending_pct'] ?>%</span>
             </div>
             <b><?= $stats['momentum_pending'] ?></b>
-            <span class="card-sub">Chưa có đủ cột điểm trong sổ</span>
         </div>
     </section>
 </div>
@@ -1267,72 +1289,72 @@ $tt22Slices = [
         </span>
     </div>
     <section class="radar-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
-        <div class="card stat-card total">
+        <div class="card stat-card total" title="Tổng số học sinh đang theo dõi trong phạm vi lọc">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('users', 16) ?>
                     <span>Tổng học sinh</span>
+                    <span class="card-help-tip" title="Tổng số học sinh đang theo dõi">?</span>
                 </span>
                 <?= render_circular_gauge(100.0, 'blue') ?>
                 <span class="card-pct total">100%</span>
             </div>
             <b><?= $stats['total'] ?></b>
-            <span class="card-sub">Tổng số học sinh theo dõi</span>
         </div>
 
         <?php if ($stats['momentum_pending'] > 0): ?>
             <?php $pendingPct = round(($stats['momentum_pending'] / max(1, $stats['total'])) * 100, 1); ?>
-            <div class="card stat-card" style="border-left: 4px solid #94a3b8;">
+            <div class="card stat-card" style="border-left: 4px solid #94a3b8;" title="Chưa có bài kiểm tra ghi nhận">
                 <div class="card-header-row">
                     <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                         <?= get_svg_icon('clock', 16) ?>
                         <span>Chờ Điểm Số</span>
+                        <span class="card-help-tip" title="Chưa có bài kiểm tra ghi nhận trong sổ">?</span>
                     </span>
                     <?= render_circular_gauge((float)$pendingPct, 'gray') ?>
                     <span class="card-pct" style="color: #64748b; font-weight: 700;"><?= $pendingPct ?>%</span>
                 </div>
                 <b><?= $stats['momentum_pending'] ?></b>
-                <span class="card-sub">Chưa có bài kiểm tra ghi nhận</span>
             </div>
         <?php endif; ?>
 
-        <div class="card stat-card green">
+        <div class="card stat-card green" title="Đạt chuẩn hoặc chờ điểm (ổn định)">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('check-circle', 16, '', 'color: #16a34a;') ?>
                     <span>Ổn định (Đạt chuẩn)</span>
+                    <span class="card-help-tip" title="Đạt chuẩn kiến thức kỹ năng Thông tư 22 (ĐTB ≥ 5.0, không sa sút)">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['green_pct'], 'green') ?>
                 <span class="card-pct green"><?= $stats['green_pct'] ?>%</span>
             </div>
             <b><?= $stats['green'] ?></b>
-            <span class="card-sub">Đạt chuẩn hoặc chờ điểm (ổn định)</span>
         </div>
 
-        <div class="card stat-card yellow">
+        <div class="card stat-card yellow" title="Cần chú ý hoặc sa sút điểm">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-circle', 16, '', 'color: #d97706;') ?>
                     <span>Cần chú ý</span>
+                    <span class="card-help-tip" title="Học sinh cần theo dõi sát sao (3.5 ≤ ĐTB < 5.0 hoặc điểm đang đi xuống)">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['yellow_pct'], 'yellow') ?>
                 <span class="card-pct yellow"><?= $stats['yellow_pct'] ?>%</span>
             </div>
             <b><?= $stats['yellow'] ?></b>
-            <span class="card-sub" title="Cần chú ý hoặc sa sút điểm">Học sinh cần theo dõi sát sao</span>
         </div>
 
-        <div class="card stat-card red">
+        <div class="card stat-card red" title="Nguy cấp (ĐTB < 3.5, CK < 3.0, hoặc hỏng cả GK và CK)">
             <div class="card-header-row">
                 <span class="card-title" style="display: flex; align-items: center; gap: 6px;">
                     <?= get_svg_icon('alert-triangle', 16, '', 'color: #dc2626;') ?>
                     <span>Nguy cấp</span>
+                    <span class="card-help-tip" title="Nguy cấp: ĐTB < 3.5 hoặc thi cuối kỳ < 3.0 — cần can thiệp sư phạm sớm">?</span>
                 </span>
                 <?= render_circular_gauge((float)$stats['red_pct'], 'red') ?>
                 <span class="card-pct red"><?= $stats['red_pct'] ?>%</span>
             </div>
             <b><?= $stats['red'] ?></b>
-            <span class="card-sub" title="Nguy cấp (ĐTB < 3.5, CK < 3.0, hoặc hỏng cả GK và CK)">Cần can thiệp sớm</span>
         </div>
     </section>
 </div>

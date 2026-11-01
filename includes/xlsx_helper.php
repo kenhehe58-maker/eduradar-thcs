@@ -570,7 +570,7 @@ function parse_csv(string $filepath): array
 
 /**
  * Resilient header detector for VnEdu gradebooks (.xlsx and .csv).
- * Scans rows 0 to 3 for standard Vietnamese THCS grade columns.
+ * Scans rows 0 to 12 for standard Vietnamese THCS grade columns (supports 2-tier VnEdu headers).
  * Returns [$headerRowIndex, $colMap].
  *
  * @param array $rows 2D rows array
@@ -587,15 +587,17 @@ function detect_gradebook_headers(array $rows): array
         'tx2'          => ['đđgtx2', 'đđgtx 2', 'tx2', 'tx 2', '15p_1', '15p 1', '15 phút 1', '15phut 1', 'p15_1', 'kttx2'],
         'tx3'          => ['đđgtx3', 'đđgtx 3', 'tx3', 'tx 3', '15p_2', '15p 2', '15 phút 2', '15phut 2', 'p15_2', 'kttx3'],
         'tx4'          => ['đđgtx4', 'đđgtx 4', 'tx4', 'tx 4', '1tiết', '1 tiết', 't1_1', 'kttx4', '1 tiet'],
-        'gk'           => ['đđggk', 'đđg gk', 'gk', 'giữakỳ', 'giữa kỳ', 'giuaky', 'giua ky', 'đdg gk'],
-        'ck'           => ['đđgck', 'đđg ck', 'ck', 'cuốikỳ', 'cuối kỳ', 'cuoiky', 'cuoi ky', 'đdg ck'],
+        'gk'           => ['đđggk', 'đđg gk', 'gk1', 'gk2', 'gk', 'giữakỳ', 'giữa kỳ', 'giuaky', 'giua ky', 'đdg gk'],
+        'ck'           => ['đđgck', 'đđg ck', 'ck1', 'ck2', 'ck', 'cuốikỳ', 'cuối kỳ', 'cuoiky', 'cuoi ky', 'đdg ck'],
+        'avg'          => ['đtbmhk', 'đtb mhk', 'đtb', 'dtb mhk', 'dtbmhk'],
+        'note'         => ['nhận xét', 'nhan xet', 'ghi chú'],
         'stt'          => ['stt', 'số tt', 'số thứ tự']
     ];
 
     $headerRowIndex = -1;
     $colMap = [];
 
-    $scanLimit = min(4, count($rows));
+    $scanLimit = min(15, count($rows));
     for ($r = 0; $r < $scanLimit; $r++) {
         $row = $rows[$r];
         if (!is_array($row) || empty($row)) continue;
@@ -617,7 +619,7 @@ function detect_gradebook_headers(array $rows): array
             foreach ($fieldKeywords as $field => $keywords) {
                 if (isset($tempMap[$field])) continue;
                 foreach ($keywords as $kw) {
-                    if (mb_strpos($norm, $kw) !== false || $norm === $kw) {
+                    if ($norm === $kw || mb_strpos($norm, $kw) !== false) {
                         $tempMap[$field] = $colIdx;
                         break;
                     }
@@ -627,6 +629,35 @@ function detect_gradebook_headers(array $rows): array
 
         if (isset($tempMap['full_name']) || (isset($tempMap['tx1']) && (isset($tempMap['gk']) || isset($tempMap['ck'])))) {
             $headerRowIndex = $r;
+            // Kiểm tra xem dòng kế tiếp ($r + 1) có phải là sub-header 2 tầng của VnEdu (TX1, TX2, TX3, TX4, GK1, CK1) không
+            if (isset($rows[$r + 1]) && is_array($rows[$r + 1])) {
+                $subRow = $rows[$r + 1];
+                $hasSubHeader = false;
+                foreach ($subRow as $sColIdx => $sCellVal) {
+                    $sNorm = mb_strtolower(trim((string)$sCellVal), 'UTF-8');
+                    if (in_array($sNorm, ['tx1', 'tx2', 'tx3', 'tx4', 'gk1', 'gk2', 'gk', 'ck1', 'ck2', 'ck'], true)) {
+                        $hasSubHeader = true;
+                        if (in_array($sNorm, ['tx1', 'tx2', 'tx3', 'tx4'], true)) {
+                            $tempMap[$sNorm] = $sColIdx;
+                        } elseif (strpos($sNorm, 'gk') === 0) {
+                            $tempMap['gk'] = $sColIdx;
+                        } elseif (strpos($sNorm, 'ck') === 0) {
+                            $tempMap['ck'] = $sColIdx;
+                        }
+                    }
+                }
+                if ($hasSubHeader) {
+                    $headerRowIndex = $r + 1;
+                }
+            }
+            // Kiểm tra trường hợp VnEdu tách Họ đệm (cột full_name) và Tên (cột full_name + 1 trống tiêu đề ở dòng $r)
+            if (isset($tempMap['full_name'])) {
+                $fnCol = $tempMap['full_name'];
+                $nextColHeader = isset($row[$fnCol + 1]) ? trim((string)$row[$fnCol + 1]) : '';
+                if ($nextColHeader === '' && (!isset($tempMap['birthday']) || $tempMap['birthday'] > $fnCol + 1)) {
+                    $tempMap['first_name_col'] = $fnCol + 1;
+                }
+            }
             $colMap = $tempMap;
             break;
         }

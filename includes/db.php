@@ -211,3 +211,36 @@ function get_student_interventions(int $studentId, ?string $subject = null): arr
         return [];
     }
 }
+
+/**
+ * Tự động nâng cấp cấu trúc bảng users để hỗ trợ:
+ * - teacher_code (Mã định danh riêng của Giáo viên: GV-XXXXXX)
+ * - homeroom_class_id (Lớp chủ nhiệm đối với GVCN theo Thông tư 22)
+ * - google_email (Tài khoản Google liên kết)
+ */
+function ensure_user_extensions_schema(): void
+{
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    try {
+        $pdo = db();
+        $cols = $pdo->query("SHOW COLUMNS FROM users")->fetchAll(PDO::FETCH_COLUMN);
+        if (!in_array('teacher_code', $cols, true)) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN teacher_code VARCHAR(32) DEFAULT NULL");
+        }
+        if (!in_array('homeroom_class_id', $cols, true)) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN homeroom_class_id INT DEFAULT NULL");
+        }
+        if (!in_array('google_email', $cols, true)) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN google_email VARCHAR(191) DEFAULT NULL");
+        }
+        // Tự động cấp mã định danh cho các tài khoản chưa có mã
+        $pdo->exec("UPDATE users SET teacher_code = CONCAT(IF(role='admin','AD-','GV-'), LPAD(id + 100000, 6, '0')) WHERE teacher_code IS NULL OR teacher_code = ''");
+    } catch (\Throwable $e) {
+        error_log('Schema extension error: ' . $e->getMessage());
+    }
+}
+ensure_user_extensions_schema();
+

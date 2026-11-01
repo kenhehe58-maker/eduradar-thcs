@@ -276,6 +276,110 @@ if ($action === 'simulate_scores' && isset($_SESSION['guest_scan_data']['student
     exit;
 }
 
+// HÀNH ĐỘNG 2C: XUẤT FILE ĐÁNH GIÁ KÈM ĐIỂM CHUẨN VNEDU TRƯỜNG THCS CHÂU VĂN ĐƠ (EXCEL / CSV)
+if (($action === 'export_vnedu_xlsx' || $action === 'export_vnedu_csv') && isset($_SESSION['guest_scan_data']['students'])) {
+    $gData = $_SESSION['guest_scan_data'];
+    $stRows = $gData['students'] ?? [];
+    $expClass = preg_replace('/^Lớp\s+/iu', '', trim($gData['class_name'] ?? '9A1'));
+    $expSubject = trim($gData['subject'] ?? 'Tin Học');
+    $upperSubject = mb_strtoupper($expSubject, 'UTF-8');
+    $gradeNum = (int)substr($expClass, 0, 1);
+    if ($gradeNum < 6 || $gradeNum > 9) $gradeNum = 9;
+
+    $exportData = [];
+    $exportData[] = ['ỦY BAN NHÂN DÂN PHƯỜNG VĨNH CHÂU', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['TRƯỜNG THCS CHÂU VĂN ĐƠ', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ["BẢNG ĐIỂM CHI TIẾT - MÔN {$upperSubject} - HỌC KỲ 1 - NĂM HỌC 2026-2027", '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ["Khối {$gradeNum} - Lớp {$expClass}", '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['STT', 'Mã học sinh', 'Họ và tên', 'Tên', 'Ngày sinh', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGgk', 'ĐĐGck', 'ĐTB mhk', 'Nhận xét'];
+    $exportData[] = ['', '', '', '', '', 'TX1', 'TX2', 'TX3', 'TX4', 'GK1', 'CK1', '', ''];
+
+    $stt = 1;
+    $cntTot = 0;
+    $cntKha = 0;
+    $cntDat = 0;
+    $cntChuaDat = 0;
+
+    foreach ($stRows as $s) {
+        $rawCode = !empty($s['student_code']) ? (string)$s['student_code'] : ('HS' . str_pad((string)$stt, 4, '0', STR_PAD_LEFT));
+        $code = preg_replace('/\.0$/', '', trim($rawCode));
+        $bday = !empty($s['birthday']) ? (strpos($s['birthday'], '/') !== false ? $s['birthday'] : date('d/m/Y', strtotime($s['birthday']))) : '';
+        $tx1 = $s['tx1'] !== null ? (float)$s['tx1'] : '';
+        $tx2 = $s['tx2'] !== null ? (float)$s['tx2'] : '';
+        $tx3 = $s['tx3'] !== null ? (float)$s['tx3'] : '';
+        $tx4 = $s['tx4'] !== null ? (float)$s['tx4'] : '';
+        $gk  = $s['gk']  !== null ? (float)$s['gk']  : '';
+        $ck  = $s['ck']  !== null ? (float)$s['ck']  : '';
+        $avg = $s['avg_score'] !== null ? (float)$s['avg_score'] : '';
+
+        if ($avg !== '') {
+            if ($avg >= 8.0) $cntTot++;
+            elseif ($avg >= 6.5) $cntKha++;
+            elseif ($avg >= 5.0) $cntDat++;
+            else $cntChuaDat++;
+        }
+
+        $noteStr = trim((string)($s['teacher_note'] ?? ''));
+        if ($noteStr === '') {
+            $noteStr = trim((string)($s['competency']['pedagogical_advice'] ?? $s['diagnostic'] ?? ''));
+        }
+
+        $nameParts = preg_split('/\s+/u', trim((string)$s['full_name']));
+        $firstNameOnly = count($nameParts) > 1 ? end($nameParts) : $s['full_name'];
+
+        $exportData[] = [
+            $stt++,
+            $code,
+            $s['full_name'],
+            $firstNameOnly,
+            $bday,
+            $tx1,
+            $tx2,
+            $tx3,
+            $tx4,
+            $gk,
+            $ck,
+            $avg,
+            $noteStr
+        ];
+    }
+
+    $totalSt = max(1, count($stRows));
+    $pctDatChung = round((($cntTot + $cntKha + $cntDat) / $totalSt) * 100, 2);
+    $pctTot = round(($cntTot / $totalSt) * 100, 2);
+    $pctKha = round(($cntKha / $totalSt) * 100, 2);
+    $pctDat = round(($cntDat / $totalSt) * 100, 2);
+    $pctChuaDat = round(($cntChuaDat / $totalSt) * 100, 2);
+
+    $exportData[] = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', '', '', '', 'THỐNG KÊ HỌC KỲ 1', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', 'Số học sinh đạt', '', '', ($cntTot + $cntKha + $cntDat) . ' (' . $pctDatChung . '%)', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', 'Số lượng - Tỉ lệ (%)', '', '', 'Tốt', '', 'Khá', '', 'Đạt', '', 'Chưa Đạt', ''];
+    $exportData[] = ['', '', '', '', '', $cntTot . ' - ' . $pctTot . '%', '', $cntKha . ' - ' . $pctKha . '%', '', $cntDat . ' - ' . $pctDat . '%', '', $cntChuaDat . ' - ' . $pctChuaDat . '%', ''];
+
+    if ($action === 'export_vnedu_csv') {
+        $csvFile = "DanhGia_VnEdu_{$expClass}_2026-2027.csv";
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $csvFile . '"');
+        echo "\xEF\xBB\xBF";
+        $out = fopen('php://output', 'w');
+        foreach ($exportData as $rRow) {
+            fputcsv($out, $rRow);
+        }
+        fclose($out);
+        exit;
+    }
+
+    $xlsxFile = "DanhGia_VnEdu_{$expClass}_2026-2027.xlsx";
+    $xlsxBin = create_xlsx($exportData, "DanhGia_" . mb_substr($expClass, 0, 15));
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment; filename="' . $xlsxFile . '"');
+    header('Content-Length: ' . strlen($xlsxBin));
+    echo $xlsxBin;
+    exit;
+}
+
 // -----------------------------------------------------------------------------
 // 3. XỬ LÝ UPLOAD TỆP EXCEL (.XLSX) HOẶC CSV TỪ VNEDU
 // -----------------------------------------------------------------------------
@@ -292,12 +396,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
         $tmpPath = $file['tmp_name'];
 
         $rows = [];
-        if ($ext === 'xlsx') {
+        if ($ext === 'xlsx' || $ext === 'xls') {
             $rows = parse_xlsx($tmpPath);
-        } elseif ($ext === 'csv') {
+            if (empty($rows)) {
+                $rows = parse_csv($tmpPath);
+            }
+        } elseif ($ext === 'csv' || $ext === 'txt') {
             $rows = parse_csv($tmpPath);
         } else {
-            $uploadError = 'Định dạng tệp không được hỗ trợ. Vui lòng tải tệp .xlsx hoặc .csv.';
+            $uploadError = 'Định dạng tệp không được hỗ trợ. Vui lòng tải tệp .xlsx, .xls hoặc .csv.';
         }
 
         if (empty($rows) && empty($uploadError)) {
@@ -306,6 +413,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
 
         if (empty($uploadError)) {
             [$headerIdx, $colMap] = detect_gradebook_headers($rows);
+
+            // Tự động nhận diện tên môn học và lớp học từ tiêu đề VnEdu (Dòng 3, 4 của File 2)
+            for ($scanR = 0; $scanR < min(10, count($rows)); $scanR++) {
+                $lineTxt = implode(' ', array_map('strval', $rows[$scanR] ?? []));
+                if (preg_match('/MÔN\s+([^\-]+?)\s*\-\s*HỌC KỲ/iu', $lineTxt, $mSub)) {
+                    $subjectInput = mb_convert_case(trim($mSub[1]), MB_CASE_TITLE, 'UTF-8');
+                }
+                if (empty($classNameInput) && preg_match('/Lớp\s+([0-9]+[A-Za-z0-9]*)/iu', $lineTxt, $mCls)) {
+                    $classNameInput = trim($mCls[1]);
+                }
+            }
 
             if ($headerIdx >= 0) {
                 foreach ($rows[$headerIdx] as $cIdx => $cVal) {
@@ -323,26 +441,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
 
             $parsedStudents = [];
             $dataStart = $headerIdx >= 0 ? ($headerIdx + 1) : 1;
+            $currentSectionClass = $classNameInput;
 
             for ($r = $dataStart; $r < count($rows); $r++) {
                 $row = $rows[$r];
                 if (!is_array($row) || empty($row)) continue;
 
+                // Kiểm tra dòng chuyển lớp ("Khối 9 - Lớp 9A8") hoặc dòng thống kê VnEdu (File 2)
+                $joinedRowText = implode(' ', array_map('strval', $row));
+                $lowerJoined = mb_strtolower($joinedRowText, 'UTF-8');
+                if (preg_match('/Lớp\s+([0-9]+[A-Za-z0-9]*)/iu', $joinedRowText, $mSecCls)) {
+                    $currentSectionClass = trim($mSecCls[1]);
+                    if (empty($classNameInput)) {
+                        $classNameInput = $currentSectionClass;
+                    }
+                    continue;
+                }
+                if (mb_strpos($lowerJoined, 'thống kê học kỳ') !== false ||
+                    mb_strpos($lowerJoined, 'số học sinh đạt') !== false ||
+                    mb_strpos($lowerJoined, 'số lượng - tỉ lệ') !== false ||
+                    mb_strpos($lowerJoined, 'ủy ban nhân dân') !== false ||
+                    mb_strpos($lowerJoined, 'trường thcs') !== false ||
+                    mb_strpos($lowerJoined, 'bảng điểm chi tiết') !== false) {
+                    continue;
+                }
+
                 $fullName = '';
                 if (isset($colMap['full_name']) && isset($row[$colMap['full_name']])) {
                     $fullName = trim((string)$row[$colMap['full_name']]);
+                    // Ghép cột Họ đệm (C) và Tên (D) nếu file VnEdu tách 2 cột
+                    if (isset($colMap['first_name_col']) && isset($row[$colMap['first_name_col']])) {
+                        $fNamePart = trim((string)$row[$colMap['first_name_col']]);
+                        if ($fNamePart !== '' && !preg_match('/\b' . preg_quote($fNamePart, '/') . '$/iu', $fullName)) {
+                            $fullName = trim($fullName . ' ' . $fNamePart);
+                        }
+                    }
                 } elseif (isset($row[1]) && !is_numeric($row[1])) {
                     $fullName = trim((string)$row[1]);
                 }
 
-                if ($fullName === '' || mb_strtolower($fullName, 'UTF-8') === 'họ và tên') {
+                $normFull = mb_strtolower($fullName, 'UTF-8');
+                if ($fullName === '' || $normFull === 'họ và tên' || $normFull === 'stt' ||
+                    mb_stripos($fullName, 'số học sinh') !== false ||
+                    mb_stripos($fullName, 'số lượng') !== false ||
+                    mb_stripos($fullName, 'tổng số') !== false) {
                     continue;
                 }
 
                 $studentCode = '';
                 if (isset($colMap['student_code']) && isset($row[$colMap['student_code']])) {
-                    $studentCode = trim((string)$row[$colMap['student_code']]);
-                } else {
+                    $studentCode = preg_replace('/\.0$/', '', trim((string)$row[$colMap['student_code']]));
+                }
+                if ($studentCode === '') {
                     $studentCode = 'HS' . str_pad((string)(count($parsedStudents) + 1), 3, '0', STR_PAD_LEFT);
                 }
 
@@ -356,7 +506,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
                     $birthday = normalize_excel_date($row[$colMap['birthday']]) ?? '';
                 }
 
-                $rowClass = $classNameInput;
+                $rowClass = !empty($currentSectionClass) ? $currentSectionClass : $classNameInput;
                 if (isset($colMap['class_col']) && isset($row[$colMap['class_col']])) {
                     $cVal = trim((string)$row[$colMap['class_col']]);
                     if (!empty($cVal)) {
@@ -373,7 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
                     $colKey = 'tx' . $t;
                     $scoreVal = null;
                     if (isset($colMap[$colKey]) && isset($row[$colMap[$colKey]])) {
-                        $v = trim((string)$row[$colMap[$colKey]]);
+                        $v = str_replace(',', '.', trim((string)$row[$colMap[$colKey]]));
                         if ($v !== '' && is_numeric($v)) {
                             $scoreVal = max(0.0, min(10.0, round((float)$v, 1)));
                             $txList[] = $scoreVal;
@@ -384,7 +534,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
 
                 $gk = null;
                 if (isset($colMap['gk']) && isset($row[$colMap['gk']])) {
-                    $v = trim((string)$row[$colMap['gk']]);
+                    $v = str_replace(',', '.', trim((string)$row[$colMap['gk']]));
                     if ($v !== '' && is_numeric($v)) {
                         $gk = max(0.0, min(10.0, round((float)$v, 1)));
                     }
@@ -392,15 +542,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
 
                 $ck = null;
                 if (isset($colMap['ck']) && isset($row[$colMap['ck']])) {
-                    $v = trim((string)$row[$colMap['ck']]);
+                    $v = str_replace(',', '.', trim((string)$row[$colMap['ck']]));
                     if ($v !== '' && is_numeric($v)) {
                         $ck = max(0.0, min(10.0, round((float)$v, 1)));
                     }
                 }
 
                 $avg = null;
-                if (!empty($txList) && $gk !== null && $ck !== null) {
-                    $avg = round((array_sum($txList) + 2 * $gk + 3 * $ck) / (count($txList) + 5), 1);
+                if (!empty($txList)) {
+                    if ($ck !== null) {
+                        $avg = round((array_sum($txList) + 2 * ($gk ?? $ck) + 3 * $ck) / (count($txList) + ($gk !== null ? 2 : 0) + 3), 1);
+                    } elseif ($gk !== null) {
+                        $avg = round((array_sum($txList) + 2 * $gk) / (count($txList) + 2), 1);
+                    }
+                }
+                if ($avg === null && isset($colMap['avg']) && isset($row[$colMap['avg']])) {
+                    $vAvg = str_replace(',', '.', trim((string)$row[$colMap['avg']]));
+                    if ($vAvg !== '' && is_numeric($vAvg)) {
+                        $avg = max(0.0, min(10.0, round((float)$vAvg, 1)));
+                    }
+                }
+
+                $importedNote = '';
+                if (isset($colMap['note']) && isset($row[$colMap['note']])) {
+                    $importedNote = trim((string)$row[$colMap['note']]);
                 }
 
                 $diag = evaluateRiskZone($avg, $gk, $ck, $txList);
@@ -420,7 +585,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['gradebook_file']) |
                     'gk'           => $gk,
                     'ck'           => $ck,
                     'avg_score'    => $avg,
-                    'teacher_note' => '',
+                    'teacher_note' => $importedNote,
                     'tx_list'      => $txList
                 ], $diag);
 
@@ -1142,13 +1307,17 @@ require_once __DIR__ . '/includes/header.php';
                 </a>
             <?php endif; ?>
             <?php if ($hasData): ?>
-                <a href="in_bao_cao_bgh.php?guest=1&format=pdf" target="_blank" class="key key--primary key--sm">
+                <a href="quet_nhanh.php?action=export_vnedu_xlsx" class="key key--primary key--sm" style="background: #059669; border-color: #047857;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Xuất Đánh Giá Kèm Điểm (.xlsx)</span>
+                </a>
+                <a href="quet_nhanh.php?action=export_vnedu_csv" class="key key--sm">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Xuất CSV Chuẩn VnEdu</span>
+                </a>
+                <a href="in_bao_cao_bgh.php?guest=1&format=pdf" target="_blank" class="key key--sm">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
                     <span data-i18n="scanner.btn_export_pdf">In Báo Cáo BGH (PDF)</span>
-                </a>
-                <a href="in_bao_cao_bgh.php?guest=1&format=xlsx" target="_blank" class="key key--sm">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span data-i18n="scanner.btn_export_xlsx">Xuất Báo Cáo BGH (Excel)</span>
                 </a>
                 <a href="quet_nhanh.php?action=clear" class="key key--sm">
                     <span data-i18n="scanner.btn_clear_session">Tải Tệp Khác</span>

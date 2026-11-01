@@ -10,12 +10,31 @@ if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     session_start();
 }
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/algorithms.php';
 require_once __DIR__ . '/icons.php';
 $headerCalendar = get_academic_calendar_phase();
 $currentUserRole = $_SESSION['role'] ?? 'teacher';
 $currentUsername = $_SESSION['username'] ?? '';
 $currentUserFullName = !empty($_SESSION['full_name']) ? $_SESSION['full_name'] : (!empty($currentUsername) ? $currentUsername : 'Thầy/Cô');
+$currentTeacherCode = $_SESSION['teacher_code'] ?? '';
+$currentHomeroomClassName = '';
+if (!empty($_SESSION['user_id'])) {
+    try {
+        $pdoHdr = db();
+        $stHdr = $pdoHdr->prepare("SELECT u.teacher_code, u.homeroom_class_id, c.name AS homeroom_name FROM users u LEFT JOIN classes c ON u.homeroom_class_id = c.id WHERE u.id = ? LIMIT 1");
+        $stHdr->execute([(int)$_SESSION['user_id']]);
+        if ($rHdr = $stHdr->fetch()) {
+            $currentTeacherCode = $rHdr['teacher_code'] ?? '';
+            $currentHomeroomClassName = $rHdr['homeroom_name'] ?? '';
+            $_SESSION['teacher_code'] = $currentTeacherCode;
+            $_SESSION['homeroom_class_id'] = (int)($rHdr['homeroom_class_id'] ?? 0);
+        }
+    } catch (\Throwable $e) {}
+}
+$headerRoleDisplay = ($currentUserRole === 'admin')
+    ? 'Quản Trị Viên'
+    : ($currentHomeroomClassName !== '' ? "GVCN Lớp {$currentHomeroomClassName} • Bộ Môn" : 'Giáo Viên Bộ Môn');
 $activeNav = $activeNav ?? 'dashboard'; // 'welcome' | 'dashboard' | 'gradebook' | 'admin' | 'slides'
 $pageTitle = $pageTitle ?? 'EduRadar THCS';
 $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm học lực THCS theo chuẩn Thông tư 22/2021/TT-BGDĐT. Giám sát nguy cơ, phân tích biến thiên điểm số và sổ điểm điện tử bộ môn.';
@@ -439,8 +458,14 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
                 <span class="edexa-sub-m">HK I &bull; NH <?= htmlspecialchars($headerCalendar['school_year'] ?? '2024-2025', ENT_QUOTES, 'UTF-8') ?></span>
             </div>
             <span class="edexa-role-pill">
-                <?= htmlspecialchars(($currentUserRole === 'admin') ? 'Quản Trị Viên' : 'Giáo Viên Bộ Môn', ENT_QUOTES, 'UTF-8') ?>
+                <?= htmlspecialchars($headerRoleDisplay, ENT_QUOTES, 'UTF-8') ?>
             </span>
+            <?php if ($currentTeacherCode !== '' && $currentUserRole !== 'admin'): ?>
+            <button type="button" class="glass-status-chip chip-mobile-hide" onclick="copyTeacherUid('<?= htmlspecialchars($currentTeacherCode, ENT_QUOTES, 'UTF-8') ?>', this)" title="Bấm để sao chép Mã định danh Giáo viên gửi cho Quản trị viên phân quyền" style="cursor: pointer; border-style: dashed; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #2563eb; background: #eff6ff;">
+                <span>ID: <b><?= htmlspecialchars($currentTeacherCode, ENT_QUOTES, 'UTF-8') ?></b></span>
+                <span style="font-size: 10px; opacity: 0.8;">📋</span>
+            </button>
+            <?php endif; ?>
         </div>
 
         <!-- SYSTEM & ACADEMIC STATUS INDICATORS -->
@@ -448,12 +473,8 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
             <div class="glass-status-chip chip-accent chip-mobile-hide" title="Niên khóa &amp; Giai đoạn học kỳ: <?= htmlspecialchars($headerCalendar['phase_title'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 <span><?= get_svg_icon('calendar', 13, '', 'vertical-align: -2px; margin-right: 4px;') ?><?= htmlspecialchars($headerCalendar['school_year'] ?? '2024-2025', ENT_QUOTES, 'UTF-8') ?> &bull; <?= htmlspecialchars($headerCalendar['semester_name'] ?? 'Học kỳ 1', ENT_QUOTES, 'UTF-8') ?></span>
             </div>
-            <div class="glass-status-chip chip-mobile-hide" title="Quy chuẩn đánh giá học sinh THCS theo Thông tư 22/2021/TT-BGDĐT">
-                <span class="tech-indicator">SPEC</span>
-                <span>Thông tư 22</span>
-            </div>
             <?php if (!empty($fxPage)): ?>
-            <!-- REPLAY GSAP ANIMATIONS BUTTON (WELCOME & QUET_NHANH) -->
+            <!-- REPLAY GSAP ANIMATIONS BUTTON -->
             <button type="button" class="edexa-help-toggle chip-mobile-hide" id="btnReplayFx" title="Chạy lại hiệu ứng chuyển động GSAP" aria-label="Chạy lại hiệu ứng">
                 <svg id="replayFxIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
             </button>
@@ -462,19 +483,8 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
             <button type="button" class="edexa-help-toggle chip-mobile-hide" onclick="toggleHelpDrawer(true)" title="Trung tâm trợ giúp &amp; Phím tắt nhanh (?)" aria-label="Trung tâm trợ giúp">
                 <span>?</span>
             </button>
-            <!-- BILINGUAL VI | EN TOGGLE BUTTON -->
-            <button type="button" class="edexa-theme-toggle edexa-lang-toggle key key--sm" id="langToggleBtn" title="Chuyển đổi ngôn ngữ Tiếng Việt / English" aria-label="Chuyển đổi ngôn ngữ Tiếng Việt / English">
-                <span class="lang-badge active" id="langBadgeVi">VI</span>
-                <span class="lang-sep">|</span>
-                <span class="lang-badge" id="langBadgeEn">EN</span>
-            </button>
-            <!-- INTERACTIVE THEME TOGGLER (LIGHT THEME / DARK THEME) -->
-            <button type="button" class="edexa-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Bấm để chuyển đổi giao diện Sáng / Tối" aria-label="Chuyển đổi giao diện Sáng / Tối">
-                <span class="theme-icon" id="themeIcon"><?= get_svg_icon('sun', 14) ?></span>
-                <span id="themeLabel">Giao diện sáng</span>
-            </button>
-            <!-- SYSTEM SETTINGS TRIGGER MODAL -->
-            <button type="button" class="edexa-theme-toggle" id="settingsToggleBtn" onclick="toggleSettingsDrawer(true)" title="Cài đặt hệ thống (Ngôn ngữ &amp; Giao diện)" aria-label="Cài đặt hệ thống">
+            <!-- SYSTEM SETTINGS TRIGGER MODAL (CONTAINS LANGUAGE & THEME) -->
+            <button type="button" class="edexa-theme-toggle" id="settingsToggleBtn" onclick="toggleSettingsDrawer(true)" title="Cài đặt hệ thống (Ngôn ngữ &amp; Giao diện Sáng/Tối)" aria-label="Cài đặt hệ thống">
                 <span class="theme-icon"><?= get_svg_icon('settings', 14) ?></span>
                 <span id="settingsLabel" data-i18n="header.settings">Cài đặt</span>
             </button>
@@ -483,6 +493,14 @@ $metaDescription = $metaDescription ?? 'Hệ thống ra-đa cảnh báo sớm h�
 </header>
 
 <script>
+function copyTeacherUid(code, btn) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code);
+    }
+    var oldHtml = btn.innerHTML;
+    btn.innerHTML = '<span style="color:#059669;font-weight:800;">✓ Đã sao chép ' + code + '</span>';
+    setTimeout(function() { btn.innerHTML = oldHtml; }, 1800);
+}
 // ĐIỀU KHIỂN CHUYỂN ĐỔI THEME TOÀN ỨNG DỤNG (PERSISTENT VIA LOCALSTORAGE)
 function toggleAppTheme() {
     var cur = document.documentElement.getAttribute('data-theme') || 'light';

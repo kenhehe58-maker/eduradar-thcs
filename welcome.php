@@ -193,13 +193,14 @@ require_once __DIR__ . '/includes/header.php';
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 5px 12px;
-    background: var(--cobalt-paper-2);
-    border: 1px solid var(--cobalt-rule);
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--cobalt-muted);
+    padding: 6px 14px;
+    background: var(--cobalt-accent-wash);
+    border: 1px solid rgba(37, 99, 235, 0.22);
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--cobalt-accent);
     margin-bottom: 16px;
 }
 .hero-pulse-dot {
@@ -640,13 +641,11 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- 1. HERO OBSERVABILITY DOCK -->
     <section class="hero-telemetry-dock cobalt-cut" aria-labelledby="welcomeHeroTitle">
-        <canvas id="asciiTelemetryField" class="ascii-telemetry-canvas" aria-hidden="true"></canvas>
-
         <div class="hero-telemetry-content">
             <div class="hero-status-strip">
                 <span class="hero-pulse-dot" aria-hidden="true"></span>
                 <span data-i18n="home.semester_phase"><?= htmlspecialchars($welcomeCalendar['phase_label'] ?? 'Học kỳ I') ?> &bull; Niên khóa <?= htmlspecialchars($welcomeCalendar['academic_year'] ?? '2026–2027') ?></span>
-                <span style="opacity: 0.5;">|</span>
+                <span style="opacity: 0.45;">&bull;</span>
                 <span data-i18n="home.role_label"><?= htmlspecialchars($userRoleTitle) ?></span>
             </div>
 
@@ -677,12 +676,28 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </section>
 
+    <?php
+        $avgFloat = (float)$schoolAvg;
+        $avgBorderVar = 'var(--cobalt-emerald)';
+        $avgBadgeBg = 'var(--cobalt-emerald-wash)';
+        if ($avgFloat > 0 && $avgFloat < 5.0) {
+            $avgBorderVar = 'var(--cobalt-ruby)';
+            $avgBadgeBg = 'var(--cobalt-ruby-wash)';
+        } elseif ($avgFloat > 0 && $avgFloat < 6.5) {
+            $avgBorderVar = 'var(--cobalt-amber)';
+            $avgBadgeBg = 'var(--cobalt-amber-wash)';
+        } elseif ($avgFloat > 0 && $avgFloat < 8.0) {
+            $avgBorderVar = 'var(--cobalt-accent)';
+            $avgBadgeBg = 'var(--cobalt-accent-wash)';
+        }
+    ?>
+
     <!-- 2. BENTO GRID KPI METRICS -->
     <section class="bento-kpi-grid" aria-label="Thống kê tổng quan trường học">
-        <!-- KPI 1: Sĩ số toàn trường -->
-        <div class="bento-kpi-item cobalt-cut">
+        <!-- KPI 1: Sĩ số toàn trường (Viền trái màu xanh biển) -->
+        <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid var(--cobalt-accent);">
             <div class="bento-kpi-head">
-                <span class="bento-kpi-title" data-i18n="home.kpi_total_students">Sĩ số toàn trường</span>
+                <span class="bento-kpi-title" data-i18n="home.kpi_total_students" style="color: var(--cobalt-accent);">Sĩ số toàn trường</span>
                 <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);"><span class="kpi-count"><?= $totalClasses ?></span> <span data-i18n="home.badge_classes">Lớp</span></span>
             </div>
             <div class="bento-kpi-value"><?= number_format($totalStudents) ?></div>
@@ -706,14 +721,13 @@ require_once __DIR__ . '/includes/header.php';
             <div class="bento-kpi-value" style="color: var(--cobalt-amber);"><?= $pctYellow ?>%</div>
         </div>
 
-        <!-- KPI 4: Điểm TB trường -->
-        <div class="bento-kpi-item cobalt-cut">
+        <!-- KPI 4: Điểm TB trường (Viền trái đổi màu theo mức ĐTB toàn trường) -->
+        <div class="bento-kpi-item cobalt-cut" style="border-left: 3px solid <?= $avgBorderVar ?>;">
             <div class="bento-kpi-head">
-                <span class="bento-kpi-title" data-i18n="home.kpi_school_avg">Điểm TB trường</span>
-                <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);"><span class="kpi-count"><?= $pctGood ?>%</span> <span data-i18n="home.badge_good">Khá Tốt</span></span>
+                <span class="bento-kpi-title" data-i18n="home.kpi_school_avg" style="color: <?= $avgBorderVar ?>;">Điểm TB trường</span>
+                <span class="bento-kpi-badge" style="background: <?= $avgBadgeBg ?>; color: <?= $avgBorderVar ?>;"><span class="kpi-count"><?= $pctGood ?>%</span> <span data-i18n="home.badge_good">Khá Tốt</span></span>
             </div>
-            <div class="bento-kpi-value"><?= $schoolAvg ?></div>
-            <div class="bento-kpi-sub" data-i18n="home.kpi_school_avg_sub">Thang điểm 10 Thông tư 22</div>
+            <div class="bento-kpi-value" style="color: <?= $avgBorderVar ?>;"><?= $schoolAvg ?></div>
         </div>
     </section>
 
@@ -813,6 +827,82 @@ require_once __DIR__ . '/includes/header.php';
                 </div>
             </a>
             <?php endif; ?>
+        </div>
+    </section>
+
+    <!-- 3B. CƠ CHẾ HOẠT ĐỘNG THEO VAI TRÒ & GIẢI THÍCH THUẬT TOÁN DỰ BÁO OLS (TT22) -->
+    <section class="stepper-dock cobalt-cut" aria-labelledby="roleGuideTitle" style="margin-bottom: 28px;">
+        <div class="stepper-header-row">
+            <div>
+                <h3 id="roleGuideTitle" class="launchpad-section-title" style="font-size: 18px;">
+                    <?= get_svg_icon('users', 18, '', 'color: var(--cobalt-accent);') ?>
+                    <span>Cơ chế phối hợp theo vai trò &amp; Giải nghĩa Cảnh báo sớm</span>
+                </h3>
+                <p class="launchpad-section-desc">
+                    Mỗi tài khoản trên EduRadar được thiết kế chuyên biệt theo nhiệm vụ trong Thông tư 22/2021/TT-BGDĐT, kết nối liền mạch từ nhập điểm đến can thiệp sư phạm.
+                </p>
+            </div>
+            <span class="hero-status-strip" style="margin: 0;">Mô hình 3 Tầng</span>
+        </div>
+
+        <div class="stepper-track-grid" style="margin-bottom: 18px;">
+            <!-- VAI TRÒ 1: GIÁO VIÊN BỘ MÔN -->
+            <div class="step-stage-card" style="border-top: 3px solid var(--cobalt-accent);">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" style="color: var(--cobalt-accent);">VAI TRÒ 01</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-accent-wash); color: var(--cobalt-accent);">GV Bộ Môn</span>
+                    </div>
+                    <h4 class="step-stage-title">Quản lý điểm &amp; Theo dõi môn dạy</h4>
+                    <p class="step-stage-text">
+                        Nhập điểm thường xuyên (TX1–TX4) và Giữa kỳ (GK1), xuất/nhập bảng điểm chuẩn VnEdu. Hệ thống tự động cảnh báo học sinh đang tụt dốc ở môn học và tính số điểm Cuối kỳ cần đạt.
+                    </p>
+                </div>
+            </div>
+
+            <!-- VAI TRÒ 2: GIÁO VIÊN CHỦ NHIỆM -->
+            <div class="step-stage-card" style="border-top: 3px solid var(--cobalt-emerald);">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" style="color: var(--cobalt-emerald);">VAI TRÒ 02</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-emerald-wash); color: var(--cobalt-emerald);">GV Chủ Nhiệm</span>
+                    </div>
+                    <h4 class="step-stage-title">Giám sát toàn diện lớp chủ nhiệm</h4>
+                    <p class="step-stage-text">
+                        Xem tổng hợp điểm tất cả các môn của lớp chủ nhiệm, theo dõi xếp loại Học lực chung (Tốt, Khá, Đạt, Chưa đạt) và phát hiện sớm học sinh bị khống chế điểm liệt (&lt; 3.5).
+                    </p>
+                </div>
+            </div>
+
+            <!-- VAI TRÒ 3: BAN GIÁM HIỆU / ADMIN -->
+            <div class="step-stage-card" style="border-top: 3px solid var(--cobalt-amber);">
+                <div>
+                    <div class="step-stage-meta">
+                        <span class="step-stage-tag" style="color: var(--cobalt-amber);">VAI TRÒ 03</span>
+                        <span class="bento-kpi-badge" style="background: var(--cobalt-amber-wash); color: var(--cobalt-amber);">Quản Trị Trường</span>
+                    </div>
+                    <h4 class="step-stage-title">Phân quyền qua ID &amp; Điều phối kỳ thi</h4>
+                    <p class="step-stage-text">
+                        Quản lý ma trận lớp Khối 6–9, dán Mã ID Giáo viên (<code>GV-XXXXXX</code>) để cấp quyền GVCN/GVBM, kiểm soát mở khóa cột điểm Cuối kỳ (CK1) và giám sát chất lượng toàn trường.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HỘP GIẢI NGHĨA TRỰC QUAN CÁCH TÍNH OLS & PHÂN TẦNG CẢNH BÁO -->
+        <div style="padding: 14px 18px; border-radius: 8px; background: var(--cobalt-paper-2); border: 1px dashed var(--cobalt-rule-2); display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; font-size: 12.5px; line-height: 1.55; color: var(--cobalt-ink-2);">
+            <div>
+                <b style="color: var(--cobalt-accent); display: block; margin-bottom: 3px;">📈 Dự báo Quỹ đạo OLS là gì?</b>
+                Hệ thống dùng hồi quy tuyến tính (Ordinary Least Squares) qua các cột điểm TX1 &rarr; TX4 &rarr; GK1 để đo tốc độ tiến bộ (<code>slope &gt; 0</code>) hoặc đà tụt dốc (<code>slope &lt; 0</code>) của từng học sinh.
+            </div>
+            <div>
+                <b style="color: var(--cobalt-emerald); display: block; margin-bottom: 3px;">🎯 Giải ngược điểm mục tiêu Cuối kỳ:</b>
+                Từ công thức <code>ĐTBmhk = (Tổng TX + 2&times;GK + 3&times;CK) / (Số cột TX + 5)</code>, hệ thống tính chính xác số điểm Cuối kỳ học sinh cần đạt để giữ mức Đạt (5.0), Khá (6.5) hoặc Tốt (8.0).
+            </div>
+            <div>
+                <b style="color: var(--cobalt-ruby); display: block; margin-bottom: 3px;">🚨 Khi nào học sinh vào diện Nguy cấp?</b>
+                Khi ĐTB tạm tính &lt; 3.5, hoặc điểm thi định kỳ &lt; 3.0, hoặc cần điểm thi Cuối kỳ vượt quá khả năng (&gt; 8.5) mới đủ 5.0 trung bình môn.
+            </div>
         </div>
     </section>
 
@@ -961,49 +1051,5 @@ require_once __DIR__ . '/includes/header.php';
     </section>
 
 </div>
-
-<script>
-// ASCII Telemetry Field Background Animation (Restrained, 30fps)
-(function() {
-    const canvas = document.getElementById('asciiTelemetryField');
-    if (!canvas || !canvas.getContext) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const chars = ['.', ':', '+', '*', '8', '9', '7', '6', '%', '#', '@', '[', ']'];
-    let width = 0, height = 0;
-    const cellW = 14, cellH = 18;
-
-    function resize() {
-        if (!canvas.parentElement) return;
-        width = canvas.width = canvas.parentElement.offsetWidth;
-        height = canvas.height = canvas.parentElement.offsetHeight;
-        draw();
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, width, height);
-        ctx.font = '11px "JetBrains Mono", monospace';
-        ctx.fillStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#94a3b8' : '#334155';
-
-        const cols = Math.floor(width / cellW);
-        const rows = Math.floor(height / cellH);
-
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                // Subtle static noise pattern with density gradient from left to right
-                const noise = Math.sin(c * 0.15 + r * 0.2);
-                if (noise > 0.4) {
-                    const charIdx = Math.floor(Math.abs(noise * 100)) % chars.length;
-                    ctx.fillText(chars[charIdx], c * cellW, r * cellH);
-                }
-            }
-        }
-    }
-
-    window.addEventListener('resize', resize);
-    resize();
-})();
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

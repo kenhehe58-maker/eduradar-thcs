@@ -250,9 +250,9 @@ if ($curClassName === '' && $selectedClassId > 0) {
 }
 
 // =============================================================================
-// XỬ LÝ XUẤT EXCEL SỔ ĐIỂM (.XLSX)
+// XỬ LÝ XUẤT EXCEL SỔ ĐIỂM (.XLSX) CHUẨN VNEDU THCS CHÂU VĂN ĐƠ + ĐÁNH GIÁ TT22
 // =============================================================================
-if ((isset($_GET['export']) && $_GET['export'] === 'xlsx') || 
+if ((isset($_GET['export']) && ($_GET['export'] === 'xlsx' || $_GET['export'] === 'csv')) || 
     (isset($_POST['action']) && $_POST['action'] === 'export_xlsx')) {
     
     if ($realUserRole !== 'admin') {
@@ -261,7 +261,7 @@ if ((isset($_GET['export']) && $_GET['export'] === 'xlsx') ||
 
     $expStmt = $pdo->prepare("
         SELECT s.id, s.student_code, s.full_name, s.birthday, s.gender, s.phone,
-               sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score
+               sc.tx1, sc.tx2, sc.tx3, sc.tx4, sc.gk, sc.ck, sc.avg_score, sc.teacher_note
         FROM students s
         LEFT JOIN scores sc ON s.id = sc.student_id AND sc.subject = ?
         WHERE s.class_id = ?
@@ -270,16 +270,32 @@ if ((isset($_GET['export']) && $_GET['export'] === 'xlsx') ||
     $expStmt->execute([$selectedSubject, $selectedClassId]);
     $studentRows = $expStmt->fetchAll();
 
+    $curGradeNum = $assignedClasses[$selectedClassId]['grade'] ?? (int)substr($curClassName, 0, 1);
+    $upperSubject = mb_strtoupper($selectedSubject, 'UTF-8');
+
     $exportData = [];
-    $exportData[] = ['STT', 'Mã HS', 'Họ và tên', 'Ngày sinh', 'Giới tính', 'Số điện thoại', 'ĐĐGtx1', 'ĐĐGtx2', 'ĐĐGtx3', 'ĐĐGtx4', 'ĐĐGgk', 'ĐĐGck', 'ĐTBmhk'];
+    // Tiêu đề 4 dòng chuẩn VnEdu Trường THCS Châu Văn Đơ (File 2)
+    $exportData[] = ['ỦY BAN NHÂN DÂN PHƯỜNG VĨNH CHÂU', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['TRƯỜNG THCS CHÂU VĂN ĐƠ', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ["BẢNG ĐIỂM CHI TIẾT - MÔN {$upperSubject} - HỌC KỲ 1 - NĂM HỌC 2026-2027", '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ["Khối {$curGradeNum} - Lớp {$curClassName}", '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
+    // Header 2 tầng chuẩn VnEdu (tương thích 100% với bộ đọc 1 cột hoặc 2 cột Họ và tên)
+    $exportData[] = ['STT', 'Mã học sinh', 'Họ và tên', 'Tên', 'Ngày sinh', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGtx', 'ĐĐGgk', 'ĐĐGck', 'ĐTB mhk', 'Nhận xét / Đánh giá'];
+    $exportData[] = ['', '', '', '', '', 'TX1', 'TX2', 'TX3', 'TX4', 'GK1', 'CK1', '', ''];
 
     $stt = 1;
+    $cntTot = 0;
+    $cntKha = 0;
+    $cntDat = 0;
+    $cntChuaDat = 0;
+    $cntScored = 0;
+
     foreach ($studentRows as $s) {
         $sId = (int)$s['id'];
-        $code = !empty($s['student_code']) ? $s['student_code'] : ('HS' . str_pad((string)$sId, 4, '0', STR_PAD_LEFT));
+        $rawCode = !empty($s['student_code']) ? (string)$s['student_code'] : ('HS' . str_pad((string)$sId, 4, '0', STR_PAD_LEFT));
+        $code = preg_replace('/\.0$/', '', trim($rawCode));
         $bday = !empty($s['birthday']) ? date('d/m/Y', strtotime($s['birthday'])) : '';
-        $gender = $s['gender'] ?? '';
-        $phone = $s['phone'] ?? '';
         $tx1 = $s['tx1'] !== null ? (float)$s['tx1'] : '';
         $tx2 = $s['tx2'] !== null ? (float)$s['tx2'] : '';
         $tx3 = $s['tx3'] !== null ? (float)$s['tx3'] : '';
@@ -288,22 +304,57 @@ if ((isset($_GET['export']) && $_GET['export'] === 'xlsx') ||
         $ck  = $s['ck']  !== null ? (float)$s['ck']  : '';
         $avg = $s['avg_score'] !== null ? (float)$s['avg_score'] : '';
 
+        // Phân loại mức học lực môn & nhận xét tự động nếu chưa có ghi chú
+        $evalTier = '';
+        if ($avg !== '') {
+            $cntScored++;
+            if ($avg >= 8.0) { $cntTot++; $evalTier = 'Tốt'; }
+            elseif ($avg >= 6.5) { $cntKha++; $evalTier = 'Khá'; }
+            elseif ($avg >= 5.0) { $cntDat++; $evalTier = 'Đạt'; }
+            else { $cntChuaDat++; $evalTier = 'Chưa Đạt'; }
+        }
+        $noteStr = trim((string)($s['teacher_note'] ?? ''));
+        if ($noteStr === '' && $evalTier !== '') {
+            if ($evalTier === 'Tốt') $noteStr = 'Mức Tốt — Nắm vững kiến thức, phát huy tốt';
+            elseif ($evalTier === 'Khá') $noteStr = 'Mức Khá — Tích cực, cần rèn thêm vận dụng cao';
+            elseif ($evalTier === 'Đạt') $noteStr = 'Mức Đạt — Cần ôn tập củng cố thêm';
+            else $noteStr = 'Chưa Đạt — Cần phụ đạo sát sao kịp thời';
+        }
+
+        // Tách tên cuối cho cột D để hiển thị chuẩn VnEdu nhưng cột C giữ đầy đủ Họ và tên để tương thích 100% mọi công cụ đọc
+        $nameParts = preg_split('/\s+/u', trim((string)$s['full_name']));
+        $firstNameOnly = count($nameParts) > 1 ? end($nameParts) : $s['full_name'];
+
         $exportData[] = [
             $stt++,
             $code,
             $s['full_name'],
+            $firstNameOnly,
             $bday,
-            $gender,
-            $phone,
             $tx1,
             $tx2,
             $tx3,
             $tx4,
             $gk,
             $ck,
-            $avg
+            $avg,
+            $noteStr
         ];
     }
+
+    // Khối THỐNG KÊ HỌC KỲ 1 ở cuối bảng chuẩn VnEdu (File 2)
+    $totalSt = max(1, count($studentRows));
+    $pctDatChung = round((($cntTot + $cntKha + $cntDat) / $totalSt) * 100, 2);
+    $pctTot = round(($cntTot / $totalSt) * 100, 2);
+    $pctKha = round(($cntKha / $totalSt) * 100, 2);
+    $pctDat = round(($cntDat / $totalSt) * 100, 2);
+    $pctChuaDat = round(($cntChuaDat / $totalSt) * 100, 2);
+
+    $exportData[] = ['', '', '', '', '', '', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', '', '', '', 'THỐNG KÊ HỌC KỲ 1', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', 'Số học sinh đạt', '', '', ($cntTot + $cntKha + $cntDat) . ' (' . $pctDatChung . '%)', '', '', '', '', '', '', ''];
+    $exportData[] = ['', '', 'Số lượng - Tỉ lệ (%)', '', '', 'Tốt', '', 'Khá', '', 'Đạt', '', 'Chưa Đạt', ''];
+    $exportData[] = ['', '', '', '', '', $cntTot . ' - ' . $pctTot . '%', '', $cntKha . ' - ' . $pctKha . '%', '', $cntDat . ' - ' . $pctDat . '%', '', $cntChuaDat . ' - ' . $pctChuaDat . '%', ''];
 
     $removeAccents = function(string $str): string {
         $map = [
@@ -328,6 +379,21 @@ if ((isset($_GET['export']) && $_GET['export'] === 'xlsx') ||
 
     $cleanClass = $removeAccents($curClassName ?: (string)$selectedClassId);
     $cleanSubject = $removeAccents($selectedSubject);
+
+    if (isset($_GET['export']) && $_GET['export'] === 'csv') {
+        $csvFilename = "SoDiem_VnEdu_{$cleanClass}_{$cleanSubject}_2026-2027.csv";
+        log_action($realUserId, $_SESSION['username'], 'Xuất file điểm', "Xuất file CSV VnEdu sổ điểm môn [$selectedSubject] lớp [$curClassName].");
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $csvFilename . '"');
+        echo "\xEF\xBB\xBF";
+        $out = fopen('php://output', 'w');
+        foreach ($exportData as $rRow) {
+            fputcsv($out, $rRow);
+        }
+        fclose($out);
+        exit;
+    }
+
     $filename = "SoDiem_{$cleanClass}_{$cleanSubject}_2026-2027.xlsx";
 
     $sheetName = "SoDiem_" . mb_substr($curClassName, 0, 20);
@@ -609,19 +675,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && ($_POST[
                     $row = $rows[$i];
                     if (empty($row) || !is_array($row)) continue;
 
+                    // Kiểm tra các dòng tiêu đề lặp hoặc dòng thống kê cuối bảng của VnEdu (File 2)
+                    $joinedRowText = mb_strtolower(implode(' ', array_map('strval', $row)), 'UTF-8');
+                    if (mb_strpos($joinedRowText, 'thống kê học kỳ') !== false ||
+                        mb_strpos($joinedRowText, 'số học sinh đạt') !== false ||
+                        mb_strpos($joinedRowText, 'số lượng - tỉ lệ') !== false ||
+                        mb_strpos($joinedRowText, 'ủy ban nhân dân') !== false ||
+                        mb_strpos($joinedRowText, 'trường thcs') !== false ||
+                        mb_strpos($joinedRowText, 'bảng điểm chi tiết') !== false ||
+                        mb_strpos($joinedRowText, 'khối ') !== false && mb_strpos($joinedRowText, 'lớp ') !== false) {
+                        continue;
+                    }
+
                     $fullName = '';
                     if (isset($colMap['full_name']) && isset($row[$colMap['full_name']])) {
                         $fullName = trim((string)$row[$colMap['full_name']]);
+                        // Nếu VnEdu tách cột Họ đệm (C) và Tên (D) thành 2 cột riêng biệt
+                        if (isset($colMap['first_name_col']) && isset($row[$colMap['first_name_col']])) {
+                            $fNamePart = trim((string)$row[$colMap['first_name_col']]);
+                            if ($fNamePart !== '' && !preg_match('/\b' . preg_quote($fNamePart, '/') . '$/iu', $fullName)) {
+                                $fullName = trim($fullName . ' ' . $fNamePart);
+                            }
+                        }
                     } elseif (isset($row[1]) && is_numeric($row[0])) {
                         $fullName = trim((string)$row[1]);
                     } elseif (isset($row[0])) {
                         $fullName = trim((string)$row[0]);
                     }
 
-                    if ($fullName === '' || mb_stripos($fullName, 'tổng số') !== false) continue;
+                    $normFull = mb_strtolower($fullName, 'UTF-8');
+                    if ($fullName === '' || $normFull === 'họ và tên' || $normFull === 'stt' ||
+                        mb_stripos($fullName, 'tổng số') !== false ||
+                        mb_stripos($fullName, 'số học sinh') !== false ||
+                        mb_stripos($fullName, 'số lượng') !== false) {
+                        continue;
+                    }
 
                     $studentCode = isset($colMap['student_code']) && isset($row[$colMap['student_code']]) ? trim((string)$row[$colMap['student_code']]) : null;
-                    if ($studentCode === '') $studentCode = null;
+                    if ($studentCode !== null) {
+                        $studentCode = preg_replace('/\.0$/', '', $studentCode);
+                        if ($studentCode === '') $studentCode = null;
+                    }
 
                     $rawBday = isset($colMap['birthday']) && isset($row[$colMap['birthday']]) ? $row[$colMap['birthday']] : null;
                     $normBday = normalize_excel_date($rawBday);
@@ -1384,19 +1478,19 @@ require_once __DIR__ . '/includes/header.php';
     }
     ?>
 
-    <!-- 2. VNEDU SCHEDULE TIMELINE BAR (HAIRLINE PRECISION) -->
-    <?php if ($isHk1Mid): ?>
+    <!-- 2. VNEDU SCHEDULE TIMELINE BAR (ONLY ADMIN CAN UNLOCK EARLY) -->
+    <?php if ($isHk1Mid && $realUserRole === 'admin'): ?>
     <div class="schedule-hairline" id="vneduScheduleBar">
         <div class="schedule-info">
             <span style="color: #d97706;"><?= get_svg_icon('lock', 16) ?></span>
             <div>
-                <b data-i18n="gradebook.schedule_title">Khung Thời Gian Nhập Điểm:</b>
-                <span data-i18n="gradebook.schedule_desc">Hiện đang trong đợt Giữa kỳ I. Cột điểm <b>Cuối kỳ I (CK1)</b> tạm thời khóa theo tiến độ VnEdu (dự kiến mở chính thức từ 15/12).</span>
+                <b data-i18n="gradebook.schedule_title">Quản Trị Khung Thời Gian Nhập Điểm:</b>
+                <span data-i18n="gradebook.schedule_desc">Cột điểm <b>Cuối kỳ I (CK1)</b> đang khóa đối với giáo viên (mở từ 15/12). Tài khoản Admin có quyền mở khóa nhập sớm.</span>
             </div>
         </div>
-        <button type="button" class="key key--sm" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Bấm để mở khóa nhập sớm nếu nhà trường tổ chức thi sớm">
+        <button type="button" class="key key--sm" id="btnVneduToggleLock" onclick="toggleVnEduCkLock()" title="Mở khóa nhập sớm cột Cuối kỳ (Quyền Admin)">
             <span id="btnLockIcon"><?= get_svg_icon('unlock', 14) ?></span>
-            <span id="btnLockLabel" data-i18n="gradebook.unlock_early">Mở khóa nhập sớm</span>
+            <span id="btnLockLabel" data-i18n="gradebook.unlock_early">Mở khóa nhập sớm (Admin)</span>
         </button>
     </div>
     <?php endif; ?>
@@ -1687,14 +1781,19 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                 </div>
                 <p style="font-size: 13px; color: var(--cobalt-ink-muted); line-height: 1.6; margin-top: 8px;" data-i18n="gradebook.export_info">
-                    File Excel xuất ra chứa đầy đủ danh sách học sinh, mã định danh, ngày sinh, các cột ĐĐGtx 1..4, ĐĐGgk, ĐĐGck và ĐTBmhk tính tự động chuẩn Thông tư 22.
+                    File xuất ra chuẩn định dạng VnEdu Trường THCS Châu Văn Đơ: đầy đủ tiêu đề trường/lớp, cột Họ và tên, Ngày sinh, ĐĐGtx 1..4, ĐĐGgk, ĐĐGck, ĐTBmhk, Nhận xét đánh giá và bảng <b>THỐNG KÊ HỌC KỲ 1</b> (Tốt, Khá, Đạt, Chưa Đạt).
                 </p>
             </div>
-            <div style="margin-top: 18px;">
+            <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
                 <a href="nhap_diem.php?export=xlsx&class_id=<?= (int)$selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" 
                    class="key key--primary" style="background: #059669; border-color: #047857;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span>Xuất Excel sổ điểm môn <?= htmlspecialchars($selectedSubject) ?></span>
+                    <span>Xuất Excel (.xlsx) môn <?= htmlspecialchars($selectedSubject) ?></span>
+                </a>
+                <a href="nhap_diem.php?export=csv&class_id=<?= (int)$selectedClassId ?>&subject=<?= urlencode($selectedSubject) ?>" 
+                   class="key">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span>Xuất CSV chuẩn VnEdu</span>
                 </a>
             </div>
         </section>

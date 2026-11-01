@@ -198,6 +198,29 @@ require_once __DIR__ . '/icons.php';
     </div>
 
     <div class="help-drawer-body">
+        <?php if (!empty($currentTeacherCode)): ?>
+        <!-- 0. MÃ ĐỊNH DANH GIÁO VIÊN (DÙNG ĐỂ PHÂN QUYỀN GVCN / GV BỘ MÔN) -->
+        <div class="help-section">
+            <div class="help-section-title">
+                <?= get_svg_icon('users', 18, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                <span>Mã định danh tài khoản (Teacher ID)</span>
+            </div>
+            <div style="margin-top: 8px; padding: 12px 14px; border-radius: 10px; background: rgba(37, 99, 235, 0.06); border: 1px dashed var(--primary, #2563eb); display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: var(--primary, #2563eb);">
+                        <?= htmlspecialchars($currentTeacherCode, ENT_QUOTES, 'UTF-8') ?>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-subtle, #64748b); margin-top: 2px;">
+                        Gửi mã này cho Admin trường để cấp quyền GVCN / Bộ môn
+                    </div>
+                </div>
+                <button type="button" class="cobalt-key" style="min-height: 34px; padding: 6px 12px; font-size: 12px;" onclick="copyTeacherUid('<?= htmlspecialchars($currentTeacherCode, ENT_QUOTES, 'UTF-8') ?>', this)">
+                    <span>Sao chép</span>
+                </button>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- 1. CÀI ĐẶT NGÔN NGỮ -->
         <div class="help-section">
             <div class="help-section-title">

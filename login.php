@@ -23,55 +23,113 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && isset($_SESSION['user_id'])) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = (string)($_POST['password'] ?? '');
+    $pdo = db();
+    ensure_user_extensions_schema();
 
-    if ($username !== '' && $password !== '') {
-        $pdo = db();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
+    // XỬ LÝ ĐĂNG NHẬP / TẠO TÀI KHOẢN GIÁO VIÊN BẰNG GOOGLE (CẤP MÃ ID GV-XXXXXX)
+    if (isset($_POST['action']) && $_POST['action'] === 'google_login') {
+        $googleEmail = strtolower(trim($_POST['google_email'] ?? ''));
+        $googleName  = trim($_POST['google_name'] ?? '');
 
-        // XÁC THỰC BẢO MẬT: Bỏ hoàn toàn bypass backdoor cũ
-        // Nghiêm ngặt chỉ chấp nhận mật khẩu đã hash bcrypt qua password_verify()
-        if ($user && password_verify($password, $user['password'])) {
-            // Ngăn ngừa tấn công Session Fixation & xóa sạch ngữ cảnh lớp/môn của tài khoản cũ trên cùng trình duyệt
+        if ($googleEmail !== '' && filter_var($googleEmail, FILTER_VALIDATE_EMAIL)) {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE google_email = ? OR username = ? LIMIT 1");
+            $stmt->execute([$googleEmail, $googleEmail]);
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                $baseUser = preg_replace('/[^a-z0-9_]/', '_', explode('@', $googleEmail)[0]);
+                $newUsername = 'gg_' . substr($baseUser, 0, 20) . '_' . rand(100, 999);
+                if ($googleName === '') {
+                    $googleName = 'Giáo Viên (' . explode('@', $googleEmail)[0] . ')';
+                }
+                $randomHash = password_hash(bin2hex(random_bytes(8)), PASSWORD_BCRYPT);
+                $ins = $pdo->prepare("INSERT INTO users (username, password, full_name, role, google_email) VALUES (?, ?, ?, 'teacher', ?)");
+                $ins->execute([$newUsername, $randomHash, $googleName, $googleEmail]);
+                $newId = (int)$pdo->lastInsertId();
+                $tCode = 'GV-' . (100000 + $newId);
+                $pdo->prepare("UPDATE users SET teacher_code = ? WHERE id = ?")->execute([$tCode, $newId]);
+
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+                $stmt->execute([$newId]);
+                $user = $stmt->fetch();
+
+                log_action($newId, $newUsername, 'Đăng ký Google thành công', "Tạo tài khoản giáo viên qua Google [$googleEmail] với Mã ID [$tCode].");
+            } else {
+                if (empty($user['teacher_code'])) {
+                    $tCode = ($user['role'] === 'admin' ? 'AD-' : 'GV-') . (100000 + (int)$user['id']);
+                    $pdo->prepare("UPDATE users SET teacher_code = ?, google_email = COALESCE(google_email, ?) WHERE id = ?")->execute([$tCode, $googleEmail, (int)$user['id']]);
+                    $user['teacher_code'] = $tCode;
+                }
+                log_action((int)$user['id'], $user['username'], 'Đăng nhập Google thành công', "Giáo viên [{$user['full_name']}] (ID: {$user['teacher_code']}) đăng nhập qua Google [$googleEmail].");
+            }
+
             session_regenerate_id(true);
             $_SESSION = [];
-
             $_SESSION['user_id'] = (int)$user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['teacher_code'] = $user['teacher_code'] ?? ('GV-' . (100000 + (int)$user['id']));
+            $_SESSION['homeroom_class_id'] = (int)($user['homeroom_class_id'] ?? 0);
             $_SESSION['ctx_owner_id'] = (int)$user['id'];
 
-            // Ghi nhật ký đăng nhập thành công vào bảng audit_logs
-            log_action(
-                (int)$user['id'],
-                $user['username'],
-                'Đăng nhập thành công',
-                "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập thành công vào hệ thống."
-            );
-
-            // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên & Người dùng vào index.php
-            if ($user['role'] === 'admin') {
-                header('Location: admin.php');
-            } else {
-                header('Location: index.php');
-            }
+            header('Location: welcome.php');
             exit;
         } else {
-            // Ghi nhật ký đăng nhập thất bại kèm tên tài khoản đã cố gắng đăng nhập
-            log_action(
-                null,
-                $username,
-                'Đăng nhập thất bại',
-                "Thử đăng nhập thất bại với tài khoản [$username]."
-            );
-            $error = 'Tên đăng nhập hoặc mật khẩu không chính xác!';
+            $error = 'Vui lòng nhập địa chỉ Email Google hợp lệ!';
         }
     } else {
-        $error = 'Vui lòng nhập đầy đủ thông tin!';
+        $username = trim($_POST['username'] ?? '');
+        $password = (string)($_POST['password'] ?? '');
+
+        if ($username !== '' && $password !== '') {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch();
+
+            // XÁC THỰC BẢO MẬT: Bỏ hoàn toàn bypass backdoor cũ
+            // Nghiêm ngặt chỉ chấp nhận mật khẩu đã hash bcrypt qua password_verify()
+            if ($user && password_verify($password, $user['password'])) {
+                // Ngăn ngừa tấn công Session Fixation & xóa sạch ngữ cảnh lớp/môn của tài khoản cũ trên cùng trình duyệt
+                session_regenerate_id(true);
+                $_SESSION = [];
+
+                $_SESSION['user_id'] = (int)$user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['full_name'] = $user['full_name'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['teacher_code'] = $user['teacher_code'] ?? (($user['role'] === 'admin' ? 'AD-' : 'GV-') . (100000 + (int)$user['id']));
+                $_SESSION['homeroom_class_id'] = (int)($user['homeroom_class_id'] ?? 0);
+                $_SESSION['ctx_owner_id'] = (int)$user['id'];
+
+                // Ghi nhật ký đăng nhập thành công vào bảng audit_logs
+                log_action(
+                    (int)$user['id'],
+                    $user['username'],
+                    'Đăng nhập thành công',
+                    "Người dùng [{$user['username']}] vai trò [{$user['role']}] đã đăng nhập thành công vào hệ thống."
+                );
+
+                // Điều hướng theo phân quyền (RBAC): Admin vào admin.php, Giáo viên & Người dùng vào index.php
+                if ($user['role'] === 'admin') {
+                    header('Location: admin.php');
+                } else {
+                    header('Location: index.php');
+                }
+                exit;
+            } else {
+                // Ghi nhật ký đăng nhập thất bại kèm tên tài khoản đã cố gắng đăng nhập
+                log_action(
+                    null,
+                    $username,
+                    'Đăng nhập thất bại',
+                    "Thử đăng nhập thất bại với tài khoản [$username]."
+                );
+                $error = 'Tên đăng nhập hoặc mật khẩu không chính xác!';
+            }
+        } else {
+            $error = 'Vui lòng nhập đầy đủ thông tin!';
+        }
     }
 }
 ?>
@@ -537,6 +595,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
         </form>
 
+        <!-- ĐĂNG NHẬP / TẠO TÀI KHOẢN GIÁO VIÊN BẰNG GOOGLE (CẤP MÃ GV-XXXXXX) -->
+        <div style="margin-top: 14px;">
+            <button type="button" onclick="toggleGoogleModal()" class="guest-link" style="background: var(--cobalt-paper); border-color: var(--cobalt-rule-strong); min-height: 46px; cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
+                </svg>
+                <span>Đăng nhập / Tạo TK Giáo viên bằng Google</span>
+            </button>
+
+            <form method="POST" action="" id="googleAuthBox" style="display: none; margin-top: 12px; padding: 14px; border-radius: 10px; border: 1px solid var(--cobalt-accent); background: var(--cobalt-paper-2);">
+                <input type="hidden" name="action" value="google_login">
+                <div style="font-size: 12px; font-weight: 700; color: var(--cobalt-accent); margin-bottom: 8px;">
+                    Xác thực tài khoản Google Giáo viên (Tự động cấp Mã ID GV-XXXXXX)
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label class="form-label" style="margin-bottom: 4px;">EMAIL GOOGLE CỦA GIÁO VIÊN</label>
+                    <input type="email" name="google_email" id="ggEmailInput" class="cobalt-input" style="padding: 9px 12px; font-size: 13.5px;" placeholder="giaovien.cvd@gmail.com" required>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label class="form-label" style="margin-bottom: 4px;">HỌ VÀ TÊN GIÁO VIÊN</label>
+                    <input type="text" name="google_name" id="ggNameInput" class="cobalt-input" style="padding: 9px 12px; font-size: 13.5px;" placeholder="Ví dụ: Cô Nguyễn Thị Minh">
+                </div>
+                <div style="font-size: 11.5px; color: var(--cobalt-ink-muted); margin-bottom: 10px; line-height: 1.45;">
+                    Sau khi đăng nhập, bạn sẽ có mã định danh <code>GV-XXXXXX</code>. Gửi mã này cho Admin trường để được gán quyền <b>GV Chủ nhiệm</b> hoặc <b>GV Bộ môn</b>.
+                </div>
+                <button type="submit" class="keycap-submit" style="min-height: 40px; padding: 8px 14px; font-size: 13px;">
+                    <span>Tiếp tục với Google & Nhận Mã GV</span>
+                </button>
+            </form>
+        </div>
+
         <!-- SECONDARY GUEST SCANNER LINK -->
         <div class="guest-tray">
             <p style="font-size: 12px; color: var(--cobalt-ink-muted); margin-bottom: 10px;">Chưa có tài khoản trường hoặc cần trải nghiệm tức thì?</p>
@@ -557,6 +649,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 duration: 0.4,
                 ease: 'power2.out'
             });
+        }
+    }
+
+    function toggleGoogleModal() {
+        var box = document.getElementById('googleAuthBox');
+        if (!box) return;
+        var isHidden = box.style.display === 'none';
+        box.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+            var emailIn = document.getElementById('ggEmailInput');
+            if (emailIn) emailIn.focus();
         }
     }
 

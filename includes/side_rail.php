@@ -105,6 +105,7 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
 
 /* NAVIGATION MENU */
 .u040-nav {
+  position: relative;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -124,9 +125,36 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
 }
 .u040-nav li {
   width: 100%;
+  position: relative;
+  z-index: 2;
+}
+/* Sliding Active & Hover Pill Indicators (Awwwards / Fluid Dock Style) */
+.u040-sliding-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 12px;
+  background: var(--color-accent, #2563eb);
+  box-shadow: var(--shadow-key-accent, 0 4px 14px rgba(37, 99, 235, 0.28));
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  will-change: transform, width, height;
+}
+.u040-hover-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 12px;
+  background: var(--color-paper-2, var(--surface-hover, #f1f5f9));
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), width 0.26s cubic-bezier(0.22, 1, 0.36, 1), height 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
 }
 .u040-it {
   position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -138,17 +166,18 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
   font-weight: 600;
   color: var(--text-muted, #475569);
   text-decoration: none;
-  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition: background-color 0.22s cubic-bezier(0.22, 1, 0.36, 1), color 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .u040-it:hover {
   background: var(--color-paper-2, var(--surface-hover, #f1f5f9));
   color: var(--color-ink, var(--text-heading, #0f172a));
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-key);
+  transform: translateX(2px);
+}
+.u040-nav.has-sliding-pill .u040-it:hover {
+  background: transparent;
 }
 .u040-it:active {
-  transform: translateY(2px);
-  box-shadow: var(--shadow-key-press);
+  transform: scale(0.97);
 }
 .u040-it svg {
   width: 20px;
@@ -159,7 +188,7 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.18s ease;
+  transition: stroke 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .u040-it-label {
   flex: 1;
@@ -172,6 +201,10 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
   color: var(--color-accent-ink, #ffffff);
   box-shadow: var(--shadow-key-accent);
   font-weight: 700;
+}
+.u040-nav.has-sliding-pill .u040-it[aria-current="page"] {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 .u040-it[aria-current="page"] svg {
   stroke: var(--color-accent-ink, #ffffff);
@@ -376,35 +409,50 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
     display: none !important;
   }
   .u040-nav {
+    position: relative !important;
     display: flex !important;
     flex-direction: row !important;
-    justify-content: space-around !important;
+    justify-content: space-between !important;
     align-items: center !important;
-    flex: 1 1 auto !important;
+    flex: <?= $userRole === 'admin' ? 5 : 4 ?> 1 0% !important;
     width: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
     gap: 2px !important;
+    overflow: visible !important;
   }
   .u040-nav li {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: auto !important;
-    flex: 1 1 0 !important;
+    flex: 1 1 0% !important;
     margin: 0 !important;
     padding: 0 !important;
+    min-width: 0 !important;
   }
   .u040-footer-sec {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: auto !important;
-    flex: 1 1 0 !important;
+    flex: 1 1 0% !important;
     margin: 0 !important;
     padding: 0 !important;
     border-top: none !important;
+    min-width: 0 !important;
+  }
+  .u040-sliding-pill {
+    border-radius: 10px !important;
+    background: #eff6ff !important;
+    box-shadow: none !important;
+  }
+  [data-theme="dark"] .u040-sliding-pill {
+    background: rgba(59, 130, 246, 0.2) !important;
+  }
+  .u040-hover-pill {
+    display: none !important;
   }
   /* Nav item styled: Fitts's Law touch target >= 48x48px */
   .u040-it {
@@ -566,29 +614,31 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
 
       <!-- Navigation List with Edexa Active Pill Styling -->
       <ul class="u040-nav" id="u040NavList">
+        <div class="u040-hover-pill" id="u040HoverPill" aria-hidden="true"></div>
+        <div class="u040-sliding-pill" id="u040SlidingPill" aria-hidden="true"></div>
         <li>
-          <a href="welcome.php" class="u040-it" <?= $activeNav === 'welcome' ? 'aria-current="page"' : '' ?> aria-label="Trang Chủ">
+          <a href="welcome.php" class="u040-it" data-nav-key="welcome" <?= $activeNav === 'welcome' ? 'aria-current="page"' : '' ?> aria-label="Trang Chủ">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span class="u040-it-label">Trang Chủ</span>
             <span class="u040-dock-tip">Trang Chủ</span>
           </a>
         </li>
         <li>
-          <a href="index.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Cảnh Báo">
+          <a href="index.php<?= $navQuery ?>" class="u040-it" data-nav-key="dashboard" <?= $activeNav === 'dashboard' ? 'aria-current="page"' : '' ?> aria-label="Cảnh Báo">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
             <span class="u040-it-label">Cảnh Báo</span>
             <span class="u040-dock-tip">Cảnh Báo Điểm Số</span>
           </a>
         </li>
         <li>
-          <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Sổ Điểm">
+          <a href="nhap_diem.php<?= $navQuery ?>" class="u040-it" data-nav-key="gradebook" <?= $activeNav === 'gradebook' ? 'aria-current="page"' : '' ?> aria-label="Sổ Điểm">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M8 4v16M14 4v16"/></svg>
             <span class="u040-it-label">Sổ Điểm</span>
             <span class="u040-dock-tip">Sổ Điểm VnEdu</span>
           </a>
         </li>
         <li>
-          <a href="quet_nhanh.php" class="u040-it" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh">
+          <a href="quet_nhanh.php" class="u040-it" data-nav-key="guest" <?= $activeNav === 'guest' ? 'aria-current="page"' : '' ?> aria-label="Quét Nhanh">
             <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             <span class="u040-it-label">Quét</span>
             <span class="u040-bd" aria-label="Mới">Mới</span>
@@ -597,7 +647,7 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
         </li>
         <?php if ($userRole === 'admin'): ?>
           <li>
-            <a href="admin.php" class="u040-it" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Quản Trị">
+            <a href="admin.php" class="u040-it" data-nav-key="admin" <?= $activeNav === 'admin' ? 'aria-current="page"' : '' ?> aria-label="Quản Trị">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z"/><circle cx="12" cy="11" r="2.5"/></svg>
               <span class="u040-it-label">Quản Trị</span>
               <span class="u040-dock-tip">Cổng Quản Trị Trường</span>
@@ -639,3 +689,109 @@ if ($userRole !== 'guest' && $ctxClassId > 0 && $ctxSubject !== '' && $ctxSubjec
     </nav>
   </div>
 </aside>
+<script>
+(function() {
+  var nav = document.getElementById('u040NavList');
+  var pill = document.getElementById('u040SlidingPill');
+  var hoverPill = document.getElementById('u040HoverPill');
+  if (!nav || !pill) return;
+
+  var items = Array.prototype.slice.call(nav.querySelectorAll('.u040-it'));
+  var activeItem = nav.querySelector('.u040-it[aria-current="page"]');
+
+  function getRelativeRect(el) {
+    var navRect = nav.getBoundingClientRect();
+    var elRect = el.getBoundingClientRect();
+    return {
+      x: Math.round(elRect.left - navRect.left),
+      y: Math.round(elRect.top - navRect.top),
+      w: Math.round(elRect.width),
+      h: Math.round(elRect.height)
+    };
+  }
+
+  function applyPillInstant(el, target) {
+    var r = getRelativeRect(target);
+    el.style.transition = 'none';
+    el.style.width = r.w + 'px';
+    el.style.height = r.h + 'px';
+    el.style.transform = 'translate3d(' + r.x + 'px,' + r.y + 'px,0)';
+    el.style.opacity = '1';
+  }
+
+  function animatePillTo(target, fromRect) {
+    var toRect = getRelativeRect(target);
+    nav.classList.add('has-sliding-pill');
+    if (fromRect && (fromRect.x !== toRect.x || fromRect.y !== toRect.y)) {
+      pill.style.transition = 'none';
+      pill.style.width = fromRect.w + 'px';
+      pill.style.height = fromRect.h + 'px';
+      pill.style.transform = 'translate3d(' + fromRect.x + 'px,' + fromRect.y + 'px,0)';
+      pill.style.opacity = '1';
+      void pill.offsetWidth;
+      pill.style.transition = 'transform 0.46s cubic-bezier(0.22, 1, 0.36, 1), width 0.46s cubic-bezier(0.22, 1, 0.36, 1), height 0.46s cubic-bezier(0.22, 1, 0.36, 1)';
+      pill.style.width = toRect.w + 'px';
+      pill.style.height = toRect.h + 'px';
+      pill.style.transform = 'translate3d(' + toRect.x + 'px,' + toRect.y + 'px,0)';
+    } else {
+      applyPillInstant(pill, target);
+    }
+  }
+
+  function initSlidingPill() {
+    if (!activeItem) return;
+    var prevKey = null;
+    try { prevKey = sessionStorage.getItem('eduradar_prev_nav_key'); } catch (e) {}
+    var currentKey = activeItem.getAttribute('data-nav-key');
+    var prevEl = prevKey ? nav.querySelector('.u040-it[data-nav-key="' + prevKey + '"]') : null;
+    if (prevEl && prevEl !== activeItem) {
+      animatePillTo(activeItem, getRelativeRect(prevEl));
+    } else {
+      nav.classList.add('has-sliding-pill');
+      applyPillInstant(pill, activeItem);
+    }
+    try { if (currentKey) sessionStorage.setItem('eduradar_prev_nav_key', currentKey); } catch (e) {}
+  }
+
+  items.forEach(function(item) {
+    item.addEventListener('click', function() {
+      var prevKey = activeItem ? activeItem.getAttribute('data-nav-key') : null;
+      try { if (prevKey) sessionStorage.setItem('eduradar_prev_nav_key', prevKey); } catch (e) {}
+      if (activeItem && item !== activeItem) {
+        activeItem.removeAttribute('aria-current');
+        item.setAttribute('aria-current', 'page');
+        animatePillTo(item, getRelativeRect(activeItem));
+        activeItem = item;
+      }
+    });
+    if (hoverPill) {
+      item.addEventListener('mouseenter', function() {
+        if (window.innerWidth <= 768 || item === activeItem) {
+          hoverPill.style.opacity = '0';
+          return;
+        }
+        var r = getRelativeRect(item);
+        hoverPill.style.width = r.w + 'px';
+        hoverPill.style.height = r.h + 'px';
+        hoverPill.style.transform = 'translate3d(' + r.x + 'px,' + r.y + 'px,0)';
+        hoverPill.style.opacity = '1';
+      });
+    }
+  });
+
+  if (hoverPill) {
+    nav.addEventListener('mouseleave', function() {
+      hoverPill.style.opacity = '0';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSlidingPill);
+  } else {
+    initSlidingPill();
+  }
+  window.addEventListener('resize', function() {
+    if (activeItem) applyPillInstant(pill, activeItem);
+  }, { passive: true });
+})();
+</script>

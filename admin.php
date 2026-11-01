@@ -166,13 +166,15 @@ if ((isset($_GET['delete_class']) && (int)$_GET['delete_class'] > 0) ||
 }
 
 // -----------------------------------------------------------------------------
-// 3. ACTION: TẠO TÀI KHOẢN GIÁO VIÊN MỚI (CREATE TEACHER)
+// 3. ACTION: TẠO TÀI KHOẢN GIÁO VIÊN MỚI (CREATE TEACHER - HỖ TRỢ GVCN & GVBM)
 // -----------------------------------------------------------------------------
+ensure_user_extensions_schema();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'create_teacher') {
     require_admin();
     $username = trim((string)($_POST['username'] ?? ''));
     $fullName = trim((string)($_POST['full_name'] ?? ''));
     $password = (string)($_POST['password'] ?? '');
+    $homeroomClassId = isset($_POST['homeroom_class_id']) && (int)$_POST['homeroom_class_id'] > 0 ? (int)$_POST['homeroom_class_id'] : null;
 
     if ($username === '' || $fullName === '' || $password === '') {
         $err = "Vui lòng nhập đầy đủ Tên đăng nhập, Họ và tên và Mật khẩu khởi tạo!";
@@ -188,16 +190,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $err = "Tên đăng nhập [$username] đã tồn tại trên hệ thống!";
         } else {
             $hashed = password_hash($password, PASSWORD_BCRYPT);
-            $ins = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, 'teacher')");
-            $ins->execute([$username, $hashed, $fullName]);
+            $ins = $pdo->prepare("INSERT INTO users (username, password, full_name, role, homeroom_class_id) VALUES (?, ?, ?, 'teacher', ?)");
+            $ins->execute([$username, $hashed, $fullName, $homeroomClassId]);
+            $newTid = (int)$pdo->lastInsertId();
+            $tCode = 'GV-' . (100000 + $newTid);
+            $pdo->prepare("UPDATE users SET teacher_code = ? WHERE id = ?")->execute([$tCode, $newTid]);
 
             log_action(
                 (int)$_SESSION['user_id'], 
                 $_SESSION['username'] ?? 'admin', 
                 'Tạo tài khoản giáo viên', 
-                "Admin tạo mới tài khoản giáo viên: [$username] - [$fullName]."
+                "Admin tạo mới tài khoản giáo viên: [$username] - [$fullName] (Mã ID: $tCode)."
             );
-            $msg = "Đã tạo thành công tài khoản giáo viên [$fullName] (Tên đăng nhập: $username)!";
+            $msg = "Đã tạo thành công tài khoản giáo viên [$fullName] (Tên đăng nhập: $username, Mã định danh: $tCode)!";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 3b. ACTION: GÁN QUYỀN NHANH QUA MÃ ĐỊNH DANH GIÁO VIÊN (GV-XXXXXX)
+// Cho phép Admin dán Mã ID giáo viên để gán GV Chủ nhiệm (Lớp CN) và/hoặc GV Bộ môn
+// -----------------------------------------------------------------------------
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'assign_by_teacher_code') {
+    require_admin();
+    $codeInput = strtoupper(trim((string)($_POST['teacher_code'] ?? '')));
+    $hrClassId = isset($_POST['homeroom_class_id']) ? (int)$_POST['homeroom_class_id'] : -1;
+    $bmSubject = trim((string)($_POST['bm_subject'] ?? ''));
+    $bmClassId = isset($_POST['bm_class_id']) ? (int)$_POST['bm_class_id'] : 0;
+
+    if ($codeInput === '') {
+        $err = "Vui lòng dán Mã định danh Giáo viên (ví dụ: GV-100002)!";
+    } else {
+        $findT = $pdo->prepare("SELECT id, username, full_name, teacher_code FROM users WHERE UPPER(teacher_code) = ? OR UPPER(username) = ? LIMIT 1");
+        $findT->execute([$codeInput, $codeInput]);
+        $tRow = $findT->fetch();
+
+        if (!$tRow) {
+            $err = "Không tìm thấy giáo viên nào có Mã định danh [$codeInput]!";
+        } else {
+            $tid = (int)$tRow['id'];
+            $updatesDone = [];
+
+            if ($hrClassId >= 0) {
+                $valHr = $hrClassId > 0 ? $hrClassId : null;
+                $pdo->prepare("UPDATE users SET homeroom_class_id = ? WHERE id = ?")->execute([$valHr, $tid]);
+                if ($hrClassId > 0) {
+                    $cNameStmt = $pdo->prepare("SELECT name FROM classes WHERE id = ?");
+                    $cNameStmt->execute([$hrClassId]);
+                    $hrName = $cNameStmt->fetchColumn() ?: "ID $hrClassId";
+                    $updatesDone[] = "Chủ nhiệm lớp $hrName";
+                } else {
+                    $updatesDone[] = "Bỏ kiêm nhiệm GVCN";
+                }
+            }
+
+            if ($bmSubject !== '' && $bmClassId > 0) {
+                $chkEx = $pdo->prepare("SELECT id FROM teacher_classes WHERE class_id = ? AND subject = ?");
+                $chkEx->execute([$bmClassId, $bmSubject]);
+                $exRow = $chkEx->fetch();
+                if ($exRow) {
+                    $pdo->prepare("UPDATE teacher_classes SET teacher_id = ? WHERE id = ?")->execute([$tid, (int)$exRow['id']]);
+                } else {
+                    $pdo->prepare("INSERT INTO teacher_classes (teacher_id, class_id, subject) VALUES (?, ?, ?)")->execute([$tid, $bmClassId, $bmSubject]);
+                }
+                $cNameStmt = $pdo->prepare("SELECT name FROM classes WHERE id = ?");
+                $cNameStmt->execute([$bmClassId]);
+                $bmClassName = $cNameStmt->fetchColumn() ?: "ID $bmClassId";
+                $updatesDone[] = "Dạy môn $bmSubject lớp $bmClassName";
+            }
+
+            $descStr = !empty($updatesDone) ? implode(' + ', $updatesDone) : 'Cập nhật hồ sơ';
+            log_action((int)$_SESSION['user_id'], $_SESSION['username'] ?? 'admin', 'Phân quyền theo Mã GV', "Admin gán quyền cho [{$tRow['full_name']}] ({$tRow['teacher_code']}): $descStr.");
+            $msg = "Đã cấp quyền thành công cho giáo viên {$tRow['full_name']} ({$tRow['teacher_code']}): $descStr!";
         }
     }
 }
@@ -730,13 +794,15 @@ $statTotalTeachers = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = '
 $statTotalAssignments = (int)$pdo->query("SELECT COUNT(*) FROM teacher_classes")->fetchColumn();
 $statTotalStudents = (int)$pdo->query("SELECT COUNT(*) FROM students")->fetchColumn();
 
-// 2. Danh sách giáo viên
+// 2. Danh sách giáo viên (kèm Mã định danh GV-XXXXXX và Lớp chủ nhiệm nếu có)
 $teachers = $pdo->query("
-    SELECT id, username, full_name,
-           (SELECT COUNT(*) FROM teacher_classes tc WHERE tc.teacher_id = users.id) AS assignment_count
-    FROM users 
-    WHERE role = 'teacher' 
-    ORDER BY full_name ASC
+    SELECT u.id, u.username, u.full_name, u.teacher_code, u.homeroom_class_id, u.google_email,
+           c.name AS homeroom_class_name,
+           (SELECT COUNT(*) FROM teacher_classes tc WHERE tc.teacher_id = u.id) AS assignment_count
+    FROM users u
+    LEFT JOIN classes c ON u.homeroom_class_id = c.id
+    WHERE u.role = 'teacher' 
+    ORDER BY u.full_name ASC
 ")->fetchAll();
 
 // 3. Toàn bộ danh sách lớp học kèm sĩ số học sinh
@@ -1215,13 +1281,78 @@ require_once __DIR__ . '/includes/header.php';
 <!-- TAB PANE 2: QUẢN LÝ GIÁO VIÊN BỘ MÔN & PHÂN CÔNG GIẢNG DẠY             -->
 <!-- ===================================================================== -->
 <div class="admin-tab-pane" id="pane-teachers" role="tabpanel">
+    <!-- KHU VỰC 1: DÁN MÃ ĐỊNH DANH GIÁO VIÊN (GV-XXXXXX) ĐỂ GÁN GV CHỦ NHIỆM / GV BỘ MÔN -->
+    <section class="panel-box mb-3" style="border-left: 4px solid var(--primary, #2563eb);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+            <div>
+                <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <span>Cấp quyền nhanh qua Mã ID Giáo viên (<code>GV-XXXXXX</code>)</span>
+                </h3>
+                <p class="muted small" style="margin: 4px 0 0 0;">
+                    Khi giáo viên tạo tài khoản hoặc đăng nhập bằng Google, hệ thống cấp một mã <code>GV-XXXXXX</code>. Dán mã đó vào đây để gán <b>GV Chủ nhiệm (GVCN)</b> hoặc <b>GV Bộ môn (GVBM)</b> theo Thông tư 22.
+                </p>
+            </div>
+        </div>
+        <form method="POST">
+            <input type="hidden" name="action" value="assign_by_teacher_code">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
+                <div class="form-group">
+                    <label>Mã ID Giáo viên (hoặc Username)</label>
+                    <input type="text" name="teacher_code" id="quickTeacherCodeInput" placeholder="VD: GV-100002" required style="min-height: 42px; font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+                </div>
+                <div class="form-group">
+                    <label>Gán Lớp Chủ Nhiệm (GVCN - Thông tư 22)</label>
+                    <select name="homeroom_class_id" style="min-height: 42px;">
+                        <option value="-1">-- Giữ nguyên hiện tại --</option>
+                        <option value="0">Không làm GV Chủ nhiệm (Chỉ dạy Bộ môn)</option>
+                        <?php foreach ($allClasses as $c): ?>
+                            <option value="<?= $c['id'] ?>">GVCN Lớp <?= htmlspecialchars($c['name']) ?> (Khối <?= $c['grade'] ?>)</option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gán nhanh Môn giảng dạy (GV Bộ môn)</label>
+                    <select name="bm_subject" style="min-height: 42px;">
+                        <option value="">-- Chọn môn dạy (Tùy chọn) --</option>
+                        <?php foreach ($thcsSubjects as $sub): ?>
+                            <option value="<?= $sub ?>">Môn <?= $sub ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tại Lớp học</label>
+                    <select name="bm_class_id" style="min-height: 42px;">
+                        <option value="0">-- Chọn lớp dạy (Tùy chọn) --</option>
+                        <?php foreach ($allClasses as $c): ?>
+                            <option value="<?= $c['id'] ?>">Lớp <?= htmlspecialchars($c['name']) ?> (<?= $c['student_count'] ?> HS)</option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px;">
+                    <span class="muted">Danh sách Mã GV hiện có (Bấm để điền nhanh):</span>
+                    <?php foreach ($teachers as $tItem): ?>
+                        <?php $tCodeChip = $tItem['teacher_code'] ?: ('GV-' . (100000 + (int)$tItem['id'])); ?>
+                        <button type="button" onclick="document.getElementById('quickTeacherCodeInput').value='<?= htmlspecialchars($tCodeChip) ?>'" style="border: 1px solid #cbd5e1; background: #f8fafc; color: #1e293b; border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; font-weight: 700; cursor: pointer;" title="<?= htmlspecialchars($tItem['full_name']) ?>">
+                            <?= htmlspecialchars($tCodeChip) ?> (<?= htmlspecialchars($tItem['full_name']) ?><?= !empty($tItem['homeroom_class_name']) ? ' • GVCN ' . htmlspecialchars($tItem['homeroom_class_name']) : '' ?>)
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+                <button type="submit" class="btn primary" style="min-height: 44px; padding: 8px 20px; font-weight: 700; border-radius: 10px;">
+                    Cập Nhật Quyền Theo Mã ID
+                </button>
+            </div>
+        </form>
+    </section>
+
     <!-- Form Tạo tài khoản giáo viên mới -->
     <section class="panel-box mb-3">
-        <h3>Tạo tài khoản giáo viên mới</h3>
-        <p class="muted small mb-3">Tạo tài khoản giáo viên THCS (mật khẩu băm Bcrypt chuẩn bảo mật).</p>
+        <h3>Tạo tài khoản giáo viên mới (GV Bộ môn & GV Chủ nhiệm)</h3>
+        <p class="muted small mb-3">Tạo tài khoản giáo viên THCS (tự động sinh Mã định danh <code>GV-XXXXXX</code> và mật khẩu băm Bcrypt chuẩn bảo mật).</p>
         <form method="POST">
             <input type="hidden" name="action" value="create_teacher">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 14px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 14px;">
                 <div class="form-group">
                     <label>Tài khoản (Username / VnEdu)</label>
                     <input type="text" name="username" placeholder="Ví dụ: gv_toan3, nguyen_van_a" required style="min-height: 42px;">
@@ -1229,6 +1360,15 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="form-group">
                     <label>Họ và tên giáo viên</label>
                     <input type="text" name="full_name" placeholder="Ví dụ: Thầy Trần Quang Khải" required style="min-height: 42px;">
+                </div>
+                <div class="form-group">
+                    <label>Kiêm nhiệm GV Chủ nhiệm (Tùy chọn)</label>
+                    <select name="homeroom_class_id" style="min-height: 42px;">
+                        <option value="0">-- Không (Chỉ dạy Bộ môn) --</option>
+                        <?php foreach ($allClasses as $c): ?>
+                            <option value="<?= $c['id'] ?>">Chủ nhiệm Lớp <?= htmlspecialchars($c['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu khởi tạo (Mặc định: 123456)</label>
@@ -1272,8 +1412,9 @@ require_once __DIR__ . '/includes/header.php';
                     <select name="teacher_id" id="teacherSelectInput" required onchange="onTeacherSelectChange(this)" style="min-height: 42px;">
                         <option value="">-- Bấm chọn giáo viên cần phân công --</option>
                         <?php foreach ($teachers as $t): ?>
+                            <?php $tCodeDisp = $t['teacher_code'] ?: ('GV-' . (100000 + (int)$t['id'])); ?>
                             <option value="<?= $t['id'] ?>">
-                                <?= htmlspecialchars($t['full_name']) ?> (Tài khoản: <?= htmlspecialchars($t['username']) ?> - Hiện có <?= $t['assignment_count'] ?> lớp)
+                                [<?= htmlspecialchars($tCodeDisp) ?>] <?= htmlspecialchars($t['full_name']) ?> (<?= htmlspecialchars($t['username']) ?><?= !empty($t['homeroom_class_name']) ? ' • GVCN ' . htmlspecialchars($t['homeroom_class_name']) : '' ?> - <?= $t['assignment_count'] ?> lớp)
                             </option>
                         <?php endforeach; ?>
                     </select>
