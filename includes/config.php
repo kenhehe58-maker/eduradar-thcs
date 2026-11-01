@@ -23,6 +23,9 @@ define('SCHOOL_NAME', 'TRƯỜNG THCS GIẢNG VÕ');
 // Ngưỡng cảnh báo học tập theo chuẩn THCS
 define('PASS_SCORE', 5.0);
 
+// Cấu hình Google OAuth 2.0 / Google Identity Services (GIS)
+define('GOOGLE_CLIENT_ID', getenv('GOOGLE_CLIENT_ID') ?: '');
+
 // Thư viện SVG icon chuẩn hóa (Monochrome vector icons)
 require_once __DIR__ . '/icons.php';
 

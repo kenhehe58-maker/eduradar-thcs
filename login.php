@@ -26,10 +26,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo = db();
     ensure_user_extensions_schema();
 
-    // XỬ LÝ ĐĂNG NHẬP / TẠO TÀI KHOẢN GIÁO VIÊN BẰNG GOOGLE (CẤP MÃ ID GV-XXXXXX)
-    if (isset($_POST['action']) && $_POST['action'] === 'google_login') {
+    // XỬ LÝ ĐĂNG NHẬP / TẠO TÀI KHOẢN GIÁO VIÊN BẰNG GOOGLE (HỖ TRỢ CẢ GOOGLE IDENTITY SERVICES JWT & OAUTH POPUP)
+    if ((isset($_POST['action']) && $_POST['action'] === 'google_login') || !empty($_POST['credential'])) {
         $googleEmail = strtolower(trim($_POST['google_email'] ?? ''));
         $googleName  = trim($_POST['google_name'] ?? '');
+
+        // Nếu nhận JWT credential trực tiếp từ Google Identity Services (accounts.google.com/gsi/client)
+        if (!empty($_POST['credential'])) {
+            $jwtParts = explode('.', (string)$_POST['credential']);
+            if (count($jwtParts) === 3) {
+                $payloadJson = base64_decode(strtr($jwtParts[1], '-_', '+/'));
+                $payload = json_decode($payloadJson, true);
+                if (is_array($payload) && !empty($payload['email'])) {
+                    $googleEmail = strtolower(trim($payload['email']));
+                    $googleName  = trim($payload['name'] ?? $googleName);
+                }
+            }
+        }
 
         if ($googleEmail !== '' && filter_var($googleEmail, FILTER_VALIDATE_EMAIL)) {
             $stmt = $pdo->prepare("SELECT * FROM users WHERE google_email = ? OR username = ? LIMIT 1");
@@ -595,37 +608,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
         </form>
 
-        <!-- ĐĂNG NHẬP / TẠO TÀI KHOẢN GIÁO VIÊN BẰNG GOOGLE (CẤP MÃ GV-XXXXXX) -->
+        <!-- ĐĂNG NHẬP BẰNG GOOGLE (OAUTH 2.0 POPUP + GOOGLE IDENTITY SERVICES) -->
         <div style="margin-top: 14px;">
-            <button type="button" onclick="toggleGoogleModal()" class="guest-link" style="background: var(--cobalt-paper); border-color: var(--cobalt-rule-strong); min-height: 46px; cursor: pointer;">
+            <button type="button" onclick="openGoogleSignInPopup()" id="btnGoogleOAuth" class="guest-link" style="background: #ffffff; color: #1f1f1f; border: 1px solid #dadce0; min-height: 46px; cursor: pointer; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
                     <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24z"/>
                     <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14z"/>
                     <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96z"/>
                 </svg>
-                <span>Đăng nhập / Tạo TK Giáo viên bằng Google</span>
+                <span id="btnGoogleOAuthLabel">Tiếp tục với Google</span>
             </button>
 
-            <form method="POST" action="" id="googleAuthBox" style="display: none; margin-top: 12px; padding: 14px; border-radius: 10px; border: 1px solid var(--cobalt-accent); background: var(--cobalt-paper-2);">
+            <form method="POST" action="" id="googleAuthBox" style="display: none;">
                 <input type="hidden" name="action" value="google_login">
-                <div style="font-size: 12px; font-weight: 700; color: var(--cobalt-accent); margin-bottom: 8px;">
-                    Xác thực tài khoản Google Giáo viên (Tự động cấp Mã ID GV-XXXXXX)
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label class="form-label" style="margin-bottom: 4px;">EMAIL GOOGLE CỦA GIÁO VIÊN</label>
-                    <input type="email" name="google_email" id="ggEmailInput" class="cobalt-input" style="padding: 9px 12px; font-size: 13.5px;" placeholder="giaovien.cvd@gmail.com" required>
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label class="form-label" style="margin-bottom: 4px;">HỌ VÀ TÊN GIÁO VIÊN</label>
-                    <input type="text" name="google_name" id="ggNameInput" class="cobalt-input" style="padding: 9px 12px; font-size: 13.5px;" placeholder="Ví dụ: Cô Nguyễn Thị Minh">
-                </div>
-                <div style="font-size: 11.5px; color: var(--cobalt-ink-muted); margin-bottom: 10px; line-height: 1.45;">
-                    Sau khi đăng nhập, bạn sẽ có mã định danh <code>GV-XXXXXX</code>. Gửi mã này cho Admin trường để được gán quyền <b>GV Chủ nhiệm</b> hoặc <b>GV Bộ môn</b>.
-                </div>
-                <button type="submit" class="keycap-submit" style="min-height: 40px; padding: 8px 14px; font-size: 13px;">
-                    <span>Tiếp tục với Google & Nhận Mã GV</span>
-                </button>
+                <input type="hidden" name="credential" id="ggCredentialInput" value="">
+                <input type="email" name="google_email" id="ggEmailInput" value="">
+                <input type="text" name="google_name" id="ggNameInput" value="">
             </form>
         </div>
 
@@ -652,16 +651,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    function toggleGoogleModal() {
-        var box = document.getElementById('googleAuthBox');
-        if (!box) return;
-        var isHidden = box.style.display === 'none';
-        box.style.display = isHidden ? 'block' : 'none';
-        if (isHidden) {
-            var emailIn = document.getElementById('ggEmailInput');
-            if (emailIn) emailIn.focus();
+    function openGoogleSignInPopup() {
+        var w = 480, h = 620;
+        var left = Math.max(0, Math.round((window.screen.width - w) / 2));
+        var top  = Math.max(0, Math.round((window.screen.height - h) / 2));
+        var popup = window.open(
+            'google_oauth.php',
+            'GoogleSignInPopup',
+            'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no'
+        );
+        if (!popup) {
+            window.location.href = 'google_oauth.php';
         }
     }
+
+    window.addEventListener('message', function(event) {
+        if (!event.data || event.data.type !== 'EDURADAR_GOOGLE_OAUTH_SUCCESS') return;
+        var form = document.getElementById('googleAuthBox');
+        if (!form) return;
+        var lbl = document.getElementById('btnGoogleOAuthLabel');
+        if (lbl) lbl.textContent = 'Đang xác thực tài khoản Google...';
+        if (event.data.credential) {
+            document.getElementById('ggCredentialInput').value = event.data.credential;
+        }
+        if (event.data.email) {
+            document.getElementById('ggEmailInput').value = event.data.email;
+        }
+        if (event.data.name) {
+            document.getElementById('ggNameInput').value = event.data.name;
+        }
+        form.submit();
+    });
 
     function updateToggleBtn() {
         const current = document.documentElement.getAttribute('data-theme') || 'light';
