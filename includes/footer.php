@@ -94,7 +94,7 @@ require_once __DIR__ . '/icons.php';
 
 <!-- HELP DRAWER & MODAL OVERLAY -->
 <div class="help-drawer-overlay" id="helpDrawerOverlay" onclick="toggleHelpDrawer(false)" aria-hidden="true"></div>
-<aside class="help-drawer" id="helpDrawer" role="dialog" aria-modal="true" aria-label="Bảng Hướng Dẫn & Trợ Giúp Nhanh">
+<aside class="help-drawer" id="helpDrawer" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Bảng Hướng Dẫn & Trợ Giúp Nhanh">
     <div class="help-drawer-header">
         <div style="display: flex; align-items: center; gap: 10px;">
             <div class="help-drawer-icon">?</div>
@@ -181,7 +181,7 @@ require_once __DIR__ . '/icons.php';
 
 <!-- SETTINGS DRAWER & MODAL OVERLAY -->
 <div class="help-drawer-overlay" id="settingsDrawerOverlay" onclick="toggleSettingsDrawer(false)" aria-hidden="true"></div>
-<aside class="help-drawer" id="settingsDrawer" role="dialog" aria-modal="true" aria-label="Cài Đặt Hệ Thống">
+<aside class="help-drawer" id="settingsDrawer" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Cài Đặt Hệ Thống">
     <div class="help-drawer-header">
         <div style="display: flex; align-items: center; gap: 10px;">
             <div class="help-drawer-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--cobalt-accent, #2563eb);">
@@ -443,6 +443,7 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 <?php 
 if (empty($extraScripts) || strpos($extraScripts, 'assets/js/main.js') === false) {
     echo '<script src="assets/js/main.js?v=' . (file_exists(__DIR__ . '/../assets/js/main.js') ? filemtime(__DIR__ . '/../assets/js/main.js') : time()) . '"></script>' . "\n";

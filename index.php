@@ -1726,7 +1726,7 @@ $tt22Slices = [
 </div>
 
 <!-- BẢNG RADAR ĐÁNH GIÁ: XU HƯỚNG TIẾN BỘ, BẬC HỌC LỰC TT22, CHẨN ĐOÁN & KHUYẾN NGHỊ -->
-<div class="radar-table-wrap view-table-hidden">
+<div class="radar-table-wrap view-table-hidden" data-lenis-prevent>
     <table class="radar-table <?= ($selectedSubject === 'all') ? 'scores-hidden' : '' ?>" id="radarTable">
         <thead>
             <tr>
@@ -2069,8 +2069,8 @@ $tt22Slices = [
 <?php endif; ?>
 
 <!-- MODAL CHI TIẾT NĂNG LỰC HỌC TẬP & SỔ TAY NHẬN XÉT SƯ PHẠM (EXPANDABLE DETAIL MODAL) -->
-<div id="competencyDetailModal" class="competency-modal-overlay" style="display: none;">
-    <div class="competency-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalStudentName">
+<div id="competencyDetailModal" class="competency-modal-overlay" data-lenis-prevent style="display: none;">
+    <div class="competency-modal-card" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="modalStudentName">
         <!-- Header -->
         <div class="competency-modal-header">
             <div class="modal-header-profile">
@@ -2091,7 +2091,7 @@ $tt22Slices = [
         </div>
 
         <!-- Body -->
-        <div class="competency-modal-body">
+        <div class="competency-modal-body" data-lenis-prevent>
             <!-- Apple Unified Segmented Stat Bar: Xu Hướng | Bậc TT22 | Trạng Thái -->
             <div class="modal-apple-stat-bar">
                 <div class="modal-apple-stat-item">

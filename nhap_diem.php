@@ -1534,7 +1534,7 @@ require_once __DIR__ . '/includes/header.php';
     <form method="POST" id="gradebookForm">
         <input type="hidden" name="action" value="save_scores">
         
-        <div class="spreadsheet-matrix-wrap">
+        <div class="spreadsheet-matrix-wrap" data-lenis-prevent>
             <table class="spreadsheet-table" id="gradebookTable">
                 <thead>
                     <!-- TIER 1 HEADER: SUPER-GROUPS (HARD CONTRACT FOR TESTS: 'ĐĐGtx', 'ĐĐGgk', 'ĐĐGck', 'ĐTBmhk') -->

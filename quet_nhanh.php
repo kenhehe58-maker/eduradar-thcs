@@ -1277,7 +1277,7 @@ $breadcrumbs = [
 ];
 require_once __DIR__ . '/includes/header.php';
 ?>
-
+    <div class="scan-page-container" style="padding-top: 1.5rem;">
     <?php if ($hasData): ?>
     <!-- 1. GUEST MODE & SANDBOX BANNER (COBALT TELEMETRY STYLE - ONLY SHOWN WHEN DATA LOADED) -->
     <section class="cut-card guest-telemetry-banner" aria-label="Thông báo chế độ quét nhanh độc lập">
@@ -1660,7 +1660,7 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- 5. FEATURE LEDGER RADAR TABLE -->
-        <div class="ledger-table-wrap view-table-hidden">
+        <div class="ledger-table-wrap view-table-hidden" data-lenis-prevent>
             <table class="radar-table" id="radarTable">
                 <thead>
                     <tr>
@@ -1894,8 +1894,8 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- 7. MODAL CHI TIẾT NĂNG LỰC HỌC TẬP & SỔ TAY NHẬN XÉT SƯ PHẠM (CHẾ ĐỘ KHÁCH) -->
-        <div id="competencyDetailModal" class="competency-modal-overlay" style="display: none;">
-            <div class="competency-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalStudentName">
+        <div id="competencyDetailModal" class="competency-modal-overlay" data-lenis-prevent style="display: none;">
+            <div class="competency-modal-card" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="modalStudentName">
                 <div class="competency-modal-header">
                     <div class="modal-header-profile">
                         <div class="modal-avatar" id="modalStudentAvatar">HS</div>
@@ -1914,7 +1914,7 @@ require_once __DIR__ . '/includes/header.php';
                     <button type="button" class="modal-close-btn" id="modalCloseBtn" title="Đóng cửa sổ" aria-label="Đóng"><?= get_svg_icon('close', 18) ?></button>
                 </div>
 
-                <div class="competency-modal-body">
+                <div class="competency-modal-body" data-lenis-prevent>
                     <div class="modal-badges-grid">
                         <div class="modal-badge-card" style="border-left: 4px solid var(--cobalt-accent);">
                             <span class="modal-badge-label">Xu hướng tiến bộ</span>
@@ -2175,6 +2175,7 @@ require_once __DIR__ . '/includes/header.php';
         });
     }
 </script>
+    </div>
 <?php
 $extraScripts = '<script src="assets/js/main.js?v=' . filemtime(__DIR__ . '/assets/js/main.js') . '"></script>';
 require_once __DIR__ . '/includes/footer.php';

@@ -8745,3 +8745,82 @@ body.fx-off *, body.fx-off *::before, body.fx-off *::after {
     place-items: center;
     flex-shrink: 0;
 }
+
+/* =========================================================================
+   10. LENIS 120FPS SMOOTH SCROLL, GPU LARGE-TABLE OPTIMIZATION & THEME FIXES
+   ========================================================================= */
+html.lenis, html.lenis body {
+    height: auto;
+}
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+/* Tối ưu GPU & Cắt bỏ độ trễ nút Sáng/Tối (< 16ms phản hồi) */
+table, thead, tbody, tr, td, th, input, select {
+    transition: none !important;
+}
+tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 52px;
+}
+
+/* Căn lề trái cho thẻ footer trên Desktop khớp với độ rộng thanh bên */
+@media (min-width: 1024px) {
+    footer,
+    footer.eduradar-pro-footer {
+        margin-left: 16rem;
+        width: calc(100% - 16rem);
+        padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    }
+    body.sidebar-is-collapsed footer,
+    body.sidebar-is-collapsed footer.eduradar-pro-footer {
+        margin-left: var(--sidebar-rail-width, 72px);
+        width: calc(100% - var(--sidebar-rail-width, 72px));
+    }
+}
+
+/* Modal học sinh Dark Mode & Light Mode (Độ tương phản sáng rõ) */
+.math-metric-card,
+#modalSlopeCard,
+#modalStabilityCard {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-subtle, #e2e8f0);
+    color: var(--text-heading, #0f172a);
+}
+.math-metric-desc,
+#modalMathSlopeSummary,
+#modalMathStabilityDesc {
+    color: var(--text-body, #334155);
+}
+[data-theme="dark"] .math-metric-card,
+[data-theme="dark"] #modalSlopeCard,
+[data-theme="dark"] #modalStabilityCard,
+body.dark-mode .math-metric-card,
+body.dark-mode #modalSlopeCard,
+body.dark-mode #modalStabilityCard {
+    background: #1a253c !important;
+    border-color: #2e3f60 !important;
+    color: #e2e8f0 !important;
+}
+[data-theme="dark"] #modalSlopeCard > div:first-child,
+[data-theme="dark"] #modalStabilityCard > div:first-child,
+body.dark-mode #modalSlopeCard > div:first-child,
+body.dark-mode #modalStabilityCard > div:first-child {
+    color: #e2e8f0 !important;
+}
+[data-theme="dark"] .math-metric-desc,
+[data-theme="dark"] #modalMathSlopeSummary,
+[data-theme="dark"] #modalMathStabilityDesc,
+body.dark-mode .math-metric-desc,
+body.dark-mode #modalMathSlopeSummary,
+body.dark-mode #modalMathStabilityDesc {
+    color: #cbd5e1 !important;
+}
+
