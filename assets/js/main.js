@@ -1,4 +1,4 @@
-﻿// =============================================================================
+// =============================================================================
 // EduRadar THCS: Master Client-side Interactions
 // Features:
 // 1. Collapsible Left-side Navigation Sidebar with localStorage Persistence
@@ -1010,6 +1010,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 );
             }
         }
+        try {
+            if (window.applyLanguage && localStorage.getItem('edu_radar_lang') === 'en') {
+                window.applyLanguage('en');
+            }
+        } catch (e) {}
     }
 
     function closeStudentModal() {
@@ -1415,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // -------------------------------------------------------------------------
-// 9. CLIENT-SIDE BILINGUAL ENGINE (VI | EN) & LOCALSTORAGE PERSISTENCE
+    // 9. CLIENT-SIDE BILINGUAL ENGINE (VI | EN) & LOCALSTORAGE PERSISTENCE
     // -------------------------------------------------------------------------
     const i18nDict = {
         vi: {
@@ -1442,6 +1447,21 @@ document.addEventListener('DOMContentLoaded', function () {
             'theme_light': 'Giao diện sáng',
             'theme_dark': 'Giao diện tối',
 
+            // Header & Settings
+            'header.semester': '2026 – 2027 • Học kỳ I',
+            'header.settings': 'Cài đặt',
+            'settings.title': 'Cài đặt hệ thống',
+            'settings.subtitle': 'Tùy chỉnh giao diện, ngôn ngữ và xem tiêu chuẩn đánh giá.',
+            'settings.theme_label': 'Chế độ giao diện (Sáng / Tối)',
+            'settings.theme_light': 'Giao diện Sáng',
+            'settings.theme_dark': 'Giao diện Tối',
+            'settings.lang_label': 'Ngôn ngữ hiển thị (Language)',
+            'settings.spec_label': 'Tiêu chuẩn đánh giá học lực',
+            'settings.spec_title': 'Thông tư 22/2021/TT-BGDĐT',
+            'settings.spec_desc': 'Quy định về đánh giá học sinh trung học cơ sở và trung học phổ thông (ĐDGtx hệ số 1, ĐDGgk hệ số 2, ĐDGck hệ số 3).',
+            'settings.spec_view': 'Xem chi tiết',
+            'settings.close': 'Đóng cài đặt',
+
             // Welcome Page (home.*)
             'home.semester_phase': 'Học kỳ I • Niên khóa 2026–2027',
             'home.role_label': 'Giáo Viên Bộ Môn',
@@ -1463,8 +1483,8 @@ document.addEventListener('DOMContentLoaded', function () {
             'home.badge_good': 'Khá Tốt',
             'home.kpi_school_avg_sub': 'Thang điểm 10 Thông tư 22',
 
-            'home.launchpad_title': 'Phân hệ làm việc',
-            'home.launchpad_desc': 'Truy cập nhanh các chức năng nghiệp vụ của hệ thống quan sát học tập EduRadar.',
+            'home.launchpad_title': 'Giới thiệu tổng quan hệ thống',
+            'home.launchpad_desc': 'Nền tảng quan sát dữ liệu học tập THCS chuẩn Thông tư 22/2021/TT-BGDĐT — kết nối liền mạch từ nhập điểm VnEdu đến phát hiện sớm nguy cơ sa sút và can thiệp sư phạm.',
             'home.launchpad_tag': 'Hệ thống mở 24/7',
             'home.lp1_badge': 'Ra-đa',
             'home.lp1_title': 'Cảnh báo sớm & Xu hướng OLS',
@@ -1517,7 +1537,92 @@ document.addEventListener('DOMContentLoaded', function () {
             'home.tier_dat': 'Mức Đạt',
             'home.tier_dat_body': '&bull; ĐTBMhk &ge; 5.0 (chưa đạt Khá)<br>&bull; Không có môn nào dưới 3.5<br>&bull; Tối đa 1 môn nhận xét Chưa Đạt',
             'home.tier_chuadat': 'Mức Chưa đạt',
-            'home.tier_chuadat_body': '&bull; Các trường hợp còn lại<br>&bull; ĐTBMhk &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0: Ra-đa khoanh vùng nguy cấp'
+            'home.tier_chuadat_body': '&bull; Các trường hợp còn lại<br>&bull; ĐTBMhk &lt; 3.5 hoặc thi cuối kỳ &lt; 3.0: Ra-đa khoanh vùng nguy cấp',
+
+            // Radar Early Warning Page (radar.*)
+            'radar.breadcrumb_home': 'Trang Chủ',
+            'radar.breadcrumb_current': 'Bảng Cảnh Báo Sớm',
+            'radar.semester': 'NĂM HỌC 2026 - 2027 • Học kỳ I',
+            'radar.title': 'Bảng theo dõi & Cảnh báo sớm học lực',
+            'radar.desc': 'Theo dõi tiến trình học tập, phát hiện sớm nguy cơ sụt giảm điểm số theo Thông tư 22/2021/TT-BGDĐT và hỗ trợ xây dựng kế hoạch can thiệp sư phạm kịp thời.',
+            'radar.btn_gradebook': 'Sổ điểm bộ môn',
+            'radar.btn_export': 'Xuất Báo Cáo (.xls)',
+            'radar.btn_login': 'Đăng nhập Giáo Viên',
+            'radar.kpi_total': 'TỔNG HỌC SINH',
+            'radar.kpi_profiles': '100% Hồ sơ',
+            'radar.kpi_good': 'KHÁ & TỐT',
+            'radar.kpi_warning': 'CẦN CHÚ Ý',
+            'radar.kpi_critical': 'NGUY CẤP',
+            'radar.filter_grade': 'CHỌN LỚP THEO KHỐI:',
+            'radar.filter_class': 'CHỌN LỚP HỌC:',
+            'radar.filter_subject': 'MÔN HỌC:',
+            'radar.btn_apply': 'Áp Dụng Lọc',
+            'radar.btn_reset': 'Đặt lại bộ lọc',
+            'radar.trend_title': 'Xu hướng tiến bộ',
+            'radar.trend_up': 'Đang tiến bộ',
+            'radar.trend_up_desc': 'Điểm số có chiều hướng đi lên qua các bài kiểm tra',
+            'radar.trend_stable': 'Duy trì ổn định',
+            'radar.trend_stable_desc': 'Điểm số giữ nhịp đều đặn, không sụt giảm phong độ',
+            'radar.trend_down': 'Cần chú ý sa sút',
+            'radar.trend_down_desc': 'Điểm kiểm tra sụt giảm liên tục, cần kịp thời nhắc nhở',
+            'radar.trend_pending': 'Chờ bổ sung điểm',
+            'radar.trend_pending_desc': 'Chưa có đủ cột điểm trong sổ',
+            'radar.level_title': 'Mức học lực',
+            'radar.level_total': 'Tổng học sinh',
+            'radar.level_total_desc': 'Tổng số học sinh theo dõi',
+            'radar.level_pending': 'Chờ Điểm Số',
+            'radar.level_pending_desc': 'Chưa có bài kiểm tra ghi nhận',
+            'radar.level_stable': 'Ổn định (Đạt chuẩn)',
+            'radar.level_stable_desc': 'Đạt chuẩn hoặc chờ điểm (ổn định)',
+            'radar.level_warning': 'Cần chú ý',
+            'radar.level_warning_desc': 'Học sinh cần theo dõi sát sao',
+            'radar.level_critical': 'Nguy cấp',
+            'radar.level_critical_desc': 'Cần can thiệp sớm',
+            'radar.chip_subject': 'MÔN:',
+            'radar.chip_all': 'Tất cả',
+            'radar.search_placeholder': 'Tìm theo tên hoặc mã học sinh...',
+            'radar.th_student': 'Học Sinh & Lớp',
+            'radar.th_subject': 'Môn Học',
+            'radar.th_tx': 'ĐĐGtx (Hệ 1)',
+            'radar.th_gk': 'Giữa Kỳ (Hệ 2)',
+            'radar.th_ck': 'Cuối Kỳ (Hệ 3)',
+            'radar.th_avg': 'ĐTBmhk',
+            'radar.th_target': 'Cần Đạt & Xu Hướng',
+            'radar.th_status': 'Cảnh Báo & Hành Động',
+
+            // Gradebook Page (gradebook.*)
+            'gradebook.breadcrumb_home': 'Trang Chủ',
+            'gradebook.breadcrumb_radar': 'Bảng Cảnh Báo Sớm',
+            'gradebook.breadcrumb_current': 'Sổ Điểm Điện Tử',
+            'gradebook.filter_grade': 'KHỐI LỚP:',
+            'gradebook.filter_all': 'Tất cả',
+            'gradebook.filter_class': 'Đổi lớp nhanh:',
+            'gradebook.filter_subject': 'Môn giảng dạy:',
+            'gradebook.badge': 'SỔ ĐIỂM ĐIỆN TỬ THÔNG TƯ 22/2021/TT-BGDĐT',
+            'gradebook.title': 'Sổ Điểm Điện Tử & Dự Báo Học Lực',
+            'gradebook.btn_template': 'Mẫu VnEdu (.xls)',
+            'gradebook.btn_import': 'Nhập Điểm Nhanh',
+            'gradebook.btn_export': 'Xuất Bảng Đánh Giá (.xls)',
+            'gradebook.btn_radar': 'Xem Ra-đa Cảnh Báo',
+            'gradebook.th_code': 'Mã Định Danh',
+            'gradebook.th_name': 'Họ và Tên Học Sinh',
+            'gradebook.th_dob': 'Ngày Sinh',
+            'gradebook.th_avg': 'ĐTBmhk',
+            'gradebook.th_forecast': 'Mục Tiêu & Đánh Giá Sư Phạm',
+            'gradebook.th_note': 'Nhận Xét GVBM',
+            'gradebook.btn_save': 'Lưu Bảng Điểm',
+
+            // Quick Scanner Page (scanner.*)
+            'scanner.breadcrumb_home': 'Trang Chủ',
+            'scanner.breadcrumb_radar': 'Bảng Cảnh Báo Sớm',
+            'scanner.breadcrumb_current': 'Quét Nhanh Bảng Điểm',
+            'scanner.badge': 'CHẾ ĐỘ KHÁCH • TRẢI NGHIỆM TỨC THÌ (ZERO-SETUP)',
+            'scanner.title': 'Quét Nhanh Bảng Điểm & Phân Tích Học Lực',
+            'scanner.desc': 'Tải lên file bảng điểm Excel (.xlsx, .xls, .csv) hoặc ảnh chụp bảng điểm để hệ thống tự động bóc tách điểm số, phân tích xu hướng OLS và xuất báo cáo đánh giá học lực ngay lập tức mà không cần tạo tài khoản.',
+            'scanner.drop_title': 'Kéo thả file bảng điểm hoặc Nhấn để chọn file',
+            'scanner.btn_choose': 'Chọn File Bảng Điểm Để Phân Tích',
+            'scanner.btn_demo': 'Dùng Thử Với Bảng Điểm Mẫu Có Sẵn',
+            'scanner.btn_template': 'Tải File Mẫu (.xls)'
         },
         en: {
             'nav_home': 'Home',
@@ -1542,6 +1647,21 @@ document.addEventListener('DOMContentLoaded', function () {
             'role_teacher': 'Subject Teacher',
             'theme_light': 'Light Theme',
             'theme_dark': 'Dark Theme',
+
+            // Header & Settings
+            'header.semester': '2026 – 2027 • Semester 1',
+            'header.settings': 'Settings',
+            'settings.title': 'System Settings',
+            'settings.subtitle': 'Customize appearance, display language, and view assessment standards.',
+            'settings.theme_label': 'Appearance Mode (Light / Dark)',
+            'settings.theme_light': 'Light Theme',
+            'settings.theme_dark': 'Dark Theme',
+            'settings.lang_label': 'Display Language (Ngôn ngữ)',
+            'settings.spec_label': 'Academic Assessment Standard',
+            'settings.spec_title': 'Circular 22/2021/TT-BGDĐT',
+            'settings.spec_desc': 'MOET regulations on secondary and high school student assessment (Continuous weight 1, Midterm weight 2, Final weight 3).',
+            'settings.spec_view': 'View Details',
+            'settings.close': 'Close Settings',
 
             // Welcome Page (home.*)
             'home.semester_phase': 'Semester 1 • Academic Year 2026–2027',
@@ -1618,7 +1738,92 @@ document.addEventListener('DOMContentLoaded', function () {
             'home.tier_dat': 'Pass Tier',
             'home.tier_dat_body': '&bull; Term GPA &ge; 5.0 (not Fair)<br>&bull; No subject below 3.5<br>&bull; Max 1 qualitative subject Below Pass',
             'home.tier_chuadat': 'Below Pass / Fail',
-            'home.tier_chuadat_body': '&bull; All other cases<br>&bull; Term GPA &lt; 3.5 or Final exam &lt; 3.0: Radar flags as critical risk'
+            'home.tier_chuadat_body': '&bull; All other cases<br>&bull; Term GPA &lt; 3.5 or Final exam &lt; 3.0: Radar flags as critical risk',
+
+            // Radar Early Warning Page (radar.*)
+            'radar.breadcrumb_home': 'Home',
+            'radar.breadcrumb_current': 'Early Warning Radar',
+            'radar.semester': 'ACADEMIC YEAR 2026 - 2027 • Semester 1',
+            'radar.title': 'Academic Progress & Early Warning Dashboard',
+            'radar.desc': 'Track learning trajectories, detect early risk of score decline per Circular 22/2021/TT-BGDĐT, and build timely pedagogical intervention plans.',
+            'radar.btn_gradebook': 'Subject Gradebook',
+            'radar.btn_export': 'Export Report (.xls)',
+            'radar.btn_login': 'Teacher Sign In',
+            'radar.kpi_total': 'TOTAL STUDENTS',
+            'radar.kpi_profiles': '100% Profiles',
+            'radar.kpi_good': 'FAIR & GOOD',
+            'radar.kpi_warning': 'NEEDS ATTENTION',
+            'radar.kpi_critical': 'CRITICAL RISK',
+            'radar.filter_grade': 'FILTER BY GRADE:',
+            'radar.filter_class': 'SELECT CLASS:',
+            'radar.filter_subject': 'SUBJECT:',
+            'radar.btn_apply': 'Apply Filter',
+            'radar.btn_reset': 'Reset Filters',
+            'radar.trend_title': 'Learning Trajectory',
+            'radar.trend_up': 'Accelerating',
+            'radar.trend_up_desc': 'Scores show an upward trajectory across assessments',
+            'radar.trend_stable': 'Steady Pace',
+            'radar.trend_stable_desc': 'Scores maintain a consistent level without decline',
+            'radar.trend_down': 'Declining Trend',
+            'radar.trend_down_desc': 'Continuous drop in test scores, timely reminder needed',
+            'radar.trend_pending': 'Pending Scores',
+            'radar.trend_pending_desc': 'Insufficient grade columns recorded yet',
+            'radar.level_title': 'Academic Standing',
+            'radar.level_total': 'Total Students',
+            'radar.level_total_desc': 'Total monitored students',
+            'radar.level_pending': 'Awaiting Scores',
+            'radar.level_pending_desc': 'No assessments recorded yet',
+            'radar.level_stable': 'Stable (On Track)',
+            'radar.level_stable_desc': 'Meeting standard or awaiting scores (stable)',
+            'radar.level_warning': 'Needs Attention',
+            'radar.level_warning_desc': 'Students requiring close monitoring',
+            'radar.level_critical': 'Critical Risk',
+            'radar.level_critical_desc': 'Requires immediate intervention',
+            'radar.chip_subject': 'SUBJECT:',
+            'radar.chip_all': 'All',
+            'radar.search_placeholder': 'Search by student name or ID...',
+            'radar.th_student': 'Student & Class',
+            'radar.th_subject': 'Subject',
+            'radar.th_tx': 'Continuous (x1)',
+            'radar.th_gk': 'Midterm (x2)',
+            'radar.th_ck': 'Final Exam (x3)',
+            'radar.th_avg': 'Term GPA',
+            'radar.th_target': 'Target & Trajectory',
+            'radar.th_status': 'Warning & Action',
+
+            // Gradebook Page (gradebook.*)
+            'gradebook.breadcrumb_home': 'Home',
+            'gradebook.breadcrumb_radar': 'Early Warning Radar',
+            'gradebook.breadcrumb_current': 'Digital Gradebook',
+            'gradebook.filter_grade': 'GRADE LEVEL:',
+            'gradebook.filter_all': 'All',
+            'gradebook.filter_class': 'Quick Class Switch:',
+            'gradebook.filter_subject': 'Teaching Subject:',
+            'gradebook.badge': 'DIGITAL GRADEBOOK • CIRCULAR 22/2021/TT-BGDĐT',
+            'gradebook.title': 'Digital Gradebook & Academic Forecast',
+            'gradebook.btn_template': 'VnEdu Template (.xls)',
+            'gradebook.btn_import': 'Quick Import',
+            'gradebook.btn_export': 'Export Evaluation (.xls)',
+            'gradebook.btn_radar': 'View Early Warning',
+            'gradebook.th_code': 'Student ID',
+            'gradebook.th_name': 'Student Full Name',
+            'gradebook.th_dob': 'Date of Birth',
+            'gradebook.th_avg': 'Term GPA',
+            'gradebook.th_forecast': 'Target & Pedagogical Assessment',
+            'gradebook.th_note': 'Teacher Remark',
+            'gradebook.btn_save': 'Save Gradebook',
+
+            // Quick Scanner Page (scanner.*)
+            'scanner.breadcrumb_home': 'Home',
+            'scanner.breadcrumb_radar': 'Early Warning Radar',
+            'scanner.breadcrumb_current': 'Quick Gradebook Scanner',
+            'scanner.badge': 'GUEST MODE • INSTANT ZERO-SETUP EXPERIENCE',
+            'scanner.title': 'Quick Gradebook Scanner & Academic Diagnostics',
+            'scanner.desc': 'Upload an Excel gradebook (.xlsx, .xls, .csv) or photo of a score sheet to automatically extract grades, analyze OLS trajectories, and export evaluation reports instantly without signing in.',
+            'scanner.drop_title': 'Drag & drop gradebook file or Click to browse',
+            'scanner.btn_choose': 'Select Gradebook File to Analyze',
+            'scanner.btn_demo': 'Try with Sample Gradebook Data',
+            'scanner.btn_template': 'Download Template (.xls)'
         }
     };
 
@@ -1629,18 +1834,23 @@ document.addEventListener('DOMContentLoaded', function () {
         'Cảnh báo': 'Early Warning',
         'Cảnh Báo Sớm': 'Early Warning',
         'Cảnh báo sớm': 'Early Warning',
+        'Bảng Cảnh Báo Sớm': 'Early Warning Radar',
         'Sổ Điểm': 'Gradebook',
         'Sổ điểm': 'Gradebook',
         'Sổ Điểm Bộ Môn': 'Subject Gradebook',
         'Sổ điểm bộ môn': 'Subject Gradebook',
+        'Sổ Điểm Điện Tử': 'Digital Gradebook',
         'Quét': 'Quick Scan',
         'Quét Nhanh': 'Quick Scan',
         'Quét nhanh': 'Quick Scan',
         'Quét Nhanh 1 Chạm': 'Quick Scan',
+        'Quét Nhanh Bảng Điểm': 'Quick Gradebook Scanner',
         'Quản Trị': 'Admin Console',
         'Quản trị': 'Admin Console',
         'Cổng Quản Trị Trường': 'School Administration',
+        'Quản Trị Nhà Trường': 'School Administration',
         'Lưu bảng điểm': 'Save Gradebook',
+        'Lưu Bảng Điểm': 'Save Gradebook',
         'Đăng Xuất': 'Sign Out',
         'Đăng xuất': 'Sign Out',
         'Thoát': 'Sign Out',
@@ -1649,39 +1859,306 @@ document.addEventListener('DOMContentLoaded', function () {
         'Lọc': 'Filter',
         'Tìm kiếm': 'Search',
         'Nguy cấp': 'Critical',
+        'NGUY CẤP': 'CRITICAL',
         'Cần chú ý': 'Attention',
+        'CẦN CHÚ Ý': 'NEEDS ATTENTION',
         'Ổn định': 'Stable',
+        'Ổn định (Đạt chuẩn)': 'Stable (On Track)',
         'Quản Trị Viên': 'Administrator',
+        'Quản trị viên Nhà trường': 'School Administrator',
         'Giáo Viên Bộ Môn': 'Subject Teacher',
+        'Giáo Viên Chủ Nhiệm': 'Homeroom Teacher',
+        'Giáo Viên Chủ Nhiệm & Bộ Môn': 'Homeroom & Subject Teacher',
         'Khách Dùng Thử': 'Guest Demo',
         'Khách Trải Nghiệm': 'Guest User',
         'Giao diện sáng': 'Light Theme',
         'Giao diện tối': 'Dark Theme',
+        'Giao diện Sáng': 'Light Theme',
+        'Giao diện Tối': 'Dark Theme',
+        'Tự động theo hệ thống': 'System Auto',
         'Thông tư 22': 'Circular 22',
         'SPEC Thông tư 22': 'SPEC Circular 22',
         'Xu Hướng Tiến Bộ': 'Learning Trajectory',
         'Xu hướng tiến bộ': 'Learning Trajectory',
         'Mức Độ Tích Lũy': 'Attainment Level',
         'Mức độ tích lũy': 'Attainment Level',
+        'Mức học lực': 'Academic Standing',
         'Tiến Bộ': 'Progress',
         'TIẾN BỘ': 'PROGRESS',
         'Học Sinh': 'Students',
         'HỌC SINH': 'STUDENTS',
+        'TỔNG HỌC SINH': 'TOTAL STUDENTS',
+        'Tổng học sinh': 'Total Students',
+        'KHÁ & TỐT': 'FAIR & GOOD',
         'Đang tiến bộ': 'Accelerating',
-        'Duy trì ổn định': 'Steady',
+        'Duy trì ổn định': 'Steady Pace',
         'Sa sút phong độ': 'Declining',
+        'Cần chú ý sa sút': 'Declining Trend',
         'Chờ dữ liệu điểm': 'Pending Data',
+        'Chờ bổ sung điểm': 'Pending Scores',
+        'Chờ Điểm Số': 'Awaiting Scores',
+        'Chờ điểm số': 'Awaiting Scores',
+        'Chờ điểm': 'Pending',
         'Tất cả lớp': 'All Classes',
+        'Tất cả các lớp': 'All Classes',
         'Tất cả môn': 'All Subjects',
+        'Tất cả': 'All',
         'Xuất Excel': 'Export Excel',
         'In Báo Cáo': 'Print Report',
         'Bộ Lọc Nhanh': 'Quick Filters',
         'Cài đặt': 'Settings',
         'Cài đặt hệ thống': 'System Settings',
-        'Giao diện Sáng': 'Light Theme',
-        'Giao diện Tối': 'Dark Theme',
-        'Tự động theo hệ thống': 'System Auto'
+        'HỆ THỐNG THCS': 'SECONDARY SCHOOL',
+        'HỆ': 'SYS',
+        'THỐNG THCS': 'SECONDARY',
+        'Mới': 'New',
+        'Áp Dụng Lọc': 'Apply Filter',
+        'Đặt lại bộ lọc': 'Reset Filters',
+        'Tất cả các môn (Tổng hợp đa môn)': 'All Subjects (Multi-subject Summary)',
+        'MỨC TỐT': 'GOOD TIER',
+        'MỨC KHÁ': 'FAIR TIER',
+        'MỨC ĐẠT': 'PASS TIER',
+        'CHƯA ĐẠT': 'BELOW PASS',
+        'TỐT (CHUNG)': 'GOOD (OVERALL)',
+        'KHÁ (CHUNG)': 'FAIR (OVERALL)',
+        'ĐẠT (CHUNG)': 'PASS (OVERALL)',
+        'HỌC LỰC CHUNG TOÀN LỚP (TT22)': 'OVERALL CLASS STANDING (TT22)',
+        'TỔNG HỢP ĐA MÔN': 'MULTI-SUBJECT',
+        'ĐẠT CHUẨN': 'ON TRACK',
+        'Mức Tốt': 'Good Tier',
+        'Mức Khá': 'Fair Tier',
+        'Mức Đạt': 'Pass Tier',
+        'Mức Chưa đạt': 'Below Pass',
+        'Chưa đạt': 'Below Pass',
+        'Khá/Tốt': 'Fair/Good',
+        'Khá Tốt': 'Fair / Good',
+        'Môn Toán': 'Mathematics',
+        'Toán': 'Mathematics',
+        'Môn Ngữ văn': 'Literature',
+        'Ngữ văn': 'Literature',
+        'Môn Tiếng Anh': 'English',
+        'Tiếng Anh': 'English',
+        'Môn KHTN': 'Natural Sciences',
+        'KHTN': 'Natural Sciences',
+        'Khoa học tự nhiên': 'Natural Sciences',
+        'Môn Lịch sử & Địa lí': 'History & Geography',
+        'Lịch sử & Địa lí': 'History & Geography',
+        'Lịch sử và Địa lí': 'History & Geography',
+        'Môn GDCD': 'Civic Education',
+        'GDCD': 'Civic Education',
+        'Giáo dục công dân': 'Civic Education',
+        'Môn Tin học': 'Informatics',
+        'Tin học': 'Informatics',
+        'Môn Công nghệ': 'Technology',
+        'Công nghệ': 'Technology',
+        'Hồ sơ & Kế hoạch': 'Profile & Plan',
+        'Nhập điểm': 'Enter Scores',
+        'Không có học sinh nào khớp với bộ lọc hiện tại.': 'No students match the current filter criteria.',
+        'Về क्या gốc': 'Reset',
+        'Chưa có điểm': 'No scores yet',
+        'Đã hoàn thành': 'Completed',
+        'Đã đủ điểm': 'All scores recorded',
+        'Vượt khả năng (>10)': 'Exceeds scale (>10)',
+        'Đã lưu': 'Saved',
+        'Sẵn sàng nhập điểm': 'Ready for grade entry',
+        'HƯỚNG DẪN SỬ DỤNG NHANH': 'QUICK USER GUIDE',
+        'Cẩm nang vận hành EduRadar theo Thông tư 22': 'EduRadar Operations Guide per Circular 22',
+        'Đã hiểu, đóng hướng dẫn': 'Got it, close guide',
+        'Ghi chú & Nhật ký can thiệp của Giáo viên': 'Teacher Remarks & Intervention Log',
+        'Lưu nhận xét': 'Save Remark',
+        'Đóng cửa sổ': 'Close Window',
+        'In Phiếu Báo Điểm': 'Print Score Report',
+        'Mở Sổ Điểm Môn Này': 'Open Subject Gradebook',
+        'BẢNG ĐIỂM CHI TIẾT & DỰ BÁO HỌC LỰC': 'DETAILED SCORE SHEET & ACADEMIC FORECAST',
+        'ĐĐGtx 1': 'Cont. 1',
+        'ĐĐGtx 2': 'Cont. 2',
+        'ĐĐGtx 3': 'Cont. 3',
+        'ĐĐGtx 4': 'Cont. 4',
+        'Giữa Kỳ (x2)': 'Midterm (x2)',
+        'Cuối Kỳ (x3)': 'Final (x3)',
+        'ĐTB Môn': 'Subject GPA',
+        'Mục Tiêu Cuối Kỳ': 'Final Exam Target',
+        'Trạng Thái': 'Status',
+        'HỆ THỐNG THEO DÕI HỌC LỰC & CẢNH BÁO SỚM THCS': 'SECONDARY SCHOOL ACADEMIC TRACKING & EARLY WARNING SYSTEM',
+        'Đánh giá theo Thông tư 22/2021/TT-BGDĐT': 'Assessed per Circular 22/2021/TT-BGDĐT',
+        'Tài liệu hướng dẫn': 'Documentation',
+        'Trạng thái hệ thống: Hoạt động tốt': 'System Status: Operational',
+        'Làm mới bộ lọc & tải lại dữ liệu': 'Refresh filters & reload data',
+        'Cẩm nang sử dụng nhanh': 'Quick user guide',
+        'Mở cài đặt hệ thống': 'Open system settings',
+        'Thử nghiệm Không cần tài khoản': 'Guest Demo Mode (No Login Required)',
+        'Chế độ Khách (Dữ liệu mẫu & Quét nhanh 1 chạm)': 'Guest Mode (Sample Data & 1-Click Quick Scan)',
+        'Tại sao trang chủ cần các thông tin này?': 'Why does the home dashboard show these metrics?',
+        'Giải thích': 'Explanation',
+        'Tiêu chuẩn Bộ GD&ĐT': 'MOET Standard',
+        'Tương thích CSDL Ngành': 'MOET Database Compatible',
+        'Hỗ trợ Sư phạm': 'Pedagogical Support',
+        'Tải File Mẫu Chuẩn VnEdu (.xls)': 'Download VnEdu Standard Template (.xls)',
+        'Xác Nhận Nhập Điểm Vào Sổ': 'Confirm Gradebook Import',
+        'Hủy bỏ': 'Cancel',
+        'Quản lý tài khoản Giáo viên & Phân công TT22': 'Teacher Account Management & TT22 Assignments',
+        'Cấu trúc phân quyền chuẩn Thông tư 22: Admin tạo tài khoản GVBM / GVCN hoặc cấp quyền qua Mã định danh Google (GV-XXXXXX).': 'Circular 22 role structure: Admin creates Subject/Homeroom teacher accounts or assigns roles via Google Teacher ID (GV-XXXXXX).',
+        '1. Tạo tài khoản Giáo viên mới': '1. Create New Teacher Account',
+        '2. Cấp quyền & Phân công cho Tài khoản Google (GV-XXXXXX)': '2. Grant Role & Assign Classes to Google Account (GV-XXXXXX)',
+        'Lưu Cấp Quyền & Phân Công': 'Save Role & Assignment',
+        ' Tạo Tài Khoản Giáo Viên': ' Create Teacher Account'
     };
+
+    function translateDynamicTextEn(raw) {
+        const s = raw.trim();
+        if (!s) return null;
+        if (phraseMapEn[s]) return phraseMapEn[s];
+
+        // Dynamic pattern matching for Vietnamese text fragments
+        let m;
+        if ((m = s.match(/^Lớp\s+([0-9A-Za-z]+)\s*•\s*Môn\s+(.+)$/i))) {
+            const subj = phraseMapEn['Môn ' + m[2]] || phraseMapEn[m[2]] || m[2];
+            return 'Class ' + m[1] + ' • ' + subj;
+        }
+        if ((m = s.match(/^Lớp\s+([0-9A-Za-z]+)\s*\[Môn:\s*(.+?)\]\s*\((\d+)\s*HS\)$/i))) {
+            const subj = phraseMapEn[m[2]] || m[2];
+            return 'Class ' + m[1] + ' [' + subj + '] (' + m[3] + ' students)';
+        }
+        if ((m = s.match(/^Lớp\s+([0-9A-Za-z]+)\s*\((\d+)\s*học sinh\)$/i))) {
+            return 'Class ' + m[1] + ' (' + m[2] + ' students)';
+        }
+        if ((m = s.match(/^Lớp\s+([0-9A-Za-z]+)$/i))) {
+            return 'Class ' + m[1];
+        }
+        if ((m = s.match(/^Khối\s+(\d+)\s*\((\d+)\)$/i))) {
+            return 'Grade ' + m[1] + ' (' + m[2] + ')';
+        }
+        if ((m = s.match(/^Khối\s+(\d+)$/i))) {
+            return 'Grade ' + m[1];
+        }
+        if ((m = s.match(/^Tất cả\s*\((\d+)\s*lớp\)$/i))) {
+            return 'All (' + m[1] + ' classes)';
+        }
+        if ((m = s.match(/^Môn\s+(.+?)\s*\(Được phân công\)$/i))) {
+            const subj = phraseMapEn[m[1]] || m[1];
+            return subj + ' (Assigned)';
+        }
+        if ((m = s.match(/^Môn\s+(.+)$/i))) {
+            const subj = phraseMapEn['Môn ' + m[1]] || phraseMapEn[m[1]];
+            if (subj) return subj;
+        }
+        if ((m = s.match(/^Đánh Giá Học Lực Lớp\s+([0-9A-Za-z]+)$/i))) {
+            return 'Academic Assessment — Class ' + m[1];
+        }
+        if ((m = s.match(/^HỌC LỰC MÔN:\s*(.+)$/i))) {
+            const subj = phraseMapEn[m[1]] || m[1];
+            return 'SUBJECT STANDING: ' + subj.toUpperCase();
+        }
+        if ((m = s.match(/^(\d+)\s*BÀI ĐÁNH GIÁ$/i))) {
+            return m[1] + ' EVALUATIONS';
+        }
+        if ((m = s.match(/^(\d+)\s*Lớp$/i))) {
+            return m[1] + ' Classes';
+        }
+        if ((m = s.match(/^(\d+)\s*HS$/i))) {
+            return m[1] + ' Students';
+        }
+        if ((m = s.match(/^(\d+)\s*học sinh$/i))) {
+            return m[1] + ' students';
+        }
+        if ((m = s.match(/^([\d.,]+%)\s*Khá Tốt$/i))) {
+            return m[1] + ' Fair/Good';
+        }
+        if ((m = s.match(/^([\d.,]+%)\s*Hồ sơ$/i))) {
+            return m[1] + ' Profiles';
+        }
+        if ((m = s.match(/^Cần CK\s*≥\s*([\d.]+)\s*\(Đạt\)$/i))) {
+            return 'Need Final ≥ ' + m[1] + ' (Pass)';
+        }
+        if ((m = s.match(/^Cần CK\s*≥\s*([\d.]+)\s*\(Khá\/Tốt\)$/i))) {
+            return 'Need Final ≥ ' + m[1] + ' (Fair/Good)';
+        }
+        if ((m = s.match(/^Mục tiêu CK:\s*([\d.]+)\s*đ\s*\((.+?)\)$/i))) {
+            const tier = phraseMapEn[m[2]] || m[2];
+            return 'Final Target: ' + m[1] + ' pts (' + tier + ')';
+        }
+        if ((m = s.match(/^Đã ghi nhận\s*(\d+\/\d+)\s*đầu điểm$/i))) {
+            return 'Recorded ' + m[1] + ' score columns';
+        }
+        if ((m = s.match(/^Cần đạt tối thiểu\s*([\d.]+)\s*điểm ở bài thi Cuối kỳ để cán mốc\s*(.+?)\.$/i))) {
+            return 'Requires at least ' + m[1] + ' pts on Final Exam to reach ' + m[2] + '.';
+        }
+        if ((m = s.match(/^Lớp\s+([0-9A-Za-z]+)\s*•\s*Sĩ số:\s*(\d+)\s*học sinh\s*•\s*Hệ số:\s*ĐĐGtx \(x1\),\s*Giữa kỳ \(x2\),\s*Cuối kỳ \(x3\)$/i))) {
+            return 'Class ' + m[1] + ' • Roster: ' + m[2] + ' students • Weights: Continuous (x1), Midterm (x2), Final (x3)';
+        }
+        if ((m = s.match(/^\+\s*(\d+)\s*môn khác$/i))) {
+            return '+ ' + m[1] + ' other subjects';
+        }
+        return null;
+    }
+
+    function translateFullDOM(lang) {
+        if (typeof document.createTreeWalker !== 'function' || !document.body) return;
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while ((node = walker.nextNode())) {
+            const parent = node.parentElement;
+            if (!parent) continue;
+            const tag = parent.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEXTAREA' || tag === 'CODE') continue;
+            if (parent.hasAttribute('data-i18n')) continue;
+
+            if (typeof node.__origVi === 'undefined') {
+                node.__origVi = node.nodeValue;
+            }
+            const orig = node.__origVi;
+            if (!orig || !orig.trim()) continue;
+
+            if (lang === 'en') {
+                const trimmed = orig.trim();
+                const translated = translateDynamicTextEn(trimmed);
+                if (translated) {
+                    const lead = orig.match(/^\s*/)[0];
+                    const trail = orig.match(/\s*$/)[0];
+                    node.nodeValue = lead + translated + trail;
+                } else {
+                    // Partial replacement for composite strings
+                    let mod = orig;
+                    mod = mod.replace(/Sĩ số:\s*/g, 'Roster: ')
+                             .replace(/học sinh/g, 'students')
+                             .replace(/Học kỳ I/g, 'Semester 1')
+                             .replace(/Niên khóa/g, 'Academic Year')
+                             .replace(/Thông tư 22\/2021\/TT-BGDĐT/g, 'Circular 22/2021/TT-BGDĐT')
+                             .replace(/Thông tư 22/g, 'Circular 22')
+                             .replace(/Giáo Viên Bộ Môn/g, 'Subject Teacher')
+                             .replace(/Giáo Viên Chủ Nhiệm/g, 'Homeroom Teacher')
+                             .replace(/Quản Trị Viên/g, 'Administrator')
+                             .replace(/Mã HS:/g, 'Student ID:')
+                             .replace(/Cập nhật lúc:/g, 'Updated at:')
+                             .replace(/Gợi ý sư phạm:/g, 'Pedagogical note:');
+                    if (mod !== orig) {
+                        node.nodeValue = mod;
+                    }
+                }
+            } else {
+                node.nodeValue = orig;
+            }
+        }
+
+        // Translate non-data-i18n placeholders & titles
+        document.querySelectorAll('input[placeholder], textarea[placeholder]').forEach(function(inp) {
+            if (inp.hasAttribute('data-i18n-placeholder')) return;
+            if (!inp.getAttribute('data-orig-ph')) {
+                inp.setAttribute('data-orig-ph', inp.placeholder);
+            }
+            const origPh = inp.getAttribute('data-orig-ph');
+            if (lang === 'en') {
+                let enPh = origPh
+                    .replace(/Nhập nhận xét của giáo viên.*/i, 'Enter teacher remarks or intervention plan...')
+                    .replace(/Ghi chú nhanh.*/i, 'Quick remark...')
+                    .replace(/Tìm theo tên hoặc mã học sinh.*/i, 'Search by student name or ID...')
+                    .replace(/Ví dụ:.*Nguyễn Văn.*/i, 'e.g. 2404815683 or Nguyen Van A...');
+                inp.placeholder = enPh;
+            } else {
+                inp.placeholder = origPh;
+            }
+        });
+    }
 
     function applyLanguage(lang) {
         const badgeVi = document.getElementById('langBadgeVi');
@@ -1694,6 +2171,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (badgeVi.classList && typeof badgeVi.classList.add === 'function') badgeVi.classList.add('active');
                 if (badgeEn.classList && typeof badgeEn.classList.remove === 'function') badgeEn.classList.remove('active');
             }
+        }
+
+        // Sync settings modal language buttons
+        const btnVi = document.getElementById('settingsLangVi');
+        const btnEn = document.getElementById('settingsLangEn');
+        if (btnVi && btnEn) {
+            btnVi.classList.toggle('active', lang === 'vi');
+            btnEn.classList.toggle('active', lang === 'en');
         }
 
         // 1. Elements with data-i18n attribute
@@ -1840,7 +2325,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (orig) searchInput.placeholder = orig;
             }
         }
+
+        // 8. Full DOM Text Node & Dynamic Pattern Translation
+        try {
+            translateFullDOM(lang);
+        } catch (e) {}
     }
+
+    // Expose globally so Settings Modal (setAppLanguage) can invoke it immediately
+    window.applyLanguage = applyLanguage;
 
     // Initialize Language from localStorage (Defensively)
     let currentLang = 'vi';

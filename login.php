@@ -551,8 +551,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- TECH GRID BG -->
     <div class="login-grid-bg" aria-hidden="true"></div>
 
-    <!-- FLOATING THEME TOGGLE -->
+    <!-- FLOATING THEME & LANGUAGE TOGGLE -->
     <div class="login-topbar">
+        <button type="button" class="cobalt-theme-btn" id="loginLangBtn" onclick="toggleLoginLang()">
+            <span id="loginLangLabel">VI | EN</span>
+        </button>
         <button type="button" class="cobalt-theme-btn" id="themeToggleBtn" onclick="toggleLoginTheme()">
             <span id="themeToggleIcon" style="display: inline-flex; align-items: center;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -685,15 +688,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     function updateToggleBtn() {
         const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const lang = localStorage.getItem('edu_radar_lang') || 'vi';
         const icon = document.getElementById('themeToggleIcon');
         const label = document.getElementById('themeToggleLabel');
         if (current === 'dark') {
             if (icon) icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-            if (label) label.textContent = 'Giao diện sáng';
+            if (label) label.textContent = (lang === 'en') ? 'Light Theme' : 'Giao diện sáng';
         } else {
             if (icon) icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-            if (label) label.textContent = 'Giao diện tối';
+            if (label) label.textContent = (lang === 'en') ? 'Dark Theme' : 'Giao diện tối';
         }
+    }
+
+    const loginPhraseMapEn = {
+        'Đăng nhập EduRadar': 'Sign in to EduRadar',
+        'Tài khoản khảo sát (Mật khẩu: 123456)': 'Demo Accounts (Password: 123456)',
+        'Điền Admin': 'Fill Admin',
+        'Điền GV Toán': 'Fill Math Teacher',
+        'Điền GV Văn': 'Fill Lit. Teacher',
+        'TÀI KHOẢN (TÊN ĐĂNG NHẬP / VNEDU)': 'USERNAME / VNEDU ACCOUNT',
+        'MẬT KHẨU': 'PASSWORD',
+        'Đăng nhập hệ thống': 'Sign In',
+        'Tiếp tục với Google': 'Continue with Google',
+        'Chưa có tài khoản trường hoặc cần trải nghiệm tức thì?': 'No school account yet or want an instant preview?',
+        'Quét 1 Chạm Bảng Điểm VnEdu (Không cần đăng nhập)': '1-Click VnEdu Gradebook Scanner (No Login Required)'
+    };
+
+    function applyLoginLanguage(lang) {
+        const langLbl = document.getElementById('loginLangLabel');
+        if (langLbl) {
+            langLbl.textContent = (lang === 'en') ? 'EN (English)' : 'VI (Tiếng Việt)';
+        }
+        const subEl = document.querySelector('.login-sub');
+        if (subEl) {
+            if (!subEl.getAttribute('data-orig')) subEl.setAttribute('data-orig', subEl.innerHTML);
+            subEl.innerHTML = (lang === 'en')
+                ? 'Secondary School Academic Assessment & Early Warning System<br>(VnEdu & Circular 22/2021/TT-BGDĐT Standard)'
+                : subEl.getAttribute('data-orig');
+        }
+        const walker = document.createTreeWalker(document.getElementById('loginCard'), NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while ((node = walker.nextNode())) {
+            if (typeof node.__origVi === 'undefined') node.__origVi = node.nodeValue;
+            const orig = node.__origVi;
+            const trimmed = orig.trim();
+            if (!trimmed) continue;
+            if (lang === 'en') {
+                if (loginPhraseMapEn[trimmed]) {
+                    node.nodeValue = loginPhraseMapEn[trimmed];
+                } else {
+                    node.nodeValue = orig
+                        .replace('Quản trị viên:', 'Administrator:')
+                        .replace('GV Toán:', 'Math Teacher:')
+                        .replace('GV Văn:', 'Lit. Teacher:');
+                }
+            } else {
+                node.nodeValue = orig;
+            }
+        }
+        updateToggleBtn();
+    }
+
+    function toggleLoginLang() {
+        const cur = localStorage.getItem('edu_radar_lang') || 'vi';
+        const next = (cur === 'vi') ? 'en' : 'vi';
+        localStorage.setItem('edu_radar_lang', next);
+        applyLoginLanguage(next);
     }
 
     function toggleLoginTheme() {
@@ -723,6 +783,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        const savedLang = localStorage.getItem('edu_radar_lang') || 'vi';
+        applyLoginLanguage(savedLang);
         updateToggleBtn();
         setTimeout(dismissPreloader, 80);
     });
