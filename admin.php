@@ -726,9 +726,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         }
                     }
 
-                    // Khử trùng lặp đa tầng (Pre-check & UNIQUE key constraint catch)
-                    $chkStudent->execute([$studentClassId, $fullName, $normalizedBirthday]);
-                    $existingId = $chkStudent->fetchColumn();
+                    // Khử trùng lặp đa tầng (Pre-check theo Mã HS hoặc theo Họ tên + Ngày sinh & UNIQUE key constraint catch)
+                    $existingId = false;
+                    if ($studentCode !== null && $studentCode !== '') {
+                        $chkByCode = $pdo->prepare("SELECT id FROM students WHERE class_id = ? AND student_code = ? LIMIT 1");
+                        $chkByCode->execute([$studentClassId, $studentCode]);
+                        $existingId = $chkByCode->fetchColumn();
+                    }
+                    if (!$existingId) {
+                        $chkStudent->execute([$studentClassId, $fullName, $normalizedBirthday]);
+                        $existingRow = $chkStudent->fetch(PDO::FETCH_ASSOC);
+                        if ($existingRow) {
+                            // Nếu cùng lớp trùng cả họ tên và ngày sinh nhưng Mã HS khác nhau, gán ngày sinh phân biệt nhẹ để không mất học sinh
+                            $chkCodeStmt = $pdo->prepare("SELECT student_code FROM students WHERE id = ?");
+                            $chkCodeStmt->execute([$existingRow['id']]);
+                            $existCode = (string)$chkCodeStmt->fetchColumn();
+                            if ($studentCode !== null && $studentCode !== '' && $existCode !== '' && $existCode !== $studentCode) {
+                                $normalizedBirthday = '1970-01-' . str_pad((string)(($i % 28) + 2), 2, '0', STR_PAD_LEFT);
+                            } else {
+                                $existingId = $existingRow['id'];
+                            }
+                        }
+                    }
 
                     if ($existingId) {
                         $totalSkipped++;
