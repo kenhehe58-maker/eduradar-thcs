@@ -297,6 +297,40 @@ require_once __DIR__ . '/icons.php';
             </div>
         </div>
 
+        <!-- 3. CÀI ĐẶT TỐC ĐỘ CUỘN TRANG (KHẮC PHỤC GIẬT LAG CUỘN TRÊN LAPTOP) -->
+        <div class="help-section">
+            <div class="help-section-title">
+                <?= get_svg_icon('activity', 18, '', 'vertical-align: -2px; margin-right: 4px;') ?>
+                <span>Tốc độ &amp; Độ mượt cuộn trang</span>
+            </div>
+            <div class="settings-options-col" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <button type="button" class="settings-choice-card" id="optScrollNative" onclick="setAppScrollMode('native')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="settings-icon-box" style="background: #ecfdf5; color: #059669;">
+                            <?= get_svg_icon('zap', 18) ?>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);">Cuộn trực tiếp (Native Fast)</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);">Tối ưu 120Hz mượt mà, triệt tiêu giật lag trên trackpad laptop</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkScrollNative">&#10003;</span>
+                </button>
+                <button type="button" class="settings-choice-card" id="optScrollSmooth" onclick="setAppScrollMode('smooth')">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="settings-icon-box" style="background: #eff6ff; color: #2563eb;">
+                            <?= get_svg_icon('activity', 18) ?>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-weight: 700; font-size: 13.5px; color: var(--text-heading, #0f172a);">Cuộn quán tính (Apple Lenis)</div>
+                            <div style="font-size: 11.5px; color: var(--text-subtle, #64748b);">Hiệu ứng trượt mềm khi dùng chuột con lăn máy bàn</div>
+                        </div>
+                    </div>
+                    <span class="settings-check-badge" id="checkScrollSmooth">&#10003;</span>
+                </button>
+            </div>
+        </div>
+
         <div style="margin-top: 18px;">
             <button type="button" class="cobalt-key cobalt-key-primary" style="width: 100%;" onclick="toggleSettingsDrawer(false)">
                 <span data-i18n="settings.btn_done">Hoàn tất &amp; Đóng</span>
@@ -374,6 +408,39 @@ function syncSettingsUIState() {
     } else {
         if (cardLight) cardLight.classList.add('is-active');
         if (chkLight) chkLight.style.display = 'inline-flex';
+    }
+
+    var scrollPref = 'native';
+    try {
+        scrollPref = localStorage.getItem('eduradar_scroll_mode') || 'native';
+    } catch (e) {}
+
+    var cardNative = document.getElementById('optScrollNative');
+    var cardSmooth = document.getElementById('optScrollSmooth');
+    var chkNative = document.getElementById('checkScrollNative');
+    var chkSmooth = document.getElementById('checkScrollSmooth');
+    if (cardNative && cardSmooth) {
+        if (scrollPref === 'smooth') {
+            cardSmooth.classList.add('is-active');
+            cardNative.classList.remove('is-active');
+            if (chkSmooth) chkSmooth.style.display = 'inline-flex';
+            if (chkNative) chkNative.style.display = 'none';
+        } else {
+            cardNative.classList.add('is-active');
+            cardSmooth.classList.remove('is-active');
+            if (chkNative) chkNative.style.display = 'inline-flex';
+            if (chkSmooth) chkSmooth.style.display = 'none';
+        }
+    }
+}
+
+function setAppScrollMode(mode) {
+    try {
+        localStorage.setItem('eduradar_scroll_mode', mode);
+    } catch (e) {}
+    syncSettingsUIState();
+    if (window.setAppScrollMode) {
+        window.setAppScrollMode(mode);
     }
 }
 

@@ -8767,8 +8767,7 @@ table, thead, tbody, tr, td, th, input, select {
     transition: none !important;
 }
 tbody tr {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 52px;
+    contain: style;
 }
 
 /* Căn lề trái cho thẻ footer trên Desktop khớp với độ rộng thanh bên */

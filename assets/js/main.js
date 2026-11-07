@@ -2402,20 +2402,60 @@ window.__triggerPageEntrance = function() {
 };
 
 // -----------------------------------------------------------------------------
-// LENIS SMOOTH SCROLL (CHUẨN QUÁN TÍNH APPLE 60FPS - 120FPS)
+// SMOOTH SCROLL & PERFORMANCE MANAGER (CHẾ ĐỘ CUỘN TỐI ƯU 120FPS)
 // -----------------------------------------------------------------------------
-if (typeof Lenis !== 'undefined') {
-  const lenis = new Lenis({
-    duration: 1.1,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    wheelMultiplier: 1,
-    touchMultiplier: 1.2
-  });
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-  window.__lenis = lenis;
+window.applyScrollPerformance = function() {
+    let mode = 'native';
+    try {
+        mode = localStorage.getItem('eduradar_scroll_mode') || 'native';
+    } catch(e) {}
+
+    if (mode === 'smooth' && typeof Lenis !== 'undefined') {
+        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReduced && !window.__lenis) {
+            const lenis = new Lenis({
+                duration: 0.65,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                smoothWheel: true,
+                wheelMultiplier: 0.95,
+                syncTouch: false
+            });
+            if (window.gsap && window.ScrollTrigger) {
+                lenis.on('scroll', ScrollTrigger.update);
+                gsap.ticker.add((time) => {
+                    lenis.raf(time * 1000);
+                });
+                gsap.ticker.lagSmoothing(0);
+            } else {
+                function raf(time) {
+                    if (window.__lenis) {
+                        lenis.raf(time);
+                        requestAnimationFrame(raf);
+                    }
+                }
+                requestAnimationFrame(raf);
+            }
+            window.__lenis = lenis;
+        }
+    } else {
+        if (window.__lenis) {
+            try {
+                window.__lenis.destroy();
+            } catch(e) {}
+            window.__lenis = null;
+        }
+    }
+};
+
+window.setAppScrollMode = function(mode) {
+    try {
+        localStorage.setItem('eduradar_scroll_mode', mode);
+    } catch(e) {}
+    window.applyScrollPerformance();
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.applyScrollPerformance);
+} else {
+    window.applyScrollPerformance();
 }
